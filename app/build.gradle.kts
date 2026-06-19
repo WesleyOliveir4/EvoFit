@@ -57,5 +57,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     //page indicators
-    implementation("androidx.compose.foundation:foundation")
+    implementation(libs.androidx.compose.foundation)
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
 }
