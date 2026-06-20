@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.ui.feature.onboard.components.OnboardingPage
 import com.example.evofit.ui.feature.onboard.components.OnboardingPageContent
@@ -52,4 +53,14 @@ fun OnboardingScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OnboardingScreenPreview() {
+    OnboardingScreen(
+        onFinish = {},
+        currentPage = 0,
+        totalPages = 3
+    )
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.ui.feature.onboard.components.OnboardingButton
@@ -94,4 +95,20 @@ fun OnboardUserDataScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OnboardUserDataScreenPreview() {
+    OnboardUserDataScreen(
+        name = "João",
+        age = "25",
+        weight = "80",
+        currentPage = 1,
+        totalPages = 3,
+        onNameChange = {},
+        onAgeChange = {},
+        onWeightChange = {},
+        onContinue = {}
+    )
 }
