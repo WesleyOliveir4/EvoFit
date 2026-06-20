@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.evofit.ui.feature.home.screens.HomeScreen
 import com.example.evofit.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.ui.feature.onboard.screens.OnboardingScreen
@@ -15,11 +16,6 @@ import com.example.evofit.ui.feature.onboard.screens.OnboardingScreen
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
-
-    var userName by remember { mutableStateOf("") }
-    var userAge by remember { mutableStateOf("") }
-    var userWeight by remember { mutableStateOf("") }
-
     val totalSteps = 3
 
     NavHost(
@@ -38,14 +34,8 @@ fun NavNavigation() {
 
         composable(NavRoutes.UserData.route) {
             OnboardUserDataScreen(
-                name = userName,
-                age = userAge,
-                weight = userWeight,
                 currentPage = 1,
                 totalPages = totalSteps,
-                onNameChange = { userName = it },
-                onAgeChange = { userAge = it },
-                onWeightChange = { userWeight = it },
                 onContinue = {
                     navController.navigate(NavRoutes.Goals.route)
                 }
@@ -57,16 +47,20 @@ fun NavNavigation() {
                 currentPage = 2,
                 totalPages = totalSteps,
                 onContinue = {
-                    navController.navigate(NavRoutes.Home.route)
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
+                    }
                 },
                 onSkip = {
-                    navController.navigate(NavRoutes.Home.route)
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
+                    }
                 }
             )
         }
 
         composable(NavRoutes.Home.route) {
-            // Placeholder para a Home
+            HomeScreen()
         }
     }
 }

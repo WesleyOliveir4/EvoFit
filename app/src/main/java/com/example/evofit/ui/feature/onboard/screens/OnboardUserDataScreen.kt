@@ -16,18 +16,20 @@ import com.example.evofit.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.ui.feature.onboard.components.UserInputField
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.evofit.ui.feature.onboard.viewmodel.OnboardingViewModel
+import org.koin.androidx.compose.koinViewModel
+
 @Composable
 fun OnboardUserDataScreen(
-    name: String,
-    age: String,
-    weight: String,
     currentPage: Int,
     totalPages: Int,
-    onNameChange: (String) -> Unit,
-    onAgeChange: (String) -> Unit,
-    onWeightChange: (String) -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    viewModel: OnboardingViewModel = koinViewModel()
 ) {
+    val userData by viewModel.userData.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,26 +58,26 @@ fun OnboardUserDataScreen(
 
         UserInputField(
             label = "Nome",
-            value = name,
-            onValueChange = onNameChange
+            value = userData.name,
+            onValueChange = { viewModel.updateName(it) }
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         UserInputField(
             label = "Idade",
-            value = age,
+            value = userData.age,
             keyboardType = KeyboardType.Number,
-            onValueChange = onAgeChange
+            onValueChange = { viewModel.updateAge(it) }
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         UserInputField(
             label = "Peso (kg)",
-            value = weight,
+            value = userData.weight,
             keyboardType = KeyboardType.Number,
-            onValueChange = onWeightChange
+            onValueChange = { viewModel.updateWeight(it) }
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -88,9 +90,16 @@ fun OnboardUserDataScreen(
                 .padding(bottom = 16.dp)
         )
 
+        val isFormValid = userData.name.isNotBlank() && 
+                          userData.age.isNotBlank() && 
+                          userData.weight.isNotBlank()
+
         OnboardingButton(
             text = "Continuar",
-            onClick = onContinue
+            enabled = isFormValid,
+            onClick = {
+                viewModel.saveAndNext(onContinue)
+            }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -101,14 +110,8 @@ fun OnboardUserDataScreen(
 @Composable
 fun OnboardUserDataScreenPreview() {
     OnboardUserDataScreen(
-        name = "João",
-        age = "25",
-        weight = "80",
         currentPage = 1,
         totalPages = 3,
-        onNameChange = {},
-        onAgeChange = {},
-        onWeightChange = {},
         onContinue = {}
     )
 }

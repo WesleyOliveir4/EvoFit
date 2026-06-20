@@ -19,6 +19,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.evofit.data.model.ExerciseModel
+import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.domain.model.ExerciseCategory
+import com.example.evofit.domain.model.GoalSuggestion
+import com.example.evofit.domain.model.UserGoal
 
 enum class GoalFlowStep {
     CHOOSE_CATEGORY,
@@ -30,16 +35,57 @@ enum class GoalFlowStep {
 @Composable
 fun NewGoalDialog(
     onDismissRequest: () -> Unit,
-    onGoalConfirmed: (String) -> Unit
+    onGoalConfirmed: (UserGoal) -> Unit,
+    muscleGroups: List<MuscleGroupModel>,
+    getExercises: (String) -> List<ExerciseModel>,
+    initialSuggestion: GoalSuggestion? = null
 ) {
-    var currentStep by remember { mutableStateOf(GoalFlowStep.CHOOSE_CATEGORY) }
+    // Usamos initialSuggestion como chave para resetar o estado se a sugestão mudar
+    var currentStep by remember(initialSuggestion) { 
+        mutableStateOf(
+            initialSuggestion?.let { 
+                when {
+                    it.isWeightGoal -> GoalFlowStep.WEIGHT_DETAILS
+                    it.category == ExerciseCategory.STRENGTH -> GoalFlowStep.STRENGTH_DETAILS
+                    it.category == ExerciseCategory.CARDIO -> GoalFlowStep.CARDIO_DETAILS
+                    else -> GoalFlowStep.CHOOSE_CATEGORY
+                }
+            } ?: GoalFlowStep.CHOOSE_CATEGORY
+        ) 
+    }
     
-    var selectedMuscleGroup by remember { mutableStateOf("") }
-    var weightObjective by remember { mutableStateOf("") }
+    var selectedMuscleGroup by remember(initialSuggestion) { 
+        mutableStateOf(
+            initialSuggestion?.muscleGroupId?.let { id -> 
+                muscleGroups.find { it.id == id } 
+            }
+        ) 
+    }
     
-    var selectedCardio by remember { mutableStateOf("") }
-    var cardioDistance by remember { mutableStateOf("") }
-    var cardioTime by remember { mutableStateOf("20m") }
+    var selectedExercise by remember(initialSuggestion, selectedMuscleGroup) { 
+        mutableStateOf(
+            initialSuggestion?.exerciseId?.let { id ->
+                selectedMuscleGroup?.let { group ->
+                    getExercises(group.id).find { it.id == id }
+                }
+            }
+        ) 
+    }
+    
+    var weightObjective by remember(initialSuggestion) { mutableStateOf("") }
+    
+    var selectedCardio by remember(initialSuggestion) { 
+        mutableStateOf<ExerciseModel?>(null) 
+    }
+
+    LaunchedEffect(initialSuggestion, selectedExercise) {
+        if (initialSuggestion?.category == ExerciseCategory.CARDIO) {
+            selectedCardio = selectedExercise
+        }
+    }
+    
+    var cardioDistance by remember(initialSuggestion) { mutableStateOf("") }
+    var cardioTime by remember(initialSuggestion) { mutableStateOf("") }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -61,7 +107,7 @@ fun NewGoalDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Nova Meta",
+                        text = if (initialSuggestion != null) "Completar Meta" else "Nova Meta",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -88,26 +134,40 @@ fun NewGoalDialog(
                         }
                         GoalFlowStep.STRENGTH_DETAILS -> {
                             StrengthFlow(
+                                muscleGroups = muscleGroups.filter { it.category == ExerciseCategory.STRENGTH },
                                 selectedMuscle = selectedMuscleGroup,
-                                onMuscleSelect = { selectedMuscleGroup = it },
+                                onMuscleSelect = { 
+                                    selectedMuscleGroup = it
+                                    selectedExercise = null
+                                },
+                                exercises = selectedMuscleGroup?.let { getExercises(it.id) } ?: emptyList(),
+                                selectedExercise = selectedExercise,
+                                onExerciseSelect = { selectedExercise = it },
                                 weight = weightObjective,
                                 onWeightChange = { weightObjective = it },
                                 onConfirm = {
-                                    onGoalConfirmed("Força: $selectedMuscleGroup - ${weightObjective}kg")
+                                    selectedExercise?.let {
+                                        onGoalConfirmed(UserGoal.Strength(exerciseName = it.name, weight = weightObjective))
+                                    }
                                     onDismissRequest()
                                 }
                             )
                         }
                         GoalFlowStep.CARDIO_DETAILS -> {
                             CardioFlow(
-                                selectedCardio = selectedCardio,
+                                cardioExercises = muscleGroups.find { it.category == ExerciseCategory.CARDIO }
+                                    ?.let { getExercises(it.id) } ?: emptyList(),
+                                selectedCardio = selectedCardio ?: selectedExercise,
                                 onCardioSelect = { selectedCardio = it },
                                 distance = cardioDistance,
                                 onDistanceChange = { cardioDistance = it },
                                 selectedTime = cardioTime,
                                 onTimeSelect = { cardioTime = it },
                                 onConfirm = {
-                                    onGoalConfirmed("$selectedCardio: ${cardioDistance}km em $cardioTime")
+                                    val finalCardio = selectedCardio ?: selectedExercise
+                                    finalCardio?.let {
+                                        onGoalConfirmed(UserGoal.Cardio(type = it.name, distance = cardioDistance, time = cardioTime))
+                                    }
                                     onDismissRequest()
                                 }
                             )
@@ -117,7 +177,7 @@ fun NewGoalDialog(
                                 weight = weightObjective,
                                 onWeightChange = { weightObjective = it },
                                 onConfirm = {
-                                    onGoalConfirmed("Meta de Peso: ${weightObjective}kg")
+                                    onGoalConfirmed(UserGoal.Weight(targetWeight = weightObjective))
                                     onDismissRequest()
                                 }
                             )
@@ -149,104 +209,163 @@ private fun CategorySelectionStep(onCategorySelected: (String) -> Unit) {
 
 @Composable
 private fun StrengthFlow(
-    selectedMuscle: String,
-    onMuscleSelect: (String) -> Unit,
+    muscleGroups: List<MuscleGroupModel>,
+    selectedMuscle: MuscleGroupModel?,
+    onMuscleSelect: (MuscleGroupModel) -> Unit,
+    exercises: List<ExerciseModel>,
+    selectedExercise: ExerciseModel?,
+    onExerciseSelect: (ExerciseModel) -> Unit,
     weight: String,
     onWeightChange: (String) -> Unit,
     onConfirm: () -> Unit
 ) {
-    val muscles = listOf("Costas", "Peito", "Braços", "Pernas")
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Qual grupo muscular?", color = Color.Gray)
+        Text("1. Qual grupo muscular?", color = Color.Gray)
         
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            muscles.forEach { m ->
-                SelectionChip(text = m, isSelected = selectedMuscle == m, onClick = { onMuscleSelect(m) })
+            muscleGroups.forEach { group ->
+                SelectionChip(
+                    text = group.name, 
+                    isSelected = selectedMuscle?.id == group.id, 
+                    onClick = { onMuscleSelect(group) }
+                )
             }
         }
 
+        Text("2. Qual exercício?", color = if (selectedMuscle != null) Color.Gray else Color.DarkGray)
+        
+        if (selectedMuscle != null) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                exercises.forEach { exercise ->
+                    SelectionChip(
+                        text = exercise.name,
+                        isSelected = selectedExercise?.id == exercise.id,
+                        onClick = { onExerciseSelect(exercise) }
+                    )
+                }
+            }
+        } else {
+            Text("Selecione um grupo muscular primeiro", color = Color(0xFF444444), fontSize = 12.sp)
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Meta de quilos (1RM):", color = Color.Gray)
+        Text("3. Meta de quilos (1RM):", color = if (selectedExercise != null) Color.Gray else Color.DarkGray)
         
         OutlinedTextField(
             value = weight,
             onValueChange = onWeightChange,
+            enabled = selectedExercise != null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             suffix = { Text("kg") },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White, 
                 unfocusedTextColor = Color.White,
-                focusedBorderColor = Color(0xFF67D14E)
+                disabledTextColor = Color.DarkGray,
+                focusedBorderColor = Color(0xFF67D14E),
+                disabledBorderColor = Color(0xFF2C2C2E)
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Button(
             onClick = onConfirm,
-            enabled = selectedMuscle.isNotEmpty() && weight.isNotEmpty(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF67D14E)),
+            enabled = selectedExercise != null && weight.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF67D14E),
+                disabledContainerColor = Color(0xFF2C2C2E)
+            ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black)
+            Icon(
+                Icons.Default.Check, 
+                contentDescription = null, 
+                tint = if (selectedExercise != null && weight.isNotEmpty()) Color.Black else Color.Gray
+            )
         }
     }
 }
 
 @Composable
 private fun CardioFlow(
-    selectedCardio: String,
-    onCardioSelect: (String) -> Unit,
+    cardioExercises: List<ExerciseModel>,
+    selectedCardio: ExerciseModel?,
+    onCardioSelect: (ExerciseModel) -> Unit,
     distance: String,
     onDistanceChange: (String) -> Unit,
     selectedTime: String,
     onTimeSelect: (String) -> Unit,
     onConfirm: () -> Unit
 ) {
-    val cardios = listOf("Esteira", "Bicicleta", "Escada")
     val times = listOf("10m", "20m", "30m", "1h")
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Selecione o Cardio:", color = Color.Gray)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            cardios.forEach { c ->
-                SelectionChip(text = c, isSelected = selectedCardio == c, onClick = { onCardioSelect(c) })
+        Text("1. Selecione o Cardio:", color = Color.Gray)
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            cardioExercises.forEach { exercise ->
+                SelectionChip(
+                    text = exercise.name, 
+                    isSelected = selectedCardio?.id == exercise.id, 
+                    onClick = { onCardioSelect(exercise) }
+                )
             }
         }
 
-        Text("Distância aproximada:", color = Color.Gray)
+        Text("2. Distância aproximada:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
         OutlinedTextField(
             value = distance,
             onValueChange = onDistanceChange,
+            enabled = selectedCardio != null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             suffix = { Text("km") },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White, 
                 unfocusedTextColor = Color.White,
-                focusedBorderColor = Color(0xFF67D14E)
+                disabledTextColor = Color.DarkGray,
+                focusedBorderColor = Color(0xFF67D14E),
+                disabledBorderColor = Color(0xFF2C2C2E)
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Text("Duração:", color = Color.Gray)
+        Text("3. Duração:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             times.forEach { t ->
-                SelectionChip(text = t, isSelected = selectedTime == t, onClick = { onTimeSelect(t) })
+                SelectionChip(
+                    text = t, 
+                    isSelected = selectedTime == t, 
+                    onClick = { if (selectedCardio != null) onTimeSelect(t) }
+                )
             }
         }
 
         Button(
             onClick = onConfirm,
-            enabled = selectedCardio.isNotEmpty() && distance.isNotEmpty(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF67D14E)),
+            enabled = selectedCardio != null && distance.isNotEmpty() && selectedTime.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF67D14E),
+                disabledContainerColor = Color(0xFF2C2C2E)
+            ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Adicionar Cardio", color = Color.Black, fontWeight = FontWeight.Bold)
+            Icon(
+                Icons.Default.Check,
+                contentDescription = null,
+                tint = if (selectedCardio != null && distance.isNotEmpty() && selectedTime.isNotEmpty()) Color.Black else Color.Gray
+            )
         }
     }
 }
@@ -275,11 +394,18 @@ private fun WeightFlow(
         Button(
             onClick = onConfirm,
             enabled = weight.isNotEmpty(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF67D14E)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF67D14E),
+                disabledContainerColor = Color(0xFF2C2C2E)
+            ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Confirmar Meta", color = Color.Black, fontWeight = FontWeight.Bold)
+            Icon(
+                Icons.Default.Check,
+                contentDescription = null,
+                tint = if (weight.isNotEmpty()) Color.Black else Color.Gray
+            )
         }
     }
 }

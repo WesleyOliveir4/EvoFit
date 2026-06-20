@@ -1,15 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.example.evofit"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.evofit"
@@ -62,4 +59,14 @@ dependencies {
 
     // navigation
     implementation(libs.androidx.navigation.compose)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 }

@@ -149,21 +149,24 @@ fun UserInputField(
 fun OnboardingButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF67D14E)
+            containerColor = Color(0xFF67D14E),
+            disabledContainerColor = Color(0xFF67D14E).copy(alpha = 0.5f)
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
         Text(
             text = text,
-            color = Color.Black,
+            color = if (enabled) Color.Black else Color.Black.copy(alpha = 0.5f),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp
         )

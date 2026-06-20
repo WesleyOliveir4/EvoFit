@@ -15,28 +15,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.ui.feature.onboard.components.*
+import com.example.evofit.ui.feature.onboard.viewmodel.OnboardingViewModel
+import org.koin.androidx.compose.koinViewModel
+
+import com.example.evofit.domain.model.GoalSuggestion
 
 @Composable
 fun OnboardingGoalsScreen(
     currentPage: Int,
     totalPages: Int,
     onContinue: () -> Unit,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
+    viewModel: OnboardingViewModel = koinViewModel()
 ) {
-     val activeGoals = remember { mutableStateListOf<String>() }
+    val userData by viewModel.userData.collectAsState()
+    val activeGoals = userData.goals
     var showDialog by remember { mutableStateOf(false) }
+    var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
     
-    val suggestedTags = listOf(
-        "Perder peso", "Ganhar massa", "Aumentar força",
-        "Melhorar pace", "Treinar 3x por semana"
-    )
+    val suggestions = remember { viewModel.getSuggestions() }
 
     if (showDialog) {
         NewGoalDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { 
+                showDialog = false
+                selectedSuggestion = null
+            },
             onGoalConfirmed = { newGoal ->
-                activeGoals.add(newGoal)
-            }
+                viewModel.addGoal(newGoal)
+            },
+            muscleGroups = viewModel.getMuscleGroups(),
+            getExercises = { viewModel.getExercisesByGroup(it) },
+            initialSuggestion = selectedSuggestion
         )
     }
 
@@ -67,29 +77,25 @@ fun OnboardingGoalsScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Tags Section
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            maxItemsInEachRow = 4
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            suggestedTags.forEach { tag ->
+            suggestions.forEach { suggestion ->
                 GoalTag(
-                    text = tag,
-                    modifier = Modifier.padding(horizontal = 2.dp),
+                    text = suggestion.text,
                     onClick = {
-                        if (tag !in activeGoals) {
-                            activeGoals.add(tag)
-                        }
+                        selectedSuggestion = suggestion
+                        showDialog = true
                     }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         LazyColumn(
             modifier = Modifier
@@ -99,9 +105,9 @@ fun OnboardingGoalsScreen(
         ) {
             items(activeGoals) { goal ->
                 ActiveGoalItem(
-                    text = goal,
+                    text = goal.title,
                     onRemoveClick = {
-                        activeGoals.remove(goal)
+                        viewModel.removeGoal(goal)
                     }
                 )
             }
@@ -133,8 +139,10 @@ fun OnboardingGoalsScreen(
         )
 
         OnboardingButton(
-            text = "Continuar",
-            onClick = onContinue
+            text = "Finalizar",
+            onClick = {
+                viewModel.completeOnboarding(onContinue)
+            }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
