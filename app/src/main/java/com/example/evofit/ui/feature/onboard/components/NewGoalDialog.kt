@@ -303,7 +303,7 @@ private fun StrengthFlow(
         
         val label = when(selectedExercise?.unit) {
             MeasurementUnit.REPS -> "3. Meta de repetições:"
-            MeasurementUnit.TIME -> "3. Meta de tempo (min/seg):"
+            MeasurementUnit.TIME -> "3. Meta de tempo (min):"
             else -> "3. Meta de quilos (1RM):"
         }
         

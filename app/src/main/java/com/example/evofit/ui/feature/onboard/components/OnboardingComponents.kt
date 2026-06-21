@@ -34,51 +34,6 @@ data class OnboardingPage(
 )
 
 @Composable
-fun OnboardingPageContent(
-    page: OnboardingPage,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(64.dp))
-
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(32.dp))
-                .background(Color(0xFF102312))
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Text(
-            text = page.title,
-            color = Color.White,
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = page.highlightText,
-            color = Color(0xFF67D14E),
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = page.description,
-            color = Color(0xFFBDBDBD),
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
 fun PageIndicators(
     pageCount: Int,
     selectedPage: Int,
@@ -303,18 +258,6 @@ fun ActiveGoalItemPreview() {
 @Composable
 fun AddNewGoalButtonPreview() {
     AddNewGoalButton(onClick = {})
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-fun OnboardingPageContentPreview() {
-    OnboardingPageContent(
-        page = OnboardingPage(
-            title = "Bem-vindo ao",
-            highlightText = "EvoFit 💪",
-            description = "Vamos configurar seu perfil para acompanhar sua evolução."
-        )
-    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)

@@ -14,11 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.data.model.ExerciseModel
+import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.domain.model.GoalSuggestion
+import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.ui.feature.onboard.components.*
 import com.example.evofit.ui.feature.onboard.viewmodel.OnboardingViewModel
 import org.koin.androidx.compose.koinViewModel
-
-import com.example.evofit.domain.model.GoalSuggestion
 
 @Composable
 fun OnboardingGoalsScreen(
@@ -29,11 +31,36 @@ fun OnboardingGoalsScreen(
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.userData.collectAsState()
-    val activeGoals = userData.goals
+    
+    OnboardingGoalsContent(
+        activeGoals = userData.goals,
+        suggestions = viewModel.getSuggestions(),
+        muscleGroups = viewModel.getMuscleGroups(),
+        getExercises = { viewModel.getExercisesByGroup(it) },
+        currentPage = currentPage,
+        totalPages = totalPages,
+        onAddGoal = viewModel::addGoal,
+        onRemoveGoal = viewModel::removeGoal,
+        onSkip = onSkip,
+        onFinish = { viewModel.completeOnboarding(onContinue) }
+    )
+}
+
+@Composable
+fun OnboardingGoalsContent(
+    activeGoals: List<UserGoal>,
+    suggestions: List<GoalSuggestion>,
+    muscleGroups: List<MuscleGroupModel>,
+    getExercises: (String) -> List<ExerciseModel>,
+    currentPage: Int,
+    totalPages: Int,
+    onAddGoal: (UserGoal) -> Unit,
+    onRemoveGoal: (UserGoal) -> Unit,
+    onSkip: () -> Unit,
+    onFinish: () -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
-    
-    val suggestions = remember { viewModel.getSuggestions() }
 
     if (showDialog) {
         NewGoalDialog(
@@ -42,10 +69,10 @@ fun OnboardingGoalsScreen(
                 selectedSuggestion = null
             },
             onGoalConfirmed = { newGoal ->
-                viewModel.addGoal(newGoal)
+                onAddGoal(newGoal)
             },
-            muscleGroups = viewModel.getMuscleGroups(),
-            getExercises = { viewModel.getExercisesByGroup(it) },
+            muscleGroups = muscleGroups,
+            getExercises = getExercises,
             initialSuggestion = selectedSuggestion
         )
     }
@@ -107,7 +134,7 @@ fun OnboardingGoalsScreen(
                 ActiveGoalItem(
                     text = goal.title,
                     onRemoveClick = {
-                        viewModel.removeGoal(goal)
+                        onRemoveGoal(goal)
                     }
                 )
             }
@@ -140,9 +167,7 @@ fun OnboardingGoalsScreen(
 
         OnboardingButton(
             text = "Finalizar",
-            onClick = {
-                viewModel.completeOnboarding(onContinue)
-            }
+            onClick = onFinish
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -171,10 +196,16 @@ fun FlowRow(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingGoalsScreenPreview() {
-    OnboardingGoalsScreen(
+    OnboardingGoalsContent(
+        activeGoals = emptyList(),
+        suggestions = emptyList(),
+        muscleGroups = emptyList(),
+        getExercises = { emptyList() },
         currentPage = 2,
         totalPages = 3,
-        onContinue = {},
-        onSkip = {}
+        onAddGoal = {},
+        onRemoveGoal = {},
+        onSkip = {},
+        onFinish = {}
     )
 }
