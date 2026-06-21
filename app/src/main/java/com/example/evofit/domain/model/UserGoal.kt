@@ -12,17 +12,23 @@ sealed interface UserGoal {
     data class Strength(
         override val id: String = UUID.randomUUID().toString(),
         val exerciseName: String,
-        val weight: String,
-        override val title: String = "$exerciseName - ${weight}kg"
+        val value: String,
+        val unit: MeasurementUnit,
+        override val title: String = when (unit) {
+            MeasurementUnit.WEIGHT -> "$exerciseName - ${value}kg"
+            MeasurementUnit.REPS -> "$exerciseName - $value reps"
+            MeasurementUnit.TIME -> "$exerciseName - $value"
+            else -> "$exerciseName - $value"
+        }
     ) : UserGoal
 
     @Serializable
     data class Cardio(
         override val id: String = UUID.randomUUID().toString(),
         val type: String,
-        val distance: String,
+        val distance: String? = null,
         val time: String,
-        override val title: String = "$type - ${distance}km em $time"
+        override val title: String = if (!distance.isNullOrEmpty()) "$type - ${distance}km em $time" else "$type - $time"
     ) : UserGoal
 
     @Serializable

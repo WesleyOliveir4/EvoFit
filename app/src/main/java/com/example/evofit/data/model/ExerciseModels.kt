@@ -1,6 +1,7 @@
 package com.example.evofit.data.model
 
 import com.example.evofit.domain.model.ExerciseCategory
+import com.example.evofit.domain.model.MeasurementUnit
 
 data class MuscleGroupModel(
     val id: String,
@@ -11,7 +12,8 @@ data class MuscleGroupModel(
 data class ExerciseModel(
     val id: String,
     val name: String,
-    val muscleGroupId: String
+    val muscleGroupId: String,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT
 )
 
 data class MuscleGroupWithExercises(

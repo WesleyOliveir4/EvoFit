@@ -9,6 +9,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +27,7 @@ import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupModel
 import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
 
 enum class GoalFlowStep {
@@ -98,6 +103,7 @@ fun NewGoalDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -143,11 +149,17 @@ fun NewGoalDialog(
                                 exercises = selectedMuscleGroup?.let { getExercises(it.id) } ?: emptyList(),
                                 selectedExercise = selectedExercise,
                                 onExerciseSelect = { selectedExercise = it },
-                                weight = weightObjective,
-                                onWeightChange = { weightObjective = it },
+                                goalValue = weightObjective,
+                                onGoalValueChange = { weightObjective = it },
                                 onConfirm = {
                                     selectedExercise?.let {
-                                        onGoalConfirmed(UserGoal.Strength(exerciseName = it.name, weight = weightObjective))
+                                        onGoalConfirmed(
+                                            UserGoal.Strength(
+                                                exerciseName = it.name, 
+                                                value = weightObjective,
+                                                unit = it.unit
+                                            )
+                                        )
                                     }
                                     onDismissRequest()
                                 }
@@ -166,7 +178,13 @@ fun NewGoalDialog(
                                 onConfirm = {
                                     val finalCardio = selectedCardio ?: selectedExercise
                                     finalCardio?.let {
-                                        onGoalConfirmed(UserGoal.Cardio(type = it.name, distance = cardioDistance, time = cardioTime))
+                                        onGoalConfirmed(
+                                            UserGoal.Cardio(
+                                                type = it.name, 
+                                                distance = if (it.unit == MeasurementUnit.DISTANCE) cardioDistance else null, 
+                                                time = cardioTime
+                                            )
+                                        )
                                     }
                                     onDismissRequest()
                                 }
@@ -215,17 +233,25 @@ private fun StrengthFlow(
     exercises: List<ExerciseModel>,
     selectedExercise: ExerciseModel?,
     onExerciseSelect: (ExerciseModel) -> Unit,
-    weight: String,
-    onWeightChange: (String) -> Unit,
+    goalValue: String,
+    onGoalValueChange: (String) -> Unit,
     onConfirm: () -> Unit
 ) {
+    var searchQuery by remember { mutableStateOf("") }
+    
+    val filteredExercises = remember(exercises, searchQuery) {
+        if (searchQuery.isBlank()) exercises
+        else exercises.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("1. Qual grupo muscular?", color = Color.Gray)
         
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             muscleGroups.forEach { group ->
                 SelectionChip(
@@ -236,15 +262,32 @@ private fun StrengthFlow(
             }
         }
 
-        Text("2. Qual exercício?", color = if (selectedMuscle != null) Color.Gray else Color.DarkGray)
-        
         if (selectedMuscle != null) {
+            Text("2. Qual exercício?", color = Color.Gray)
+
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Buscar exercício...", color = Color.DarkGray) },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color(0xFF2C2C2E),
+                    unfocusedContainerColor = Color(0xFF2C2C2E),
+                    focusedBorderColor = Color(0xFF67D14E)
+                )
+            )
+
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                exercises.forEach { exercise ->
+                filteredExercises.forEach { exercise ->
                     SelectionChip(
                         text = exercise.name,
                         isSelected = selectedExercise?.id == exercise.id,
@@ -257,14 +300,27 @@ private fun StrengthFlow(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Text("3. Meta de quilos (1RM):", color = if (selectedExercise != null) Color.Gray else Color.DarkGray)
+        
+        val label = when(selectedExercise?.unit) {
+            MeasurementUnit.REPS -> "3. Meta de repetições:"
+            MeasurementUnit.TIME -> "3. Meta de tempo (min/seg):"
+            else -> "3. Meta de quilos (1RM):"
+        }
+        
+        val suffixText = when(selectedExercise?.unit) {
+            MeasurementUnit.REPS -> "reps"
+            MeasurementUnit.TIME -> "min"
+            else -> "kg"
+        }
+
+        Text(label, color = if (selectedExercise != null) Color.Gray else Color.DarkGray)
         
         OutlinedTextField(
-            value = weight,
-            onValueChange = onWeightChange,
+            value = goalValue,
+            onValueChange = onGoalValueChange,
             enabled = selectedExercise != null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            suffix = { Text("kg") },
+            suffix = { Text(suffixText) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White, 
                 unfocusedTextColor = Color.White,
@@ -277,7 +333,7 @@ private fun StrengthFlow(
 
         Button(
             onClick = onConfirm,
-            enabled = selectedExercise != null && weight.isNotEmpty(),
+            enabled = selectedExercise != null && goalValue.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF67D14E),
                 disabledContainerColor = Color(0xFF2C2C2E)
@@ -288,7 +344,7 @@ private fun StrengthFlow(
             Icon(
                 Icons.Default.Check, 
                 contentDescription = null, 
-                tint = if (selectedExercise != null && weight.isNotEmpty()) Color.Black else Color.Gray
+                tint = if (selectedExercise != null && goalValue.isNotEmpty()) Color.Black else Color.Gray
             )
         }
     }
@@ -306,6 +362,7 @@ private fun CardioFlow(
     onConfirm: () -> Unit
 ) {
     val times = listOf("10m", "20m", "30m", "1h")
+    val isDistanceRequired = selectedCardio?.unit == MeasurementUnit.DISTANCE
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("1. Selecione o Cardio:", color = Color.Gray)
@@ -323,24 +380,29 @@ private fun CardioFlow(
             }
         }
 
-        Text("2. Distância aproximada:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
-        OutlinedTextField(
-            value = distance,
-            onValueChange = onDistanceChange,
-            enabled = selectedCardio != null,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            suffix = { Text("km") },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White, 
-                unfocusedTextColor = Color.White,
-                disabledTextColor = Color.DarkGray,
-                focusedBorderColor = Color(0xFF67D14E),
-                disabledBorderColor = Color(0xFF2C2C2E)
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (isDistanceRequired) {
+            Text("2. Distância aproximada:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
+            OutlinedTextField(
+                value = distance,
+                onValueChange = onDistanceChange,
+                enabled = selectedCardio != null,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                suffix = { Text("km") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White, 
+                    unfocusedTextColor = Color.White,
+                    disabledTextColor = Color.DarkGray,
+                    focusedBorderColor = Color(0xFF67D14E),
+                    disabledBorderColor = Color(0xFF2C2C2E)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        Text("3. Duração:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
+        Text(
+            if (isDistanceRequired) "3. Duração:" else "2. Duração:", 
+            color = if (selectedCardio != null) Color.Gray else Color.DarkGray
+        )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             times.forEach { t ->
                 SelectionChip(
@@ -351,9 +413,11 @@ private fun CardioFlow(
             }
         }
 
+        val canConfirm = selectedCardio != null && selectedTime.isNotEmpty() && (!isDistanceRequired || distance.isNotEmpty())
+
         Button(
             onClick = onConfirm,
-            enabled = selectedCardio != null && distance.isNotEmpty() && selectedTime.isNotEmpty(),
+            enabled = canConfirm,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF67D14E),
                 disabledContainerColor = Color(0xFF2C2C2E)
@@ -364,7 +428,7 @@ private fun CardioFlow(
             Icon(
                 Icons.Default.Check,
                 contentDescription = null,
-                tint = if (selectedCardio != null && distance.isNotEmpty() && selectedTime.isNotEmpty()) Color.Black else Color.Gray
+                tint = if (canConfirm) Color.Black else Color.Gray
             )
         }
     }
