@@ -1,14 +1,17 @@
 package com.example.evofit.data.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.evofit.domain.model.UserGoal
+import com.example.evofit.data.model.UserGoalDto
+import com.example.evofit.data.model.toDomain
+import com.example.evofit.data.model.toDto
 import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val Context.dataStore by preferencesDataStore(name = "onboarding_prefs")
@@ -28,7 +31,7 @@ class OnboardingRepositoryImpl(private val context: Context) : OnboardingReposit
         val goalsJson = prefs[PreferencesKeys.GOALS]
         val goals = if (!goalsJson.isNullOrEmpty()) {
             try {
-                Json.decodeFromString<List<UserGoal>>(goalsJson)
+                Json.decodeFromString<List<UserGoalDto>>(goalsJson).map { it.toDomain() }
             } catch (e: Exception) {
                 emptyList()
             }
@@ -51,7 +54,7 @@ class OnboardingRepositoryImpl(private val context: Context) : OnboardingReposit
             prefs[PreferencesKeys.AGE] = data.age
             prefs[PreferencesKeys.WEIGHT] = data.weight
             prefs[PreferencesKeys.HEIGHT] = data.height
-            prefs[PreferencesKeys.GOALS] = Json.encodeToString(data.goals)
+            prefs[PreferencesKeys.GOALS] = Json.encodeToString(data.goals.map { it.toDto() })
         }
     }
 

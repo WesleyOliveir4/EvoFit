@@ -1,4 +1,4 @@
-package com.example.evofit.ui.theme
+package com.example.evofit.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -12,15 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = _root_ide_package_.com.example.evofit.presentation.ui.theme.Purple80,
+    secondary = _root_ide_package_.com.example.evofit.presentation.ui.theme.PurpleGrey80,
+    tertiary = _root_ide_package_.com.example.evofit.presentation.ui.theme.Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = _root_ide_package_.com.example.evofit.presentation.ui.theme.Purple40,
+    secondary = _root_ide_package_.com.example.evofit.presentation.ui.theme.PurpleGrey40,
+    tertiary = _root_ide_package_.com.example.evofit.presentation.ui.theme.Pink40
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -46,13 +46,13 @@ fun EvoFitTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> _root_ide_package_.com.example.evofit.presentation.ui.theme.DarkColorScheme
+        else -> _root_ide_package_.com.example.evofit.presentation.ui.theme.LightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = _root_ide_package_.com.example.evofit.presentation.ui.theme.Typography,
         content = content
     )
 }

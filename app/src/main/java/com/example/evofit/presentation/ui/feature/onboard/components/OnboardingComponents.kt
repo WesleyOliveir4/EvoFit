@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.components
+package com.example.evofit.presentation.ui.feature.onboard.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -245,25 +245,28 @@ fun AddNewGoalButton(
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun GoalTagPreview() {
-    GoalTag(text = "Ganhar massa")
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.GoalTag(text = "Ganhar massa")
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun ActiveGoalItemPreview() {
-    ActiveGoalItem(text = "Treinar 5x na semana", onRemoveClick = {})
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem(
+        text = "Treinar 5x na semana",
+        onRemoveClick = {})
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun AddNewGoalButtonPreview() {
-    AddNewGoalButton(onClick = {})
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton(
+        onClick = {})
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun PageIndicatorsPreview() {
-    PageIndicators(
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators(
         pageCount = 3,
         selectedPage = 1
     )
@@ -272,7 +275,7 @@ fun PageIndicatorsPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun UserInputFieldPreview() {
-    UserInputField(
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.UserInputField(
         label = "Nome",
         value = "João Silva",
         onValueChange = {}
@@ -282,7 +285,7 @@ fun UserInputFieldPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun OnboardingButtonPreview() {
-    OnboardingButton(
+    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton(
         text = "Continuar",
         onClick = {}
     )

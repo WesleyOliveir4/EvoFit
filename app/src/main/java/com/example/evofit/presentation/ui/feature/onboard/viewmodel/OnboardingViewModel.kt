@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.viewmodel
+package com.example.evofit.presentation.ui.feature.onboard.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,15 @@ class OnboardingViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase
 ) : ViewModel() {
 
-    private val _userData = MutableStateFlow(UserOnboardingData())
+    private val _userData = MutableStateFlow(
+        UserOnboardingData(
+            name = "",
+            age = "",
+            weight = "",
+            height = "",
+            goals = emptyList()
+        )
+    )
     val userData: StateFlow<UserOnboardingData> = _userData.asStateFlow()
 
     init {

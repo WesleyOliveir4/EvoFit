@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.screens
+package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,10 +15,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.UserOnboardingData
-import com.example.evofit.ui.feature.onboard.components.OnboardingButton
-import com.example.evofit.ui.feature.onboard.components.PageIndicators
-import com.example.evofit.ui.feature.onboard.components.UserInputField
-import com.example.evofit.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
+import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
+import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -129,7 +129,13 @@ fun OnboardUserDataContent(
 @Composable
 fun OnboardUserDataScreenPreview() {
     OnboardUserDataContent(
-        userData = UserOnboardingData(name = "João", age = "25", weight = "80"),
+        userData = UserOnboardingData(
+            name = "João",
+            age = "25",
+            weight = "80",
+            height = "175",
+            goals = emptyList()
+        ),
         currentPage = 1,
         totalPages = 3,
         onNameChange = {},

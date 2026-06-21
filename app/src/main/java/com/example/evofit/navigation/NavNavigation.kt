@@ -8,10 +8,10 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.evofit.ui.feature.home.screens.HomeScreen
-import com.example.evofit.ui.feature.onboard.screens.OnboardUserDataScreen
-import com.example.evofit.ui.feature.onboard.screens.OnboardingGoalsScreen
-import com.example.evofit.ui.feature.onboard.screens.OnboardingScreen
+import com.example.evofit.presentation.ui.feature.home.screens.HomeScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 
 @Composable
 fun NavNavigation() {
@@ -23,7 +23,7 @@ fun NavNavigation() {
         startDestination = NavRoutes.Onboarding.route
     ) {
         composable(NavRoutes.Onboarding.route) {
-            OnboardingScreen(
+            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen(
                 currentPage = 0,
                 totalPages = totalSteps,
                 onFinish = {
@@ -33,7 +33,7 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.UserData.route) {
-            OnboardUserDataScreen(
+            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen(
                 currentPage = 1,
                 totalPages = totalSteps,
                 onContinue = {
@@ -43,7 +43,7 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.Goals.route) {
-            OnboardingGoalsScreen(
+            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen(
                 currentPage = 2,
                 totalPages = totalSteps,
                 onContinue = {
@@ -60,7 +60,7 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.Home.route) {
-            HomeScreen()
+            _root_ide_package_.com.example.evofit.presentation.ui.feature.home.screens.HomeScreen()
         }
     }
 }

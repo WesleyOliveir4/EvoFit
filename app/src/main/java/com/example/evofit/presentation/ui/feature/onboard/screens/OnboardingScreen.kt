@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.screens
+package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,9 +14,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.ui.feature.onboard.components.OnboardingButton
-import com.example.evofit.ui.feature.onboard.components.OnboardingPage
-import com.example.evofit.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
+import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingPage
+import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 
 @Composable
 fun OnboardingScreen(
@@ -24,11 +24,12 @@ fun OnboardingScreen(
     currentPage: Int,
     totalPages: Int
 ) {
-    val welcomePage = OnboardingPage(
-        title = "Bem-vindo ao",
-        highlightText = "EvoFit 💪",
-        description = "Vamos configurar seu perfil para acompanhar sua evolução."
-    )
+    val welcomePage =
+        OnboardingPage(
+            title = "Bem-vindo ao",
+            highlightText = "EvoFit 💪",
+            description = "Vamos configurar seu perfil para acompanhar sua evolução."
+        )
 
     OnboardingContent(
         page = welcomePage,

@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.screens
+package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,8 +18,12 @@ import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupModel
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
-import com.example.evofit.ui.feature.onboard.components.*
-import com.example.evofit.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.mapper.getDisplayText
+import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
+import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
+import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -31,7 +35,7 @@ fun OnboardingGoalsScreen(
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.userData.collectAsState()
-    
+
     OnboardingGoalsContent(
         activeGoals = userData.goals,
         suggestions = viewModel.getSuggestions(),
@@ -63,8 +67,8 @@ fun OnboardingGoalsContent(
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
 
     if (showDialog) {
-        NewGoalDialog(
-            onDismissRequest = { 
+        _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog(
+            onDismissRequest = {
                 showDialog = false
                 selectedSuggestion = null
             },
@@ -124,6 +128,7 @@ fun OnboardingGoalsContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        val context = LocalContext.current
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,8 +136,8 @@ fun OnboardingGoalsContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(activeGoals) { goal ->
-                ActiveGoalItem(
-                    text = goal.title,
+                _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem(
+                    text = goal.getDisplayText(context),
                     onRemoveClick = {
                         onRemoveGoal(goal)
                     }
@@ -140,7 +145,7 @@ fun OnboardingGoalsContent(
             }
             
             item {
-                AddNewGoalButton(
+                _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton(
                     onClick = { showDialog = true }
                 )
             }

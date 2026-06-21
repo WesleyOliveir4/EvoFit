@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.home.screens
+package com.example.evofit.presentation.ui.feature.home.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.evofit.domain.model.UserGoal
-import com.example.evofit.ui.feature.home.viewmodel.HomeViewModel
+import com.example.evofit.presentation.mapper.getDisplayText
+import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
+import androidx.compose.ui.platform.LocalContext
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -59,6 +61,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            val context = LocalContext.current
             userData.goals.forEach { goal ->
                 Box(
                     modifier = Modifier
@@ -69,7 +72,7 @@ fun HomeScreen(
                 ) {
                     Column {
                         Text(
-                            text = goal.title,
+                            text = goal.getDisplayText(context),
                             color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium

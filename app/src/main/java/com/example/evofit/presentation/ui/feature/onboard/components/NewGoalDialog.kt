@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.onboard.components
+package com.example.evofit.presentation.ui.feature.onboard.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -29,6 +29,7 @@ import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
+import java.util.UUID
 
 enum class GoalFlowStep {
     CHOOSE_CATEGORY,
@@ -45,8 +46,7 @@ fun NewGoalDialog(
     getExercises: (String) -> List<ExerciseModel>,
     initialSuggestion: GoalSuggestion? = null
 ) {
-    // Usamos initialSuggestion como chave para resetar o estado se a sugestão mudar
-    var currentStep by remember(initialSuggestion) { 
+    var currentStep by remember(initialSuggestion) {
         mutableStateOf(
             initialSuggestion?.let { 
                 when {
@@ -142,11 +142,12 @@ fun NewGoalDialog(
                             StrengthFlow(
                                 muscleGroups = muscleGroups.filter { it.category == ExerciseCategory.STRENGTH },
                                 selectedMuscle = selectedMuscleGroup,
-                                onMuscleSelect = { 
+                                onMuscleSelect = {
                                     selectedMuscleGroup = it
                                     selectedExercise = null
                                 },
-                                exercises = selectedMuscleGroup?.let { getExercises(it.id) } ?: emptyList(),
+                                exercises = selectedMuscleGroup?.let { getExercises(it.id) }
+                                    ?: emptyList(),
                                 selectedExercise = selectedExercise,
                                 onExerciseSelect = { selectedExercise = it },
                                 goalValue = weightObjective,
@@ -155,7 +156,8 @@ fun NewGoalDialog(
                                     selectedExercise?.let {
                                         onGoalConfirmed(
                                             UserGoal.Strength(
-                                                exerciseName = it.name, 
+                                                id = UUID.randomUUID().toString(),
+                                                exerciseName = it.name,
                                                 value = weightObjective,
                                                 unit = it.unit
                                             )
@@ -180,8 +182,9 @@ fun NewGoalDialog(
                                     finalCardio?.let {
                                         onGoalConfirmed(
                                             UserGoal.Cardio(
-                                                type = it.name, 
-                                                distance = if (it.unit == MeasurementUnit.DISTANCE) cardioDistance else null, 
+                                                id = UUID.randomUUID().toString(),
+                                                type = it.name,
+                                                distance = if (it.unit == MeasurementUnit.DISTANCE) cardioDistance else null,
                                                 time = cardioTime
                                             )
                                         )
@@ -195,7 +198,12 @@ fun NewGoalDialog(
                                 weight = weightObjective,
                                 onWeightChange = { weightObjective = it },
                                 onConfirm = {
-                                    onGoalConfirmed(UserGoal.Weight(targetWeight = weightObjective))
+                                    onGoalConfirmed(
+                                        UserGoal.Weight(
+                                            id = UUID.randomUUID().toString(),
+                                            targetWeight = weightObjective
+                                        )
+                                    )
                                     onDismissRequest()
                                 }
                             )
@@ -255,8 +263,8 @@ private fun StrengthFlow(
         ) {
             muscleGroups.forEach { group ->
                 SelectionChip(
-                    text = group.name, 
-                    isSelected = selectedMuscle?.id == group.id, 
+                    text = group.name,
+                    isSelected = selectedMuscle?.id == group.id,
                     onClick = { onMuscleSelect(group) }
                 )
             }
@@ -373,8 +381,8 @@ private fun CardioFlow(
         ) {
             cardioExercises.forEach { exercise ->
                 SelectionChip(
-                    text = exercise.name, 
-                    isSelected = selectedCardio?.id == exercise.id, 
+                    text = exercise.name,
+                    isSelected = selectedCardio?.id == exercise.id,
                     onClick = { onCardioSelect(exercise) }
                 )
             }
@@ -406,8 +414,8 @@ private fun CardioFlow(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             times.forEach { t ->
                 SelectionChip(
-                    text = t, 
-                    isSelected = selectedTime == t, 
+                    text = t,
+                    isSelected = selectedTime == t,
                     onClick = { if (selectedCardio != null) onTimeSelect(t) }
                 )
             }

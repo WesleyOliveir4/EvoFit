@@ -1,4 +1,4 @@
-package com.example.evofit.ui.theme
+package com.example.evofit.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

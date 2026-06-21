@@ -1,4 +1,4 @@
-package com.example.evofit.ui.feature.home.viewmodel
+package com.example.evofit.presentation.ui.feature.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +16,12 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UserOnboardingData()
+            initialValue = UserOnboardingData(
+                name = "",
+                age = "",
+                weight = "",
+                height = "",
+                goals = emptyList()
+            )
         )
 }
