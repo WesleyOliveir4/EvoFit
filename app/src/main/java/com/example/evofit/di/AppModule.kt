@@ -3,7 +3,10 @@ package com.example.evofit.di
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.domain.repository.OnboardingRepository
+import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
+import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import org.koin.android.ext.koin.androidContext
@@ -15,15 +18,20 @@ val appModule = module {
     single<OnboardingRepository> { OnboardingRepositoryImpl(androidContext()) }
     
     factory { GetExerciseDataUseCase(get()) }
+    factory { GetOnboardingDataUseCase(get()) }
+    factory { SaveOnboardingDataUseCase(get()) }
+    factory { CompleteOnboardingUseCase(get()) }
     
     viewModel {
-        _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel(
+        OnboardingViewModel(
+            get(),
+            get(),
             get(),
             get()
         )
     }
     viewModel {
-        _root_ide_package_.com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel(
+        HomeViewModel(
             get()
         )
     }

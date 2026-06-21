@@ -4,13 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.domain.model.UserOnboardingData
-import com.example.evofit.domain.repository.OnboardingRepository
+import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
+import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
-    private val repository: OnboardingRepository,
+    private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
+    private val saveOnboardingDataUseCase: SaveOnboardingDataUseCase,
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase,
     private val getExerciseDataUseCase: GetExerciseDataUseCase
 ) : ViewModel() {
 
@@ -27,7 +31,7 @@ class OnboardingViewModel(
 
     init {
         viewModelScope.launch {
-            repository.getUserData().collect { data ->
+            getOnboardingDataUseCase().collect { data ->
                 _userData.value = data
             }
         }
@@ -63,15 +67,14 @@ class OnboardingViewModel(
 
     fun saveAndNext(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            repository.saveUserData(_userData.value)
+            saveOnboardingDataUseCase(_userData.value)
             onSuccess()
         }
     }
 
     fun completeOnboarding(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            repository.saveUserData(_userData.value)
-            repository.completeOnboarding()
+            completeOnboardingUseCase(_userData.value)
             onSuccess()
         }
     }
