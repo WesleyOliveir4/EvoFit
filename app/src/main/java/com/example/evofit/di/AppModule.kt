@@ -1,6 +1,8 @@
 package com.example.evofit.di
 
+import androidx.room.Room
 import com.example.evofit.data.datasource.LocalExerciseDataSource
+import com.example.evofit.data.local.AppDatabase
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
@@ -14,8 +16,19 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDatabase::class.java,
+            "evofit_database"
+        ).fallbackToDestructiveMigration() // Useful during development
+         .build()
+    }
+    
+    single { get<AppDatabase>().userDao() }
+
     single { LocalExerciseDataSource() }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(androidContext()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     
     factory { GetExerciseDataUseCase(get()) }
     factory { GetOnboardingDataUseCase(get()) }
