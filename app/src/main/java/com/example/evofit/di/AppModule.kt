@@ -21,7 +21,7 @@ val appModule = module {
             androidContext(),
             AppDatabase::class.java,
             "evofit_database"
-        ).fallbackToDestructiveMigration() // Useful during development
+        ).fallbackToDestructiveMigration()
          .build()
     }
     
@@ -45,6 +45,11 @@ val appModule = module {
     }
     viewModel {
         HomeViewModel(
+            get()
+        )
+    }
+    viewModel {
+        com.example.evofit.presentation.ui.feature.splash.SplashViewModel(
             get()
         )
     }

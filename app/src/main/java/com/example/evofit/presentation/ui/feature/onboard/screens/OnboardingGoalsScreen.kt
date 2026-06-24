@@ -45,7 +45,7 @@ fun OnboardingGoalsScreen(
         totalPages = totalPages,
         onAddGoal = viewModel::addGoal,
         onRemoveGoal = viewModel::removeGoal,
-        onSkip = onSkip,
+        onSkip = { viewModel.completeOnboarding(onSkip) },
         onFinish = { viewModel.completeOnboarding(onContinue) }
     )
 }
@@ -172,6 +172,7 @@ fun OnboardingGoalsContent(
 
         OnboardingButton(
             text = "Finalizar",
+            enabled = activeGoals.isNotEmpty(),
             onClick = onFinish
         )
 

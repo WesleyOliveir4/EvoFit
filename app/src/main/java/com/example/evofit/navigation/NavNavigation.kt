@@ -1,10 +1,6 @@
 package com.example.evofit.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +8,8 @@ import com.example.evofit.presentation.ui.feature.home.screens.HomeScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
+import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 
 @Composable
 fun NavNavigation() {
@@ -20,10 +18,20 @@ fun NavNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Onboarding.route
+        startDestination = NavRoutes.Splash.route
     ) {
+        composable(NavRoutes.Splash.route) {
+            SplashScreen(
+                onNavigate = { destination ->
+                    navController.navigate(destination) {
+                        popUpTo(NavRoutes.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(NavRoutes.Onboarding.route) {
-            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen(
+            OnboardingScreen(
                 currentPage = 0,
                 totalPages = totalSteps,
                 onFinish = {
@@ -33,7 +41,7 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.UserData.route) {
-            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen(
+            OnboardUserDataScreen(
                 currentPage = 1,
                 totalPages = totalSteps,
                 onContinue = {
@@ -43,24 +51,31 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.Goals.route) {
-            _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen(
+            OnboardingGoalsScreen(
                 currentPage = 2,
                 totalPages = totalSteps,
                 onContinue = {
-                    navController.navigate(NavRoutes.Home.route) {
-                        popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
-                    }
+                    navController.navigate(NavRoutes.Summary.route)
                 },
                 onSkip = {
+                    navController.navigate(NavRoutes.Summary.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Summary.route) {
+            OnboardSummaryScreen(
+                onStartTraining = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
+                        popUpTo(NavRoutes.Summary.route) { inclusive = true }
                     }
                 }
             )
         }
 
         composable(NavRoutes.Home.route) {
-            _root_ide_package_.com.example.evofit.presentation.ui.feature.home.screens.HomeScreen()
+            HomeScreen()
         }
     }
 }

@@ -37,6 +37,7 @@ fun OnboardUserDataScreen(
         onNameChange = viewModel::updateName,
         onAgeChange = viewModel::updateAge,
         onWeightChange = viewModel::updateWeight,
+        onHeightChange = viewModel::updateHeight,
         onContinue = { viewModel.saveAndNext(onContinue) }
     )
 }
@@ -49,11 +50,13 @@ fun OnboardUserDataContent(
     onNameChange: (String) -> Unit,
     onAgeChange: (String) -> Unit,
     onWeightChange: (String) -> Unit,
+    onHeightChange: (String) -> Unit,
     onContinue: () -> Unit
 ) {
     val isFormValid = userData.name.isNotBlank() && 
                       userData.age.isNotBlank() && 
-                      userData.weight.isNotBlank()
+                      userData.weight.isNotBlank() &&
+                      userData.height.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -105,6 +108,15 @@ fun OnboardUserDataContent(
             onValueChange = onWeightChange
         )
 
+        Spacer(modifier = Modifier.height(20.dp))
+
+        UserInputField(
+            label = "Altura (cm)",
+            value = userData.height,
+            keyboardType = KeyboardType.Number,
+            onValueChange = onHeightChange
+        )
+
         Spacer(modifier = Modifier.weight(1f))
 
         PageIndicators(
@@ -141,6 +153,7 @@ fun OnboardUserDataScreenPreview() {
         onNameChange = {},
         onAgeChange = {},
         onWeightChange = {},
+        onHeightChange = {},
         onContinue = {}
     )
 }
