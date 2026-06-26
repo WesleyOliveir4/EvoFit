@@ -18,64 +18,49 @@ class OnboardingViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase
 ) : ViewModel() {
 
-    private val _userData = MutableStateFlow(
-        UserOnboardingData(
-            name = "",
-            age = "",
-            weight = "",
-            height = "",
-            goals = emptyList()
-        )
-    )
+    private val _userData = MutableStateFlow(UserOnboardingData())
     val userData: StateFlow<UserOnboardingData> = _userData.asStateFlow()
 
     init {
+        loadSavedData()
+    }
+
+    private fun loadSavedData() {
         viewModelScope.launch {
-            getOnboardingDataUseCase().collect { data ->
+            getOnboardingDataUseCase().take(1).collect { data ->
                 _userData.value = data
             }
         }
     }
 
-    fun updateName(name: String) {
-        _userData.update { it.copy(name = name) }
-    }
-
-    fun updateAge(age: String) {
-        _userData.update { it.copy(age = age) }
-    }
-
-    fun updateWeight(weight: String) {
-        _userData.update { it.copy(weight = weight) }
-    }
-
-    fun updateHeight(height: String) {
-        _userData.update { it.copy(height = height) }
+    fun updateProfile(
+        name: String = _userData.value.name,
+        age: String = _userData.value.age,
+        weight: String = _userData.value.weight,
+        height: String = _userData.value.height
+    ) {
+        _userData.update { it.copy(name = name, age = age, weight = weight, height = height) }
     }
 
     fun addGoal(goal: UserGoal) {
-        _userData.update { 
-            it.copy(goals = it.goals + goal)
-        }
+        _userData.update { it.copy(goals = it.goals + goal) }
     }
 
     fun removeGoal(goal: UserGoal) {
-        _userData.update { 
-            it.copy(goals = it.goals.filter { g -> g.id != goal.id })
-        }
+        _userData.update { it.copy(goals = it.goals.filter { g -> g.id != goal.id }) }
     }
 
-    fun saveAndNext(onSuccess: () -> Unit) {
+    fun saveAndNext(onContinue: () -> Unit) {
         viewModelScope.launch {
             saveOnboardingDataUseCase(_userData.value)
-            onSuccess()
+            onContinue()
         }
     }
 
-    fun completeOnboarding(onSuccess: () -> Unit) {
+    fun finishOnboarding(onFinish: () -> Unit) {
         viewModelScope.launch {
             completeOnboardingUseCase(_userData.value)
-            onSuccess()
+            onFinish()
         }
     }
 

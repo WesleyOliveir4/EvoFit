@@ -11,6 +11,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: UserEntity): Long
 
+    @Update
+    suspend fun updateUser(user: UserEntity): Int
+
     @Query("SELECT * FROM users LIMIT 1")
     fun getUser(): Flow<UserEntity?>
 
@@ -33,6 +36,14 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExerciseSets(sets: List<ExerciseSetEntity>): List<Long>
+
+    @Transaction
+    suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>): Long {
+        val id = insertUser(user)
+        deleteGoalsForUser(user.id)
+        insertGoals(goals)
+        return id
+    }
 
     @Transaction
     @Query("SELECT * FROM workouts WHERE userId = :userId")

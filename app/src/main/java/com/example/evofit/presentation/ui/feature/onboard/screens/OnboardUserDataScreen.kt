@@ -34,10 +34,10 @@ fun OnboardUserDataScreen(
         userData = userData,
         currentPage = currentPage,
         totalPages = totalPages,
-        onNameChange = viewModel::updateName,
-        onAgeChange = viewModel::updateAge,
-        onWeightChange = viewModel::updateWeight,
-        onHeightChange = viewModel::updateHeight,
+        onNameChange = { viewModel.updateProfile(name = it) },
+        onAgeChange = { viewModel.updateProfile(age = it) },
+        onWeightChange = { viewModel.updateProfile(weight = it) },
+        onHeightChange = { viewModel.updateProfile(height = it) },
         onContinue = { viewModel.saveAndNext(onContinue) }
     )
 }

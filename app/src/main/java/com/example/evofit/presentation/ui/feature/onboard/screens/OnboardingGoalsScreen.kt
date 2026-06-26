@@ -21,7 +21,10 @@ import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.mapper.getDisplayText
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import androidx.compose.ui.platform.LocalContext
+import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
+import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
+import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import org.koin.androidx.compose.koinViewModel
@@ -43,10 +46,10 @@ fun OnboardingGoalsScreen(
         getExercises = { viewModel.getExercisesByGroup(it) },
         currentPage = currentPage,
         totalPages = totalPages,
-        onAddGoal = viewModel::addGoal,
-        onRemoveGoal = viewModel::removeGoal,
-        onSkip = { viewModel.completeOnboarding(onSkip) },
-        onFinish = { viewModel.completeOnboarding(onContinue) }
+        onAddGoal = { goal -> viewModel.addGoal(goal) },
+        onRemoveGoal = { goal -> viewModel.removeGoal(goal) },
+        onSkip = { viewModel.finishOnboarding(onSkip) },
+        onFinish = { viewModel.finishOnboarding(onContinue) }
     )
 }
 
@@ -67,7 +70,7 @@ fun OnboardingGoalsContent(
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
 
     if (showDialog) {
-        _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog(
+        NewGoalDialog(
             onDismissRequest = {
                 showDialog = false
                 selectedSuggestion = null
@@ -136,7 +139,7 @@ fun OnboardingGoalsContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(activeGoals) { goal ->
-                _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem(
+                ActiveGoalItem(
                     text = goal.getDisplayText(context),
                     onRemoveClick = {
                         onRemoveGoal(goal)
@@ -145,7 +148,7 @@ fun OnboardingGoalsContent(
             }
             
             item {
-                _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton(
+                AddNewGoalButton(
                     onClick = { showDialog = true }
                 )
             }

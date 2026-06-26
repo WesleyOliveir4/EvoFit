@@ -13,7 +13,7 @@ import com.example.evofit.data.local.entities.*
         WorkoutExerciseEntity::class,
         ExerciseSetEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

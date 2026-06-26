@@ -41,7 +41,9 @@ fun OnboardSummaryScreen(
 
     OnboardSummaryContent(
         userData = userData,
-        onStartTraining = onStartTraining
+        onStartTraining = { 
+            viewModel.finishOnboarding(onStartTraining) 
+        }
     )
 }
 

@@ -43,15 +43,12 @@ class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingReposit
             isOnboardingCompleted = existingUser?.isOnboardingCompleted ?: false
         )
         val goalEntities = data.goals.map { it.toEntity(userId) }
-        
-        userDao.insertUser(userEntity)
-        userDao.deleteGoalsForUser(userId)
-        userDao.insertGoals(goalEntities)
+        userDao.saveUserWithGoals(userEntity, goalEntities)
     }
 
     override suspend fun completeOnboarding() {
         userDao.getUser().firstOrNull()?.let { user ->
-            userDao.insertUser(user.copy(isOnboardingCompleted = true))
+            userDao.updateUser(user.copy(isOnboardingCompleted = true))
         }
     }
 
