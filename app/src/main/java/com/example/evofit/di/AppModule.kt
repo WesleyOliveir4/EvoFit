@@ -11,30 +11,38 @@ import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val appModule = module {
+val dataModule = module {
     single {
         Room.databaseBuilder(
             androidContext(),
             AppDatabase::class.java,
             "evofit_database"
         ).fallbackToDestructiveMigration()
-         .build()
+            .build()
     }
-    
-    single { get<AppDatabase>().userDao() }
 
+    single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
-    
+}
+
+val domainModule = module {
     factory { GetExerciseDataUseCase(get()) }
     factory { GetOnboardingDataUseCase(get()) }
     factory { SaveOnboardingDataUseCase(get()) }
     factory { CompleteOnboardingUseCase(get()) }
-    
+}
+
+val splashModule = module {
+    viewModel { SplashViewModel(get()) }
+}
+
+val onboardingModule = module {
     viewModel {
         OnboardingViewModel(
             get(),
@@ -43,14 +51,20 @@ val appModule = module {
             get()
         )
     }
+}
+
+val homeModule = module {
     viewModel {
         HomeViewModel(
             get()
         )
     }
-    viewModel {
-        com.example.evofit.presentation.ui.feature.splash.SplashViewModel(
-            get()
-        )
-    }
 }
+
+val appModule = listOf(
+    dataModule,
+    domainModule,
+    splashModule,
+    onboardingModule,
+    homeModule
+)
