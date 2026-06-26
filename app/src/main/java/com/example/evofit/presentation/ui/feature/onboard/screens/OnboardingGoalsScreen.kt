@@ -48,8 +48,8 @@ fun OnboardingGoalsScreen(
         totalPages = totalPages,
         onAddGoal = { goal -> viewModel.addGoal(goal) },
         onRemoveGoal = { goal -> viewModel.removeGoal(goal) },
-        onSkip = { viewModel.finishOnboarding(onSkip) },
-        onFinish = { viewModel.finishOnboarding(onContinue) }
+        onSkip = { viewModel.saveAndNext(onSkip) },
+        onFinish = { viewModel.saveAndNext(onContinue) }
     )
 }
 
@@ -174,7 +174,7 @@ fun OnboardingGoalsContent(
         )
 
         OnboardingButton(
-            text = "Finalizar",
+            text = "Continuar",
             enabled = activeGoals.isNotEmpty(),
             onClick = onFinish
         )
@@ -211,7 +211,7 @@ fun OnboardingGoalsScreenPreview() {
         muscleGroups = emptyList(),
         getExercises = { emptyList() },
         currentPage = 2,
-        totalPages = 3,
+        totalPages = 4,
         onAddGoal = {},
         onRemoveGoal = {},
         onSkip = {},

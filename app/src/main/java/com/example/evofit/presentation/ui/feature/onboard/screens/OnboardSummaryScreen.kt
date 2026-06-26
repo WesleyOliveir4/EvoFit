@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,18 +19,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
+import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import org.koin.androidx.compose.koinViewModel
 
 private val AppDarkBg = Color(0xFF090909)
 private val AppSurface = Color(0xFF1E1E1E)
-private val AppGreen = Color(0xFF5ED961)
+private val AppGreen = Color(0xFF67D14E)
 private val IconContainerBg = Color(0xFF1A231A)
 private val TextPrimary = Color(0xFFFFFFFF)
 private val TextSecondary = Color(0xFF8E8E93)
 
 @Composable
 fun OnboardSummaryScreen(
+    currentPage: Int,
+    totalPages: Int,
     onStartTraining: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
@@ -41,6 +42,8 @@ fun OnboardSummaryScreen(
 
     OnboardSummaryContent(
         userData = userData,
+        currentPage = currentPage,
+        totalPages = totalPages,
         onStartTraining = { 
             viewModel.finishOnboarding(onStartTraining) 
         }
@@ -50,6 +53,8 @@ fun OnboardSummaryScreen(
 @Composable
 fun OnboardSummaryContent(
     userData: UserOnboardingData,
+    currentPage: Int,
+    totalPages: Int,
     onStartTraining: () -> Unit
 ) {
     Column(
@@ -120,6 +125,12 @@ fun OnboardSummaryContent(
                     value = "${userData.weight} kg"
                 )
 
+                SummaryRow(
+                    icon = Icons.Default.Straighten,
+                    label = "Altura",
+                    value = "${userData.height} cm"
+                )
+
                 if (userData.goals.isNotEmpty()) {
                     SummaryRow(
                         icon = Icons.Default.Star,
@@ -133,43 +144,19 @@ fun OnboardSummaryContent(
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Button(
-                onClick = onStartTraining,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = AppGreen)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(text = "🔥", fontSize = 18.sp) 
-                    
-                    Text(
-                        text = "Começar a Treinar",
-                        color = Color.Black,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(modifier = Modifier.size(8.dp).background(Color(0xFF2C2C2E), CircleShape))
-                Box(modifier = Modifier.size(8.dp).background(Color(0xFF2C2C2E), CircleShape))
-                Box(
-                    modifier = Modifier
-                        .size(width = 24.dp, height = 8.dp)
-                        .background(AppGreen, RoundedCornerShape(4.dp))
-                )
-            }
+            PageIndicators(
+                pageCount = totalPages,
+                selectedPage = currentPage,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            OnboardingButton(
+                text = "🔥 Começar a Treinar",
+                onClick = onStartTraining
+            )
+
         }
     }
 }
@@ -226,6 +213,8 @@ fun OnboardSummaryScreenPreview() {
             height = "175",
             goals = emptyList()
         ),
+        currentPage = 3,
+        totalPages = 4,
         onStartTraining = {}
     )
 }

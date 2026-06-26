@@ -131,7 +131,7 @@ fun OnboardingScreenPreview() {
             description = "Vamos configurar seu perfil para acompanhar sua evolução."
         ),
         currentPage = 0,
-        totalPages = 3,
+        totalPages = 4,
         onFinish = {}
     )
 }

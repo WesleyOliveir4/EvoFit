@@ -149,7 +149,7 @@ fun OnboardUserDataScreenPreview() {
             goals = emptyList()
         ),
         currentPage = 1,
-        totalPages = 3,
+        totalPages = 4,
         onNameChange = {},
         onAgeChange = {},
         onWeightChange = {},

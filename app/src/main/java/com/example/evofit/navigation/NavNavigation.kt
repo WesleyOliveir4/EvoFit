@@ -14,7 +14,7 @@ import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
-    val totalSteps = 3
+    val totalSteps = 4
 
     NavHost(
         navController = navController,
@@ -65,6 +65,8 @@ fun NavNavigation() {
 
         composable(NavRoutes.Summary.route) {
             OnboardSummaryScreen(
+                currentPage = 3,
+                totalPages = totalSteps,
                 onStartTraining = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
