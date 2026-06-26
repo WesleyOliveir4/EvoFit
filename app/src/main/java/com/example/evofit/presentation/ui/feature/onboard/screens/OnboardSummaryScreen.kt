@@ -12,24 +12,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
-
-private val AppDarkBg = Color(0xFF090909)
-private val AppSurface = Color(0xFF1E1E1E)
-private val AppGreen = Color(0xFF67D14E)
-private val IconContainerBg = Color(0xFF1A231A)
-private val TextPrimary = Color(0xFFFFFFFF)
-private val TextSecondary = Color(0xFF8E8E93)
 
 @Composable
 fun OnboardSummaryScreen(
@@ -60,7 +55,7 @@ fun OnboardSummaryContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppDarkBg)
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,15 +68,15 @@ fun OnboardSummaryContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Tudo pronto!",
-                color = TextPrimary,
+                text = stringResource(R.string.onboarding_summary_title),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Seu perfil está configurado.",
-                color = TextSecondary,
+                text = stringResource(R.string.onboarding_summary_description),
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 16.sp
             )
         }
@@ -91,7 +86,7 @@ fun OnboardSummaryContent(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = AppSurface)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
@@ -100,8 +95,8 @@ fun OnboardSummaryContent(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Text(
-                    text = "RESUMO",
-                    color = TextSecondary,
+                    text = stringResource(R.string.onboarding_summary_label_summary),
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp
@@ -109,32 +104,32 @@ fun OnboardSummaryContent(
 
                 SummaryRow(
                     icon = Icons.Default.AccountCircle,
-                    label = "Nome",
+                    label = stringResource(R.string.onboarding_summary_label_name),
                     value = userData.name
                 )
 
                 SummaryRow(
                     icon = Icons.Default.DateRange,
-                    label = "Idade",
-                    value = "${userData.age} anos"
+                    label = stringResource(R.string.onboarding_summary_label_age),
+                    value = stringResource(R.string.onboarding_summary_value_age, userData.age)
                 )
 
                 SummaryRow(
                     icon = Icons.Default.Favorite,
-                    label = "Peso",
-                    value = "${userData.weight} kg"
+                    label = stringResource(R.string.onboarding_summary_label_weight),
+                    value = stringResource(R.string.onboarding_summary_value_weight, userData.weight)
                 )
 
                 SummaryRow(
                     icon = Icons.Default.Straighten,
-                    label = "Altura",
-                    value = "${userData.height} cm"
+                    label = stringResource(R.string.onboarding_summary_label_height),
+                    value = stringResource(R.string.onboarding_summary_value_height, userData.height)
                 )
 
                 if (userData.goals.isNotEmpty()) {
                     SummaryRow(
                         icon = Icons.Default.Star,
-                        label = "Metas Definidas",
+                        label = stringResource(R.string.onboarding_summary_label_goals),
                         value = "${userData.goals.size}"
                     )
                 }
@@ -153,7 +148,7 @@ fun OnboardSummaryContent(
             )
 
             OnboardingButton(
-                text = "🔥 Começar a Treinar",
+                text = stringResource(R.string.onboarding_summary_button_start_training),
                 onClick = onStartTraining
             )
 
@@ -175,13 +170,13 @@ fun SummaryRow(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(IconContainerBg, CircleShape),
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = AppGreen,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -189,12 +184,12 @@ fun SummaryRow(
         Column {
             Text(
                 text = label,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 14.sp
             )
             Text(
                 text = value,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -205,16 +200,18 @@ fun SummaryRow(
 @Preview
 @Composable
 fun OnboardSummaryScreenPreview() {
-    OnboardSummaryContent(
-        userData = UserOnboardingData(
-            name = "Wesley",
-            age = "28",
-            weight = "78",
-            height = "175",
-            goals = emptyList()
-        ),
-        currentPage = 3,
-        totalPages = 4,
-        onStartTraining = {}
-    )
+    EvoFitTheme {
+        OnboardSummaryContent(
+            userData = UserOnboardingData(
+                name = "Wesley",
+                age = "28",
+                weight = "78",
+                height = "175",
+                goals = emptyList()
+            ),
+            currentPage = 3,
+            totalPages = 4,
+            onStartTraining = {}
+        )
+    }
 }

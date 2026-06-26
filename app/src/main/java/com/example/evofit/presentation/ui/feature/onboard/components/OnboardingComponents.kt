@@ -4,7 +4,16 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,20 +21,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 data class OnboardingPage(
     val title: String,
@@ -53,9 +70,9 @@ fun PageIndicators(
                     .clip(CircleShape)
                     .background(
                         if (selectedPage == index)
-                            Color(0xFF67D14E)
+                            MaterialTheme.colorScheme.primary
                         else
-                            Color.DarkGray
+                            MaterialTheme.colorScheme.outline
                     )
             )
         }
@@ -73,7 +90,7 @@ fun UserInputField(
     Column(modifier = modifier) {
         Text(
             text = label,
-            color = Color(0xFFB0BEC5),
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium
         )
@@ -89,12 +106,12 @@ fun UserInputField(
             ),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFF232323),
-                unfocusedContainerColor = Color(0xFF232323),
-                focusedBorderColor = Color(0xFF333333),
-                unfocusedBorderColor = Color(0xFF333333),
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
     }
@@ -114,14 +131,14 @@ fun OnboardingButton(
             .height(56.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF67D14E),
-            disabledContainerColor = Color(0xFF67D14E).copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
         Text(
             text = text,
-            color = if (enabled) Color.Black else Color.Black.copy(alpha = 0.5f),
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp
         )
@@ -138,7 +155,7 @@ fun GoalTag(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = Color(0xFF333333),
+                color = MaterialTheme.colorScheme.outlineVariant,
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable { onClick() }
@@ -146,7 +163,7 @@ fun GoalTag(
     ) {
         Text(
             text = text,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 12.sp
         )
     }
@@ -162,7 +179,7 @@ fun ActiveGoalItem(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(Color(0xFF1E1E1E), shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -174,12 +191,12 @@ fun ActiveGoalItem(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
-                tint = Color(0xFF67D14E),
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
             Text(
                 text = text,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -188,8 +205,8 @@ fun ActiveGoalItem(
         IconButton(onClick = onRemoveClick) {
             Icon(
                 imageVector = Icons.Default.Clear,
-                contentDescription = "Remover Meta",
-                tint = Color(0xFF8E8E93),
+                contentDescription = stringResource(R.string.onboarding_component_remove_goal),
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -206,6 +223,8 @@ fun AddNewGoalButton(
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     )
 
+    val strokeColor = MaterialTheme.colorScheme.primary
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -216,7 +235,7 @@ fun AddNewGoalButton(
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRoundRect(
-                color = Color(0xFF8E8E93),
+                color = strokeColor,
                 style = stroke,
                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx(), 16.dp.toPx())
             )
@@ -229,12 +248,12 @@ fun AddNewGoalButton(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = Color(0xFF8E8E93),
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp)
             )
             Text(
-                text = "Adicionar nova",
-                color = Color(0xFF8E8E93),
+                text = stringResource(R.string.onboarding_component_add_new_goal),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -245,48 +264,60 @@ fun AddNewGoalButton(
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun GoalTagPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.GoalTag(text = "Ganhar massa")
+    EvoFitTheme {
+        GoalTag(text = "Ganhar massa")
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun ActiveGoalItemPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem(
-        text = "Treinar 5x na semana",
-        onRemoveClick = {})
+    EvoFitTheme {
+        ActiveGoalItem(
+            text = "Treinar 5x na semana",
+            onRemoveClick = {})
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun AddNewGoalButtonPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton(
-        onClick = {})
+    EvoFitTheme {
+        AddNewGoalButton(
+            onClick = {})
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun PageIndicatorsPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators(
-        pageCount = 3,
-        selectedPage = 1
-    )
+    EvoFitTheme {
+        PageIndicators(
+            pageCount = 3,
+            selectedPage = 1
+        )
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun UserInputFieldPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.UserInputField(
-        label = "Nome",
-        value = "João Silva",
-        onValueChange = {}
-    )
+    EvoFitTheme {
+        UserInputField(
+            label = "Nome",
+            value = "João Silva",
+            onValueChange = {}
+        )
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 fun OnboardingButtonPreview() {
-    _root_ide_package_.com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton(
-        text = "Continuar",
-        onClick = {}
-    )
+    EvoFitTheme {
+        OnboardingButton(
+            text = "Continuar",
+            onClick = {}
+        )
+    }
 }

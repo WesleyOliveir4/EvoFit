@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -11,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.data.model.ExerciseModel
@@ -27,6 +30,7 @@ import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
 import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -87,7 +91,7 @@ fun OnboardingGoalsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF090909))
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -98,15 +102,15 @@ fun OnboardingGoalsContent(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Suas metas",
-                color = Color.White,
+                text = stringResource(R.string.onboarding_goals_title),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Quais metas deseja atingir?",
-                color = Color(0xFFB0BEC5),
+                text = stringResource(R.string.onboarding_goals_description),
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 18.sp
             )
         }
@@ -158,8 +162,8 @@ fun OnboardingGoalsContent(
 
         TextButton(onClick = onSkip) {
             Text(
-                text = "Pular por enquanto",
-                color = Color.White,
+                text = stringResource(R.string.onboarding_goals_button_skip),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -174,7 +178,7 @@ fun OnboardingGoalsContent(
         )
 
         OnboardingButton(
-            text = "Continuar",
+            text = stringResource(R.string.onboarding_button_continue),
             enabled = activeGoals.isNotEmpty(),
             onClick = onFinish
         )
@@ -205,16 +209,18 @@ fun FlowRow(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingGoalsScreenPreview() {
-    OnboardingGoalsContent(
-        activeGoals = emptyList(),
-        suggestions = emptyList(),
-        muscleGroups = emptyList(),
-        getExercises = { emptyList() },
-        currentPage = 2,
-        totalPages = 4,
-        onAddGoal = {},
-        onRemoveGoal = {},
-        onSkip = {},
-        onFinish = {}
-    )
+    EvoFitTheme {
+        OnboardingGoalsContent(
+            activeGoals = emptyList(),
+            suggestions = emptyList(),
+            muscleGroups = emptyList(),
+            getExercises = { emptyList() },
+            currentPage = 2,
+            totalPages = 4,
+            onAddGoal = {},
+            onRemoveGoal = {},
+            onSkip = {},
+            onFinish = {}
+        )
+    }
 }

@@ -1,3 +1,75 @@
 <resources>
     <string name="app_name">EvoFit</string>
+
+    <!-- Onboarding General -->
+    <string name="onboarding_button_continue">Continuar</string>
+
+    <!-- Onboarding Welcome Screen -->
+    <string name="onboarding_welcome_title">Bem-vindo ao</string>
+    <string name="onboarding_welcome_highlight">EvoFit 💪</string>
+    <string name="onboarding_welcome_description">Vamos configurar seu perfil para acompanhar sua evolução.</string>
+    <string name="onboarding_welcome_button_start">Começar</string>
+
+    <!-- Onboarding User Data Screen -->
+    <string name="onboarding_user_data_title">Seus dados</string>
+    <string name="onboarding_user_data_description">Precisamos de algumas informações para personalizar sua experiência.</string>
+    <string name="onboarding_user_data_label_name">Nome</string>
+    <string name="onboarding_user_data_label_age">Idade</string>
+    <string name="onboarding_user_data_label_weight">Peso (kg)</string>
+    <string name="onboarding_user_data_label_height">Altura (cm)</string>
+
+    <!-- Onboarding Goals Screen -->
+    <string name="onboarding_goals_title">Suas metas</string>
+    <string name="onboarding_goals_description">Quais metas deseja atingir?</string>
+    <string name="onboarding_goals_button_skip">Pular por enquanto</string>
+
+    <!-- Onboarding Summary Screen -->
+    <string name="onboarding_summary_title">Tudo pronto!</string>
+    <string name="onboarding_summary_description">Seu perfil está configurado.</string>
+    <string name="onboarding_summary_label_summary">RESUMO</string>
+    <string name="onboarding_summary_label_name">Nome</string>
+    <string name="onboarding_summary_label_age">Idade</string>
+    <string name="onboarding_summary_label_weight">Peso</string>
+    <string name="onboarding_summary_label_height">Altura</string>
+    <string name="onboarding_summary_label_goals">Metas Definidas</string>
+    <string name="onboarding_summary_value_age">%1$s anos</string>
+    <string name="onboarding_summary_value_weight">%1$s kg</string>
+    <string name="onboarding_summary_value_height">%1$s cm</string>
+    <string name="onboarding_summary_button_start_training">🔥 Começar a Treinar</string>
+
+    <!-- Onboarding Components -->
+    <string name="onboarding_component_remove_goal">Remover Meta</string>
+    <string name="onboarding_component_add_new_goal">Adicionar nova</string>
+
+    <!-- New Goal Dialog -->
+    <string name="goal_dialog_title_new">Nova Meta</string>
+    <string name="goal_dialog_title_complete">Completar Meta</string>
+    <string name="goal_dialog_close">Fechar</string>
+    <string name="goal_dialog_choose_type">Escolha o tipo da sua meta:</string>
+
+    <string name="goal_category_strength">Aumentar força</string>
+    <string name="goal_category_resistance">Melhorar resistência</string>
+    <string name="goal_category_weight_loss">Perder peso</string>
+    <string name="goal_category_muscle_gain">Ganhar massa</string>
+
+    <string name="goal_step_muscle_group">1. Qual grupo muscular?</string>
+    <string name="goal_step_exercise">2. Qual exercício?</string>
+    <string name="goal_step_reps">3. Meta de repetições:</string>
+    <string name="goal_step_time">3. Meta de tempo (min):</string>
+    <string name="goal_step_weight">3. Meta de quilos (1RM):</string>
+
+    <string name="goal_unit_reps">reps</string>
+    <string name="goal_unit_min">min</string>
+    <string name="goal_unit_kg">kg</string>
+    <string name="goal_unit_km">km</string>
+
+    <string name="goal_search_placeholder">Buscar exercício...</string>
+    <string name="goal_error_select_muscle">Selecione um grupo muscular primeiro</string>
+
+    <string name="goal_step_cardio_select">1. Selecione o Cardio:</string>
+    <string name="goal_step_cardio_distance">2. Distância aproximada:</string>
+    <string name="goal_step_cardio_duration_step2">2. Duração:</string>
+    <string name="goal_step_cardio_duration_step3">3. Duração:</string>
+
+    <string name="goal_step_body_weight">Meta de peso corporal:</string>
 </resources>

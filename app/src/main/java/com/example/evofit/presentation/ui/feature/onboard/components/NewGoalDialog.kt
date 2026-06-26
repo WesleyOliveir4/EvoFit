@@ -18,17 +18,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.evofit.R
 import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupModel
 import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import java.util.UUID
 
 enum class GoalFlowStep {
@@ -98,7 +101,7 @@ fun NewGoalDialog(
                 .fillMaxWidth()
                 .wrapContentHeight(),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E))
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
@@ -113,13 +116,20 @@ fun NewGoalDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (initialSuggestion != null) "Completar Meta" else "Nova Meta",
-                        color = Color.White,
+                        text = if (initialSuggestion != null) 
+                            stringResource(R.string.goal_dialog_title_complete) 
+                        else 
+                            stringResource(R.string.goal_dialog_title_new),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     IconButton(onClick = onDismissRequest) {
-                        Icon(Icons.Default.Close, contentDescription = "Fechar", tint = Color.Gray)
+                        Icon(
+                            Icons.Default.Close, 
+                            contentDescription = stringResource(R.string.goal_dialog_close), 
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
                     }
                 }
 
@@ -128,11 +138,13 @@ fun NewGoalDialog(
                 AnimatedContent(targetState = currentStep, label = "GoalFlow") { step ->
                     when (step) {
                         GoalFlowStep.CHOOSE_CATEGORY -> {
+                            val strengthText = stringResource(R.string.goal_category_strength)
+                            val resistanceText = stringResource(R.string.goal_category_resistance)
                             CategorySelectionStep(
                                 onCategorySelected = { category ->
                                     currentStep = when (category) {
-                                        "Aumentar força" -> GoalFlowStep.STRENGTH_DETAILS
-                                        "Melhorar resistência" -> GoalFlowStep.CARDIO_DETAILS
+                                        strengthText -> GoalFlowStep.STRENGTH_DETAILS
+                                        resistanceText -> GoalFlowStep.CARDIO_DETAILS
                                         else -> GoalFlowStep.WEIGHT_DETAILS
                                     }
                                 }
@@ -217,17 +229,26 @@ fun NewGoalDialog(
 
 @Composable
 private fun CategorySelectionStep(onCategorySelected: (String) -> Unit) {
-    val categories = listOf("Aumentar força", "Melhorar resistência", "Perder peso", "Ganhar massa")
+    val categories = listOf(
+        stringResource(R.string.goal_category_strength),
+        stringResource(R.string.goal_category_resistance),
+        stringResource(R.string.goal_category_weight_loss),
+        stringResource(R.string.goal_category_muscle_gain)
+    )
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Escolha o tipo da sua meta:", color = Color.Gray, fontSize = 14.sp)
+        Text(
+            text = stringResource(R.string.goal_dialog_choose_type), 
+            color = MaterialTheme.colorScheme.secondary, 
+            fontSize = 14.sp
+        )
         categories.forEach { category ->
             Button(
                 onClick = { onCategorySelected(category) },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C2C2E)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(category, color = Color.White)
+                Text(category, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     }
@@ -253,7 +274,7 @@ private fun StrengthFlow(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("1. Qual grupo muscular?", color = Color.Gray)
+        Text(stringResource(R.string.goal_step_muscle_group), color = MaterialTheme.colorScheme.secondary)
         
         Row(
             modifier = Modifier
@@ -271,22 +292,22 @@ private fun StrengthFlow(
         }
 
         if (selectedMuscle != null) {
-            Text("2. Qual exercício?", color = Color.Gray)
+            Text(stringResource(R.string.goal_step_exercise), color = MaterialTheme.colorScheme.secondary)
 
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Buscar exercício...", color = Color.DarkGray) },
+                placeholder = { Text(stringResource(R.string.goal_search_placeholder), color = MaterialTheme.colorScheme.outline) },
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = Color(0xFF2C2C2E),
-                    unfocusedContainerColor = Color(0xFF2C2C2E),
-                    focusedBorderColor = Color(0xFF67D14E)
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
@@ -304,24 +325,28 @@ private fun StrengthFlow(
                 }
             }
         } else {
-            Text("Selecione um grupo muscular primeiro", color = Color(0xFF444444), fontSize = 12.sp)
+            Text(
+                text = stringResource(R.string.goal_error_select_muscle), 
+                color = MaterialTheme.colorScheme.outlineVariant, 
+                fontSize = 12.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
         
         val label = when(selectedExercise?.unit) {
-            MeasurementUnit.REPS -> "3. Meta de repetições:"
-            MeasurementUnit.TIME -> "3. Meta de tempo (min):"
-            else -> "3. Meta de quilos (1RM):"
+            MeasurementUnit.REPS -> stringResource(R.string.goal_step_reps)
+            MeasurementUnit.TIME -> stringResource(R.string.goal_step_time)
+            else -> stringResource(R.string.goal_step_weight)
         }
         
         val suffixText = when(selectedExercise?.unit) {
-            MeasurementUnit.REPS -> "reps"
-            MeasurementUnit.TIME -> "min"
-            else -> "kg"
+            MeasurementUnit.REPS -> stringResource(R.string.goal_unit_reps)
+            MeasurementUnit.TIME -> stringResource(R.string.goal_unit_min)
+            else -> stringResource(R.string.goal_unit_kg)
         }
 
-        Text(label, color = if (selectedExercise != null) Color.Gray else Color.DarkGray)
+        Text(label, color = if (selectedExercise != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline)
         
         OutlinedTextField(
             value = goalValue,
@@ -330,11 +355,11 @@ private fun StrengthFlow(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             suffix = { Text(suffixText) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White, 
-                unfocusedTextColor = Color.White,
-                disabledTextColor = Color.DarkGray,
-                focusedBorderColor = Color(0xFF67D14E),
-                disabledBorderColor = Color(0xFF2C2C2E)
+                focusedTextColor = MaterialTheme.colorScheme.onSurface, 
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                disabledTextColor = MaterialTheme.colorScheme.outline,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -343,8 +368,8 @@ private fun StrengthFlow(
             onClick = onConfirm,
             enabled = selectedExercise != null && goalValue.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF67D14E),
-                disabledContainerColor = Color(0xFF2C2C2E)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
@@ -352,7 +377,7 @@ private fun StrengthFlow(
             Icon(
                 Icons.Default.Check, 
                 contentDescription = null, 
-                tint = if (selectedExercise != null && goalValue.isNotEmpty()) Color.Black else Color.Gray
+                tint = if (selectedExercise != null && goalValue.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary
             )
         }
     }
@@ -373,7 +398,7 @@ private fun CardioFlow(
     val isDistanceRequired = selectedCardio?.unit == MeasurementUnit.DISTANCE
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("1. Selecione o Cardio:", color = Color.Gray)
+        Text(stringResource(R.string.goal_step_cardio_select), color = MaterialTheme.colorScheme.secondary)
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -389,27 +414,33 @@ private fun CardioFlow(
         }
 
         if (isDistanceRequired) {
-            Text("2. Distância aproximada:", color = if (selectedCardio != null) Color.Gray else Color.DarkGray)
+            Text(
+                text = stringResource(R.string.goal_step_cardio_distance), 
+                color = if (selectedCardio != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
+            )
             OutlinedTextField(
                 value = distance,
                 onValueChange = onDistanceChange,
                 enabled = selectedCardio != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                suffix = { Text("km") },
+                suffix = { Text(stringResource(R.string.goal_unit_km)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White, 
-                    unfocusedTextColor = Color.White,
-                    disabledTextColor = Color.DarkGray,
-                    focusedBorderColor = Color(0xFF67D14E),
-                    disabledBorderColor = Color(0xFF2C2C2E)
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface, 
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledTextColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
         Text(
-            if (isDistanceRequired) "3. Duração:" else "2. Duração:", 
-            color = if (selectedCardio != null) Color.Gray else Color.DarkGray
+            text = if (isDistanceRequired) 
+                stringResource(R.string.goal_step_cardio_duration_step3) 
+            else 
+                stringResource(R.string.goal_step_cardio_duration_step2), 
+            color = if (selectedCardio != null) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             times.forEach { t ->
@@ -427,8 +458,8 @@ private fun CardioFlow(
             onClick = onConfirm,
             enabled = canConfirm,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF67D14E),
-                disabledContainerColor = Color(0xFF2C2C2E)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
@@ -436,7 +467,7 @@ private fun CardioFlow(
             Icon(
                 Icons.Default.Check,
                 contentDescription = null,
-                tint = if (canConfirm) Color.Black else Color.Gray
+                tint = if (canConfirm) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary
             )
         }
     }
@@ -449,16 +480,16 @@ private fun WeightFlow(
     onConfirm: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Meta de peso corporal:", color = Color.Gray)
+        Text(stringResource(R.string.goal_step_body_weight), color = MaterialTheme.colorScheme.secondary)
         OutlinedTextField(
             value = weight,
             onValueChange = onWeightChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            suffix = { Text("kg") },
+            suffix = { Text(stringResource(R.string.goal_unit_kg)) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White, 
-                unfocusedTextColor = Color.White,
-                focusedBorderColor = Color(0xFF67D14E)
+                focusedTextColor = MaterialTheme.colorScheme.onSurface, 
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -467,8 +498,8 @@ private fun WeightFlow(
             onClick = onConfirm,
             enabled = weight.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF67D14E),
-                disabledContainerColor = Color(0xFF2C2C2E)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
@@ -476,7 +507,7 @@ private fun WeightFlow(
             Icon(
                 Icons.Default.Check,
                 contentDescription = null,
-                tint = if (weight.isNotEmpty()) Color.Black else Color.Gray
+                tint = if (weight.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary
             )
         }
     }
@@ -487,12 +518,16 @@ fun SelectionChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .background(
-                color = if (isSelected) Color(0xFF67D14E) else Color(0xFF2C2C2E),
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(text = text, color = if (isSelected) Color.Black else Color.White, fontSize = 14.sp)
+        Text(
+            text = text, 
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface, 
+            fontSize = 14.sp
+        )
     }
 }

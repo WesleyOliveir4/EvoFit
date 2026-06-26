@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -11,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.UserOnboardingData
@@ -19,6 +22,7 @@ import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingB
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -61,15 +65,15 @@ fun OnboardUserDataContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF090909))
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .padding(horizontal = 24.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Seus dados",
-            color = Color.White,
+            text = stringResource(R.string.onboarding_user_data_title),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
         )
@@ -77,15 +81,15 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Precisamos de algumas informações para personalizar sua experiência.",
-            color = Color(0xFFB0BEC5),
+            text = stringResource(R.string.onboarding_user_data_description),
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 18.sp
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         UserInputField(
-            label = "Nome",
+            label = stringResource(R.string.onboarding_user_data_label_name),
             value = userData.name,
             onValueChange = onNameChange
         )
@@ -93,7 +97,7 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         UserInputField(
-            label = "Idade",
+            label = stringResource(R.string.onboarding_user_data_label_age),
             value = userData.age,
             keyboardType = KeyboardType.Number,
             onValueChange = onAgeChange
@@ -102,7 +106,7 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         UserInputField(
-            label = "Peso (kg)",
+            label = stringResource(R.string.onboarding_user_data_label_weight),
             value = userData.weight,
             keyboardType = KeyboardType.Number,
             onValueChange = onWeightChange
@@ -111,7 +115,7 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         UserInputField(
-            label = "Altura (cm)",
+            label = stringResource(R.string.onboarding_user_data_label_height),
             value = userData.height,
             keyboardType = KeyboardType.Number,
             onValueChange = onHeightChange
@@ -128,7 +132,7 @@ fun OnboardUserDataContent(
         )
 
         OnboardingButton(
-            text = "Continuar",
+            text = stringResource(R.string.onboarding_button_continue),
             enabled = isFormValid,
             onClick = onContinue
         )
@@ -140,20 +144,22 @@ fun OnboardUserDataContent(
 @Preview(showBackground = true)
 @Composable
 fun OnboardUserDataScreenPreview() {
-    OnboardUserDataContent(
-        userData = UserOnboardingData(
-            name = "João",
-            age = "25",
-            weight = "80",
-            height = "175",
-            goals = emptyList()
-        ),
-        currentPage = 1,
-        totalPages = 4,
-        onNameChange = {},
-        onAgeChange = {},
-        onWeightChange = {},
-        onHeightChange = {},
-        onContinue = {}
-    )
+    EvoFitTheme {
+        OnboardUserDataContent(
+            userData = UserOnboardingData(
+                name = "João",
+                age = "25",
+                weight = "80",
+                height = "175",
+                goals = emptyList()
+            ),
+            currentPage = 1,
+            totalPages = 4,
+            onNameChange = {},
+            onAgeChange = {},
+            onWeightChange = {},
+            onHeightChange = {},
+            onContinue = {}
+        )
+    }
 }

@@ -3,20 +3,23 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingPage
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun OnboardingScreen(
@@ -26,9 +29,9 @@ fun OnboardingScreen(
 ) {
     val welcomePage =
         OnboardingPage(
-            title = "Bem-vindo ao",
-            highlightText = "EvoFit 💪",
-            description = "Vamos configurar seu perfil para acompanhar sua evolução."
+            title = stringResource(R.string.onboarding_welcome_title),
+            highlightText = stringResource(R.string.onboarding_welcome_highlight),
+            description = stringResource(R.string.onboarding_welcome_description)
         )
 
     OnboardingContent(
@@ -49,7 +52,7 @@ fun OnboardingContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF090909))
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -68,7 +71,7 @@ fun OnboardingContent(
         )
 
         OnboardingButton(
-            text = "Começar",
+            text = stringResource(R.string.onboarding_welcome_button_start),
             onClick = onFinish
         )
 
@@ -91,21 +94,21 @@ fun OnboardingPageContent(
             modifier = Modifier
                 .size(120.dp)
                 .clip(RoundedCornerShape(32.dp))
-                .background(Color(0xFF102312))
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
             text = page.title,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
             text = page.highlightText,
-            color = Color(0xFF67D14E),
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
         )
@@ -114,7 +117,7 @@ fun OnboardingPageContent(
 
         Text(
             text = page.description,
-            color = Color(0xFFBDBDBD),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
@@ -124,14 +127,16 @@ fun OnboardingPageContent(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
-    OnboardingContent(
-        page = OnboardingPage(
-            title = "Bem-vindo ao",
-            highlightText = "EvoFit 💪",
-            description = "Vamos configurar seu perfil para acompanhar sua evolução."
-        ),
-        currentPage = 0,
-        totalPages = 4,
-        onFinish = {}
-    )
+    EvoFitTheme {
+        OnboardingContent(
+            page = OnboardingPage(
+                title = stringResource(R.string.onboarding_welcome_title),
+                highlightText = stringResource(R.string.onboarding_welcome_highlight),
+                description = stringResource(R.string.onboarding_welcome_description)
+            ),
+            currentPage = 0,
+            totalPages = 4,
+            onFinish = {}
+        )
+    }
 }
