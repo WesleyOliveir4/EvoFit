@@ -24,3 +24,4 @@ local.properties
 /.idea/runConfigurations.xml
 /.idea/studiobot.xml
 /.idea/vcs.xml
+/.idea/deviceManager.xml
