@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,19 +42,19 @@ fun OnboardingGoalsScreen(
     onSkip: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsState()
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
 
     OnboardingGoalsContent(
         activeGoals = userData.goals,
-        suggestions = viewModel.getSuggestions(),
-        muscleGroups = viewModel.getMuscleGroups(),
-        getExercises = { viewModel.getExercisesByGroup(it) },
+        suggestions = remember { viewModel.getSuggestions() },
+        muscleGroups = remember { viewModel.getMuscleGroups() },
+        getExercises = remember { { viewModel.getExercisesByGroup(it) } },
         currentPage = currentPage,
         totalPages = totalPages,
-        onAddGoal = { goal -> viewModel.addGoal(goal) },
-        onRemoveGoal = { goal -> viewModel.removeGoal(goal) },
-        onSkip = { viewModel.saveAndNext(onSkip) },
-        onFinish = { viewModel.saveAndNext(onContinue) }
+        onAddGoal = remember { { goal -> viewModel.addGoal(goal) } },
+        onRemoveGoal = remember { { goal -> viewModel.removeGoal(goal) } },
+        onSkip = remember { { viewModel.saveAndNext(onSkip) } },
+        onFinish = remember { { viewModel.saveAndNext(onContinue) } }
     )
 }
 
@@ -142,7 +143,10 @@ fun OnboardingGoalsContent(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(activeGoals) { goal ->
+            items(
+                items = activeGoals,
+                key = { it.id }
+            ) { goal ->
                 ActiveGoalItem(
                     text = goal.getDisplayText(context),
                     onRemoveClick = {

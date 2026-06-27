@@ -8,8 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,14 +34,16 @@ fun OnboardSummaryScreen(
     onStartTraining: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsState()
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
 
     OnboardSummaryContent(
         userData = userData,
         currentPage = currentPage,
         totalPages = totalPages,
-        onStartTraining = { 
-            viewModel.finishOnboarding(onStartTraining) 
+        onStartTraining = remember { 
+            { 
+                viewModel.finishOnboarding(onStartTraining) 
+            }
         }
     )
 }

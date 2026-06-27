@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,17 +34,17 @@ fun OnboardUserDataScreen(
     onContinue: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsState()
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
 
     OnboardUserDataContent(
         userData = userData,
         currentPage = currentPage,
         totalPages = totalPages,
-        onNameChange = { viewModel.updateProfile(name = it) },
-        onAgeChange = { viewModel.updateProfile(age = it) },
-        onWeightChange = { viewModel.updateProfile(weight = it) },
-        onHeightChange = { viewModel.updateProfile(height = it) },
-        onContinue = { viewModel.saveAndNext(onContinue) }
+        onNameChange = remember { { viewModel.updateProfile(name = it) } },
+        onAgeChange = remember { { viewModel.updateProfile(age = it) } },
+        onWeightChange = remember { { viewModel.updateProfile(weight = it) } },
+        onHeightChange = remember { { viewModel.updateProfile(height = it) } },
+        onContinue = remember { { viewModel.saveAndNext(onContinue) } }
     )
 }
 
@@ -57,10 +59,14 @@ fun OnboardUserDataContent(
     onHeightChange: (String) -> Unit,
     onContinue: () -> Unit
 ) {
-    val isFormValid = userData.name.isNotBlank() && 
-                      userData.age.isNotBlank() && 
-                      userData.weight.isNotBlank() &&
-                      userData.height.isNotBlank()
+    val isFormValid by remember(userData) {
+        derivedStateOf {
+            userData.name.isNotBlank() &&
+                    userData.age.isNotBlank() &&
+                    userData.weight.isNotBlank() &&
+                    userData.height.isNotBlank()
+        }
+    }
 
     Column(
         modifier = Modifier
