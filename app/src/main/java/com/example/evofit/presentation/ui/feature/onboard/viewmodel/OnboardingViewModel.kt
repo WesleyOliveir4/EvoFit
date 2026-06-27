@@ -18,7 +18,7 @@ class OnboardingViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase
 ) : ViewModel() {
 
-    private val _userData = MutableStateFlow(UserOnboardingData())
+    private val _userData = MutableStateFlow(UserOnboardingData.empty())
     val userData: StateFlow<UserOnboardingData> = _userData.asStateFlow()
 
     init {

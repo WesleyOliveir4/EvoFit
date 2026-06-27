@@ -6,9 +6,12 @@ import com.example.evofit.data.local.AppDatabase
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
+import com.example.evofit.domain.usecase.CompleteOnboardingUseCaseImpl
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
+import com.example.evofit.domain.usecase.GetOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
+import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
@@ -33,9 +36,9 @@ val dataModule = module {
 
 val domainModule = module {
     factory { GetExerciseDataUseCase(get()) }
-    factory { GetOnboardingDataUseCase(get()) }
-    factory { SaveOnboardingDataUseCase(get()) }
-    factory { CompleteOnboardingUseCase(get()) }
+    factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
+    factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
+    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
 }
 
 val splashModule = module {

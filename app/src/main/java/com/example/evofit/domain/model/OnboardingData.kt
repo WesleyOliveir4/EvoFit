@@ -6,4 +6,8 @@ data class UserOnboardingData(
     val weight: String = "",
     val height: String = "",
     val goals: List<UserGoal> = emptyList()
-)
+) {
+    companion object {
+        fun empty() = UserOnboardingData()
+    }
+}

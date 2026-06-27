@@ -72,4 +72,12 @@
     <string name="goal_step_cardio_duration_step3">3. Duração:</string>
 
     <string name="goal_step_body_weight">Meta de peso corporal:</string>
+
+    <!-- Goal Display Strings -->
+    <string name="goal_display_strength_weight">%1$s - %2$skg</string>
+    <string name="goal_display_strength_reps">%1$s - %2$s reps</string>
+    <string name="goal_display_strength_value">%1$s - %2$s</string>
+    <string name="goal_display_cardio_with_distance">%1$s - %2$skm em %3$s</string>
+    <string name="goal_display_cardio_no_distance">%1$s - %2$s</string>
+    <string name="goal_display_target_weight">Meta de Peso: %1$skg</string>
 </resources>

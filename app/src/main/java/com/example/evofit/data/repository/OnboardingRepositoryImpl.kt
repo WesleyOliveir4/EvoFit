@@ -15,18 +15,10 @@ import kotlinx.coroutines.flow.map
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingRepository {
 
-    override fun getUserData(): Flow<UserOnboardingData> {
+    override fun getUserData(): Flow<UserOnboardingData?> {
         return userDao.getUser().flatMapLatest { userEntity ->
             if (userEntity == null) {
-                flowOf(
-                    UserOnboardingData(
-                        name = "",
-                        age = "",
-                        weight = "",
-                        height = "",
-                        goals = emptyList()
-                    )
-                )
+                flowOf(null)
             } else {
                 userDao.getGoalsForUser(userEntity.id).map { goals ->
                     mapToDomain(userEntity, goals)
@@ -35,12 +27,13 @@ class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingReposit
         }
     }
 
-    override suspend fun saveUserData(data: UserOnboardingData) {
-        val existingUser = userDao.getUser().firstOrNull()
-        val userId = existingUser?.id ?: java.util.UUID.randomUUID().toString()
-        
+    override suspend fun getUserId(): String? {
+        return userDao.getUser().firstOrNull()?.id
+    }
+
+    override suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean) {
         val userEntity = data.toEntity(userId).copy(
-            isOnboardingCompleted = existingUser?.isOnboardingCompleted ?: false
+            isOnboardingCompleted = isCompleted
         )
         val goalEntities = data.goals.map { it.toEntity(userId) }
         userDao.saveUserWithGoals(userEntity, goalEntities)
