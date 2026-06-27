@@ -3,24 +3,49 @@ package com.example.evofit.presentation.ui.feature.onboard.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -361,6 +386,7 @@ private fun StrengthFlow(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant
             ),
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -431,6 +457,7 @@ private fun CardioFlow(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -491,6 +518,7 @@ private fun WeightFlow(
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                 focusedBorderColor = MaterialTheme.colorScheme.primary
             ),
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -529,5 +557,114 @@ fun SelectionChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
             color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface, 
             fontSize = 14.sp
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NewGoalDialogPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            NewGoalDialog(
+                onDismissRequest = {},
+                onGoalConfirmed = {},
+                muscleGroups = listOf(
+                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("2", "Costas", ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("3", "Corrida", ExerciseCategory.CARDIO)
+                ),
+                getExercises = { groupId ->
+                    when (groupId) {
+                        "1" -> listOf(ExerciseModel("e1", "Supino Reto", "1"))
+                        "2" -> listOf(ExerciseModel("e2", "Remada", "2"))
+                        "3" -> listOf(ExerciseModel("e3", "Esteira", "3", MeasurementUnit.DISTANCE))
+                        else -> emptyList()
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CategorySelectionStepPreview() {
+    EvoFitTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            CategorySelectionStep(onCategorySelected = {})
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StrengthFlowPreview() {
+    EvoFitTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            StrengthFlow(
+                muscleGroups = listOf(
+                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("2", "Pernas", ExerciseCategory.STRENGTH)
+                ),
+                selectedMuscle = MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
+                onMuscleSelect = {},
+                exercises = listOf(
+                    ExerciseModel("e1", "Supino Reto", "1"),
+                    ExerciseModel("e2", "Supino Inclinado", "1")
+                ),
+                selectedExercise = ExerciseModel("e1", "Supino Reto", "1"),
+                onExerciseSelect = {},
+                goalValue = "80",
+                onGoalValueChange = {},
+                onConfirm = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CardioFlowPreview() {
+    EvoFitTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            CardioFlow(
+                cardioExercises = listOf(
+                    ExerciseModel("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
+                    ExerciseModel("c2", "Natação", "3", MeasurementUnit.TIME)
+                ),
+                selectedCardio = ExerciseModel("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
+                onCardioSelect = {},
+                distance = "5",
+                onDistanceChange = {},
+                selectedTime = "30m",
+                onTimeSelect = {},
+                onConfirm = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WeightFlowPreview() {
+    EvoFitTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            WeightFlow(
+                weight = "75",
+                onWeightChange = {},
+                onConfirm = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectionChipPreview() {
+    EvoFitTheme {
+        Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SelectionChip(text = "Selecionado", isSelected = true, onClick = {})
+            SelectionChip(text = "Não Selecionado", isSelected = false, onClick = {})
+        }
     }
 }

@@ -105,6 +105,7 @@ fun UserInputField(
                 keyboardType = keyboardType
             ),
             shape = RoundedCornerShape(16.dp),
+            singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
