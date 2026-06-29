@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.evofit.R
+import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
@@ -57,7 +58,7 @@ fun WorkoutScreen(
             localWorkouts = mutableList
         },
         onNavigate = onNavigate,
-        onAddWorkoutClick = { /* Adicionar novo treino */ }
+        onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.route) }
     )
 }
 

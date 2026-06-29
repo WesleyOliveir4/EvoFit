@@ -13,11 +13,13 @@ import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
+import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
+import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -45,6 +47,7 @@ val domainModule = module {
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
     factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
     factory { GetWorkoutsUseCase(get()) }
+    factory { SaveWorkoutUseCase(get()) }
 }
 
 val splashModule = module {
@@ -73,6 +76,12 @@ val homeModule = module {
 val workoutModule = module {
     viewModel {
         WorkoutViewModel(
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        NewWorkoutViewModel(
             get(),
             get()
         )

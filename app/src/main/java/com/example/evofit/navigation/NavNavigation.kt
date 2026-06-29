@@ -9,6 +9,7 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoal
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
+import com.example.evofit.presentation.ui.feature.workout.screens.NewWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.screens.WorkoutScreen
 
 @Composable
@@ -80,6 +81,21 @@ fun NavNavigation() {
             WorkoutScreen(
                 onNavigate = { route ->
                     navController.navigate(route)
+                }
+            )
+        }
+
+        composable(NavRoutes.NewWorkout.route) {
+            NewWorkoutScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onGroupSelected = { groupId ->
+                    // Por enquanto apenas volta ou loga, futuramente navegará para detalhes do treino
+                    navController.popBackStack()
                 }
             )
         }
