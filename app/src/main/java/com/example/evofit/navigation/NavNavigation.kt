@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.evofit.presentation.ui.feature.home.screens.HomeScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
+import com.example.evofit.presentation.ui.feature.workout.screens.WorkoutScreen
 
 @Composable
 fun NavNavigation() {
@@ -77,7 +77,11 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.Home.route) {
-            HomeScreen()
+            WorkoutScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                }
+            )
         }
     }
 }

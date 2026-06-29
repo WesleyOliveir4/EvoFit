@@ -80,4 +80,21 @@
     <string name="goal_display_cardio_with_distance">%1$s - %2$skm em %3$s</string>
     <string name="goal_display_cardio_no_distance">%1$s - %2$s</string>
     <string name="goal_display_target_weight">Meta de Peso: %1$skg</string>
+
+    <!-- Main Workout Screen -->
+    <string name="main_workout_greeting">Olá, %1$s 👋</string>
+    <string name="main_workout_subtitle">Bora treinar?</string>
+    <string name="main_workout_stats_total_label">Treinos</string>
+    <string name="main_workout_stats_week_label">Esta semana</string>
+    <string name="main_workout_section_title">MEUS TREINOS</string>
+    <string name="main_workout_exercise_count">%1$d exercícios</string>
+    <string name="main_workout_series_count">%1$d séries</string>
+    <string name="main_workout_exercise_series_format">%1$s · %2$s</string>
+    <string name="main_workout_new_workout_desc">Novo Treino</string>
+    <string name="main_workout_drag_handle_desc">Arrastar</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_training">Treino</string>
+    <string name="nav_evo">Evo</string>
+    <string name="nav_profile">Perfil</string>
 </resources>
