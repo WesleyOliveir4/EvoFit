@@ -25,36 +25,36 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
 import com.example.evofit.presentation.ui.feature.workout.components.WorkoutListItem
 import com.example.evofit.presentation.ui.feature.workout.components.WorkoutUIModel
+import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun WorkoutScreen(
-    viewModel: HomeViewModel = koinViewModel(),
+    viewModel: WorkoutViewModel = koinViewModel(),
     onNavigate: (String) -> Unit = {}
 ) {
-    val userData by viewModel.userData.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     
-    val workouts = remember {
-        mutableStateListOf(
-            WorkoutUIModel(1, "Peito", 3, 7, Icons.Default.Favorite),
-            WorkoutUIModel(2, "Costas", 2, 4, Icons.Default.ArrowBack),
-            WorkoutUIModel(3, "Pernas", 2, 5, Icons.Default.DirectionsRun),
-            WorkoutUIModel(4, "Ombros", 1, 2, Icons.Default.Face),
-            WorkoutUIModel(5, "Braços", 2, 4, Icons.Default.ThumbUp)
-        )
+    var localWorkouts by remember { mutableStateOf<List<WorkoutUIModel>>(emptyList()) }
+    
+    LaunchedEffect(uiState.workouts) {
+        localWorkouts = uiState.workouts
     }
 
     WorkoutContent(
-        userName = userData.name,
-        workouts = workouts,
+        userName = uiState.userName,
+        workouts = localWorkouts,
+        totalWorkouts = uiState.totalWorkouts,
+        workoutsThisWeek = uiState.workoutsThisWeek,
         onMove = { from, to ->
-            workouts.add(to, workouts.removeAt(from))
+            val mutableList = localWorkouts.toMutableList()
+            mutableList.add(to, mutableList.removeAt(from))
+            localWorkouts = mutableList
         },
         onNavigate = onNavigate,
         onAddWorkoutClick = { /* Adicionar novo treino */ }
@@ -65,6 +65,8 @@ fun WorkoutScreen(
 fun WorkoutContent(
     userName: String,
     workouts: List<WorkoutUIModel>,
+    totalWorkouts: Int,
+    workoutsThisWeek: Int,
     onMove: (Int, Int) -> Unit,
     onNavigate: (String) -> Unit,
     onAddWorkoutClick: () -> Unit,
@@ -120,13 +122,13 @@ fun WorkoutContent(
                 ) {
                     StatCard(
                         modifier = Modifier.weight(1f),
-                        value = "5",
+                        value = totalWorkouts.toString(),
                         label = stringResource(R.string.main_workout_stats_total_label),
                         icon = Icons.Default.SettingsInputComponent
                     )
                     StatCard(
                         modifier = Modifier.weight(1f),
-                        value = "3",
+                        value = workoutsThisWeek.toString(),
                         label = stringResource(R.string.main_workout_stats_week_label),
                         icon = Icons.Default.Whatshot
                     )
@@ -221,6 +223,8 @@ private fun WorkoutContentPreview() {
                 WorkoutUIModel(1, "Peito", 3, 7, Icons.Default.Favorite),
                 WorkoutUIModel(2, "Costas", 2, 4, Icons.Default.ArrowBack)
             ),
+            totalWorkouts = 2,
+            workoutsThisWeek = 1,
             onMove = { _, _ -> },
             onNavigate = {},
             onAddWorkoutClick = {}
