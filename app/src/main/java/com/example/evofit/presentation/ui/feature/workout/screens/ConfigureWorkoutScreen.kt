@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.workout.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,6 +40,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ConfigureWorkoutScreen(
     exerciseIds: List<String>,
+    workoutName: String,
     onBackClick: () -> Unit,
     onFinishClick: () -> Unit,
     viewModel: ConfigureWorkoutViewModel = koinViewModel()
@@ -47,8 +49,8 @@ fun ConfigureWorkoutScreen(
     val configs = viewModel.exerciseConfigs
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(exerciseIds) {
-        viewModel.loadExercises(exerciseIds)
+    LaunchedEffect(exerciseIds, workoutName) {
+        viewModel.loadExercises(exerciseIds, workoutName)
     }
 
     LaunchedEffect(uiState.isSaved) {
@@ -180,7 +182,8 @@ fun ConfigureWorkoutScreen(
                 ExerciseConfigContent(
                     config = configs[page],
                     onAddSet = { viewModel.addSet(it) },
-                    onUpdateSet = { id, idx, weight, reps -> viewModel.updateSet(id, idx, weight, reps) }
+                    onUpdateSet = { id, idx, weight, reps -> viewModel.updateSet(id, idx, weight, reps) },
+                    onRemoveSet = { id, idx -> viewModel.removeSet(id, idx) }
                 )
             }
         }
@@ -191,7 +194,8 @@ fun ConfigureWorkoutScreen(
 fun ExerciseConfigContent(
     config: ExerciseConfigState,
     onAddSet: (String) -> Unit,
-    onUpdateSet: (String, Int, Double, Int) -> Unit
+    onUpdateSet: (String, Int, Double, Int) -> Unit,
+    onRemoveSet: (String, Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -261,19 +265,44 @@ fun ExerciseConfigContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Indicador de Série
-                Box(
+                // Indicador de Série Modificado com Botão de Remoção Integrado no Canto Esquerdo
+                Row(
                     modifier = Modifier
                         .weight(0.8f)
                         .height(48.dp)
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
                 ) {
+                    // Botão de remover vermelho: quadrado com bordas arredondadas ao canto esquerdo do componente
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(36.dp)
+                            .background(
+                                Color(0xFFBA1A1A),
+                                RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
+                            )
+                            .clickable { onRemoveSet(config.exerciseId, index) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "–",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.offset(y = (-1).dp)
+                        )
+                    }
+
+                    // Número da Série centralizado no espaço restante
                     Text(
                         text = "${index + 1}",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -331,7 +360,8 @@ private fun ConfigureWorkoutScreenPreview() {
                 ExerciseConfigContent(
                     config = mockConfig,
                     onAddSet = {},
-                    onUpdateSet = { _, _, _, _ -> }
+                    onUpdateSet = { _, _, _, _ -> },
+                    onRemoveSet = { _, _ -> }
                 )
             }
         }

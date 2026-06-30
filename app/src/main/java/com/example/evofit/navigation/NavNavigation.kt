@@ -116,20 +116,25 @@ fun NavNavigation() {
                 onNavigate = { route ->
                     navController.navigate(route)
                 },
-                onConfigureExercisesClick = { exerciseIds ->
+                onConfigureExercisesClick = { exerciseIds, workoutName ->
                     val idsParam = exerciseIds.joinToString(",")
-                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam))
+                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam, workoutName))
                 }
             )
         }
 
         composable(
             route = NavRoutes.ConfigureWorkout.route,
-            arguments = listOf(navArgument("exerciseIds") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("exerciseIds") { type = NavType.StringType },
+                navArgument("workoutName") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
+            val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
             ConfigureWorkoutScreen(
                 exerciseIds = exerciseIds,
+                workoutName = workoutName,
                 onBackClick = {
                     navController.popBackStack()
                 },

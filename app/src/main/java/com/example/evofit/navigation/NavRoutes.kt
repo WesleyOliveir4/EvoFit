@@ -11,7 +11,7 @@ sealed class NavRoutes(val route: String) {
     object SelectExercises : NavRoutes("select_exercises/{muscleGroupId}") {
         fun createRoute(muscleGroupId: String) = "select_exercises/$muscleGroupId"
     }
-    object ConfigureWorkout : NavRoutes("configure_workout/{exerciseIds}") {
-        fun createRoute(exerciseIds: String) = "configure_workout/$exerciseIds"
+    object ConfigureWorkout : NavRoutes("configure_workout/{exerciseIds}/{workoutName}") {
+        fun createRoute(exerciseIds: String, workoutName: String) = "configure_workout/$exerciseIds/$workoutName"
     }
 }

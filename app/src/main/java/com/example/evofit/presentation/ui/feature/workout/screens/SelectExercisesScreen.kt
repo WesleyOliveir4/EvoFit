@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,7 +31,7 @@ fun SelectExercisesScreen(
     muscleGroupId: String,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
-    onConfigureExercisesClick: (List<String>) -> Unit,
+    onConfigureExercisesClick: (List<String>, String) -> Unit,
     viewModel: SelectExercisesViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -41,13 +43,20 @@ fun SelectExercisesScreen(
 
     SelectExercisesContent(
         muscleGroupName = uiState.muscleGroupName,
+        workoutName = uiState.workoutName,
+        tempWorkoutName = uiState.tempWorkoutName,
+        isEditingName = uiState.isEditingName,
         exercises = uiState.exercises,
         selectedExerciseIds = selectedIds,
         isLoading = uiState.isLoading,
         onBackClick = onBackClick,
         onNavigate = onNavigate,
         onExerciseToggle = { viewModel.toggleExerciseSelection(it) },
-        onConfigureExercisesClick = { onConfigureExercisesClick(selectedIds) }
+        onConfigureExercisesClick = { onConfigureExercisesClick(selectedIds, uiState.workoutName) },
+        onStartEditingName = { viewModel.startEditingName() },
+        onCancelEditingName = { viewModel.cancelEditingName() },
+        onConfirmEditingName = { viewModel.confirmEditingName() },
+        onTempNameChange = { viewModel.updateTempName(it) }
     )
 }
 
@@ -55,13 +64,20 @@ fun SelectExercisesScreen(
 @Composable
 fun SelectExercisesContent(
     muscleGroupName: String,
+    workoutName: String,
+    tempWorkoutName: String,
+    isEditingName: Boolean,
     exercises: List<ExerciseSelectionUIModel>,
     selectedExerciseIds: List<String>,
     isLoading: Boolean,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onExerciseToggle: (String) -> Unit,
-    onConfigureExercisesClick: () -> Unit
+    onConfigureExercisesClick: () -> Unit,
+    onStartEditingName: () -> Unit,
+    onCancelEditingName: () -> Unit,
+    onConfirmEditingName: () -> Unit,
+    onTempNameChange: (String) -> Unit
 ) {
     val isButtonEnabled = selectedExerciseIds.isNotEmpty()
 
@@ -140,31 +156,67 @@ fun SelectExercisesContent(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Nome: ",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
+                    if (isEditingName) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextField(
+                                value = tempWorkoutName,
+                                onValueChange = onTempNameChange,
+                                modifier = Modifier.weight(1f),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground
+                                ),
+                                singleLine = true
                             )
-                            Text(
-                                text = muscleGroupName,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            IconButton(onClick = onConfirmEditingName) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Confirmar",
+                                    tint = Color.Green
+                                )
+                            }
+                            IconButton(onClick = onCancelEditingName) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Cancelar",
+                                    tint = Color.White
+                                )
+                            }
                         }
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Editar nome",
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Nome: ",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = workoutName,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            IconButton(onClick = onStartEditingName) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Editar nome",
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -196,6 +248,9 @@ fun SelectExercisesScreenPreview() {
     EvoFitTheme {
         SelectExercisesContent(
             muscleGroupName = "Peito",
+            workoutName = "Treino de Peito",
+            tempWorkoutName = "",
+            isEditingName = false,
             exercises = listOf(
                 ExerciseSelectionUIModel("1", "Supino Reto"),
                 ExerciseSelectionUIModel("2", "Crucifixo")
@@ -205,7 +260,11 @@ fun SelectExercisesScreenPreview() {
             onBackClick = {},
             onNavigate = {},
             onExerciseToggle = {},
-            onConfigureExercisesClick = {}
+            onConfigureExercisesClick = {},
+            onStartEditingName = {},
+            onCancelEditingName = {},
+            onConfirmEditingName = {},
+            onTempNameChange = {}
         )
     }
 }

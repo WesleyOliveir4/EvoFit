@@ -47,7 +47,7 @@ class WorkoutViewModel(
                             workouts = workouts.map { workout ->
                                 WorkoutUIModel(
                                     id = workout.id.toInt(),
-                                    title = workout.muscleGroupId,
+                                    title = workout.name.ifEmpty { workout.muscleGroupId },
                                     exercises = workout.exercises.size,
                                     series = workout.exercises.sumOf { it.sets.size },
                                     icon = Icons.Default.FitnessCenter

@@ -13,6 +13,7 @@ fun FullWorkout.toDomain(): Workout {
     return Workout(
         id = workout.workoutId,
         userId = workout.userId,
+        name = workout.name,
         muscleGroupId = workout.muscleGroupId,
         date = workout.date,
         isCompleted = workout.isCompleted,
@@ -41,6 +42,7 @@ fun Workout.toEntity(): WorkoutEntity {
     return WorkoutEntity(
         workoutId = id,
         userId = userId,
+        name = name,
         muscleGroupId = muscleGroupId,
         date = date,
         isCompleted = isCompleted

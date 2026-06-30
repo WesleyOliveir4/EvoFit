@@ -3,6 +3,7 @@ package com.example.evofit.domain.model
 data class Workout(
     val id: Long = 0,
     val userId: String,
+    val name: String,
     val muscleGroupId: String,
     val date: Long,
     val isCompleted: Boolean,

@@ -85,7 +85,6 @@ val workoutModule = module {
     viewModel {
         NewWorkoutViewModel(
             get(),
-            get()
         )
     }
     viewModel {

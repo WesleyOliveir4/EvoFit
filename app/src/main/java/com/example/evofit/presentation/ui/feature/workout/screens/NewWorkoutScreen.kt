@@ -1,6 +1,7 @@
 package com.example.evofit.presentation.ui.feature.workout.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Whatshot
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,19 +26,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.data.model.MuscleGroupModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
-
 
 @Composable
 fun NewWorkoutScreen(
@@ -45,13 +49,11 @@ fun NewWorkoutScreen(
     onGroupSelected: (String) -> Unit,
     viewModel: NewWorkoutViewModel = koinViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.workoutSaved.collect {
-            onBackClick()
-        }
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     NewWorkoutContent(
+        muscleGroups = uiState.muscleGroups,
+        isLoading = uiState.isLoading,
         onBackClick = onBackClick,
         onNavigate = onNavigate,
         onMuscleGroupClick = { groupId ->
@@ -60,26 +62,31 @@ fun NewWorkoutScreen(
     )
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewWorkoutContent(
+    muscleGroups: List<MuscleGroupModel>,
+    isLoading: Boolean,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onMuscleGroupClick: (String) -> Unit
 ) {
-    // Lista sincronizada com LocalExerciseDataSource
-    val muscleGroups = listOf(
-        MuscleGroupItem("2", "Peito", Icons.Default.Favorite),
-        MuscleGroupItem("1", "Costas", Icons.AutoMirrored.Filled.ArrowBack),
-        MuscleGroupItem("5", "Ombros", Icons.Default.Face),
-        MuscleGroupItem("4", "Braços", Icons.Default.EmojiPeople),
-        MuscleGroupItem("3", "Pernas", Icons.Default.DirectionsRun),
-        MuscleGroupItem("6", "Abdômen", Icons.Default.Whatshot),
-        MuscleGroupItem("7", "Cardio", Icons.Default.DirectionsRun),
-        MuscleGroupItem("8", "Glúteo", Icons.Default.Accessibility),
-        MuscleGroupItem("9", "Panturrilha", Icons.Default.DirectionsRun)
-    )
+    // Mapeamento de ícones baseado no ID ou Nome vindo da camada de Data
+    val muscleGroupItems = muscleGroups.map { group ->
+        val icon = when (group.id) {
+            "2" -> Icons.Default.Favorite // Peito
+            "1" -> Icons.Default.Face // Costas (Ajustei o ícone)
+            "5" -> Icons.Default.Face // Ombros
+            "4" -> Icons.Default.EmojiPeople // Braços
+            "3" -> Icons.Default.DirectionsRun // Pernas
+            "6" -> Icons.Default.Whatshot // Abdômen
+            "7" -> Icons.Default.DirectionsRun // Cardio
+            "8" -> Icons.Default.Accessibility // Glúteo
+            "9" -> Icons.Default.DirectionsRun // Panturrilha
+            else -> Icons.Default.Accessibility
+        }
+        MuscleGroupItem(group.id, group.name, icon)
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -114,34 +121,43 @@ fun NewWorkoutContent(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Instrução da Tela
-            item {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Selecione o grupo muscular",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Selecione o grupo muscular",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
-            // Lista renderizada dinamicamente
-            items(muscleGroups) { item ->
-                MuscleGroupCard(
-                    item = item,
-                    onClick = { onMuscleGroupClick(item.id) }
-                )
+                items(muscleGroupItems) { item ->
+                    MuscleGroupCard(
+                        item = item,
+                        onClick = { onMuscleGroupClick(item.id) }
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
-
-            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
 }
@@ -151,6 +167,8 @@ fun NewWorkoutContent(
 fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
+            muscleGroups = listOf(MuscleGroupModel("1", "Peito")),
+            isLoading = false,
             onBackClick = {},
             onNavigate = {},
             onMuscleGroupClick = {}

@@ -18,6 +18,7 @@ import java.util.Date
 
 data class ConfigureWorkoutUiState(
     val selectedExercises: List<ExerciseModel> = emptyList(),
+    val workoutName: String = "",
     val isLoading: Boolean = false,
     val isSaved: Boolean = false
 )
@@ -46,9 +47,9 @@ class ConfigureWorkoutViewModel(
     private val _exerciseConfigs = mutableStateListOf<ExerciseConfigState>()
     val exerciseConfigs: List<ExerciseConfigState> get() = _exerciseConfigs
 
-    fun loadExercises(exerciseIds: List<String>) {
+    fun loadExercises(exerciseIds: List<String>, workoutName: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, workoutName = workoutName) }
             
             val allMuscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val allExercises = mutableListOf<ExerciseModel>()
@@ -128,6 +129,7 @@ class ConfigureWorkoutViewModel(
 
             val workout = Workout(
                 userId = userId,
+                name = _uiState.value.workoutName,
                 muscleGroupId = _uiState.value.selectedExercises.firstOrNull()?.muscleGroupId ?: "",
                 date = Date().time,
                 isCompleted = false,
