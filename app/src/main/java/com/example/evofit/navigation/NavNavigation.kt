@@ -1,15 +1,19 @@
 package com.example.evofit.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
+import com.example.evofit.presentation.ui.feature.workout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.screens.NewWorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.screens.SelectExercisesScreen
 import com.example.evofit.presentation.ui.feature.workout.screens.WorkoutScreen
 
 @Composable
@@ -94,8 +98,45 @@ fun NavNavigation() {
                     navController.navigate(route)
                 },
                 onGroupSelected = { groupId ->
-                    // Por enquanto apenas volta ou loga, futuramente navegará para detalhes do treino
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(groupId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.SelectExercises.route,
+            arguments = listOf(navArgument("muscleGroupId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
+            SelectExercisesScreen(
+                muscleGroupId = muscleGroupId,
+                onBackClick = {
                     navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onConfigureExercisesClick = { exerciseIds ->
+                    val idsParam = exerciseIds.joinToString(",")
+                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.ConfigureWorkout.route,
+            arguments = listOf(navArgument("exerciseIds") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
+            ConfigureWorkoutScreen(
+                exerciseIds = exerciseIds,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onFinishClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    }
                 }
             )
         }

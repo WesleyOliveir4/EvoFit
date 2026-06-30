@@ -19,7 +19,9 @@ import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
+import com.example.evofit.presentation.ui.feature.workout.viewmodel.ConfigureWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -82,6 +84,18 @@ val workoutModule = module {
     }
     viewModel {
         NewWorkoutViewModel(
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        SelectExercisesViewModel(
+            get()
+        )
+    }
+    viewModel {
+        ConfigureWorkoutViewModel(
+            get(),
             get(),
             get()
         )

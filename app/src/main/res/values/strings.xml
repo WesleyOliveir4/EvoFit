@@ -93,6 +93,16 @@
     <string name="main_workout_new_workout_desc">Novo Treino</string>
     <string name="main_workout_drag_handle_desc">Arrastar</string>
 
+    <!-- Configure Workout Screen -->
+    <string name="configure_workout_title">Configurar (%1$d/%2$d)</string>
+    <string name="configure_workout_next">Próximo</string>
+    <string name="configure_workout_finish">Finalizar</string>
+    <string name="configure_workout_add_set">Adicionar série</string>
+    <string name="configure_workout_header_sets">%1$d séries</string>
+    <string name="configure_workout_col_set">Série</string>
+    <string name="configure_workout_col_weight">Peso (kg)</string>
+    <string name="configure_workout_col_reps">Reps</string>
+
     <!-- Bottom Navigation -->
     <string name="nav_training">Treino</string>
     <string name="nav_evo">Evo</string>

@@ -55,7 +55,7 @@ fun NewWorkoutScreen(
         onBackClick = onBackClick,
         onNavigate = onNavigate,
         onMuscleGroupClick = { groupId ->
-            viewModel.selectMuscleGroup(groupId)
+            onGroupSelected(groupId)
         }
     )
 }
@@ -68,15 +68,17 @@ fun NewWorkoutContent(
     onNavigate: (String) -> Unit,
     onMuscleGroupClick: (String) -> Unit
 ) {
-    // Lista baseada exatamente na sua imagem de referência
+    // Lista sincronizada com LocalExerciseDataSource
     val muscleGroups = listOf(
-        MuscleGroupItem("peito", "Peito", Icons.Default.Favorite),
-        MuscleGroupItem("costas", "Costas", Icons.AutoMirrored.Filled.ArrowBack),
-        MuscleGroupItem("ombros", "Ombros", Icons.Default.Face),
-        MuscleGroupItem("biceps", "Bíceps", Icons.Default.EmojiPeople),
-        MuscleGroupItem("triceps", "Tríceps", Icons.Default.Accessibility),
-        MuscleGroupItem("pernas", "Pernas", Icons.Default.DirectionsRun),
-        MuscleGroupItem("abdomen", "Abdômen", Icons.Default.Whatshot)
+        MuscleGroupItem("2", "Peito", Icons.Default.Favorite),
+        MuscleGroupItem("1", "Costas", Icons.AutoMirrored.Filled.ArrowBack),
+        MuscleGroupItem("5", "Ombros", Icons.Default.Face),
+        MuscleGroupItem("4", "Braços", Icons.Default.EmojiPeople),
+        MuscleGroupItem("3", "Pernas", Icons.Default.DirectionsRun),
+        MuscleGroupItem("6", "Abdômen", Icons.Default.Whatshot),
+        MuscleGroupItem("7", "Cardio", Icons.Default.DirectionsRun),
+        MuscleGroupItem("8", "Glúteo", Icons.Default.Accessibility),
+        MuscleGroupItem("9", "Panturrilha", Icons.Default.DirectionsRun)
     )
 
     Scaffold(
