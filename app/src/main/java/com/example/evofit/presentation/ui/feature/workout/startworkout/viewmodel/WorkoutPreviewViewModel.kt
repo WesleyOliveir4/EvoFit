@@ -19,19 +19,20 @@ class WorkoutPreviewViewModel(
 
     val uiState: StateFlow<WorkoutDetailPreview?> = getWorkoutByIdUseCase(workoutId.toLong())
         .map { workout ->
-            workout?.let {
-                val exercises = it.exercises.map { workoutExercise ->
-                    val muscleGroup = getExerciseDataUseCase.getMuscleGroups()
-                        .find { group -> group.id == it.muscleGroupId }
+            workout?.let { workoutSelected ->
+                val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
+                val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                    .associateBy { it.id }
 
-                    val exercise = getExerciseDataUseCase.getExercisesByGroup(it.muscleGroupId)
-                        .find { ex -> ex.id == workoutExercise.exerciseId }
+                val exercises = workoutSelected.exercises.map { workoutExercise ->
+                    val exercise = exerciseDataMap[workoutExercise.exerciseId]
 
                     val setsCount = workoutExercise.sets.size
                     val weight = workoutExercise.sets.firstOrNull()?.load ?: 0.0
                     val reps = workoutExercise.sets.firstOrNull()?.reps ?: 0
 
                     ExercisePreviewItem(
+                        workoutExerciseId = workoutExercise.id,
                         name = exercise?.name ?: "",
                         setsCount = setsCount,
                         weight = weight,
@@ -40,9 +41,9 @@ class WorkoutPreviewViewModel(
                 }
 
                 WorkoutDetailPreview(
-                    title = it.name.ifEmpty { it.muscleGroupId },
-                    totalExercises = it.exercises.size,
-                    totalSets = it.exercises.sumOf { ex -> ex.sets.size },
+                    title = workoutSelected.name.ifEmpty { workoutSelected.muscleGroupId },
+                    totalExercises = workoutSelected.exercises.size,
+                    totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
                     exercises = exercises
                 )
             }

@@ -48,7 +48,6 @@ fun ConfigureWorkoutScreen(
     viewModel: ConfigureWorkoutViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val configs = viewModel.exerciseConfigs
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(exerciseIds, workoutName) {
@@ -61,14 +60,14 @@ fun ConfigureWorkoutScreen(
         }
     }
 
-    if (configs.isEmpty()) {
+    if (uiState.exerciseConfigs.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
         return
     }
 
-    val pagerState = rememberPagerState(pageCount = { configs.size })
+    val pagerState = rememberPagerState(pageCount = { uiState.exerciseConfigs.size })
 
     BackHandler {
         if (pagerState.currentPage > 0) {
@@ -89,7 +88,7 @@ fun ConfigureWorkoutScreen(
                         text = stringResource(
                             R.string.configure_workout_title,
                             pagerState.currentPage + 1,
-                            configs.size
+                            uiState.exerciseConfigs.size
                         ),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
@@ -127,7 +126,7 @@ fun ConfigureWorkoutScreen(
             ) {
                 Button(
                     onClick = {
-                        if (pagerState.currentPage < configs.size - 1) {
+                        if (pagerState.currentPage < uiState.exerciseConfigs.size - 1) {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
@@ -151,7 +150,7 @@ fun ConfigureWorkoutScreen(
                         )
                     } else {
                         Text(
-                            text = if (pagerState.currentPage == configs.size - 1) {
+                            text = if (pagerState.currentPage == uiState.exerciseConfigs.size - 1) {
                                 stringResource(R.string.configure_workout_finish)
                             } else {
                                 stringResource(R.string.configure_workout_next)
@@ -171,7 +170,7 @@ fun ConfigureWorkoutScreen(
                 .padding(paddingValues)
         ) {
             ExercisePageSegmentedIndicator(
-                totalCount = configs.size,
+                totalCount = uiState.exerciseConfigs.size,
                 currentIndex = pagerState.currentPage
             )
 
@@ -181,7 +180,7 @@ fun ConfigureWorkoutScreen(
                 userScrollEnabled = !uiState.isLoading
             ) { page ->
                 ExerciseConfigContent(
-                    config = configs[page],
+                    config = uiState.exerciseConfigs[page],
                     muscleGroupType = uiState.muscleGroupType,
                     onAddSet = { viewModel.addSet(it) },
                     onUpdateSet = { id, idx, weight, reps -> viewModel.updateSet(id, idx, weight, reps) },
@@ -357,6 +356,7 @@ private fun ConfigureWorkoutScreenPreview() {
             ExerciseConfigState(
                 exerciseId = "1",
                 name = "Supino Reto",
+                muscleGroupId = "2",
                 sets = mutableStateListOf(
                     SetState(1, 30.0, 12),
                     SetState(2, 30.0, 12),

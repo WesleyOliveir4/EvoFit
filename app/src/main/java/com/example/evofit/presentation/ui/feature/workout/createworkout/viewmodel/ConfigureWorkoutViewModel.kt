@@ -1,9 +1,7 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
@@ -15,11 +13,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 data class ConfigureWorkoutUiState(
-    val selectedExercises: List<ExerciseModel> = emptyList(),
     val workoutName: String = "",
+    val exerciseConfigs: List<ExerciseConfigState> = emptyList(),
     val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false
@@ -28,7 +28,8 @@ data class ConfigureWorkoutUiState(
 data class ExerciseConfigState(
     val exerciseId: String,
     val name: String,
-    val sets: MutableList<SetState> = mutableStateListOf(SetState(1, 20.0, 10))
+    val muscleGroupId: String,
+    val sets: List<SetState> = listOf(SetState(1, 20.0, 10))
 )
 
 data class SetState(
@@ -46,39 +47,25 @@ class ConfigureWorkoutViewModel(
     private val _uiState = MutableStateFlow(ConfigureWorkoutUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _exerciseConfigs = mutableStateListOf<ExerciseConfigState>()
-    val exerciseConfigs: List<ExerciseConfigState> get() = _exerciseConfigs
-
     fun loadExercises(exerciseIds: List<String>, workoutName: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, workoutName = workoutName) }
-            
-            val allMuscleGroups = getExerciseDataUseCase.getMuscleGroups()
-            val allExercises = mutableListOf<ExerciseModel>()
-            
-            allMuscleGroups.forEach { group ->
-                allExercises.addAll(getExerciseDataUseCase.getExercisesByGroup(group.id))
+            val selectedExercises = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+            val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
+                getExerciseDataUseCase.getMuscleGroups().find { it.id == first.muscleGroupId }?.type
             }
 
-            val selected = allExercises.filter { it.id in exerciseIds }
-            
-            val muscleGroupType = selected.firstOrNull()?.let { firstExercise ->
-                allMuscleGroups.find { it.id == firstExercise.muscleGroupId }?.type
-            }
-
-            _exerciseConfigs.clear()
-            selected.forEach { exercise ->
-                _exerciseConfigs.add(
-                    ExerciseConfigState(
-                        exerciseId = exercise.id,
-                        name = exercise.name
-                    )
+            val configs = selectedExercises.map { exercise ->
+                ExerciseConfigState(
+                    exerciseId = exercise.id,
+                    name = exercise.name,
+                    muscleGroupId = exercise.muscleGroupId
                 )
             }
 
-            _uiState.update { 
+            _uiState.update {
                 it.copy(
-                    selectedExercises = selected,
+                    exerciseConfigs = configs,
                     muscleGroupType = muscleGroupType,
                     isLoading = false
                 )
@@ -87,63 +74,81 @@ class ConfigureWorkoutViewModel(
     }
 
     fun addSet(exerciseId: String) {
-        val config = _exerciseConfigs.find { it.exerciseId == exerciseId }
-        config?.let {
-            val nextSetNumber = it.sets.size + 1
-            val lastSet = it.sets.lastOrNull()
-            it.sets.add(SetState(nextSetNumber, lastSet?.weight ?: 20.0, lastSet?.reps ?: 10))
+        _uiState.update { state ->
+            val updatedConfigs = state.exerciseConfigs.map { config ->
+                if (config.exerciseId == exerciseId) {
+                    val nextNumber = config.sets.size + 1
+                    val lastSet = config.sets.lastOrNull()
+                    config.copy(
+                        sets = config.sets + SetState(
+                            setNumber = nextNumber,
+                            weight = lastSet?.weight ?: 20.0,
+                            reps = lastSet?.reps ?: 10
+                        )
+                    )
+                } else config
+            }
+            state.copy(exerciseConfigs = updatedConfigs)
         }
     }
 
     fun removeSet(exerciseId: String, setIndex: Int) {
-        val config = _exerciseConfigs.find { it.exerciseId == exerciseId }
-        if (config != null && config.sets.size > 1) {
-            config.sets.removeAt(setIndex)
-            val newSets = config.sets.mapIndexed { index, setState ->
-                setState.copy(setNumber = index + 1)
+        _uiState.update { state ->
+            val updatedConfigs = state.exerciseConfigs.map { config ->
+                if (config.exerciseId == exerciseId && config.sets.size > 1) {
+                    val newSets = config.sets.toMutableList().apply { removeAt(setIndex) }
+                        .mapIndexed { index, setState -> setState.copy(setNumber = index + 1) }
+                    config.copy(sets = newSets)
+                } else config
             }
-            config.sets.clear()
-            config.sets.addAll(newSets)
+            state.copy(exerciseConfigs = updatedConfigs)
         }
     }
 
     fun updateSet(exerciseId: String, setIndex: Int, weight: Double, reps: Int) {
-        val config = _exerciseConfigs.find { it.exerciseId == exerciseId }
-        config?.let {
-            it.sets[setIndex] = it.sets[setIndex].copy(reps = reps, weight = weight)
+        _uiState.update { state ->
+            val updatedConfigs = state.exerciseConfigs.map { config ->
+                if (config.exerciseId == exerciseId) {
+                    val newSets = config.sets.toMutableList().apply {
+                        this[setIndex] = this[setIndex].copy(weight = weight, reps = reps)
+                    }
+                    config.copy(sets = newSets)
+                } else config
+            }
+            state.copy(exerciseConfigs = updatedConfigs)
         }
     }
 
     fun saveWorkout() {
+        val currentState = _uiState.value
+        if (currentState.isLoading) return
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            
-            val workoutExercises = _exerciseConfigs.map { config ->
+
+            val workoutExercises = currentState.exerciseConfigs.map { config ->
                 WorkoutExercise(
                     exerciseId = config.exerciseId,
-                    sets = config.sets.map { 
+                    sets = config.sets.map { set ->
                         ExerciseSet(
-                            id = config.exerciseId.toLong(),
-                            setNumber = it.setNumber,
-                            reps = it.reps,
-                            load = it.weight
+                            setNumber = set.setNumber,
+                            reps = set.reps,
+                            load = set.weight
                         )
                     }
                 )
             }
 
-            val userId = getUserIdUseCase() ?: "default_user"
-
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
             val workout = Workout(
-                userId = userId,
-                name = _uiState.value.workoutName,
-                muscleGroupId = _uiState.value.selectedExercises.firstOrNull()?.muscleGroupId ?: "",
-                date = Date().time,
+                userId = getUserIdUseCase() ?: "default_user",
+                name = currentState.workoutName,
+                muscleGroupId = currentState.exerciseConfigs.firstOrNull()?.muscleGroupId ?: "",
+                date = dateFormat.format(Date()),
                 exercises = workoutExercises
             )
 
             saveWorkoutUseCase(workout)
-            
             _uiState.update { it.copy(isLoading = false, isSaved = true) }
         }
     }

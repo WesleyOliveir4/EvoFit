@@ -161,9 +161,9 @@ private fun WorkoutPreviewScreenPreview() {
                 totalExercises = 3,
                 totalSets = 7,
                 exercises = listOf(
-                    ExercisePreviewItem("Supino reto", 3, 80.0, 10),
-                    ExercisePreviewItem("Supino inclinado", 2, 70.0, 10),
-                    ExercisePreviewItem("Crucifixo", 2, 20.0, 12)
+                    ExercisePreviewItem(1L, "Supino reto", 3, 80.0, 10),
+                    ExercisePreviewItem(2L, "Supino inclinado", 2, 70.0, 10),
+                    ExercisePreviewItem(3L, "Crucifixo", 2, 20.0, 12)
                 )
             ),
             onBackClick = {},

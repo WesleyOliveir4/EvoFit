@@ -45,7 +45,7 @@ fun ExerciseTrackingCard(
     index: Int,
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
-    onToggleSetDone: (String, Int) -> Unit,
+    onToggleSetDone: (Long, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -155,7 +155,7 @@ fun ExerciseTrackingCard(
                                 CustomCircularCheckbox(
                                     isChecked = setItem.isDone,
                                     onCheckedChange = {
-                                        onToggleSetDone(exercise.id, setItem.setNumber)
+                                        onToggleSetDone(exercise.workoutExerciseId, setItem.setNumber)
                                     }
                                 )
                             }

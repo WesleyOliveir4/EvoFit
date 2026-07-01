@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
@@ -39,6 +41,8 @@ class WorkoutViewModel(
                     calendar.set(Calendar.SECOND, 0)
                     calendar.set(Calendar.MILLISECOND, 0)
                     val startOfWeek = calendar.timeInMillis
+                    
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("pt-BR"))
 
                     WorkoutState(
                         userName = userData.name,
@@ -52,7 +56,14 @@ class WorkoutViewModel(
                             )
                         },
                         totalWorkouts = workouts.size,
-                        workoutsThisWeek = workouts.count { it.date >= startOfWeek }
+                        workoutsThisWeek = workouts.count { 
+                            try {
+                                val date = dateFormat.parse(it.date)
+                                date != null && date.time >= startOfWeek
+                            } catch (e: Exception) {
+                                false
+                            }
+                        }
                     )
                 }
             }

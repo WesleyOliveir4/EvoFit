@@ -8,7 +8,7 @@ data class Workout(
     val name: String,
     val muscleGroupId: String,
     val muscleGroup: MuscleGroupModel? = null,
-    val date: Long,
+    val date: String,
     val exercises: List<WorkoutExercise>
 )
 

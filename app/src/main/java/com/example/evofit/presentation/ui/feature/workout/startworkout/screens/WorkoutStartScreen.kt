@@ -67,8 +67,8 @@ fun WorkoutStartScreen(
     } else {
         WorkoutStartContent(
             uiState = uiState,
-            onToggleSetDone = { exerciseId, setNumber ->
-                viewModel.toggleSetDone(exerciseId, setNumber)
+            onToggleSetDone = { workoutExerciseId, setNumber ->
+                viewModel.toggleSetDone(workoutExerciseId, setNumber)
             },
             onFinishWorkoutClick = { viewModel.onFinishClick() }
         )
@@ -113,16 +113,16 @@ fun WorkoutStartScreen(
 @Composable
 fun WorkoutStartContent(
     uiState: WorkoutStartUiState,
-    onToggleSetDone: (String, Int) -> Unit,
+    onToggleSetDone: (Long, Int) -> Unit,
     onFinishWorkoutClick: () -> Unit
 ) {
     val totalSets = uiState.exercises.sumOf { it.sets.size }
     val doneSets = uiState.exercises.sumOf { it.sets.count { set -> set.isDone } }
-    var expandedExerciseIds by remember { mutableStateOf(setOf<String>()) }
+    var expandedWorkoutExerciseIds by remember { mutableStateOf(setOf<Long>()) }
 
     LaunchedEffect(uiState.exercises) {
-        if (expandedExerciseIds.isEmpty() && uiState.exercises.isNotEmpty()) {
-            expandedExerciseIds = setOf(uiState.exercises.first().id)
+        if (expandedWorkoutExerciseIds.isEmpty() && uiState.exercises.isNotEmpty()) {
+            expandedWorkoutExerciseIds = setOf(uiState.exercises.first().workoutExerciseId)
         }
     }
 
@@ -220,12 +220,12 @@ fun WorkoutStartContent(
                 ExerciseTrackingCard(
                     exercise = exercise,
                     index = index,
-                    isExpanded = expandedExerciseIds.contains(exercise.id),
+                    isExpanded = expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId),
                     onExpandClick = {
-                        expandedExerciseIds = if (expandedExerciseIds.contains(exercise.id)) {
-                            expandedExerciseIds - exercise.id
+                        expandedWorkoutExerciseIds = if (expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId)) {
+                            expandedWorkoutExerciseIds - exercise.workoutExerciseId
                         } else {
-                            expandedExerciseIds + exercise.id
+                            expandedWorkoutExerciseIds + exercise.workoutExerciseId
                         }
                     },
                     onToggleSetDone = onToggleSetDone
@@ -244,7 +244,8 @@ private fun WorkoutStartScreenPreview() {
                 workoutTitle = "Peito",
                 exercises = listOf(
                     ExerciseProgressState(
-                        id = "1",
+                        workoutExerciseId = 1L,
+                        exerciseId = "1",
                         name = "Supino reto",
                         sets = listOf(
                             SetProgressState(1, 80.0, 10, true),

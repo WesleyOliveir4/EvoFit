@@ -144,6 +144,10 @@ class LocalExerciseDataSource {
         return exercises.filter { it.muscleGroupId == groupId }
     }
 
+    fun getExercisesByIds(ids: List<String>): List<ExerciseModel> {
+        return exercises.filter { it.id in ids }
+    }
+
     fun getSuggestions(): List<GoalSuggestion> = suggestions
 
     fun getMuscleGroupWithExercises(groupId: String): MuscleGroupWithExercises? {

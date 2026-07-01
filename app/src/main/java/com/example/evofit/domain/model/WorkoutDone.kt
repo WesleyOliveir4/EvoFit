@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WorkoutDone(
-    val date: Long,
+    val date: String,
     val nameWorkout: String,
     val time: String,
     val muscleGroupModel: MuscleGroupModel?,

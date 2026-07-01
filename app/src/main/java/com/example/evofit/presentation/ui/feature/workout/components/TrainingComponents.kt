@@ -1015,6 +1015,7 @@ data class WorkoutDetailPreview(
 )
 
 data class ExercisePreviewItem(
+    val workoutExerciseId: Long,
     val name: String,
     val setsCount: Int,
     val weight: Double,

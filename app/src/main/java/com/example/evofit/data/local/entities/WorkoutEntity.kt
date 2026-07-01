@@ -22,5 +22,5 @@ data class WorkoutEntity(
     val userId: String,
     val name: String,
     val muscleGroupId: String,
-    val date: Long
+    val date: String
 )

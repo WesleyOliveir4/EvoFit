@@ -20,13 +20,14 @@ data class WorkoutStartUiState(
     val workoutTitle: String = "",
     val exercises: List<ExerciseProgressState> = emptyList(),
     val isLoading: Boolean = true,
-    val elapsedTime: String = "00:00",
+    val elapsedTime: String = "00:00:00",
     val showFinishDialog: Boolean = false,
     val workoutCompleted: Boolean = false
 )
 
 data class ExerciseProgressState(
-    val id: String,
+    val workoutExerciseId: Long,
+    val exerciseId: String,
     val name: String,
     val sets: List<SetProgressState>
 )
@@ -65,13 +66,17 @@ class WorkoutStartViewModel(
                 workoutDomain = workout
                 workout?.let { w ->
                     val groupName = w.muscleGroup?.name ?: ""
+                    
+                    val exerciseIds = w.exercises.map { it.exerciseId }
+                    val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                        .associateBy { it.id }
 
                     val exercises = w.exercises.map { workoutExercise ->
-                        val exerciseInfo = getExerciseDataUseCase.getExercisesByGroup(w.muscleGroupId)
-                            .find { it.id == workoutExercise.exerciseId }
+                        val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
 
                         ExerciseProgressState(
-                            id = workoutExercise.exerciseId,
+                            workoutExerciseId = workoutExercise.id,
+                            exerciseId = workoutExercise.exerciseId,
                             name = exerciseInfo?.name ?: "",
                             sets = workoutExercise.sets.mapIndexed { index, set ->
                                 SetProgressState(
@@ -116,17 +121,13 @@ class WorkoutStartViewModel(
         val seconds = (millis / 1000) % 60
         val minutes = (millis / (1000 * 60)) % 60
         val hours = (millis / (1000 * 60 * 60))
-        return if (hours > 0) {
-            "%02d:%02d:%02d".format(hours, minutes, seconds)
-        } else {
-            "%02d:%02d".format(minutes, seconds)
-        }
+        return "%02d:%02d:%02d".format(hours, minutes, seconds)
     }
 
-    fun toggleSetDone(exerciseId: String, setNumber: Int) {
+    fun toggleSetDone(workoutExerciseId: Long, setNumber: Int) {
         _uiState.update { currentState ->
             val updatedExercises = currentState.exercises.map { exercise ->
-                if (exercise.id == exerciseId) {
+                if (exercise.workoutExerciseId == workoutExerciseId) {
                     val updatedSets = exercise.sets.map { set ->
                         if (set.setNumber == setNumber) {
                             set.copy(isDone = !set.isDone)
@@ -159,7 +160,7 @@ class WorkoutStartViewModel(
             val doneSets = _uiState.value.exercises.flatMap { exercise ->
                 exercise.sets.filter { it.isDone }.map { set ->
                     ExerciseSetEntity(
-                        workoutExerciseId = 0, // Not relevant for history summary
+                        workoutExerciseId = exercise.workoutExerciseId,
                         setNumber = set.setNumber,
                         reps = set.reps,
                         load = set.weight
@@ -167,8 +168,9 @@ class WorkoutStartViewModel(
                 }
             }
 
+            val dateFormat = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale("pt", "BR"))
             val workoutDone = WorkoutDone(
-                date = System.currentTimeMillis(),
+                date = dateFormat.format(java.util.Date()),
                 nameWorkout = workout.name,
                 time = _uiState.value.elapsedTime,
                 muscleGroupModel = workout.muscleGroup,

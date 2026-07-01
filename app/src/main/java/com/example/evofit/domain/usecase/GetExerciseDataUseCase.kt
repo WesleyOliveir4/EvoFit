@@ -12,5 +12,8 @@ class GetExerciseDataUseCase(private val dataSource: LocalExerciseDataSource) {
     fun getExercisesByGroup(groupId: String): List<ExerciseModel> = 
         dataSource.getExercisesByMuscleGroup(groupId)
 
+    fun getExercisesByIds(ids: List<String>): List<ExerciseModel> =
+        dataSource.getExercisesByIds(ids)
+
     fun getSuggestions(): List<GoalSuggestion> = dataSource.getSuggestions()
 }
