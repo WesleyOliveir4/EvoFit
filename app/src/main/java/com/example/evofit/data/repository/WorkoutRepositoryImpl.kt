@@ -15,6 +15,10 @@ class WorkoutRepositoryImpl(private val userDao: UserDao) : WorkoutRepository {
         }
     }
 
+    override fun getWorkoutById(workoutId: Long): Flow<Workout?> {
+        return userDao.getFullWorkoutById(workoutId).map { it?.toDomain() }
+    }
+
     override suspend fun saveWorkout(workout: Workout): Long {
         val workoutId = userDao.insertWorkout(workout.toEntity())
         workout.exercises.forEach { exercise ->

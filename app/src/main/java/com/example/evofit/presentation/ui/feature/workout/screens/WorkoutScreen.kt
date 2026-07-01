@@ -51,6 +51,9 @@ fun WorkoutScreen(
             localWorkouts = mutableList
         },
         onNavigate = onNavigate,
+        onWorkoutClick = { workout ->
+            onNavigate(NavRoutes.WorkoutPreview.createRoute(workout.id))
+        },
         onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.route) }
     )
 }
@@ -63,6 +66,7 @@ fun WorkoutContent(
     workoutsThisWeek: Int,
     onMove: (Int, Int) -> Unit,
     onNavigate: (String) -> Unit,
+    onWorkoutClick: (WorkoutUIModel) -> Unit,
     onAddWorkoutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -140,7 +144,11 @@ fun WorkoutContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            draggableWorkoutList(workouts, dragState)
+            draggableWorkoutList(
+                workouts = workouts,
+                dragState = dragState,
+                onWorkoutClick = onWorkoutClick
+            )
             
             item { Spacer(modifier = Modifier.height(100.dp)) }
         }
@@ -161,6 +169,7 @@ private fun WorkoutContentPreview() {
             workoutsThisWeek = 1,
             onMove = { _, _ -> },
             onNavigate = {},
+            onWorkoutClick = {},
             onAddWorkoutClick = {}
         )
     }

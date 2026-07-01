@@ -221,7 +221,8 @@ fun rememberWorkoutDraggableListState(
 
 fun LazyListScope.draggableWorkoutList(
     workouts: List<WorkoutUIModel>,
-    dragState: WorkoutDraggableListState
+    dragState: WorkoutDraggableListState,
+    onWorkoutClick: (WorkoutUIModel) -> Unit
 ) {
     itemsIndexed(workouts, key = { _, it -> it.id }) { _, workout ->
         val isDragging = dragState.draggedItemId == workout.id
@@ -233,7 +234,8 @@ fun LazyListScope.draggableWorkoutList(
             onDragStart = { dragState.onDragStart(workout.id) },
             onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
             onDragEnd = { dragState.onDragEnd() },
-            onDragCancel = { dragState.onDragEnd() }
+            onDragCancel = { dragState.onDragEnd() },
+            onClick = { onWorkoutClick(workout) }
         )
     }
 }
@@ -247,7 +249,8 @@ fun WorkoutListItem(
     onDragStart: () -> Unit = {},
     onDrag: (Float) -> Unit = {},
     onDragEnd: () -> Unit = {},
-    onDragCancel: () -> Unit = {}
+    onDragCancel: () -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     val density = LocalDensity.current
     
@@ -271,11 +274,14 @@ fun WorkoutListItem(
                             shape = RoundedCornerShape(16.dp)
                         )
                 } else {
-                    Modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = RoundedCornerShape(16.dp)
-                    )
+                    Modifier
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable { onClick() }
                 }
             ),
         shape = RoundedCornerShape(16.dp),
@@ -966,6 +972,120 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
+        }
+    }
+}
+
+// Workout Preview Components
+data class WorkoutDetailPreview(
+    val title: String,
+    val totalExercises: Int,
+    val totalSets: Int,
+    val exercises: List<ExercisePreviewItem>
+)
+
+data class ExercisePreviewItem(
+    val name: String,
+    val setsCount: Int,
+    val weight: Double,
+    val reps: Int
+)
+
+@Composable
+fun HeaderIndicatorCard(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.height(90.dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = value,
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun ExercisePreviewCard(
+    index: Int,
+    item: ExercisePreviewItem
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$index",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = item.name,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                val weightStr = if (item.weight % 1 == 0.0) "${item.weight.toInt()}" else "${item.weight}"
+                Text(
+                    text = stringResource(
+                        R.string.main_workout_exercise_series_format,
+                        stringResource(R.string.main_workout_series_count, item.setsCount),
+                        "$weightStr kg × ${item.reps} reps"
+                    ),
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }

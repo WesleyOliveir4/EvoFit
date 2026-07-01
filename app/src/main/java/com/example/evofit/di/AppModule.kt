@@ -14,6 +14,8 @@ import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCaseImpl
+import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
+import com.example.evofit.domain.usecase.GetWorkoutByIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCaseImpl
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
@@ -28,10 +30,12 @@ import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.ConfigureWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.SelectExercisesViewModel
+import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.core.parameter.parametersOf
 
 val dataModule = module {
     single {
@@ -57,6 +61,7 @@ val domainModule = module {
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
+    factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
 }
 
@@ -104,6 +109,13 @@ val workoutModule = module {
     viewModel {
         ConfigureWorkoutViewModel(
             get(),
+            get(),
+            get()
+        )
+    }
+    viewModel { (workoutId: Int) ->
+        WorkoutPreviewViewModel(
+            workoutId = workoutId,
             get(),
             get()
         )

@@ -48,4 +48,8 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM workouts WHERE userId = :userId")
     fun getFullWorkouts(userId: String): Flow<List<FullWorkout>>
+
+    @Transaction
+    @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
+    fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
 }
