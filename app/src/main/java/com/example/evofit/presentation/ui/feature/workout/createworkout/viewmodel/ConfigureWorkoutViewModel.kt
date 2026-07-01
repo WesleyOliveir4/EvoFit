@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.viewmodel
+package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

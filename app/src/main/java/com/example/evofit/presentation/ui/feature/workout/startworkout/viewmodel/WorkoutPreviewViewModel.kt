@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.viewmodel
+package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,7 @@ class WorkoutPreviewViewModel(
                 val exercises = it.exercises.map { workoutExercise ->
                     val muscleGroup = getExerciseDataUseCase.getMuscleGroups()
                         .find { group -> group.id == it.muscleGroupId }
-                    
+
                     val exercise = getExerciseDataUseCase.getExercisesByGroup(it.muscleGroupId)
                         .find { ex -> ex.id == workoutExercise.exerciseId }
 
@@ -48,7 +48,7 @@ class WorkoutPreviewViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = null
         )
 }

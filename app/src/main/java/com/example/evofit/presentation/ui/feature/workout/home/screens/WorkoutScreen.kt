@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.screens
+package com.example.evofit.presentation.ui.feature.workout.home.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +23,7 @@ import com.example.evofit.presentation.ui.feature.workout.components.HeaderSecti
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
 import com.example.evofit.presentation.ui.feature.workout.components.draggableWorkoutList
 import com.example.evofit.presentation.ui.feature.workout.components.rememberWorkoutDraggableListState
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 

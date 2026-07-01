@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.screens
+package com.example.evofit.presentation.ui.feature.workout.startworkout.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,7 +22,7 @@ import com.example.evofit.presentation.ui.feature.workout.components.ExercisePre
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderIndicatorCard
 import com.example.evofit.presentation.ui.feature.workout.components.WorkoutDetailPreview
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutPreviewViewModel
+import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf

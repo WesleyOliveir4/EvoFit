@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.screens
+package com.example.evofit.presentation.ui.feature.workout.createworkout.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +35,7 @@ import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupCard
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 

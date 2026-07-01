@@ -11,11 +11,11 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoal
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
-import com.example.evofit.presentation.ui.feature.workout.screens.ConfigureWorkoutScreen
-import com.example.evofit.presentation.ui.feature.workout.screens.NewWorkoutScreen
-import com.example.evofit.presentation.ui.feature.workout.screens.SelectExercisesScreen
-import com.example.evofit.presentation.ui.feature.workout.screens.WorkoutPreviewScreen
-import com.example.evofit.presentation.ui.feature.workout.screens.WorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
+import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
+import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
 
 @Composable
 fun NavNavigation() {

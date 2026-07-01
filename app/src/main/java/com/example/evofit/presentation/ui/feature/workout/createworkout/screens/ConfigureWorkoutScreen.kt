@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.screens
+package com.example.evofit.presentation.ui.feature.workout.createworkout.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -30,10 +30,10 @@ import com.example.evofit.presentation.ui.feature.workout.components.AddSetDashe
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePageSegmentedIndicator
 import com.example.evofit.presentation.ui.feature.workout.components.RepsCounterComponent
 import com.example.evofit.presentation.ui.feature.workout.components.WeightWheelSelector
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.ConfigureWorkoutViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.ExerciseConfigState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ExerciseConfigState
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.SetState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SetState
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

@@ -1,11 +1,11 @@
-package com.example.evofit.presentation.ui.feature.workout.viewmodel
+package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
-import com.example.evofit.presentation.ui.feature.workout.state.SelectExercisesUiState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SelectExercisesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +24,7 @@ class SelectExercisesViewModel(
     fun loadExercises(muscleGroupId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            
+
             val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val group = muscleGroups.find { it.id.lowercase() == muscleGroupId.lowercase() }
             val groupName = group?.name ?: muscleGroupId.replaceFirstChar { it.uppercase() }
@@ -34,7 +34,7 @@ class SelectExercisesViewModel(
                 ExerciseSelectionUIModel(it.id, it.name)
             }
 
-            _uiState.update { 
+            _uiState.update {
                 it.copy(
                     muscleGroupName = groupName,
                     workoutName = groupName,
@@ -54,7 +54,7 @@ class SelectExercisesViewModel(
     }
 
     fun confirmEditingName() {
-        _uiState.update { 
+        _uiState.update {
             it.copy(
                 workoutName = it.tempWorkoutName,
                 isEditingName = false,

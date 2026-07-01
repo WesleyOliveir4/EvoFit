@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.viewmodel
+package com.example.evofit.presentation.ui.feature.workout.home.viewmodel
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -8,11 +8,15 @@ import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.presentation.model.WorkoutUIModel
-import com.example.evofit.presentation.ui.feature.workout.state.WorkoutState
+import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
-import java.util.*
-
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import java.util.Calendar
 
 class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
@@ -54,7 +58,7 @@ class WorkoutViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = WorkoutState()
         )
 }

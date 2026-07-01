@@ -27,15 +27,14 @@ import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.ConfigureWorkoutViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.SelectExercisesViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutPreviewViewModel
-import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
+import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
+import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import org.koin.core.parameter.parametersOf
 
 val dataModule = module {
     single {

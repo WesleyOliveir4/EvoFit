@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.workout.state
+package com.example.evofit.presentation.ui.feature.workout.home.state
 
 import com.example.evofit.presentation.model.WorkoutUIModel
 
