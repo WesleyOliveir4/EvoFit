@@ -15,13 +15,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.R
+import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.ExerciseRowItem
-import com.example.evofit.presentation.ui.feature.workout.components.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -87,7 +89,7 @@ fun SelectExercisesContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Selecionar Exercícios",
+                        text = stringResource(R.string.select_exercises_title),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -97,7 +99,7 @@ fun SelectExercisesContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.select_exercises_back_desc),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -127,7 +129,7 @@ fun SelectExercisesContent(
                         )
                     ) {
                         Text(
-                            text = "Configurar Exercícios",
+                            text = stringResource(R.string.select_exercises_button_configure),
                             color = if (isButtonEnabled) Color.Black else MaterialTheme.colorScheme.secondary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
@@ -176,14 +178,14 @@ fun SelectExercisesContent(
                             IconButton(onClick = onConfirmEditingName) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Confirmar",
+                                    contentDescription = stringResource(R.string.select_exercises_confirm_desc),
                                     tint = Color.Green
                                 )
                             }
                             IconButton(onClick = onCancelEditingName) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Cancelar",
+                                    contentDescription = stringResource(R.string.select_exercises_cancel_desc),
                                     tint = Color.White
                                 )
                             }
@@ -196,7 +198,7 @@ fun SelectExercisesContent(
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Nome: ",
+                                    text = stringResource(R.string.select_exercises_label_name),
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
@@ -211,7 +213,7 @@ fun SelectExercisesContent(
                             IconButton(onClick = onStartEditingName) {
                                 Icon(
                                     imageVector = Icons.Default.Edit,
-                                    contentDescription = "Editar nome",
+                                    contentDescription = stringResource(R.string.select_exercises_edit_name_desc),
                                     tint = MaterialTheme.colorScheme.secondary,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -220,7 +222,7 @@ fun SelectExercisesContent(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "${exercises.size} exercícios disponíveis",
+                        text = stringResource(R.string.select_exercises_available_count, exercises.size),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp
                     )

@@ -14,7 +14,7 @@ fun UserOnboardingData.toEntity(userId: String = UUID.randomUUID().toString()): 
         age = age,
         weight = weight,
         height = height,
-        isOnboardingCompleted = false // This will be updated by completeOnboarding
+        isOnboardingCompleted = false
     )
 }
 

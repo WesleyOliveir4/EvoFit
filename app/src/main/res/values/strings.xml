@@ -108,6 +108,16 @@
     <string name="new_workout_back_desc">Voltar</string>
     <string name="new_workout_select_group">Selecione o grupo muscular</string>
 
+    <!-- Select Exercises Screen -->
+    <string name="select_exercises_title">Selecionar Exercícios</string>
+    <string name="select_exercises_back_desc">Voltar</string>
+    <string name="select_exercises_button_configure">Configurar Exercícios</string>
+    <string name="select_exercises_confirm_desc">Confirmar</string>
+    <string name="select_exercises_cancel_desc">Cancelar</string>
+    <string name="select_exercises_label_name">Nome: </string>
+    <string name="select_exercises_edit_name_desc">Editar nome</string>
+    <string name="select_exercises_available_count">%1$d exercícios disponíveis</string>
+
     <!-- Bottom Navigation -->
     <string name="nav_training">Treino</string>
     <string name="nav_evo">Evo</string>

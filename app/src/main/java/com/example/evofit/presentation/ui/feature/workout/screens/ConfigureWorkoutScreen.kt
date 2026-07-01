@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.data.model.MuscleGroupType
+import com.example.evofit.presentation.mapper.toIcon
 import com.example.evofit.presentation.ui.feature.workout.components.AddSetDashedButton
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePageSegmentedIndicator
 import com.example.evofit.presentation.ui.feature.workout.components.RepsCounterComponent
@@ -68,7 +70,6 @@ fun ConfigureWorkoutScreen(
 
     val pagerState = rememberPagerState(pageCount = { configs.size })
 
-    // Intercepta o botão voltar (gesto/físico)
     BackHandler {
         if (pagerState.currentPage > 0) {
             coroutineScope.launch {
@@ -107,7 +108,7 @@ fun ConfigureWorkoutScreen(
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.new_workout_back_desc),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -181,6 +182,7 @@ fun ConfigureWorkoutScreen(
             ) { page ->
                 ExerciseConfigContent(
                     config = configs[page],
+                    muscleGroupType = uiState.muscleGroupType,
                     onAddSet = { viewModel.addSet(it) },
                     onUpdateSet = { id, idx, weight, reps -> viewModel.updateSet(id, idx, weight, reps) },
                     onRemoveSet = { id, idx -> viewModel.removeSet(id, idx) }
@@ -193,10 +195,13 @@ fun ConfigureWorkoutScreen(
 @Composable
 fun ExerciseConfigContent(
     config: ExerciseConfigState,
+    muscleGroupType: MuscleGroupType?,
     onAddSet: (String) -> Unit,
     onUpdateSet: (String, Int, Double, Int) -> Unit,
     onRemoveSet: (String, Int) -> Unit
 ) {
+    val muscleGroupIcon = muscleGroupType?.toIcon()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -215,7 +220,16 @@ fun ExerciseConfigContent(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("🏋️", fontSize = 20.sp)
+                    if (muscleGroupIcon != null) {
+                        Icon(
+                            imageVector = muscleGroupIcon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
+                        Text("", fontSize = 20.sp)
+                    }
                 }
                 Column {
                     Text(
@@ -265,7 +279,6 @@ fun ExerciseConfigContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Indicador de Série Modificado com Botão de Remoção Integrado no Canto Esquerdo
                 Row(
                     modifier = Modifier
                         .weight(0.8f)
@@ -274,7 +287,6 @@ fun ExerciseConfigContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    // Botão de remover vermelho: quadrado com bordas arredondadas ao canto esquerdo do componente
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -295,7 +307,6 @@ fun ExerciseConfigContent(
                         )
                     }
 
-                    // Número da Série centralizado no espaço restante
                     Text(
                         text = "${index + 1}",
                         color = MaterialTheme.colorScheme.primary,
@@ -359,6 +370,7 @@ private fun ConfigureWorkoutScreenPreview() {
                 ExercisePageSegmentedIndicator(totalCount = 3, currentIndex = 0)
                 ExerciseConfigContent(
                     config = mockConfig,
+                    muscleGroupType = MuscleGroupType.CHEST,
                     onAddSet = {},
                     onUpdateSet = { _, _, _, _ -> },
                     onRemoveSet = { _, _ -> }

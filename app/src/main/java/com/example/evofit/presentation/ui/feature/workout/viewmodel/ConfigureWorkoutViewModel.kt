@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.data.model.ExerciseModel
+import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
@@ -19,6 +20,7 @@ import java.util.Date
 data class ConfigureWorkoutUiState(
     val selectedExercises: List<ExerciseModel> = emptyList(),
     val workoutName: String = "",
+    val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false
 )
@@ -60,6 +62,10 @@ class ConfigureWorkoutViewModel(
 
             val selected = allExercises.filter { it.id in exerciseIds }
             
+            val muscleGroupType = selected.firstOrNull()?.let { firstExercise ->
+                allMuscleGroups.find { it.id == firstExercise.muscleGroupId }?.type
+            }
+
             _exerciseConfigs.clear()
             selected.forEach { exercise ->
                 _exerciseConfigs.add(
@@ -73,6 +79,7 @@ class ConfigureWorkoutViewModel(
             _uiState.update { 
                 it.copy(
                     selectedExercises = selected,
+                    muscleGroupType = muscleGroupType,
                     isLoading = false
                 )
             }
@@ -92,7 +99,6 @@ class ConfigureWorkoutViewModel(
         val config = _exerciseConfigs.find { it.exerciseId == exerciseId }
         if (config != null && config.sets.size > 1) {
             config.sets.removeAt(setIndex)
-            // Renumber sets
             val newSets = config.sets.mapIndexed { index, setState ->
                 setState.copy(setNumber = index + 1)
             }

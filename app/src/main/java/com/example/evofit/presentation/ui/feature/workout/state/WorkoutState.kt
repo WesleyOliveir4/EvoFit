@@ -1,6 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.state
 
-import com.example.evofit.presentation.ui.feature.workout.components.WorkoutUIModel
+import com.example.evofit.presentation.model.WorkoutUIModel
 
 data class WorkoutState(
     val userName: String = "",

@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
+import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
-import com.example.evofit.presentation.ui.feature.workout.components.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.components.draggableWorkoutList
 import com.example.evofit.presentation.ui.feature.workout.components.rememberWorkoutDraggableListState
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel

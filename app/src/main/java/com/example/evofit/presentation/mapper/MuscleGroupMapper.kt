@@ -7,12 +7,13 @@ import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Whatshot
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.data.model.MuscleGroupModel
-import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupItem
+import com.example.evofit.presentation.model.MuscleGroupItem
 
-fun MuscleGroupModel.toItem(): MuscleGroupItem {
-    val icon = when (this.type) {
+fun MuscleGroupType.toIcon(): ImageVector {
+    return when (this) {
         MuscleGroupType.CHEST -> Icons.Default.Favorite
         MuscleGroupType.BACK -> Icons.Default.Face
         MuscleGroupType.SHOULDERS -> Icons.Default.Face
@@ -24,9 +25,12 @@ fun MuscleGroupModel.toItem(): MuscleGroupItem {
         MuscleGroupType.CALVES -> Icons.AutoMirrored.Filled.DirectionsRun
         MuscleGroupType.OTHER -> Icons.Default.Accessibility
     }
+}
+
+fun MuscleGroupModel.toItem(): MuscleGroupItem {
     return MuscleGroupItem(
         id = this.id,
         name = this.name,
-        temporaryIcon = icon
+        temporaryIcon = this.type.toIcon()
     )
 }

@@ -4,20 +4,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
-import com.example.evofit.presentation.ui.feature.workout.components.ExerciseSelectionUIModel
+import com.example.evofit.presentation.model.ExerciseSelectionUIModel
+import com.example.evofit.presentation.ui.feature.workout.state.SelectExercisesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class SelectExercisesUiState(
-    val muscleGroupName: String = "",
-    val workoutName: String = "",
-    val tempWorkoutName: String = "",
-    val isEditingName: Boolean = false,
-    val exercises: List<ExerciseSelectionUIModel> = emptyList(),
-    val isLoading: Boolean = false
-)
 
 class SelectExercisesViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase
@@ -33,13 +25,12 @@ class SelectExercisesViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             
-            // Aqui buscamos os grupos musculares para encontrar o nome correto
             val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val group = muscleGroups.find { it.id.lowercase() == muscleGroupId.lowercase() }
             val groupName = group?.name ?: muscleGroupId.replaceFirstChar { it.uppercase() }
 
             val exercises = getExerciseDataUseCase.getExercisesByGroup(muscleGroupId)
-            val uiExercises = exercises.map { 
+            val uiExercises = exercises.map {
                 ExerciseSelectionUIModel(it.id, it.name)
             }
 

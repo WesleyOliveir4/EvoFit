@@ -82,28 +82,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import com.example.evofit.R
+import com.example.evofit.presentation.model.ExerciseSelectionUIModel
+import com.example.evofit.presentation.model.MuscleGroupItem
+import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-data class WorkoutUIModel(
-    val id: Int,
-    val title: String,
-    val exercises: Int,
-    val series: Int,
-    val icon: ImageVector
-)
-
-data class MuscleGroupItem(
-    val id: String,
-    val name: String,
-    val temporaryIcon: ImageVector
-)
-
-data class ExerciseSelectionUIModel(
-    val id: String,
-    val name: String
-)
 
 @Composable
 fun HeaderSection(
@@ -202,13 +187,11 @@ class WorkoutDraggableListState(
 
     fun onDrag(deltaY: Float, workouts: List<WorkoutUIModel>) {
         dragOffset += deltaY
-        // Altura aproximada do item para cálculo de troca (92dp item + 12dp gap)
         val itemHeightPx = with(density) { 104.dp.toPx() }
         val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
 
         if (currentIndex != -1) {
-            // Threshold reduzido para 40% para tornar a troca mais sensível e fácil
-            val threshold = itemHeightPx * 0.4f 
+            val threshold = itemHeightPx * 0.4f
             if (dragOffset > threshold && currentIndex < workouts.size - 1) {
                 onMoveState.value(currentIndex, currentIndex + 1)
                 dragOffset -= itemHeightPx
@@ -268,7 +251,6 @@ fun WorkoutListItem(
 ) {
     val density = LocalDensity.current
     
-    // Captura os callbacks mais recentes para evitar closures obsoletas durante o gesto
     val currentOnDragStart by rememberUpdatedState(onDragStart)
     val currentOnDrag by rememberUpdatedState(onDrag)
     val currentOnDragEnd by rememberUpdatedState(onDragEnd)
@@ -561,7 +543,6 @@ fun ExerciseRowItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Indicador de seleção com animação interna
             Box(
                 modifier = Modifier
                     .size(24.dp)
@@ -681,7 +662,6 @@ fun CompactWeightDisplay(
             .clip(RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
-        // Neighbor previous - Partially visible on the left
         if (prevStr.isNotEmpty()) {
             Text(
                 text = prevStr,
@@ -694,14 +674,12 @@ fun CompactWeightDisplay(
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         layout(placeable.width, placeable.height) {
-                            // Hide 60% of the text to the left, showing exactly 40%
                             placeable.placeRelative(-(placeable.width * 0.6f).toInt(), 0)
                         }
                     }
             )
         }
 
-        // Center weight highlight
         Box(
             modifier = Modifier
                 .width(64.dp)
@@ -718,7 +696,6 @@ fun CompactWeightDisplay(
             )
         }
 
-        // Neighbor next
         Text(
             text = nextStr,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
@@ -730,7 +707,6 @@ fun CompactWeightDisplay(
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     layout(placeable.width, placeable.height) {
-                        // Hide 60% of the text to the right, showing exactly 40%
                         placeable.placeRelative((placeable.width * 0.6f).toInt(), 0)
                     }
                 }
@@ -833,7 +809,6 @@ fun WeightWheel(
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
 
     LaunchedEffect(startIndex) {
-        // Center the item: scroll directly to startIndex
         listState.scrollToItem(startIndex)
     }
 
@@ -854,7 +829,6 @@ fun WeightWheel(
             LazyColumn(
                 state = listState,
                 flingBehavior = flingBehavior,
-                // Adjusted padding to center the first item (200dp total, ~24dp item -> (200-24)/2 = 88)
                 contentPadding = PaddingValues(vertical = 88.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -894,7 +868,6 @@ fun WeightWheel(
             }
         }
 
-        // Indicador de seleção
         Box(
             modifier = if (isExpanded) {
                 Modifier

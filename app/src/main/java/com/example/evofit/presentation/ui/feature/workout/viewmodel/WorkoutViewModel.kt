@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
-import com.example.evofit.presentation.ui.feature.workout.components.WorkoutUIModel
+import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
