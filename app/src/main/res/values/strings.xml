@@ -128,4 +128,14 @@
     <string name="workout_preview_sets">Séries</string>
     <string name="workout_preview_start_training">Iniciar Treino</string>
     <string name="workout_preview_unknown_exercise">Exercício</string>
+    <!-- Workout Start Screen -->
+    <string name="workout_start_status">Em andamento · %1$d/%2$d séries</string>
+    <string name="workout_start_exercise_progress">%1$d/%2$d séries</string>
+    <string name="workout_start_finish_button">Finalizar Treino</string>
+    <string name="workout_start_expand_collapse_desc">Expandir/Colapsar</string>
+    <string name="workout_start_column_set">Série</string>
+    <string name="workout_start_column_weight">Peso</string>
+    <string name="workout_start_column_reps">Reps</string>
+    <string name="workout_start_column_ok">OK</string>
+    <string name="workout_start_weight_kg">%1$skg</string>
 </resources>

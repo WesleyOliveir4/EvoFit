@@ -356,6 +356,36 @@ fun WorkoutListItem(
     }
 }
 
+@Composable
+fun CustomCircularCheckbox(
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(if (isChecked) MaterialTheme.colorScheme.primary else Color.Transparent)
+            .border(
+                width = 2.dp,
+                color = if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                shape = CircleShape
+            )
+            .clickable { onCheckedChange(!isChecked) },
+        contentAlignment = Alignment.Center
+    ) {
+        if (isChecked) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = Color.Black,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 private fun HeaderSectionPreview() {

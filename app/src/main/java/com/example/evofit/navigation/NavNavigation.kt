@@ -15,6 +15,7 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
+import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
 
 @Composable
@@ -158,7 +159,25 @@ fun NavNavigation() {
                     navController.popBackStack()
                 },
                 onStartWorkoutClick = {
-                    // Logica para iniciar o treino
+                    navController.navigate(NavRoutes.WorkoutStart.createRoute(workoutId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutStart.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getInt("workoutId") ?: 0
+            WorkoutStartScreen(
+                workoutId = workoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onFinishWorkoutClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    }
                 }
             )
         }

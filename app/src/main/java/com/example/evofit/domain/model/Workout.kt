@@ -1,10 +1,13 @@
 package com.example.evofit.domain.model
 
+import com.example.evofit.data.model.MuscleGroupModel
+
 data class Workout(
     val id: Long = 0,
     val userId: String,
     val name: String,
     val muscleGroupId: String,
+    val muscleGroup: MuscleGroupModel? = null,
     val date: Long,
     val isCompleted: Boolean,
     val exercises: List<WorkoutExercise>

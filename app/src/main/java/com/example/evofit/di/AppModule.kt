@@ -31,6 +31,7 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmode
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
+import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -49,7 +50,7 @@ val dataModule = module {
     single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
-    single<WorkoutRepository> { WorkoutRepositoryImpl(get()) }
+    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
 }
 
 val domainModule = module {
@@ -114,6 +115,13 @@ val workoutModule = module {
     }
     viewModel { (workoutId: Int) ->
         WorkoutPreviewViewModel(
+            workoutId = workoutId,
+            get(),
+            get()
+        )
+    }
+    viewModel { (workoutId: Int) ->
+        WorkoutStartViewModel(
             workoutId = workoutId,
             get(),
             get()

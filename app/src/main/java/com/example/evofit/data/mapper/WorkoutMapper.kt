@@ -9,12 +9,15 @@ import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
 
-fun FullWorkout.toDomain(): Workout {
+import com.example.evofit.data.model.MuscleGroupModel
+
+fun FullWorkout.toDomain(muscleGroup: MuscleGroupModel? = null): Workout {
     return Workout(
         id = workout.workoutId,
         userId = workout.userId,
         name = workout.name,
         muscleGroupId = workout.muscleGroupId,
+        muscleGroup = muscleGroup,
         date = workout.date,
         isCompleted = workout.isCompleted,
         exercises = exercises.map { it.toDomain() }
