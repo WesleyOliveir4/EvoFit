@@ -7,15 +7,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
+import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -23,8 +28,11 @@ import java.util.Locale
 class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val getWorkoutsUseCase: GetWorkoutsUseCase
+    private val getWorkoutsUseCase: GetWorkoutsUseCase,
+    private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase
 ) : ViewModel() {
+
+    private var updateOrderJob: Job? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WorkoutState> = getOnboardingDataUseCase()
@@ -72,4 +80,21 @@ class WorkoutViewModel(
             started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = WorkoutState()
         )
+
+    fun updateWorkoutOrder(orderedList: List<WorkoutUIModel>) {
+        updateOrderJob?.cancel()
+        updateOrderJob = viewModelScope.launch {
+            delay(1000) // Debounce de 1 segundo
+            
+            val userId = getUserIdUseCase() ?: return@launch
+            // Buscamos os workouts atuais para manter os dados completos ao salvar a nova ordem
+            val currentWorkouts = getWorkoutsUseCase(userId).first()
+            
+            val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
+                currentWorkouts.find { it.id.toInt() == uiModel.id }
+            }
+            
+            updateWorkoutsOrderUseCase(reorderedWorkouts)
+        }
+    }
 }

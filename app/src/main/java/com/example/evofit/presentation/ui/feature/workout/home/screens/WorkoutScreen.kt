@@ -49,6 +49,7 @@ fun WorkoutScreen(
             val mutableList = localWorkouts.toMutableList()
             mutableList.add(to, mutableList.removeAt(from))
             localWorkouts = mutableList
+            viewModel.updateWorkoutOrder(localWorkouts)
         },
         onNavigate = onNavigate,
         onWorkoutClick = { workout ->

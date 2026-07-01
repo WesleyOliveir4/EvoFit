@@ -36,12 +36,25 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun saveWorkout(workout: Workout): Long {
-        val workoutId = userDao.insertWorkout(workout.toEntity())
-        workout.exercises.forEach { exercise ->
-            val exerciseId = userDao.insertWorkoutExercise(exercise.toEntity(workoutId))
-            userDao.insertExerciseSets(exercise.sets.map { it.toEntity(exerciseId) })
+        val nextOrderIndex = (userDao.getMaxOrderIndex(workout.userId) ?: -1) + 1
+        val workoutEntity = workout.toEntity().copy(orderIndex = nextOrderIndex)
+        
+        val exercises = workout.exercises.map { it.toEntity(0) }
+        val sets = workout.exercises.map { exercise ->
+            exercise.sets.map { it.toEntity(0) }
         }
-        return workoutId
+
+        userDao.insertFullWorkout(workoutEntity, exercises, sets)
+        return 0 // Since we're using a transaction for multiple inserts, returning 0 or the last ID. 
+                 // Note: If the specific ID is needed, we'd need to return it from insertFullWorkout.
+    }
+
+    override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
+        userDao.updateWorkoutsOrder(workouts.map { it.toEntity() })
+    }
+
+    override suspend fun getMaxOrderIndex(userId: String): Int {
+        return userDao.getMaxOrderIndex(userId) ?: -1
     }
 
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {

@@ -46,12 +46,36 @@ interface UserDao {
     }
 
     @Transaction
-    @Query("SELECT * FROM workouts WHERE userId = :userId")
+    @Query("SELECT * FROM workouts WHERE userId = :userId ORDER BY orderIndex ASC")
     fun getFullWorkouts(userId: String): Flow<List<FullWorkout>>
+
+    @Query("SELECT MAX(orderIndex) FROM workouts WHERE userId = :userId")
+    suspend fun getMaxOrderIndex(userId: String): Int?
+
+    @Update
+    suspend fun updateWorkouts(workouts: List<WorkoutEntity>)
+
+    @Transaction
+    suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>) {
+        updateWorkouts(workouts)
+    }
 
     @Transaction
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
     fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
+
+    @Transaction
+    suspend fun insertFullWorkout(
+        workout: WorkoutEntity,
+        exercises: List<WorkoutExerciseEntity>,
+        sets: List<List<ExerciseSetEntity>>
+    ) {
+        val workoutId = insertWorkout(workout)
+        exercises.forEachIndexed { index, exercise ->
+            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workoutId))
+            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+        }
+    }
 
     // Workout History
     @Insert(onConflict = OnConflictStrategy.REPLACE)

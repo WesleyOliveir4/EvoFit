@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.workout.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Canvas
@@ -68,6 +69,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
@@ -186,18 +188,28 @@ class WorkoutDraggableListState(
     }
 
     fun onDrag(deltaY: Float, workouts: List<WorkoutUIModel>) {
-        dragOffset += deltaY
-        val itemHeightPx = with(density) { 104.dp.toPx() }
         val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
+        if (currentIndex == -1) return
 
-        if (currentIndex != -1) {
-            val threshold = itemHeightPx * 0.4f
-            if (dragOffset > threshold && currentIndex < workouts.size - 1) {
+        val totalItemHeightPx = with(density) { 104.dp.toPx() }
+        val newOffset = dragOffset + deltaY
+        val threshold = totalItemHeightPx * 0.5f
+
+        when {
+            newOffset > threshold && currentIndex < workouts.lastIndex -> {
                 onMoveState.value(currentIndex, currentIndex + 1)
-                dragOffset -= itemHeightPx
-            } else if (dragOffset < -threshold && currentIndex > 0) {
+                dragOffset = newOffset - totalItemHeightPx
+            }
+            newOffset < -threshold && currentIndex > 0 -> {
                 onMoveState.value(currentIndex, currentIndex - 1)
-                dragOffset += itemHeightPx
+                dragOffset = newOffset + totalItemHeightPx
+            }
+            else -> {
+                dragOffset = when {
+                    currentIndex == 0 -> newOffset.coerceAtLeast(-totalItemHeightPx * 0.2f)
+                    currentIndex == workouts.lastIndex -> newOffset.coerceAtMost(totalItemHeightPx * 0.2f)
+                    else -> newOffset
+                }
             }
         }
     }
@@ -229,12 +241,14 @@ fun LazyListScope.draggableWorkoutList(
         WorkoutListItem(
             workout = workout,
             isDragging = isDragging,
-            dragOffset = dragState.dragOffset,
-            modifier = if (isDragging) Modifier.zIndex(10f) else Modifier.animateItem(),
+            dragOffset = { if (isDragging) dragState.dragOffset else 0f },
+            modifier = Modifier
+                .zIndex(if (isDragging) 10f else 1f)
+                .then(if (isDragging) Modifier else Modifier.animateItem()),
             onDragStart = { dragState.onDragStart(workout.id) },
             onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
-            onDragEnd = { dragState.onDragEnd() },
-            onDragCancel = { dragState.onDragEnd() },
+            onDragEnd = dragState::onDragEnd,
+            onDragCancel = dragState::onDragEnd,
             onClick = { onWorkoutClick(workout) }
         )
     }
@@ -245,45 +259,38 @@ fun WorkoutListItem(
     workout: WorkoutUIModel,
     modifier: Modifier = Modifier,
     isDragging: Boolean = false,
-    dragOffset: Float = 0f,
+    dragOffset: () -> Float = { 0f },
     onDragStart: () -> Unit = {},
     onDrag: (Float) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
-    val density = LocalDensity.current
-    
     val currentOnDragStart by rememberUpdatedState(onDragStart)
     val currentOnDrag by rememberUpdatedState(onDrag)
     val currentOnDragEnd by rememberUpdatedState(onDragEnd)
     val currentOnDragCancel by rememberUpdatedState(onDragCancel)
 
+    val animatedElevation by animateDpAsState(if (isDragging) 12.dp else 0.dp, label = "elevation")
+    val animatedScale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .then(
-                if (isDragging) {
-                    Modifier
-                        .offset(y = with(density) { dragOffset.toDp() })
-                        .scale(1.05f)
-                        .shadow(12.dp, RoundedCornerShape(16.dp))
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                } else {
-                    Modifier
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable { onClick() }
-                }
-            ),
+            .graphicsLayer {
+                translationY = dragOffset()
+                scaleX = animatedScale
+                scaleY = animatedScale
+                shadowElevation = animatedElevation.toPx()
+                shape = RoundedCornerShape(16.dp)
+                clip = true
+            }
+            .border(
+                width = 1.dp,
+                color = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable(enabled = !isDragging) { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
