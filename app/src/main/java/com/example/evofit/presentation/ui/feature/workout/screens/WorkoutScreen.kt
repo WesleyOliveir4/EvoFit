@@ -1,10 +1,7 @@
 package com.example.evofit.presentation.ui.feature.workout.screens
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,24 +9,20 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
-import com.example.evofit.presentation.ui.feature.workout.components.WorkoutListItem
 import com.example.evofit.presentation.ui.feature.workout.components.WorkoutUIModel
+import com.example.evofit.presentation.ui.feature.workout.components.draggableWorkoutList
+import com.example.evofit.presentation.ui.feature.workout.components.rememberWorkoutDraggableListState
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -74,8 +67,7 @@ fun WorkoutContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    var draggedItemId by remember { mutableStateOf<Int?>(null) }
-    var dragOffset by remember { mutableFloatStateOf(0f) }
+    val dragState = rememberWorkoutDraggableListState(onMove = onMove)
 
     Scaffold(
         modifier = modifier,
@@ -148,66 +140,7 @@ fun WorkoutContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            itemsIndexed(workouts, key = { _, it -> it.id }) { index, workout ->
-                val density = LocalDensity.current
-                val isDragging = draggedItemId == workout.id
-                
-                WorkoutListItem(
-                    workout = workout,
-                    modifier = Modifier
-                        .zIndex(if (isDragging) 10f else 1f)
-                        .then(if (isDragging) Modifier else Modifier.animateItem())
-                        .then(
-                            if (isDragging) {
-                                Modifier
-                                    .offset(y = with(density) { dragOffset.toDp() })
-                                    .scale(1.05f)
-                                    .shadow(12.dp, RoundedCornerShape(16.dp))
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                            } else Modifier
-                        ),
-                    handleModifier = Modifier.pointerInput(workout.id) {
-                        detectDragGesturesAfterLongPress(
-                            onDragStart = { 
-                                draggedItemId = workout.id
-                                dragOffset = 0f 
-                            },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                dragOffset += dragAmount.y
-                                
-                                val itemHeightPx = with(density) { 104.dp.toPx() }
-                                val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
-                                
-                                if (currentIndex != -1) {
-                                    while (dragOffset > itemHeightPx * 0.5f && currentIndex < workouts.size - 1) {
-                                        onMove(currentIndex, currentIndex + 1)
-                                        dragOffset -= itemHeightPx
-                                        break
-                                    }
-                                    while (dragOffset < -itemHeightPx * 0.5f && currentIndex > 0) {
-                                        onMove(currentIndex, currentIndex - 1)
-                                        dragOffset += itemHeightPx
-                                        break
-                                    }
-                                }
-                            },
-                            onDragEnd = {
-                                draggedItemId = null
-                                dragOffset = 0f
-                            },
-                            onDragCancel = {
-                                draggedItemId = null
-                                dragOffset = 0f
-                            }
-                        )
-                    }
-                )
-            }
+            draggableWorkoutList(workouts, dragState)
             
             item { Spacer(modifier = Modifier.height(100.dp)) }
         }

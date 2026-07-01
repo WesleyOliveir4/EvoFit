@@ -1,6 +1,5 @@
 package com.example.evofit.presentation.ui.feature.workout.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandIn
@@ -10,6 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,17 +21,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
@@ -47,35 +48,43 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import kotlin.math.abs
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 data class WorkoutUIModel(
     val id: Int,
@@ -176,19 +185,116 @@ fun StatCard(
     }
 }
 
+@Stable
+class WorkoutDraggableListState(
+    private val onMoveState: State<(Int, Int) -> Unit>,
+    private val density: Density
+) {
+    var draggedItemId by mutableStateOf<Int?>(null)
+        private set
+    var dragOffset by mutableFloatStateOf(0f)
+        private set
+
+    fun onDragStart(id: Int) {
+        draggedItemId = id
+        dragOffset = 0f
+    }
+
+    fun onDrag(deltaY: Float, workouts: List<WorkoutUIModel>) {
+        dragOffset += deltaY
+        // Altura aproximada do item para cálculo de troca (92dp item + 12dp gap)
+        val itemHeightPx = with(density) { 104.dp.toPx() }
+        val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
+
+        if (currentIndex != -1) {
+            // Threshold reduzido para 40% para tornar a troca mais sensível e fácil
+            val threshold = itemHeightPx * 0.4f 
+            if (dragOffset > threshold && currentIndex < workouts.size - 1) {
+                onMoveState.value(currentIndex, currentIndex + 1)
+                dragOffset -= itemHeightPx
+            } else if (dragOffset < -threshold && currentIndex > 0) {
+                onMoveState.value(currentIndex, currentIndex - 1)
+                dragOffset += itemHeightPx
+            }
+        }
+    }
+
+    fun onDragEnd() {
+        draggedItemId = null
+        dragOffset = 0f
+    }
+}
+
+@Composable
+fun rememberWorkoutDraggableListState(
+    onMove: (Int, Int) -> Unit
+): WorkoutDraggableListState {
+    val density = LocalDensity.current
+    val onMoveState = rememberUpdatedState(onMove)
+    return remember(density) {
+        WorkoutDraggableListState(onMoveState, density)
+    }
+}
+
+fun LazyListScope.draggableWorkoutList(
+    workouts: List<WorkoutUIModel>,
+    dragState: WorkoutDraggableListState
+) {
+    itemsIndexed(workouts, key = { _, it -> it.id }) { _, workout ->
+        val isDragging = dragState.draggedItemId == workout.id
+        WorkoutListItem(
+            workout = workout,
+            isDragging = isDragging,
+            dragOffset = dragState.dragOffset,
+            modifier = if (isDragging) Modifier.zIndex(10f) else Modifier.animateItem(),
+            onDragStart = { dragState.onDragStart(workout.id) },
+            onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
+            onDragEnd = { dragState.onDragEnd() },
+            onDragCancel = { dragState.onDragEnd() }
+        )
+    }
+}
+
 @Composable
 fun WorkoutListItem(
     workout: WorkoutUIModel,
     modifier: Modifier = Modifier,
-    handleModifier: Modifier = Modifier
+    isDragging: Boolean = false,
+    dragOffset: Float = 0f,
+    onDragStart: () -> Unit = {},
+    onDrag: (Float) -> Unit = {},
+    onDragEnd: () -> Unit = {},
+    onDragCancel: () -> Unit = {}
 ) {
+    val density = LocalDensity.current
+    
+    // Captura os callbacks mais recentes para evitar closures obsoletas durante o gesto
+    val currentOnDragStart by rememberUpdatedState(onDragStart)
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+            .then(
+                if (isDragging) {
+                    Modifier
+                        .offset(y = with(density) { dragOffset.toDp() })
+                        .scale(1.05f)
+                        .shadow(12.dp, RoundedCornerShape(16.dp))
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                } else {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                }
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -236,7 +342,19 @@ fun WorkoutListItem(
                 imageVector = Icons.Default.DragIndicator,
                 contentDescription = stringResource(R.string.main_workout_drag_handle_desc),
                 tint = MaterialTheme.colorScheme.outline,
-                modifier = handleModifier.size(24.dp)
+                modifier = Modifier
+                    .size(24.dp)
+                    .pointerInput(workout.id) {
+                        detectDragGesturesAfterLongPress(
+                            onDragStart = { currentOnDragStart() },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                currentOnDrag(dragAmount.y)
+                            },
+                            onDragEnd = { currentOnDragEnd() },
+                            onDragCancel = { currentOnDragCancel() }
+                        )
+                    }
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -878,4 +996,3 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
         }
     }
 }
-

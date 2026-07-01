@@ -7,8 +7,8 @@ import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
-import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +38,7 @@ data class SetState(
 class ConfigureWorkoutViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
-    private val onboardingRepository: OnboardingRepository
+    private val getUserIdUseCase: GetUserIdUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConfigureWorkoutUiState())
@@ -125,7 +125,7 @@ class ConfigureWorkoutViewModel(
                 )
             }
 
-            val userId = onboardingRepository.getUserId() ?: "default_user"
+            val userId = getUserIdUseCase() ?: "default_user"
 
             val workout = Workout(
                 userId = userId,

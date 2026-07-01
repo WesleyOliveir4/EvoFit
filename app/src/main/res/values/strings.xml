@@ -82,7 +82,7 @@
     <string name="goal_display_target_weight">Meta de Peso: %1$skg</string>
 
     <!-- Main Workout Screen -->
-    <string name="main_workout_greeting">Olá, %1$s 👋</string>
+    <string name="main_workout_greeting">Olá, %1$s </string>
     <string name="main_workout_subtitle">Bora treinar?</string>
     <string name="main_workout_stats_total_label">Treinos</string>
     <string name="main_workout_stats_week_label">Esta semana</string>
@@ -102,6 +102,11 @@
     <string name="configure_workout_col_set">Série</string>
     <string name="configure_workout_col_weight">Peso (kg)</string>
     <string name="configure_workout_col_reps">Reps</string>
+
+    <!-- New Workout Screen -->
+    <string name="new_workout_title">Novo Treino</string>
+    <string name="new_workout_back_desc">Voltar</string>
+    <string name="new_workout_select_group">Selecione o grupo muscular</string>
 
     <!-- Bottom Navigation -->
     <string name="nav_training">Treino</string>

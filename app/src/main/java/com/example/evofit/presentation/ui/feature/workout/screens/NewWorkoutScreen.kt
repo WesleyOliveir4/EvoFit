@@ -10,12 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Accessibility
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.EmojiPeople
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,14 +24,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.R
 import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.data.model.MuscleGroupType
+import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupCard
-import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.workout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -71,22 +68,7 @@ fun NewWorkoutContent(
     onNavigate: (String) -> Unit,
     onMuscleGroupClick: (String) -> Unit
 ) {
-    // Mapeamento de ícones baseado no ID ou Nome vindo da camada de Data
-    val muscleGroupItems = muscleGroups.map { group ->
-        val icon = when (group.id) {
-            "2" -> Icons.Default.Favorite // Peito
-            "1" -> Icons.Default.Face // Costas (Ajustei o ícone)
-            "5" -> Icons.Default.Face // Ombros
-            "4" -> Icons.Default.EmojiPeople // Braços
-            "3" -> Icons.Default.DirectionsRun // Pernas
-            "6" -> Icons.Default.Whatshot // Abdômen
-            "7" -> Icons.Default.DirectionsRun // Cardio
-            "8" -> Icons.Default.Accessibility // Glúteo
-            "9" -> Icons.Default.DirectionsRun // Panturrilha
-            else -> Icons.Default.Accessibility
-        }
-        MuscleGroupItem(group.id, group.name, icon)
-    }
+    val muscleGroupItems = muscleGroups.map { it.toItem() }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -94,7 +76,7 @@ fun NewWorkoutContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Novo Treino",
+                        text = stringResource(R.string.new_workout_title),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -104,7 +86,7 @@ fun NewWorkoutContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.new_workout_back_desc),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -141,7 +123,7 @@ fun NewWorkoutContent(
                 item {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Selecione o grupo muscular",
+                        text = stringResource(R.string.new_workout_select_group),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
@@ -167,7 +149,13 @@ fun NewWorkoutContent(
 fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
-            muscleGroups = listOf(MuscleGroupModel("1", "Peito")),
+            muscleGroups = listOf(
+                MuscleGroupModel(
+                    id = "1",
+                    name = "Peito",
+                    type = MuscleGroupType.CHEST
+                )
+            ),
             isLoading = false,
             onBackClick = {},
             onNavigate = {},

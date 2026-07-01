@@ -52,6 +52,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.evofit.R
 import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.MeasurementUnit
@@ -569,9 +570,9 @@ private fun NewGoalDialogPreview() {
                 onDismissRequest = {},
                 onGoalConfirmed = {},
                 muscleGroups = listOf(
-                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("2", "Costas", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("3", "Corrida", ExerciseCategory.CARDIO)
+                    MuscleGroupModel("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("2", "Costas", MuscleGroupType.BACK, ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("3", "Corrida", MuscleGroupType.CARDIO, ExerciseCategory.CARDIO)
                 ),
                 getExercises = { groupId ->
                     when (groupId) {
@@ -603,10 +604,10 @@ private fun StrengthFlowPreview() {
         Surface(modifier = Modifier.padding(16.dp)) {
             StrengthFlow(
                 muscleGroups = listOf(
-                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("2", "Pernas", ExerciseCategory.STRENGTH)
+                    MuscleGroupModel("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+                    MuscleGroupModel("2", "Pernas", MuscleGroupType.LEGS, ExerciseCategory.STRENGTH)
                 ),
-                selectedMuscle = MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
+                selectedMuscle = MuscleGroupModel("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
                 onMuscleSelect = {},
                 exercises = listOf(
                     ExerciseModel("e1", "Supino Reto", "1"),

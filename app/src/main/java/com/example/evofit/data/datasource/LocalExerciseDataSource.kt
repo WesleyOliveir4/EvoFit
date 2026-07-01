@@ -2,6 +2,7 @@ package com.example.evofit.data.datasource
 
 import com.example.evofit.data.model.ExerciseModel
 import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.data.model.MuscleGroupType
 import com.example.evofit.data.model.MuscleGroupWithExercises
 import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
@@ -9,15 +10,15 @@ import com.example.evofit.domain.model.MeasurementUnit
 
 class LocalExerciseDataSource {
     private val groups = listOf(
-        MuscleGroupModel("1", "Costas", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("2", "Peito", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("3", "Pernas", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("4", "Braços", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("5", "Ombros", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("6", "Core", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("7", "Cardio", ExerciseCategory.CARDIO),
-        MuscleGroupModel("8", "Gluteo", ExerciseCategory.STRENGTH),
-        MuscleGroupModel("9", "Panturrilha", ExerciseCategory.STRENGTH),
+        MuscleGroupModel("1", "Costas", MuscleGroupType.BACK, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("2", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("3", "Pernas", MuscleGroupType.LEGS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("4", "Braços", MuscleGroupType.ARMS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("5", "Ombros", MuscleGroupType.SHOULDERS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("6", "Core", MuscleGroupType.ABS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("7", "Cardio", MuscleGroupType.CARDIO, ExerciseCategory.CARDIO),
+        MuscleGroupModel("8", "Gluteo", MuscleGroupType.GLUTES, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("9", "Panturrilha", MuscleGroupType.CALVES, ExerciseCategory.STRENGTH),
     )
 
     private val exercises = listOf(
