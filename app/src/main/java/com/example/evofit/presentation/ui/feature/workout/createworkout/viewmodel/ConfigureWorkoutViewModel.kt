@@ -123,6 +123,7 @@ class ConfigureWorkoutViewModel(
                     exerciseId = config.exerciseId,
                     sets = config.sets.map { 
                         ExerciseSet(
+                            id = config.exerciseId.toLong(),
                             setNumber = it.setNumber,
                             reps = it.reps,
                             load = it.weight
@@ -138,7 +139,6 @@ class ConfigureWorkoutViewModel(
                 name = _uiState.value.workoutName,
                 muscleGroupId = _uiState.value.selectedExercises.firstOrNull()?.muscleGroupId ?: "",
                 date = Date().time,
-                isCompleted = false,
                 exercises = workoutExercises
             )
 

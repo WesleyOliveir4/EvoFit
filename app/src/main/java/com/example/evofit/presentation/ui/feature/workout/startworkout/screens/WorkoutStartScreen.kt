@@ -38,6 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.workout.startworkout.components.ExerciseTrackingCard
@@ -68,8 +70,43 @@ fun WorkoutStartScreen(
             onToggleSetDone = { exerciseId, setNumber ->
                 viewModel.toggleSetDone(exerciseId, setNumber)
             },
-            onFinishWorkoutClick = onFinishWorkoutClick
+            onFinishWorkoutClick = { viewModel.onFinishClick() }
         )
+
+        if (uiState.showFinishDialog) {
+            val totalExercises = uiState.exercises.size
+            val completedExercises = uiState.exercises.count { it.sets.all { set -> set.isDone } }
+            
+            AlertDialog(
+                onDismissRequest = { viewModel.onDismissFinishDialog() },
+                title = { Text(stringResource(R.string.workout_finish_dialog_title)) },
+                text = {
+                    Text(
+                        stringResource(
+                            R.string.workout_finish_dialog_message,
+                            completedExercises,
+                            totalExercises
+                        )
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.onConfirmFinish() }) {
+                        Text(stringResource(R.string.workout_finish_dialog_confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.onDismissFinishDialog() }) {
+                        Text(stringResource(R.string.workout_finish_dialog_cancel))
+                    }
+                }
+            )
+        }
+
+        LaunchedEffect(uiState.workoutCompleted) {
+            if (uiState.workoutCompleted) {
+                onFinishWorkoutClick()
+            }
+        }
     }
 }
 
@@ -127,7 +164,7 @@ fun WorkoutStartContent(
                     ) {
                         Text("🕒", fontSize = 12.sp)
                         Text(
-                            text = "00:12",
+                            text = uiState.elapsedTime,
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold

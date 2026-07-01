@@ -2,6 +2,7 @@ package com.example.evofit.di
 
 import androidx.room.Room
 import com.example.evofit.data.datasource.LocalExerciseDataSource
+import com.example.evofit.data.datasource.WorkoutSessionDataSource
 import com.example.evofit.data.local.AppDatabase
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.data.repository.WorkoutRepositoryImpl
@@ -23,6 +24,7 @@ import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCaseImpl
 import com.example.evofit.domain.usecase.SaveWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
+import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
@@ -49,6 +51,7 @@ val dataModule = module {
 
     single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
+    single { WorkoutSessionDataSource(androidContext()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
 }
@@ -63,6 +66,7 @@ val domainModule = module {
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
+    factory { SaveWorkoutDoneUseCase(get()) }
 }
 
 val splashModule = module {
@@ -123,8 +127,12 @@ val workoutModule = module {
     viewModel { (workoutId: Int) ->
         WorkoutStartViewModel(
             workoutId = workoutId,
-            get(),
-            get()
+            getWorkoutByIdUseCase = get(),
+            getExerciseDataUseCase = get(),
+            saveWorkoutUseCase = get(),
+            saveWorkoutDoneUseCase = get(),
+            getUserIdUseCase = get(),
+            sessionDataSource = get()
         )
     }
 }

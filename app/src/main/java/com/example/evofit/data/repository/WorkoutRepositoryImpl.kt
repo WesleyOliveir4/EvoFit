@@ -4,7 +4,9 @@ import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.local.dao.UserDao
 import com.example.evofit.data.mapper.toDomain
 import com.example.evofit.data.mapper.toEntity
+import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.domain.model.Workout
+import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -40,5 +42,22 @@ class WorkoutRepositoryImpl(
             userDao.insertExerciseSets(exercise.sets.map { it.toEntity(exerciseId) })
         }
         return workoutId
+    }
+
+    override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
+        val existingHistory = userDao.getWorkoutDoneHistory(userId)
+        
+        val updatedList = if (existingHistory != null) {
+            existingHistory.history + workoutDone
+        } else {
+            listOf(workoutDone)
+        }
+        
+        userDao.insertWorkoutDoneHistory(
+            WorkoutDoneHistoryEntity(
+                userId = userId,
+                history = updatedList
+            )
+        )
     }
 }

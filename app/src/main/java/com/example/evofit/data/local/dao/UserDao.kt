@@ -52,4 +52,11 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
     fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
+
+    // Workout History
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
+
+    @Query("SELECT * FROM workout_done_history WHERE userId = :userId")
+    suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
 }

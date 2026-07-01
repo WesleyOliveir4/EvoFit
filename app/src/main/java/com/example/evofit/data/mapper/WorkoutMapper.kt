@@ -19,7 +19,6 @@ fun FullWorkout.toDomain(muscleGroup: MuscleGroupModel? = null): Workout {
         muscleGroupId = workout.muscleGroupId,
         muscleGroup = muscleGroup,
         date = workout.date,
-        isCompleted = workout.isCompleted,
         exercises = exercises.map { it.toDomain() }
     )
 }
@@ -47,8 +46,7 @@ fun Workout.toEntity(): WorkoutEntity {
         userId = userId,
         name = name,
         muscleGroupId = muscleGroupId,
-        date = date,
-        isCompleted = isCompleted
+        date = date
     )
 }
 

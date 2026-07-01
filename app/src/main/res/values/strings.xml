@@ -138,4 +138,10 @@
     <string name="workout_start_column_reps">Reps</string>
     <string name="workout_start_column_ok">OK</string>
     <string name="workout_start_weight_kg">%1$skg</string>
+
+    <!-- Workout Finish Dialog -->
+    <string name="workout_finish_dialog_title">Finalizar Treino?</string>
+    <string name="workout_finish_dialog_message">Você concluiu %1$d de %2$d exercícios. Deseja finalizar o treino e salvar seu progresso?</string>
+    <string name="workout_finish_dialog_confirm">Finalizar</string>
+    <string name="workout_finish_dialog_cancel">Continuar Treinando</string>
 </resources>
