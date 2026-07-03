@@ -2,13 +2,9 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -19,17 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.data.model.MuscleGroupType
-import com.example.evofit.presentation.mapper.toIcon
-import com.example.evofit.presentation.ui.feature.workout.components.AddSetDashedButton
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePageSegmentedIndicator
-import com.example.evofit.presentation.ui.feature.workout.components.RepsCounterComponent
-import com.example.evofit.presentation.ui.feature.workout.components.WeightWheelSelector
+import com.example.evofit.presentation.ui.feature.workout.createworkout.components.ExerciseConfigContent
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ExerciseConfigState
 import androidx.compose.ui.tooling.preview.Preview
@@ -191,163 +183,6 @@ fun ConfigureWorkoutScreen(
     }
 }
 
-@Composable
-fun ExerciseConfigContent(
-    config: ExerciseConfigState,
-    muscleGroupType: MuscleGroupType?,
-    onAddSet: (String) -> Unit,
-    onUpdateSet: (String, Int, Double, Int) -> Unit,
-    onRemoveSet: (String, Int) -> Unit
-) {
-    val muscleGroupIcon = muscleGroupType?.toIcon()
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (muscleGroupIcon != null) {
-                        Icon(
-                            imageVector = muscleGroupIcon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    } else {
-                        Text("", fontSize = 20.sp)
-                    }
-                }
-                Column {
-                    Text(
-                        text = config.name,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = stringResource(R.string.configure_workout_header_sets, config.sets.size),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = stringResource(R.string.configure_workout_col_set),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    modifier = Modifier.weight(0.8f),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(R.string.configure_workout_col_weight),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    modifier = Modifier.weight(2f),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(R.string.configure_workout_col_reps),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    modifier = Modifier.weight(1.2f),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
-        itemsIndexed(config.sets) { index, item ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    modifier = Modifier
-                        .weight(0.8f)
-                        .height(48.dp)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(36.dp)
-                            .background(
-                                Color(0xFFBA1A1A),
-                                RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                            )
-                            .clickable { onRemoveSet(config.exerciseId, index) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "–",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.offset(y = (-1).dp)
-                        )
-                    }
-
-                    Text(
-                        text = "${index + 1}",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                WeightWheelSelector(
-                    modifier = Modifier.weight(1f),
-                    initialWeight = item.weight,
-                    onWeightSelected = { newWeight ->
-                        onUpdateSet(config.exerciseId, index, newWeight, item.reps)
-                    }
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                RepsCounterComponent(
-                    modifier = Modifier.weight(1.2f),
-                    value = item.reps,
-                    onValueChange = { newReps ->
-                        onUpdateSet(config.exerciseId, index, item.weight, newReps)
-                    }
-                )
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            AddSetDashedButton(
-                onClick = { onAddSet(config.exerciseId) }
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-        }
-    }
-}
-
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 private fun ConfigureWorkoutScreenPreview() {
@@ -357,7 +192,8 @@ private fun ConfigureWorkoutScreenPreview() {
                 exerciseId = "1",
                 name = "Supino Reto",
                 muscleGroupId = "2",
-                sets = mutableStateListOf(
+                unit = MeasurementUnit.WEIGHT,
+                sets = listOf(
                     SetState(1, 30.0, 12),
                     SetState(2, 30.0, 12),
                     SetState(3, 25.0, 15)

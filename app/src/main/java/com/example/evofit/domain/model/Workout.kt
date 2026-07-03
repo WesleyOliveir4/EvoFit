@@ -23,5 +23,8 @@ data class ExerciseSet(
     val id: Long = 0,
     val setNumber: Int,
     val reps: Int,
-    val load: Double
+    val load: Double,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val time: Int? = null,
+    val distance: Double? = null
 )

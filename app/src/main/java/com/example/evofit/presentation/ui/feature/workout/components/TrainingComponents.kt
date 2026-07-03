@@ -529,6 +529,7 @@ private fun RepsCounterComponentPreview() {
     EvoFitTheme {
         RepsCounterComponent(
             value = 12,
+            step = 1,
             onValueChange = {},
             modifier = Modifier.padding(16.dp).width(120.dp)
         )
@@ -934,6 +935,7 @@ fun WeightWheel(
 fun RepsCounterComponent(
     modifier: Modifier = Modifier,
     value: Int,
+    step: Int = 1,
     onValueChange: (Int) -> Unit
 ) {
     Row(
@@ -949,7 +951,7 @@ fun RepsCounterComponent(
             fontSize = 16.sp,
             modifier = Modifier
                 .weight(1f)
-                .clickable { if (value > 0) onValueChange(value - 1) },
+                .clickable { if (value >= step) onValueChange(value - step) else if (value > 0) onValueChange(0) },
             textAlign = TextAlign.Center
         )
         Text(
@@ -966,7 +968,7 @@ fun RepsCounterComponent(
             fontSize = 16.sp,
             modifier = Modifier
                 .weight(1f)
-                .clickable { onValueChange(value + 1) },
+                .clickable { onValueChange(value + step) },
             textAlign = TextAlign.Center
         )
     }

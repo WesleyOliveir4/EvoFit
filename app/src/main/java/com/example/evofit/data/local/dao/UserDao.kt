@@ -77,6 +77,20 @@ interface UserDao {
         }
     }
 
+    @Transaction
+    suspend fun insertFullWorkoutReturnId(
+        workout: WorkoutEntity,
+        exercises: List<WorkoutExerciseEntity>,
+        sets: List<List<ExerciseSetEntity>>
+    ): Long {
+        val workoutId = insertWorkout(workout)
+        exercises.forEachIndexed { index, exercise ->
+            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workoutId))
+            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+        }
+        return workoutId
+    }
+
     // Workout History
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)

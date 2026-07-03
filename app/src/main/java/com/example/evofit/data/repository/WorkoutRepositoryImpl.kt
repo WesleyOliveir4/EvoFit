@@ -44,9 +44,7 @@ class WorkoutRepositoryImpl(
             exercise.sets.map { it.toEntity(0) }
         }
 
-        userDao.insertFullWorkout(workoutEntity, exercises, sets)
-        return 0 // Since we're using a transaction for multiple inserts, returning 0 or the last ID. 
-                 // Note: If the specific ID is needed, we'd need to return it from insertFullWorkout.
+        return userDao.insertFullWorkoutReturnId(workoutEntity, exercises, sets)
     }
 
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {

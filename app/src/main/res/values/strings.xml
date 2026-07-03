@@ -102,6 +102,9 @@
     <string name="configure_workout_col_set">Série</string>
     <string name="configure_workout_col_weight">Peso (kg)</string>
     <string name="configure_workout_col_reps">Reps</string>
+    <string name="configure_workout_col_distance">Distância (km)</string>
+    <string name="configure_workout_col_time">Tempo (min)</string>
+    <string name="configure_workout_col_reps_only">Repetições</string>
 
     <!-- New Workout Screen -->
     <string name="new_workout_title">Novo Treino</string>

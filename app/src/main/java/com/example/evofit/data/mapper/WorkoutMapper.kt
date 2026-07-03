@@ -37,7 +37,10 @@ fun ExerciseSetEntity.toDomain(): ExerciseSet {
         id = id,
         setNumber = setNumber,
         reps = reps,
-        load = load
+        load = load,
+        unit = unit,
+        time = time,
+        distance = distance
     )
 }
 
@@ -66,6 +69,9 @@ fun ExerciseSet.toEntity(workoutExerciseId: Long): ExerciseSetEntity {
         workoutExerciseId = workoutExerciseId,
         setNumber = setNumber,
         reps = reps,
-        load = load
+        load = load,
+        unit = unit,
+        time = time,
+        distance = distance
     )
 }

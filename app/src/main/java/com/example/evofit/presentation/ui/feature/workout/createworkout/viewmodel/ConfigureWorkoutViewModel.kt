@@ -3,6 +3,7 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmod
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.data.model.MuscleGroupType
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
@@ -29,6 +30,7 @@ data class ExerciseConfigState(
     val exerciseId: String,
     val name: String,
     val muscleGroupId: String,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val sets: List<SetState> = listOf(SetState(1, 20.0, 10))
 )
 
@@ -51,15 +53,27 @@ class ConfigureWorkoutViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, workoutName = workoutName) }
             val selectedExercises = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+            val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
-                getExerciseDataUseCase.getMuscleGroups().find { it.id == first.muscleGroupId }?.type
+                muscleGroups.find { it.id == first.muscleGroupId }?.type
             }
 
             val configs = selectedExercises.map { exercise ->
+                val defaultWeight = when (exercise.unit) {
+                    MeasurementUnit.DISTANCE -> 1.0
+                    else -> 20.0
+                }
+                val defaultReps = when (exercise.unit) {
+                    MeasurementUnit.DISTANCE -> 5 // 5 min
+                    MeasurementUnit.TIME -> 1 // 1 min
+                    else -> 10
+                }
                 ExerciseConfigState(
                     exerciseId = exercise.id,
                     name = exercise.name,
-                    muscleGroupId = exercise.muscleGroupId
+                    muscleGroupId = exercise.muscleGroupId,
+                    unit = exercise.unit,
+                    sets = listOf(SetState(1, defaultWeight, defaultReps))
                 )
             }
 
@@ -79,11 +93,20 @@ class ConfigureWorkoutViewModel(
                 if (config.exerciseId == exerciseId) {
                     val nextNumber = config.sets.size + 1
                     val lastSet = config.sets.lastOrNull()
+                    val defaultWeight = when (config.unit) {
+                        MeasurementUnit.DISTANCE -> 1.0
+                        else -> 20.0
+                    }
+                    val defaultReps = when (config.unit) {
+                        MeasurementUnit.DISTANCE -> 5
+                        MeasurementUnit.TIME -> 1
+                        else -> 10
+                    }
                     config.copy(
                         sets = config.sets + SetState(
                             setNumber = nextNumber,
-                            weight = lastSet?.weight ?: 20.0,
-                            reps = lastSet?.reps ?: 10
+                            weight = lastSet?.weight ?: defaultWeight,
+                            reps = lastSet?.reps ?: defaultReps
                         )
                     )
                 } else config
@@ -126,15 +149,51 @@ class ConfigureWorkoutViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
+            val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
+            val firstConfig = currentState.exerciseConfigs.firstOrNull()
+            val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
+
             val workoutExercises = currentState.exerciseConfigs.map { config ->
                 WorkoutExercise(
                     exerciseId = config.exerciseId,
                     sets = config.sets.map { set ->
-                        ExerciseSet(
-                            setNumber = set.setNumber,
-                            reps = set.reps,
-                            load = set.weight
-                        )
+                        when (config.unit) {
+                            MeasurementUnit.DISTANCE -> {
+                                ExerciseSet(
+                                    setNumber = set.setNumber,
+                                    reps = 0,
+                                    load = 0.0,
+                                    unit = config.unit,
+                                    distance = set.weight,
+                                    time = set.reps
+                                )
+                            }
+                            MeasurementUnit.TIME -> {
+                                ExerciseSet(
+                                    setNumber = set.setNumber,
+                                    reps = 0,
+                                    load = 0.0,
+                                    unit = config.unit,
+                                    time = set.reps
+                                )
+                            }
+                            MeasurementUnit.REPS -> {
+                                ExerciseSet(
+                                    setNumber = set.setNumber,
+                                    reps = set.reps,
+                                    load = 0.0,
+                                    unit = config.unit
+                                )
+                            }
+                            MeasurementUnit.WEIGHT -> {
+                                ExerciseSet(
+                                    setNumber = set.setNumber,
+                                    reps = set.reps,
+                                    load = set.weight,
+                                    unit = config.unit
+                                )
+                            }
+                        }
                     }
                 )
             }
@@ -143,7 +202,8 @@ class ConfigureWorkoutViewModel(
             val workout = Workout(
                 userId = getUserIdUseCase() ?: "default_user",
                 name = currentState.workoutName,
-                muscleGroupId = currentState.exerciseConfigs.firstOrNull()?.muscleGroupId ?: "",
+                muscleGroupId = firstConfig?.muscleGroupId ?: "",
+                muscleGroup = muscleGroup,
                 date = dateFormat.format(Date()),
                 exercises = workoutExercises
             )
