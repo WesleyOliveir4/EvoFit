@@ -2,8 +2,9 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmode
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.core.common.AppConstants
 import com.example.evofit.data.datasource.WorkoutSessionDataSource
-import com.example.evofit.data.local.entities.ExerciseSetEntity
+import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
@@ -162,12 +163,11 @@ class WorkoutStartViewModel(
     fun onConfirmFinish() {
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
-            val userId = getUserIdUseCase() ?: "default_user"
+            val userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID
             
             val doneSets = _uiState.value.exercises.flatMap { exercise ->
                 exercise.sets.filter { it.isDone }.map { set ->
-                    ExerciseSetEntity(
-                        workoutExerciseId = exercise.workoutExerciseId,
+                    ExerciseSet(
                         setNumber = set.setNumber,
                         reps = set.reps,
                         load = set.weight,
@@ -183,7 +183,7 @@ class WorkoutStartViewModel(
                 date = dateFormat.format(java.util.Date()),
                 nameWorkout = workout.name,
                 time = _uiState.value.elapsedTime,
-                muscleGroupModel = workout.muscleGroup,
+                muscleGroup = workout.muscleGroup,
                 exercises = doneSets
             )
 

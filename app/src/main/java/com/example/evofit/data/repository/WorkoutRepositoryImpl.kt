@@ -2,6 +2,7 @@ package com.example.evofit.data.repository
 
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.local.dao.UserDao
+import com.example.evofit.data.mapper.toData
 import com.example.evofit.data.mapper.toDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
@@ -17,7 +18,7 @@ class WorkoutRepositoryImpl(
 ) : WorkoutRepository {
     override fun getWorkouts(userId: String): Flow<List<Workout>> {
         return userDao.getFullWorkouts(userId).map { fullWorkouts ->
-            val muscleGroups = exerciseDataSource.getAllMuscleGroups()
+            val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
             fullWorkouts.map { fullWorkout ->
                 val group = muscleGroups.find { it.id == fullWorkout.workout.muscleGroupId }
                 fullWorkout.toDomain(group)
@@ -30,6 +31,7 @@ class WorkoutRepositoryImpl(
             fullWorkout?.let {
                 val group = exerciseDataSource.getAllMuscleGroups()
                     .find { it.id == fullWorkout.workout.muscleGroupId }
+                    ?.toDomain()
                 fullWorkout.toDomain(group)
             }
         }

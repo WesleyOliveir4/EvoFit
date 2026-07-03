@@ -8,8 +8,8 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.evofit.data.model.MuscleGroupType
-import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.domain.model.MuscleGroupType
+import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.presentation.model.MuscleGroupItem
 
 fun MuscleGroupType.toIcon(): ImageVector {
@@ -27,7 +27,7 @@ fun MuscleGroupType.toIcon(): ImageVector {
     }
 }
 
-fun MuscleGroupModel.toItem(): MuscleGroupItem {
+fun MuscleGroup.toItem(): MuscleGroupItem {
     return MuscleGroupItem(
         id = this.id,
         name = this.name,

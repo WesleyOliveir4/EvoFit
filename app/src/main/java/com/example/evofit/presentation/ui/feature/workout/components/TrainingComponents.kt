@@ -1,18 +1,14 @@
 package com.example.evofit.presentation.ui.feature.workout.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import com.example.evofit.domain.model.MeasurementUnit
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,15 +19,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,9 +33,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,316 +44,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.zIndex
 import com.example.evofit.R
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.model.MuscleGroupItem
-import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-
-
-@Composable
-fun HeaderSection(
-    userName: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(
-                text = stringResource(R.string.main_workout_greeting, userName),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(R.string.main_workout_subtitle),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(MaterialTheme.colorScheme.surface, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Composable
-fun StatCard(
-    value: String,
-    label: String,
-    icon: ImageVector,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(
-                text = value,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 12.sp
-            )
-        }
-    }
-}
-
-@Stable
-class WorkoutDraggableListState(
-    private val onMoveState: State<(Int, Int) -> Unit>,
-    private val density: Density
-) {
-    var draggedItemId by mutableStateOf<Int?>(null)
-        private set
-    var dragOffset by mutableFloatStateOf(0f)
-        private set
-
-    fun onDragStart(id: Int) {
-        draggedItemId = id
-        dragOffset = 0f
-    }
-
-    fun onDrag(deltaY: Float, workouts: List<WorkoutUIModel>) {
-        val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
-        if (currentIndex == -1) return
-
-        val totalItemHeightPx = with(density) { 104.dp.toPx() }
-        val newOffset = dragOffset + deltaY
-        val threshold = totalItemHeightPx * 0.5f
-
-        when {
-            newOffset > threshold && currentIndex < workouts.lastIndex -> {
-                onMoveState.value(currentIndex, currentIndex + 1)
-                dragOffset = newOffset - totalItemHeightPx
-            }
-            newOffset < -threshold && currentIndex > 0 -> {
-                onMoveState.value(currentIndex, currentIndex - 1)
-                dragOffset = newOffset + totalItemHeightPx
-            }
-            else -> {
-                dragOffset = when {
-                    currentIndex == 0 -> newOffset.coerceAtLeast(-totalItemHeightPx * 0.2f)
-                    currentIndex == workouts.lastIndex -> newOffset.coerceAtMost(totalItemHeightPx * 0.2f)
-                    else -> newOffset
-                }
-            }
-        }
-    }
-
-    fun onDragEnd() {
-        draggedItemId = null
-        dragOffset = 0f
-    }
-}
-
-@Composable
-fun rememberWorkoutDraggableListState(
-    onMove: (Int, Int) -> Unit
-): WorkoutDraggableListState {
-    val density = LocalDensity.current
-    val onMoveState = rememberUpdatedState(onMove)
-    return remember(density) {
-        WorkoutDraggableListState(onMoveState, density)
-    }
-}
-
-fun LazyListScope.draggableWorkoutList(
-    workouts: List<WorkoutUIModel>,
-    dragState: WorkoutDraggableListState,
-    onWorkoutClick: (WorkoutUIModel) -> Unit
-) {
-    itemsIndexed(workouts, key = { _, it -> it.id }) { _, workout ->
-        val isDragging = dragState.draggedItemId == workout.id
-        WorkoutListItem(
-            workout = workout,
-            isDragging = isDragging,
-            dragOffset = { if (isDragging) dragState.dragOffset else 0f },
-            modifier = Modifier
-                .zIndex(if (isDragging) 10f else 1f)
-                .then(if (isDragging) Modifier else Modifier.animateItem()),
-            onDragStart = { dragState.onDragStart(workout.id) },
-            onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
-            onDragEnd = dragState::onDragEnd,
-            onDragCancel = dragState::onDragEnd,
-            onClick = { onWorkoutClick(workout) }
-        )
-    }
-}
-
-@Composable
-fun WorkoutListItem(
-    workout: WorkoutUIModel,
-    modifier: Modifier = Modifier,
-    isDragging: Boolean = false,
-    dragOffset: () -> Float = { 0f },
-    onDragStart: () -> Unit = {},
-    onDrag: (Float) -> Unit = {},
-    onDragEnd: () -> Unit = {},
-    onDragCancel: () -> Unit = {},
-    onClick: () -> Unit = {}
-) {
-    val currentOnDragStart by rememberUpdatedState(onDragStart)
-    val currentOnDrag by rememberUpdatedState(onDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
-
-    val animatedElevation by animateDpAsState(if (isDragging) 12.dp else 0.dp, label = "elevation")
-    val animatedScale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                translationY = dragOffset()
-                scaleX = animatedScale
-                scaleY = animatedScale
-                shadowElevation = animatedElevation.toPx()
-                shape = RoundedCornerShape(16.dp)
-                clip = true
-            }
-            .border(
-                width = 1.dp,
-                color = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(enabled = !isDragging) { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = workout.icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = workout.title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                val exercisesStr = stringResource(R.string.main_workout_exercise_count, workout.exercises)
-                val seriesStr = stringResource(R.string.main_workout_series_count, workout.series)
-                Text(
-                    text = stringResource(R.string.main_workout_exercise_series_format, exercisesStr, seriesStr),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
-                )
-            }
-
-            Icon(
-                imageVector = Icons.Default.DragIndicator,
-                contentDescription = stringResource(R.string.main_workout_drag_handle_desc),
-                tint = MaterialTheme.colorScheme.outline,
-                modifier = Modifier
-                    .size(24.dp)
-                    .pointerInput(workout.id) {
-                        detectDragGesturesAfterLongPress(
-                            onDragStart = { currentOnDragStart() },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                currentOnDrag(dragAmount.y)
-                            },
-                            onDragEnd = { currentOnDragEnd() },
-                            onDragCancel = { currentOnDragCancel() }
-                        )
-                    }
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 
 @Composable
 fun CustomCircularCheckbox(
@@ -391,27 +100,6 @@ fun CustomCircularCheckbox(
                 modifier = Modifier.size(16.dp)
             )
         }
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun HeaderSectionPreview() {
-    EvoFitTheme {
-        HeaderSection(userName = "Wesley", modifier = Modifier.padding(16.dp))
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun StatCardPreview() {
-    EvoFitTheme {
-        StatCard(
-            value = "5",
-            label = "Treinos",
-            icon = Icons.Default.Favorite,
-            modifier = Modifier.padding(16.dp).width(160.dp)
-        )
     }
 }
 
@@ -473,78 +161,6 @@ fun MuscleGroupCard(
                 modifier = Modifier.size(24.dp)
             )
         }
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun MuscleGroupCardPreview() {
-    EvoFitTheme {
-        MuscleGroupCard(
-            item = MuscleGroupItem("peito", "Peito", Icons.Default.Favorite),
-            onClick = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun ExerciseRowItemPreview() {
-    EvoFitTheme {
-        ExerciseRowItem(
-            item = ExerciseSelectionUIModel("1", "Supino Reto"),
-            isSelected = true,
-            onCheckedChange = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun ExercisePageSegmentedIndicatorPreview() {
-    EvoFitTheme {
-        ExercisePageSegmentedIndicator(
-            totalCount = 5,
-            currentIndex = 2,
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun WeightWheelSelectorPreview() {
-    EvoFitTheme {
-        WeightWheelSelector(
-            initialWeight = 30.0,
-            onWeightSelected = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun RepsCounterComponentPreview() {
-    EvoFitTheme {
-        RepsCounterComponent(
-            value = 12,
-            step = 1,
-            onValueChange = {},
-            modifier = Modifier.padding(16.dp).width(120.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-private fun AddSetDashedButtonPreview() {
-    EvoFitTheme {
-        AddSetDashedButton(
-            onClick = {},
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }
 
@@ -628,7 +244,6 @@ fun ExerciseRowItem(
         }
     }
 }
-
 
 @Composable
 fun ExercisePageSegmentedIndicator(
@@ -1016,14 +631,6 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-// Workout Preview Components
-data class WorkoutDetailPreview(
-    val title: String,
-    val totalExercises: Int,
-    val totalSets: Int,
-    val exercises: List<ExercisePreviewItem>
-)
-
 data class ExercisePreviewItem(
     val workoutExerciseId: Long,
     val name: String,
@@ -1033,6 +640,13 @@ data class ExercisePreviewItem(
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val time: Int? = null,
     val distance: Double? = null
+)
+
+data class WorkoutDetailPreview(
+    val title: String,
+    val totalExercises: Int,
+    val totalSets: Int,
+    val exercises: List<ExercisePreviewItem>
 )
 
 @Composable
@@ -1073,78 +687,15 @@ fun HeaderIndicatorCard(
     }
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
-fun ExercisePreviewCard(
-    index: Int,
-    item: ExercisePreviewItem
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "$index",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = item.name,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                val detailText = when (item.unit) {
-                    MeasurementUnit.WEIGHT -> {
-                        val weightStr = if (item.weight % 1 == 0.0) "${item.weight.toInt()}" else "${item.weight}"
-                        "$weightStr kg × ${item.reps} reps"
-                    }
-                    MeasurementUnit.DISTANCE -> {
-                        val distanceStr = if ((item.distance ?: 0.0) % 1 == 0.0) "${item.distance?.toInt()}" else "${item.distance}"
-                        "$distanceStr km × ${item.time ?: 0} min"
-                    }
-                    MeasurementUnit.TIME -> {
-                        "${item.time ?: 0} min"
-                    }
-                    MeasurementUnit.REPS -> {
-                        "${item.reps} reps"
-                    }
-                }
-                Text(
-                    text = stringResource(
-                        R.string.main_workout_exercise_series_format,
-                        stringResource(R.string.main_workout_series_count, item.setsCount),
-                        detailText
-                    ),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
-                )
-            }
-        }
+private fun StatCardPreview() {
+    EvoFitTheme {
+        com.example.evofit.presentation.ui.feature.workout.components.training.StatCard(
+            value = "5",
+            label = "Treinos",
+            icon = Icons.Default.Favorite,
+            modifier = Modifier.padding(16.dp).width(160.dp)
+        )
     }
 }

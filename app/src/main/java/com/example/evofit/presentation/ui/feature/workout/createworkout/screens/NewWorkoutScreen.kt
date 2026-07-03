@@ -30,8 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.data.model.MuscleGroupModel
-import com.example.evofit.data.model.MuscleGroupType
+import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.MuscleGroupCard
@@ -62,7 +62,7 @@ fun NewWorkoutScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewWorkoutContent(
-    muscleGroups: List<MuscleGroupModel>,
+    muscleGroups: List<MuscleGroup>,
     isLoading: Boolean,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
@@ -150,7 +150,7 @@ fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
             muscleGroups = listOf(
-                MuscleGroupModel(
+                MuscleGroup(
                     id = "1",
                     name = "Peito",
                     type = MuscleGroupType.CHEST

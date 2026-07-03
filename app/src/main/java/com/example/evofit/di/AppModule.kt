@@ -4,8 +4,10 @@ import androidx.room.Room
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.datasource.WorkoutSessionDataSource
 import com.example.evofit.data.local.AppDatabase
+import com.example.evofit.data.repository.ExerciseRepositoryImpl
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.data.repository.WorkoutRepositoryImpl
+import com.example.evofit.domain.repository.ExerciseRepository
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.repository.WorkoutRepository
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
@@ -26,6 +28,7 @@ import com.example.evofit.domain.usecase.SaveWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
@@ -56,6 +59,7 @@ val dataModule = module {
     single { WorkoutSessionDataSource(androidContext()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
+    single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
 }
 
 val domainModule = module {
@@ -70,6 +74,7 @@ val domainModule = module {
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
     factory { SaveWorkoutDoneUseCase(get()) }
     factory { GetWorkoutDoneHistoryUseCase(get()) }
+    factory { GetCurrentWeekRangeUseCase() }
     factory { UpdateWorkoutsOrderUseCase(get()) }
 }
 
@@ -99,6 +104,7 @@ val homeModule = module {
 val workoutModule = module {
     viewModel {
         WorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),

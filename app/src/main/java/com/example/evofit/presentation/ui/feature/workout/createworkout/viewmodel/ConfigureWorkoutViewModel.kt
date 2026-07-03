@@ -2,8 +2,9 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmod
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.data.model.MuscleGroupType
+import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.MeasurementUnit
+import com.example.evofit.core.common.AppConstants
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
@@ -200,7 +201,7 @@ class ConfigureWorkoutViewModel(
 
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
             val workout = Workout(
-                userId = getUserIdUseCase() ?: "default_user",
+                userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
                 name = currentState.workoutName,
                 muscleGroupId = firstConfig?.muscleGroupId ?: "",
                 muscleGroup = muscleGroup,

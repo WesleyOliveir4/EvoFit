@@ -8,10 +8,9 @@ import com.example.evofit.data.local.relations.WorkoutExerciseWithSets
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
+import com.example.evofit.domain.model.MuscleGroup
 
-import com.example.evofit.data.model.MuscleGroupModel
-
-fun FullWorkout.toDomain(muscleGroup: MuscleGroupModel? = null): Workout {
+fun FullWorkout.toDomain(muscleGroup: MuscleGroup? = null): Workout {
     return Workout(
         id = workout.workoutId,
         userId = workout.userId,

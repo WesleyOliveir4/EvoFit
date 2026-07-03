@@ -24,12 +24,12 @@ import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewCard
+import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
-import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
-import com.example.evofit.presentation.ui.feature.workout.components.StatCard
-import com.example.evofit.presentation.ui.feature.workout.components.draggableWorkoutList
-import com.example.evofit.presentation.ui.feature.workout.components.rememberWorkoutDraggableListState
+import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
+import com.example.evofit.presentation.ui.feature.workout.components.training.StatCard
+import com.example.evofit.presentation.ui.feature.workout.components.training.draggableWorkoutList
+import com.example.evofit.presentation.ui.feature.workout.components.training.rememberWorkoutDraggableListState
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel

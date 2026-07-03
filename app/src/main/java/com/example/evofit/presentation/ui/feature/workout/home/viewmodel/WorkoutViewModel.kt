@@ -9,6 +9,7 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
+import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +32,8 @@ class WorkoutViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutsUseCase: GetWorkoutsUseCase,
     private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase,
-    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase
+    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
+    private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase
 ) : ViewModel() {
 
     private var updateOrderJob: Job? = null
@@ -45,13 +47,7 @@ class WorkoutViewModel(
             } else {
                 val history = getWorkoutDoneHistoryUseCase(userId)
                 getWorkoutsUseCase(userId).map { workouts ->
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-                    calendar.set(Calendar.HOUR_OF_DAY, 0)
-                    calendar.set(Calendar.MINUTE, 0)
-                    calendar.set(Calendar.SECOND, 0)
-                    calendar.set(Calendar.MILLISECOND, 0)
-                    val startOfWeek = calendar.timeInMillis
+                    val startOfWeek = getCurrentWeekRangeUseCase()
                     
                     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("pt-BR"))
 

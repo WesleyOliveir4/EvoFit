@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.data.model.ExerciseModel
-import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.domain.model.Exercise
+import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.mapper.getDisplayText
@@ -62,8 +62,8 @@ fun OnboardingGoalsScreen(
 fun OnboardingGoalsContent(
     activeGoals: List<UserGoal>,
     suggestions: List<GoalSuggestion>,
-    muscleGroups: List<MuscleGroupModel>,
-    getExercises: (String) -> List<ExerciseModel>,
+    muscleGroups: List<MuscleGroup>,
+    getExercises: (String) -> List<Exercise>,
     currentPage: Int,
     totalPages: Int,
     onAddGoal: (UserGoal) -> Unit,

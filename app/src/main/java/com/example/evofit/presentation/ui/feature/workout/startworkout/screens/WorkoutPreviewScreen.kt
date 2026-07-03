@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewCard
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderIndicatorCard
 import com.example.evofit.presentation.ui.feature.workout.components.WorkoutDetailPreview
+import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
