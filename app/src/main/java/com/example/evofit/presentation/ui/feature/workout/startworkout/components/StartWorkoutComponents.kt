@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.workout.components.CustomCircularCheckbox
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.ExerciseProgressState
 
@@ -119,10 +120,72 @@ fun ExerciseTrackingCard(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.workout_start_column_set), color = MaterialTheme.colorScheme.secondary, fontSize = 13.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
-                        Text(stringResource(R.string.workout_start_column_weight), color = MaterialTheme.colorScheme.secondary, fontSize = 13.sp, modifier = Modifier.weight(1.2f), textAlign = TextAlign.Center)
-                        Text(stringResource(R.string.workout_start_column_reps), color = MaterialTheme.colorScheme.secondary, fontSize = 13.sp, modifier = Modifier.weight(1.2f), textAlign = TextAlign.Center)
-                        Text(stringResource(R.string.workout_start_column_ok), color = MaterialTheme.colorScheme.secondary, fontSize = 13.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                        Text(
+                            stringResource(R.string.workout_start_column_set),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 13.sp,
+                            modifier = Modifier.weight(0.8f),
+                            textAlign = TextAlign.Center
+                        )
+                        when (exercise.unit) {
+                            MeasurementUnit.WEIGHT -> {
+                                Text(
+                                    stringResource(R.string.workout_start_column_weight),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1.2f),
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    stringResource(R.string.workout_start_column_reps),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1.2f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            MeasurementUnit.DISTANCE -> {
+                                Text(
+                                    "Dist. (km)",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1.2f),
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    "Tempo (min)",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(1.2f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            MeasurementUnit.TIME -> {
+                                Text(
+                                    "Tempo (min)",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(2.4f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            MeasurementUnit.REPS -> {
+                                Text(
+                                    "Reps",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 13.sp,
+                                    modifier = Modifier.weight(2.4f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                        Text(
+                            stringResource(R.string.workout_start_column_ok),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 13.sp,
+                            modifier = Modifier.weight(0.8f),
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -133,22 +196,79 @@ fun ExerciseTrackingCard(
                                 .height(44.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "${setItem.setNumber}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
-
-                            val weightStr = if (setItem.weight % 1 == 0.0) "${setItem.weight.toInt()}" else "${setItem.weight}"
                             Text(
-                                text = stringResource(R.string.workout_start_weight_kg, weightStr),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                text = "${setItem.setNumber}",
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp,
-                                modifier = Modifier.weight(1.2f),
+                                modifier = Modifier.weight(0.8f),
                                 textAlign = TextAlign.Center
                             )
-                            Text(text = "${setItem.reps}", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1.2f), textAlign = TextAlign.Center)
+
+                            when (exercise.unit) {
+                                MeasurementUnit.WEIGHT -> {
+                                    val weightStr = if (setItem.weight % 1 == 0.0) "${setItem.weight.toInt()}" else "${setItem.weight}"
+                                    Text(
+                                        text = "$weightStr kg",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(1.2f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Text(
+                                        text = "${setItem.reps}",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(1.2f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                MeasurementUnit.DISTANCE -> {
+                                    val distStr = if ((setItem.distance ?: 0.0) % 1 == 0.0) "${setItem.distance?.toInt()}" else "${setItem.distance}"
+                                    Text(
+                                        text = "$distStr km",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(1.2f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Text(
+                                        text = "${setItem.time} min",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(1.2f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                MeasurementUnit.TIME -> {
+                                    Text(
+                                        text = "${setItem.time} min",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(2.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                MeasurementUnit.REPS -> {
+                                    Text(
+                                        text = "${setItem.reps}",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(2.4f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
 
                             Box(
                                 modifier = Modifier
-                                    .weight(1f)
+                                    .weight(0.8f)
                                     .fillMaxHeight(),
                                 contentAlignment = Alignment.Center
                             ) {

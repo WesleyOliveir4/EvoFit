@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewCard
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderIndicatorCard
@@ -157,13 +158,45 @@ private fun WorkoutPreviewScreenPreview() {
     EvoFitTheme {
         WorkoutPreviewContent(
             preview = WorkoutDetailPreview(
-                title = "Peito",
-                totalExercises = 3,
-                totalSets = 7,
+                title = "Treino Completo",
+                totalExercises = 4,
+                totalSets = 10,
                 exercises = listOf(
-                    ExercisePreviewItem(1L, "Supino reto", 3, 80.0, 10),
-                    ExercisePreviewItem(2L, "Supino inclinado", 2, 70.0, 10),
-                    ExercisePreviewItem(3L, "Crucifixo", 2, 20.0, 12)
+                    ExercisePreviewItem(
+                        workoutExerciseId = 1L,
+                        name = "Supino reto",
+                        setsCount = 3,
+                        weight = 80.0,
+                        reps = 10,
+                        unit = MeasurementUnit.WEIGHT
+                    ),
+                    ExercisePreviewItem(
+                        workoutExerciseId = 2L,
+                        name = "Corrida",
+                        setsCount = 1,
+                        weight = 0.0,
+                        reps = 0,
+                        unit = MeasurementUnit.DISTANCE,
+                        distance = 5.0,
+                        time = 25
+                    ),
+                    ExercisePreviewItem(
+                        workoutExerciseId = 3L,
+                        name = "Prancha",
+                        setsCount = 3,
+                        weight = 0.0,
+                        reps = 0,
+                        unit = MeasurementUnit.TIME,
+                        time = 2
+                    ),
+                    ExercisePreviewItem(
+                        workoutExerciseId = 4L,
+                        name = "Abdominais",
+                        setsCount = 3,
+                        weight = 0.0,
+                        reps = 20,
+                        unit = MeasurementUnit.REPS
+                    )
                 )
             ),
             onBackClick = {},

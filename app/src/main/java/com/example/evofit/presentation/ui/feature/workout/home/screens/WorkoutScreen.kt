@@ -1,13 +1,17 @@
 package com.example.evofit.presentation.ui.feature.workout.home.screens
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -16,9 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
+import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewCard
+import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.StatCard
 import com.example.evofit.presentation.ui.feature.workout.components.draggableWorkoutList
@@ -45,6 +52,7 @@ fun WorkoutScreen(
         workouts = localWorkouts,
         totalWorkouts = uiState.totalWorkouts,
         workoutsThisWeek = uiState.workoutsThisWeek,
+        history = uiState.history,
         onMove = { from, to ->
             val mutableList = localWorkouts.toMutableList()
             mutableList.add(to, mutableList.removeAt(from))
@@ -65,6 +73,7 @@ fun WorkoutContent(
     workouts: List<WorkoutUIModel>,
     totalWorkouts: Int,
     workoutsThisWeek: Int,
+    history: List<WorkoutDone>,
     onMove: (Int, Int) -> Unit,
     onNavigate: (String) -> Unit,
     onWorkoutClick: (WorkoutUIModel) -> Unit,
@@ -150,8 +159,105 @@ fun WorkoutContent(
                 dragState = dragState,
                 onWorkoutClick = onWorkoutClick
             )
+
+            if (history.isNotEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        text = "Histórico Recente",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                items(history.takeLast(5).reversed()) { workoutDone ->
+                    WorkoutDoneItem(workoutDone = workoutDone)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
             
             item { Spacer(modifier = Modifier.height(100.dp)) }
+        }
+    }
+}
+
+@Composable
+fun WorkoutDoneItem(
+    workoutDone: WorkoutDone,
+    modifier: Modifier = Modifier
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable { isExpanded = !isExpanded },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = workoutDone.nameWorkout,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${workoutDone.date} • ${workoutDone.time}",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp
+                    )
+                }
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(16.dp))
+                val exerciseGroups = workoutDone.exercises.groupBy { it.workoutExerciseId }
+                exerciseGroups.forEach { (exerciseId, sets) ->
+                    // Aqui precisaríamos do nome do exercício, mas o ExerciseSetEntity só tem o ID.
+                    // Para simplificar agora, vamos mostrar "Exercício #ID" ou tentar inferir.
+                    // Idealmente WorkoutDone deveria salvar o nome do exercício também.
+                    
+                    // Como WorkoutDone não tem o nome do exercício, e buscá-lo do DB local pode ser custoso aqui,
+                    // vamos usar um placeholder ou ver se conseguimos passar.
+                    
+                    // No momento, vamos mostrar os sets agrupados.
+                    val firstSet = sets.first()
+                    ExercisePreviewCard(
+                        index = exerciseGroups.keys.toList().indexOf(exerciseId) + 1,
+                        item = ExercisePreviewItem(
+                            workoutExerciseId = exerciseId,
+                            name = "Exercício", // Nome omitido por falta no modelo WorkoutDone
+                            setsCount = sets.size,
+                            weight = sets.maxOf { it.load },
+                            reps = sets.maxOf { it.reps },
+                            unit = firstSet.unit,
+                            time = sets.maxOf { it.time ?: 0 },
+                            distance = sets.maxOf { it.distance ?: 0.0 }
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }
@@ -168,6 +274,7 @@ private fun WorkoutContentPreview() {
             ),
             totalWorkouts = 2,
             workoutsThisWeek = 1,
+            history = emptyList(),
             onMove = { _, _ -> },
             onNavigate = {},
             onWorkoutClick = {},

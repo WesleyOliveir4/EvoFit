@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmode
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
@@ -26,17 +27,26 @@ class WorkoutPreviewViewModel(
 
                 val exercises = workoutSelected.exercises.map { workoutExercise ->
                     val exercise = exerciseDataMap[workoutExercise.exerciseId]
+                    val unit = exercise?.unit ?: MeasurementUnit.WEIGHT
 
                     val setsCount = workoutExercise.sets.size
-                    val weight = workoutExercise.sets.firstOrNull()?.load ?: 0.0
-                    val reps = workoutExercise.sets.firstOrNull()?.reps ?: 0
+                    
+                    val bestSet = when (unit) {
+                        MeasurementUnit.WEIGHT -> workoutExercise.sets.maxByOrNull { it.load }
+                        MeasurementUnit.DISTANCE -> workoutExercise.sets.maxByOrNull { it.distance ?: 0.0 }
+                        MeasurementUnit.TIME -> workoutExercise.sets.maxByOrNull { it.time ?: 0 }
+                        MeasurementUnit.REPS -> workoutExercise.sets.maxByOrNull { it.reps }
+                    }
 
                     ExercisePreviewItem(
                         workoutExerciseId = workoutExercise.id,
                         name = exercise?.name ?: "",
                         setsCount = setsCount,
-                        weight = weight,
-                        reps = reps
+                        weight = bestSet?.load ?: 0.0,
+                        reps = bestSet?.reps ?: 0,
+                        unit = unit,
+                        time = bestSet?.time,
+                        distance = bestSet?.distance
                     )
                 }
 
@@ -49,7 +59,7 @@ class WorkoutPreviewViewModel(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
         )
 }

@@ -71,4 +71,8 @@ class WorkoutRepositoryImpl(
             )
         )
     }
+
+    override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
+        return userDao.getWorkoutDoneHistory(userId)?.history ?: emptyList()
+    }
 }

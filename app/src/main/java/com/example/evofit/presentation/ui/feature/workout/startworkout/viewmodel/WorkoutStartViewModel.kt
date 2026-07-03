@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.data.datasource.WorkoutSessionDataSource
 import com.example.evofit.data.local.entities.ExerciseSetEntity
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
@@ -29,6 +30,7 @@ data class ExerciseProgressState(
     val workoutExerciseId: Long,
     val exerciseId: String,
     val name: String,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val sets: List<SetProgressState>
 )
 
@@ -36,6 +38,8 @@ data class SetProgressState(
     val setNumber: Int,
     val weight: Double,
     val reps: Int,
+    val time: Int? = null,
+    val distance: Double? = null,
     val isDone: Boolean = false
 )
 
@@ -78,11 +82,14 @@ class WorkoutStartViewModel(
                             workoutExerciseId = workoutExercise.id,
                             exerciseId = workoutExercise.exerciseId,
                             name = exerciseInfo?.name ?: "",
+                            unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
                             sets = workoutExercise.sets.mapIndexed { index, set ->
                                 SetProgressState(
                                     setNumber = index + 1,
                                     weight = set.load,
-                                    reps = set.reps
+                                    reps = set.reps,
+                                    time = set.time,
+                                    distance = set.distance
                                 )
                             }
                         )
@@ -163,7 +170,10 @@ class WorkoutStartViewModel(
                         workoutExerciseId = exercise.workoutExerciseId,
                         setNumber = set.setNumber,
                         reps = set.reps,
-                        load = set.weight
+                        load = set.weight,
+                        unit = exercise.unit,
+                        time = set.time,
+                        distance = set.distance
                     )
                 }
             }

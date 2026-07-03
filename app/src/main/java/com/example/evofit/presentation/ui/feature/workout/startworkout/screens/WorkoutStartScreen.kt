@@ -248,8 +248,18 @@ private fun WorkoutStartScreenPreview() {
                         exerciseId = "1",
                         name = "Supino reto",
                         sets = listOf(
-                            SetProgressState(1, 80.0, 10, true),
-                            SetProgressState(2, 80.0, 10, false)
+                            SetProgressState(
+                                setNumber = 1,
+                                weight = 80.0,
+                                reps = 10,
+                                isDone = true
+                            ),
+                            SetProgressState(
+                                setNumber = 2,
+                                weight = 80.0,
+                                reps = 10,
+                                isDone = false
+                            )
                         )
                     )
                 ),

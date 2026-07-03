@@ -25,6 +25,7 @@ import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCaseImpl
 import com.example.evofit.domain.usecase.SaveWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
+import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
@@ -68,6 +69,7 @@ val domainModule = module {
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
     factory { SaveWorkoutDoneUseCase(get()) }
+    factory { GetWorkoutDoneHistoryUseCase(get()) }
     factory { UpdateWorkoutsOrderUseCase(get()) }
 }
 
@@ -97,6 +99,7 @@ val homeModule = module {
 val workoutModule = module {
     viewModel {
         WorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),

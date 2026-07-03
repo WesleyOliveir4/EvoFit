@@ -7,6 +7,7 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import com.example.evofit.domain.model.MeasurementUnit
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -1028,7 +1029,10 @@ data class ExercisePreviewItem(
     val name: String,
     val setsCount: Int,
     val weight: Double,
-    val reps: Int
+    val reps: Int,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val time: Int? = null,
+    val distance: Double? = null
 )
 
 @Composable
@@ -1115,12 +1119,27 @@ fun ExercisePreviewCard(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
-                val weightStr = if (item.weight % 1 == 0.0) "${item.weight.toInt()}" else "${item.weight}"
+                val detailText = when (item.unit) {
+                    MeasurementUnit.WEIGHT -> {
+                        val weightStr = if (item.weight % 1 == 0.0) "${item.weight.toInt()}" else "${item.weight}"
+                        "$weightStr kg × ${item.reps} reps"
+                    }
+                    MeasurementUnit.DISTANCE -> {
+                        val distanceStr = if ((item.distance ?: 0.0) % 1 == 0.0) "${item.distance?.toInt()}" else "${item.distance}"
+                        "$distanceStr km × ${item.time ?: 0} min"
+                    }
+                    MeasurementUnit.TIME -> {
+                        "${item.time ?: 0} min"
+                    }
+                    MeasurementUnit.REPS -> {
+                        "${item.reps} reps"
+                    }
+                }
                 Text(
                     text = stringResource(
                         R.string.main_workout_exercise_series_format,
                         stringResource(R.string.main_workout_series_count, item.setsCount),
-                        "$weightStr kg × ${item.reps} reps"
+                        detailText
                     ),
                     color = MaterialTheme.colorScheme.secondary,
                     fontSize = 14.sp

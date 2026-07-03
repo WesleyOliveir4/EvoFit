@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
+import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.presentation.model.WorkoutUIModel
@@ -29,7 +30,8 @@ class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutsUseCase: GetWorkoutsUseCase,
-    private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase
+    private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase,
+    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase
 ) : ViewModel() {
 
     private var updateOrderJob: Job? = null
@@ -41,6 +43,7 @@ class WorkoutViewModel(
             if (userId.isEmpty()) {
                 flowOf(WorkoutState(userName = userData.name))
             } else {
+                val history = getWorkoutDoneHistoryUseCase(userId)
                 getWorkoutsUseCase(userId).map { workouts ->
                     val calendar = Calendar.getInstance()
                     calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
@@ -71,7 +74,8 @@ class WorkoutViewModel(
                             } catch (e: Exception) {
                                 false
                             }
-                        }
+                        },
+                        history = history
                     )
                 }
             }
