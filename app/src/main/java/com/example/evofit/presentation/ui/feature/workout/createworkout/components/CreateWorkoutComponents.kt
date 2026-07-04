@@ -23,9 +23,9 @@ import com.example.evofit.R
 import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.mapper.toIcon
-import com.example.evofit.presentation.ui.feature.workout.components.AddSetDashedButton
-import com.example.evofit.presentation.ui.feature.workout.components.RepsCounterComponent
-import com.example.evofit.presentation.ui.feature.workout.components.WeightWheelSelector
+import com.example.evofit.presentation.ui.feature.workout.components.configure.AddSetDashedButton
+import com.example.evofit.presentation.ui.feature.workout.components.configure.RepsCounterComponent
+import com.example.evofit.presentation.ui.feature.workout.components.configure.WeightWheelSelector
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SetState
 import com.example.evofit.presentation.ui.theme.EvoFitTheme

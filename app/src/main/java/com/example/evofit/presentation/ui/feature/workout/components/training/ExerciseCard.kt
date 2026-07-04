@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
+import com.example.evofit.presentation.model.ExercisePreviewItem
 
 @Composable
 fun ExercisePreviewCard(

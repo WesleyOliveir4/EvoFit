@@ -2,14 +2,15 @@ package com.example.evofit.di
 
 import androidx.room.Room
 import com.example.evofit.data.datasource.LocalExerciseDataSource
-import com.example.evofit.data.datasource.WorkoutSessionDataSource
 import com.example.evofit.data.local.AppDatabase
 import com.example.evofit.data.repository.ExerciseRepositoryImpl
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.data.repository.WorkoutRepositoryImpl
+import com.example.evofit.data.repository.WorkoutSessionRepositoryImpl
 import com.example.evofit.domain.repository.ExerciseRepository
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.repository.WorkoutRepository
+import com.example.evofit.domain.repository.WorkoutSessionRepository
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCaseImpl
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
@@ -56,7 +57,7 @@ val dataModule = module {
 
     single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
-    single { WorkoutSessionDataSource(androidContext()) }
+    single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(androidContext()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
@@ -144,7 +145,7 @@ val workoutModule = module {
             saveWorkoutUseCase = get(),
             saveWorkoutDoneUseCase = get(),
             getUserIdUseCase = get(),
-            sessionDataSource = get()
+            sessionRepository = get()
         )
     }
 }

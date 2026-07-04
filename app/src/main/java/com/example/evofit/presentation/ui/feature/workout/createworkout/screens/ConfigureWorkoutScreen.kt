@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePageSegmentedIndicator
+import com.example.evofit.presentation.ui.feature.workout.components.configure.ExercisePageSegmentedIndicator
 import com.example.evofit.presentation.ui.feature.workout.createworkout.components.ExerciseConfigContent
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ExerciseConfigState

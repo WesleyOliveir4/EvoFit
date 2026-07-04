@@ -10,6 +10,7 @@ import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
+import com.example.evofit.presentation.mapper.DateMapper
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,9 +24,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
@@ -49,8 +47,6 @@ class WorkoutViewModel(
                 getWorkoutsUseCase(userId).map { workouts ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
                     
-                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("pt-BR"))
-
                     WorkoutState(
                         userName = userData.name,
                         workouts = workouts.map { workout ->
@@ -64,12 +60,8 @@ class WorkoutViewModel(
                         },
                         totalWorkouts = workouts.size,
                         workoutsThisWeek = workouts.count { 
-                            try {
-                                val date = dateFormat.parse(it.date)
-                                date != null && date.time >= startOfWeek
-                            } catch (e: Exception) {
-                                false
-                            }
+                            val date = DateMapper.parseDate(it.date)
+                            date != null && date.time >= startOfWeek
                         },
                         history = history
                     )

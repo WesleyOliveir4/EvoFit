@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
-import com.example.evofit.presentation.ui.feature.workout.components.WorkoutDetailPreview
+import com.example.evofit.presentation.model.ExercisePreviewItem
+import com.example.evofit.presentation.model.WorkoutDetailPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

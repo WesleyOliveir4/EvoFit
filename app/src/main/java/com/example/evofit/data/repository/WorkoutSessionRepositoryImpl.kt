@@ -1,19 +1,20 @@
-package com.example.evofit.data.datasource
+package com.example.evofit.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.evofit.domain.repository.WorkoutSessionRepository
 
-class WorkoutSessionDataSource(context: Context) {
+class WorkoutSessionRepositoryImpl(context: Context) : WorkoutSessionRepository {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    fun startSession(workoutId: Int, startTimeMillis: Long) {
+    override fun startSession(workoutId: Int, startTimeMillis: Long) {
         prefs.edit()
             .putInt(KEY_WORKOUT_ID, workoutId)
             .putLong(KEY_START_TIME, startTimeMillis)
             .apply()
     }
 
-    fun getSessionStartTime(workoutId: Int): Long? {
+    override fun getSessionStartTime(workoutId: Int): Long? {
         val activeWorkoutId = prefs.getInt(KEY_WORKOUT_ID, -1)
         return if (activeWorkoutId == workoutId) {
             val startTime = prefs.getLong(KEY_START_TIME, 0L)
@@ -21,7 +22,7 @@ class WorkoutSessionDataSource(context: Context) {
         } else null
     }
 
-    fun clearSession() {
+    override fun clearSession() {
         prefs.edit().clear().apply()
     }
 

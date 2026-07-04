@@ -25,7 +25,7 @@ import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
-import com.example.evofit.presentation.ui.feature.workout.components.ExercisePreviewItem
+import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.training.StatCard
 import com.example.evofit.presentation.ui.feature.workout.components.training.draggableWorkoutList

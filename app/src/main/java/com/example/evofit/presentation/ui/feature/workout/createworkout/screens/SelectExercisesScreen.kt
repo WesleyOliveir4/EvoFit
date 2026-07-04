@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.workout.components.ExerciseRowItem
+import com.example.evofit.presentation.ui.feature.workout.components.configure.ExerciseRowItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel

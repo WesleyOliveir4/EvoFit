@@ -65,19 +65,6 @@ interface UserDao {
     fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
 
     @Transaction
-    suspend fun insertFullWorkout(
-        workout: WorkoutEntity,
-        exercises: List<WorkoutExerciseEntity>,
-        sets: List<List<ExerciseSetEntity>>
-    ) {
-        val workoutId = insertWorkout(workout)
-        exercises.forEachIndexed { index, exercise ->
-            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workoutId))
-            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
-        }
-    }
-
-    @Transaction
     suspend fun insertFullWorkoutReturnId(
         workout: WorkoutEntity,
         exercises: List<WorkoutExerciseEntity>,

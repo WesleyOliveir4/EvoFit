@@ -11,20 +11,20 @@ import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
+import com.example.evofit.presentation.mapper.DateMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 data class ConfigureWorkoutUiState(
     val workoutName: String = "",
     val exerciseConfigs: List<ExerciseConfigState> = emptyList(),
     val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
-    val isSaved: Boolean = false
+    val isSaved: Boolean = false,
+    val savedWorkoutId: Long? = null
 )
 
 data class ExerciseConfigState(
@@ -199,18 +199,23 @@ class ConfigureWorkoutViewModel(
                 )
             }
 
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
             val workout = Workout(
                 userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
                 name = currentState.workoutName,
                 muscleGroupId = firstConfig?.muscleGroupId ?: "",
                 muscleGroup = muscleGroup,
-                date = dateFormat.format(Date()),
+                date = DateMapper.formatDate(Date()),
                 exercises = workoutExercises
             )
 
-            saveWorkoutUseCase(workout)
-            _uiState.update { it.copy(isLoading = false, isSaved = true) }
+            val workoutId = saveWorkoutUseCase(workout)
+            _uiState.update { 
+                it.copy(
+                    isLoading = false, 
+                    isSaved = true,
+                    savedWorkoutId = workoutId
+                ) 
+            }
         }
     }
 }

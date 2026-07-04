@@ -3,7 +3,6 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.core.common.AppConstants
-import com.example.evofit.data.datasource.WorkoutSessionDataSource
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
@@ -13,6 +12,8 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
+import com.example.evofit.domain.repository.WorkoutSessionRepository
+import com.example.evofit.presentation.mapper.DateMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -51,7 +52,7 @@ class WorkoutStartViewModel(
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val sessionDataSource: WorkoutSessionDataSource
+    private val sessionRepository: WorkoutSessionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutStartUiState())
@@ -110,8 +111,8 @@ class WorkoutStartViewModel(
 
     private fun startOrResumeTimer() {
         val now = System.currentTimeMillis()
-        val startTime = sessionDataSource.getSessionStartTime(workoutId) ?: run {
-            sessionDataSource.startSession(workoutId, now)
+        val startTime = sessionRepository.getSessionStartTime(workoutId) ?: run {
+            sessionRepository.startSession(workoutId, now)
             now
         }
 
@@ -178,9 +179,8 @@ class WorkoutStartViewModel(
                 }
             }
 
-            val dateFormat = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale("pt", "BR"))
             val workoutDone = WorkoutDone(
-                date = dateFormat.format(java.util.Date()),
+                date = DateMapper.formatDate(java.util.Date()),
                 nameWorkout = workout.name,
                 time = _uiState.value.elapsedTime,
                 muscleGroup = workout.muscleGroup,
@@ -188,7 +188,7 @@ class WorkoutStartViewModel(
             )
 
             saveWorkoutDoneUseCase(userId, workoutDone)
-            sessionDataSource.clearSession()
+            sessionRepository.clearSession()
             _uiState.update { it.copy(showFinishDialog = false, workoutCompleted = true) }
         }
     }
