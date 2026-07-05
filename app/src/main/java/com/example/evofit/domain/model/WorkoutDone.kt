@@ -4,11 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WorkoutDone(
+    val id: Long = 0,
+    val userId: String,
+    val name: String,
+    val muscleGroupId: String,
+    val muscleGroup: MuscleGroup? = null,
     val date: String,
-    val nameWorkout: String,
-    val time: String,
-    val muscleGroup: MuscleGroup?,
-    val exercises: List<ExerciseSet>
+    val exercises: List<WorkoutExercise>,
+    val time: String
 )
 
 data class WorkoutDoneHistory(

@@ -10,7 +10,10 @@ import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.model.MuscleGroup
 
-fun FullWorkout.toDomain(muscleGroup: MuscleGroup? = null): Workout {
+fun FullWorkout.toDomain(
+    muscleGroup: MuscleGroup? = null,
+    exerciseNameResolver: (String) -> String = { "" }
+): Workout {
     return Workout(
         id = workout.workoutId,
         userId = workout.userId,
@@ -18,22 +21,24 @@ fun FullWorkout.toDomain(muscleGroup: MuscleGroup? = null): Workout {
         muscleGroupId = workout.muscleGroupId,
         muscleGroup = muscleGroup,
         date = workout.date,
-        exercises = exercises.map { it.toDomain() },
+        exercises = exercises.map { it.toDomain(exerciseNameResolver) },
         orderIndex = workout.orderIndex
     )
 }
 
-fun WorkoutExerciseWithSets.toDomain(): WorkoutExercise {
+fun WorkoutExerciseWithSets.toDomain(exerciseNameResolver: (String) -> String = { "" }): WorkoutExercise {
+    val exerciseName = exerciseNameResolver(workoutExercise.exerciseId)
     return WorkoutExercise(
         id = workoutExercise.id,
         exerciseId = workoutExercise.exerciseId,
-        sets = sets.map { it.toDomain() }
+        sets = sets.map { it.toDomain(exerciseName) }
     )
 }
 
-fun ExerciseSetEntity.toDomain(): ExerciseSet {
+fun ExerciseSetEntity.toDomain(exerciseName: String = ""): ExerciseSet {
     return ExerciseSet(
         id = id,
+        exerciseName = exerciseName,
         setNumber = setNumber,
         reps = reps,
         load = load,

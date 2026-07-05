@@ -7,6 +7,7 @@ import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
+import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
@@ -166,9 +167,10 @@ class WorkoutStartViewModel(
             val workout = workoutDomain ?: return@launch
             val userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID
             
-            val doneSets = _uiState.value.exercises.flatMap { exercise ->
-                exercise.sets.filter { it.isDone }.map { set ->
+            val doneExercises = _uiState.value.exercises.mapNotNull { exercise ->
+                val doneSets = exercise.sets.filter { it.isDone }.map { set ->
                     ExerciseSet(
+                        exerciseName = exercise.name,
                         setNumber = set.setNumber,
                         reps = set.reps,
                         load = set.weight,
@@ -177,14 +179,25 @@ class WorkoutStartViewModel(
                         distance = set.distance
                     )
                 }
+                if (doneSets.isEmpty()) {
+                    null
+                } else {
+                    WorkoutExercise(
+                        id = exercise.workoutExerciseId,
+                        exerciseId = exercise.exerciseId,
+                        sets = doneSets
+                    )
+                }
             }
 
             val workoutDone = WorkoutDone(
-                date = DateMapper.formatDate(java.util.Date()),
-                nameWorkout = workout.name,
-                time = _uiState.value.elapsedTime,
+                userId = userId,
+                name = workout.name,
+                muscleGroupId = workout.muscleGroupId,
                 muscleGroup = workout.muscleGroup,
-                exercises = doneSets
+                date = DateMapper.formatDate(java.util.Date()),
+                exercises = doneExercises,
+                time = _uiState.value.elapsedTime
             )
 
             saveWorkoutDoneUseCase(userId, workoutDone)

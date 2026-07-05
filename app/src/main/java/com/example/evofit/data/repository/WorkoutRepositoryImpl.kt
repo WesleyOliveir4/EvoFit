@@ -21,7 +21,8 @@ class WorkoutRepositoryImpl(
             val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
             fullWorkouts.map { fullWorkout ->
                 val group = muscleGroups.find { it.id == fullWorkout.workout.muscleGroupId }
-                fullWorkout.toDomain(group)
+                val nameResolver = buildExerciseNameResolver(fullWorkout.exercises.map { it.workoutExercise.exerciseId })
+                fullWorkout.toDomain(group, nameResolver)
             }
         }
     }
@@ -32,9 +33,19 @@ class WorkoutRepositoryImpl(
                 val group = exerciseDataSource.getAllMuscleGroups()
                     .find { it.id == fullWorkout.workout.muscleGroupId }
                     ?.toDomain()
-                fullWorkout.toDomain(group)
+                val nameResolver = buildExerciseNameResolver(fullWorkout.exercises.map { ex -> ex.workoutExercise.exerciseId })
+                fullWorkout.toDomain(group, nameResolver)
             }
         }
+    }
+
+    /**
+     * Constrói um resolver de id -> nome de exercício a partir do catálogo local,
+     * usado para preencher ExerciseSet.exerciseName ao montar o domínio a partir das entidades.
+     */
+    private fun buildExerciseNameResolver(exerciseIds: List<String>): (String) -> String {
+        val namesById = exerciseDataSource.getExercisesByIds(exerciseIds).associate { it.id to it.name }
+        return { exerciseId -> namesById[exerciseId] ?: "" }
     }
 
     override suspend fun saveWorkout(workout: Workout): Long {

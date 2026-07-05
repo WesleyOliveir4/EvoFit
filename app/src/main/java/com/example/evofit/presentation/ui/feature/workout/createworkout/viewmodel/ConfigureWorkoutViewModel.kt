@@ -161,6 +161,7 @@ class ConfigureWorkoutViewModel(
                         when (config.unit) {
                             MeasurementUnit.DISTANCE -> {
                                 ExerciseSet(
+                                    exerciseName = config.name,
                                     setNumber = set.setNumber,
                                     reps = 0,
                                     load = 0.0,
@@ -171,6 +172,7 @@ class ConfigureWorkoutViewModel(
                             }
                             MeasurementUnit.TIME -> {
                                 ExerciseSet(
+                                    exerciseName = config.name,
                                     setNumber = set.setNumber,
                                     reps = 0,
                                     load = 0.0,
@@ -180,6 +182,7 @@ class ConfigureWorkoutViewModel(
                             }
                             MeasurementUnit.REPS -> {
                                 ExerciseSet(
+                                    exerciseName = config.name,
                                     setNumber = set.setNumber,
                                     reps = set.reps,
                                     load = 0.0,
@@ -188,6 +191,7 @@ class ConfigureWorkoutViewModel(
                             }
                             MeasurementUnit.WEIGHT -> {
                                 ExerciseSet(
+                                    exerciseName = config.name,
                                     setNumber = set.setNumber,
                                     reps = set.reps,
                                     load = set.weight,

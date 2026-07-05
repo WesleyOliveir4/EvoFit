@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ExerciseSet(
     val id: Long = 0,
+    val exerciseName: String,
     val workoutExerciseId: Long = 0,
     val setNumber: Int,
     val reps: Int,

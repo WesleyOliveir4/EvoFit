@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.WorkoutUIModel
@@ -211,7 +212,7 @@ fun WorkoutDoneItem(
             ) {
                 Column {
                     Text(
-                        text = workoutDone.nameWorkout,
+                        text = workoutDone.name,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -231,28 +232,20 @@ fun WorkoutDoneItem(
 
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(16.dp))
-                val exerciseGroups = workoutDone.exercises.groupBy { it.workoutExerciseId }
-                exerciseGroups.forEach { (exerciseId, sets) ->
-                    // Aqui precisaríamos do nome do exercício, mas o ExerciseSetEntity só tem o ID.
-                    // Para simplificar agora, vamos mostrar "Exercício #ID" ou tentar inferir.
-                    // Idealmente WorkoutDone deveria salvar o nome do exercício também.
-                    
-                    // Como WorkoutDone não tem o nome do exercício, e buscá-lo do DB local pode ser custoso aqui,
-                    // vamos usar um placeholder ou ver se conseguimos passar.
-                    
-                    // No momento, vamos mostrar os sets agrupados.
-                    val firstSet = sets.first()
+                workoutDone.exercises.forEachIndexed { index, workoutExercise ->
+                    val sets = workoutExercise.sets
+                    val firstSet = sets.firstOrNull()
                     ExercisePreviewCard(
-                        index = exerciseGroups.keys.toList().indexOf(exerciseId) + 1,
+                        index = index + 1,
                         item = ExercisePreviewItem(
-                            workoutExerciseId = exerciseId,
-                            name = "Exercício", // Nome omitido por falta no modelo WorkoutDone
+                            workoutExerciseId = workoutExercise.id,
+                            name = firstSet?.exerciseName ?: "",
                             setsCount = sets.size,
-                            weight = sets.maxOf { it.load },
-                            reps = sets.maxOf { it.reps },
-                            unit = firstSet.unit,
-                            time = sets.maxOf { it.time ?: 0 },
-                            distance = sets.maxOf { it.distance ?: 0.0 }
+                            weight = sets.maxOfOrNull { it.load } ?: 0.0,
+                            reps = sets.maxOfOrNull { it.reps } ?: 0,
+                            unit = firstSet?.unit ?: MeasurementUnit.WEIGHT,
+                            time = sets.maxOfOrNull { it.time ?: 0 } ?: 0,
+                            distance = sets.maxOfOrNull { it.distance ?: 0.0 } ?: 0.0
                         )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
