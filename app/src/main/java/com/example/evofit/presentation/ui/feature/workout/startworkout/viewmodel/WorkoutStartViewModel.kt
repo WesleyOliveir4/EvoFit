@@ -9,52 +9,38 @@ import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.model.WorkoutExercise
+import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
+import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
-import com.example.evofit.domain.usecase.SaveWorkoutUseCase
-import com.example.evofit.domain.repository.WorkoutSessionRepository
+import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
+import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCase
 import com.example.evofit.presentation.mapper.DateMapper
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class WorkoutStartUiState(
-    val workoutTitle: String = "",
-    val exercises: List<ExerciseProgressState> = emptyList(),
-    val isLoading: Boolean = true,
-    val elapsedTime: String = "00:00:00",
-    val showFinishDialog: Boolean = false,
-    val workoutCompleted: Boolean = false
-)
-
-data class ExerciseProgressState(
-    val workoutExerciseId: Long,
-    val exerciseId: String,
-    val name: String,
-    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
-    val sets: List<SetProgressState>
-)
-
-data class SetProgressState(
-    val setNumber: Int,
-    val weight: Double,
-    val reps: Int,
-    val time: Int? = null,
-    val distance: Double? = null,
-    val isDone: Boolean = false
-)
 
 class WorkoutStartViewModel(
     private val workoutId: Int,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
-    private val saveWorkoutUseCase: SaveWorkoutUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val sessionRepository: WorkoutSessionRepository
+    private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
+    private val startWorkoutSessionUseCase: StartWorkoutSessionUseCase,
+    private val updateCompletedSetsUseCase: UpdateCompletedSetsUseCase,
+    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutStartUiState())
@@ -70,7 +56,10 @@ class WorkoutStartViewModel(
 
     private fun loadWorkout() {
         viewModelScope.launch {
-            getWorkoutByIdUseCase(workoutId.toLong()).collect { workout ->
+            combine(
+                getWorkoutByIdUseCase(workoutId.toLong()),
+                getActiveWorkoutSessionUseCase()
+            ) { workout, activeSession ->
                 workoutDomain = workout
                 workout?.let { w ->
                     val groupName = w.muscleGroup?.name ?: ""
@@ -79,12 +68,8 @@ class WorkoutStartViewModel(
                     val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
                         .associateBy { it.id }
 
-                    // Restaura as séries já marcadas como feitas, caso exista uma sessão
-                    // salva para este mesmo treino (usuário saiu do app e voltou, ou está
-                    // retomando pelo card "Treino em andamento" da Home).
-                    val savedSession = sessionRepository.getActiveSession()
-                    val completedSets = if (savedSession?.workoutId == workoutId.toLong()) {
-                        savedSession.completedSets
+                    val completedSets = if (activeSession?.workout?.id == workoutId.toLong()) {
+                        activeSession.completedSets
                     } else {
                         emptyList()
                     }
@@ -121,26 +106,28 @@ class WorkoutStartViewModel(
                         )
                     }
                 }
-            }
+            }.collect { }
         }
     }
 
     private fun startOrResumeTimer() {
-        val now = System.currentTimeMillis()
-        val activeSession = sessionRepository.getActiveSession()
-        val startTime = if (activeSession?.workoutId == workoutId.toLong()) {
-            activeSession.startTime
-        } else {
-            sessionRepository.startSession(workoutId.toLong(), now)
-            now
-        }
+        viewModelScope.launch {
+            val now = System.currentTimeMillis()
+            val activeSession = getActiveWorkoutSessionUseCase().first()
+            val startTime = if (activeSession?.workout?.id == workoutId.toLong()) {
+                activeSession.startTime
+            } else {
+                startWorkoutSessionUseCase(workoutId.toLong(), now)
+                now
+            }
 
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (true) {
-                val elapsed = System.currentTimeMillis() - startTime
-                _uiState.update { it.copy(elapsedTime = formatElapsedTime(elapsed)) }
-                delay(1000)
+            timerJob?.cancel()
+            timerJob = launch {
+                while (true) {
+                    val elapsed = System.currentTimeMillis() - startTime
+                    _uiState.update { it.copy(elapsedTime = formatElapsedTime(elapsed)) }
+                    delay(1000)
+                }
             }
         }
     }
@@ -170,20 +157,18 @@ class WorkoutStartViewModel(
             }
             currentState.copy(exercises = updatedExercises)
         }
-        persistCompletedSets()
+        viewModelScope.launch {
+            persistCompletedSets()
+        }
     }
 
-    /**
-     * Salva quais séries já foram marcadas como feitas, para que o progresso não se
-     * perca se o usuário sair do app antes de finalizar o treino.
-     */
-    private fun persistCompletedSets() {
+    private suspend fun persistCompletedSets() {
         val completedSets = _uiState.value.exercises.flatMap { exercise ->
             exercise.sets.filter { it.isDone }.map { set ->
                 CompletedSet(workoutExerciseId = exercise.workoutExerciseId, setNumber = set.setNumber)
             }
         }
-        sessionRepository.updateCompletedSets(completedSets)
+        updateCompletedSetsUseCase(completedSets)
     }
 
     fun onFinishClick() {
@@ -233,12 +218,8 @@ class WorkoutStartViewModel(
             )
 
             saveWorkoutDoneUseCase(userId, workoutDone)
-            sessionRepository.clearSession()
+            clearWorkoutSessionUseCase()
             _uiState.update { it.copy(showFinishDialog = false, workoutCompleted = true) }
         }
-    }
-
-    companion object {
-        private const val DEFAULT_EXERCISE_NAME = "Exercício"
     }
 }

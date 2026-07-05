@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.ExerciseProgressState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 
 @Composable
 fun ExerciseTrackingCard(

@@ -49,9 +49,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.workout.startworkout.components.ExerciseTrackingCard
-import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.ExerciseProgressState
-import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.SetProgressState
-import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartUiState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
+
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel

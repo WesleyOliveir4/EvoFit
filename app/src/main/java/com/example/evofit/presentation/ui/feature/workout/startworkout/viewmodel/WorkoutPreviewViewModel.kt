@@ -8,18 +8,17 @@ import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
+import com.example.evofit.presentation.ui.feature.workout.startworkout.state.WorkoutPreviewUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-data class WorkoutPreviewUiState(
-    val preview: WorkoutDetailPreview? = null,
-    val hasActiveSessionConflict: Boolean = false
-)
-// TODO
+
 class WorkoutPreviewViewModel(
     private val workoutId: Int,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
@@ -82,18 +81,22 @@ class WorkoutPreviewViewModel(
     )
 
     fun onStartWorkoutClicked(onProceed: () -> Unit) {
-        val hasActiveSession = sessionRepository.getActiveSession() != null
-        if (hasActiveSession) {
-            _hasActiveSessionConflict.value = true
-        } else {
-            onProceed()
+        viewModelScope.launch {
+            val hasActiveSession = sessionRepository.getActiveSession().first() != null
+            if (hasActiveSession) {
+                _hasActiveSessionConflict.value = true
+            } else {
+                onProceed()
+            }
         }
     }
 
     fun onConfirmDiscardActiveSession(onProceed: () -> Unit) {
-        sessionRepository.clearSession()
-        _hasActiveSessionConflict.value = false
-        onProceed()
+        viewModelScope.launch {
+            sessionRepository.clearSession()
+            _hasActiveSessionConflict.value = false
+            onProceed()
+        }
     }
 
     fun onDismissActiveSessionDialog() {

@@ -46,10 +46,6 @@ fun WorkoutScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.refreshActiveSession()
-    }
-
     var localWorkouts by remember { mutableStateOf<List<WorkoutUIModel>>(emptyList()) }
     
     LaunchedEffect(uiState.workouts) {

@@ -44,8 +44,6 @@ class WorkoutViewModel(
 
     private val _updateOrderFlow = MutableSharedFlow<List<WorkoutUIModel>>()
 
-    private val _activeSession = MutableStateFlow<ActiveWorkoutSession?>(null)
-
     init {
         viewModelScope.launch {
             _updateOrderFlow
@@ -53,13 +51,6 @@ class WorkoutViewModel(
                 .collect { orderedList ->
                     performUpdateOrder(orderedList)
                 }
-        }
-        refreshActiveSession()
-    }
-
-    fun refreshActiveSession() {
-        viewModelScope.launch {
-            _activeSession.value = getActiveWorkoutSessionUseCase()
         }
     }
 
@@ -107,7 +98,10 @@ class WorkoutViewModel(
             }
         }
 
-    val uiState: StateFlow<WorkoutState> = combine(baseState, _activeSession) { state, activeSession ->
+    val uiState: StateFlow<WorkoutState> = combine(
+        baseState,
+        getActiveWorkoutSessionUseCase()
+    ) { state, activeSession ->
         state.copy(activeSession = activeSession)
     }.stateIn(
         scope = viewModelScope,
