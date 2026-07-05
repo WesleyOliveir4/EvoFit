@@ -105,7 +105,6 @@ fun ExerciseSetRow(
                 )
             }
             MeasurementUnit.DISTANCE -> {
-                // weight -> distance (km), reps -> time (seconds)
                 RepsCounterComponent(
                     modifier = Modifier.weight(1.5f),
                     value = set.weight.toInt(),
@@ -117,7 +116,6 @@ fun ExerciseSetRow(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // simplified for now, as time needs a proper picker. Using reps counter for seconds/minutes for now.
                 RepsCounterComponent(
                     modifier = Modifier.weight(1.5f),
                     value = set.reps,
@@ -128,7 +126,6 @@ fun ExerciseSetRow(
                 )
             }
             MeasurementUnit.TIME -> {
-                // reps -> time (seconds)
                 RepsCounterComponent(
                     modifier = Modifier.weight(2.2f),
                     value = set.reps,
@@ -139,7 +136,6 @@ fun ExerciseSetRow(
                 )
             }
             MeasurementUnit.REPS -> {
-                // reps -> reps
                 RepsCounterComponent(
                     modifier = Modifier.weight(2.2f),
                     value = set.reps,
@@ -328,10 +324,10 @@ private fun ExerciseConfigContentDistancePreview() {
             ExerciseConfigState(
                 exerciseId = "1",
                 name = "Corrida",
-                muscleGroupId = "7", // CARDIO
+                muscleGroupId = "7",
                 unit = MeasurementUnit.DISTANCE,
                 sets = listOf(
-                    SetState(1, 5.0, 30), // 5km, 30 min
+                    SetState(1, 5.0, 30),
                     SetState(2, 5.0, 25)
                 )
             )
@@ -354,7 +350,7 @@ private fun ExerciseConfigContentTimePreview() {
             ExerciseConfigState(
                 exerciseId = "1",
                 name = "Prancha",
-                muscleGroupId = "6", // ABS
+                muscleGroupId = "6",
                 unit = MeasurementUnit.TIME,
                 sets = listOf(
                     SetState(1, 0.0, 60),
@@ -381,7 +377,7 @@ private fun ExerciseConfigContentRepsPreview() {
             ExerciseConfigState(
                 exerciseId = "1",
                 name = "Flexão de Braço",
-                muscleGroupId = "2", // CHEST
+                muscleGroupId = "2",
                 unit = MeasurementUnit.REPS,
                 sets = listOf(
                     SetState(1, 0.0, 20),

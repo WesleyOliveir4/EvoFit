@@ -7,7 +7,6 @@ class UpdateWorkoutsOrderUseCase(
     private val repository: WorkoutRepository
 ) {
     suspend operator fun invoke(workouts: List<Workout>) {
-        // Atualiza os índices de ordem com base na posição na lista
         val updatedWorkouts = workouts.mapIndexed { index, workout ->
             workout.copy(orderIndex = index)
         }

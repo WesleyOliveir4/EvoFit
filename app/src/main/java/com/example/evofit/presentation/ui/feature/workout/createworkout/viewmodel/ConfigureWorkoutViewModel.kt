@@ -65,8 +65,8 @@ class ConfigureWorkoutViewModel(
                     else -> 20.0
                 }
                 val defaultReps = when (exercise.unit) {
-                    MeasurementUnit.DISTANCE -> 5 // 5 min
-                    MeasurementUnit.TIME -> 1 // 1 min
+                    MeasurementUnit.DISTANCE -> 5
+                    MeasurementUnit.TIME -> 1
                     else -> 10
                 }
                 ExerciseConfigState(

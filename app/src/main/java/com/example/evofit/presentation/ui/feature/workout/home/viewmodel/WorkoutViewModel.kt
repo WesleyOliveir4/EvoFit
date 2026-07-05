@@ -14,10 +14,11 @@ import com.example.evofit.presentation.mapper.DateMapper
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class WorkoutViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
@@ -34,7 +36,28 @@ class WorkoutViewModel(
     private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase
 ) : ViewModel() {
 
-    private var updateOrderJob: Job? = null
+    private val _updateOrderFlow = MutableSharedFlow<List<WorkoutUIModel>>()
+
+    init {
+        viewModelScope.launch {
+            _updateOrderFlow
+                .debounce(1000L)
+                .collect { orderedList ->
+                    performUpdateOrder(orderedList)
+                }
+        }
+    }
+
+    private suspend fun performUpdateOrder(orderedList: List<WorkoutUIModel>) {
+        val userId = getUserIdUseCase() ?: return
+        val currentWorkouts = getWorkoutsUseCase(userId).first()
+        
+        val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
+            currentWorkouts.find { it.id.toInt() == uiModel.id }
+        }
+        
+        updateWorkoutsOrderUseCase(reorderedWorkouts)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WorkoutState> = getOnboardingDataUseCase()
@@ -59,7 +82,7 @@ class WorkoutViewModel(
                             )
                         },
                         totalWorkouts = workouts.size,
-                        workoutsThisWeek = workouts.count { 
+                        workoutsThisWeek = history.count {
                             val date = DateMapper.parseDate(it.date)
                             date != null && date.time >= startOfWeek
                         },
@@ -74,19 +97,8 @@ class WorkoutViewModel(
         )
 
     fun updateWorkoutOrder(orderedList: List<WorkoutUIModel>) {
-        updateOrderJob?.cancel()
-        updateOrderJob = viewModelScope.launch {
-            delay(1000) // Debounce de 1 segundo
-            
-            val userId = getUserIdUseCase() ?: return@launch
-            // Buscamos os workouts atuais para manter os dados completos ao salvar a nova ordem
-            val currentWorkouts = getWorkoutsUseCase(userId).first()
-            
-            val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
-                currentWorkouts.find { it.id.toInt() == uiModel.id }
-            }
-            
-            updateWorkoutsOrderUseCase(reorderedWorkouts)
+        viewModelScope.launch {
+            _updateOrderFlow.emit(orderedList)
         }
     }
 }
