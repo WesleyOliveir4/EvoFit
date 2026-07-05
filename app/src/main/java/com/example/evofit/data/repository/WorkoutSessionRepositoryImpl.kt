@@ -2,33 +2,45 @@ package com.example.evofit.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import com.example.evofit.domain.model.CompletedSet
+import com.example.evofit.domain.model.WorkoutSession
 import com.example.evofit.domain.repository.WorkoutSessionRepository
-
+import kotlinx.serialization.json.Json
+//TODO
 class WorkoutSessionRepositoryImpl(context: Context) : WorkoutSessionRepository {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    override fun startSession(workoutId: Int, startTimeMillis: Long) {
-        prefs.edit()
-            .putInt(KEY_WORKOUT_ID, workoutId)
-            .putLong(KEY_START_TIME, startTimeMillis)
-            .apply()
+    override fun getActiveSession(): WorkoutSession? {
+        val json = prefs.getString(KEY_SESSION, null) ?: return null
+        return runCatching { Json.decodeFromString<WorkoutSession>(json) }.getOrNull()
     }
 
-    override fun getSessionStartTime(workoutId: Int): Long? {
-        val activeWorkoutId = prefs.getInt(KEY_WORKOUT_ID, -1)
-        return if (activeWorkoutId == workoutId) {
-            val startTime = prefs.getLong(KEY_START_TIME, 0L)
-            if (startTime > 0) startTime else null
-        } else null
+    override fun startSession(workoutId: Long, startTimeMillis: Long) {
+        saveSession(
+            WorkoutSession(
+                workoutId = workoutId,
+                startTime = startTimeMillis,
+                completedSets = emptyList()
+            )
+        )
+    }
+
+    override fun updateCompletedSets(completedSets: List<CompletedSet>) {
+        val current = getActiveSession() ?: return
+        saveSession(current.copy(completedSets = completedSets))
     }
 
     override fun clearSession() {
-        prefs.edit().clear().apply()
+        prefs.edit { remove(KEY_SESSION) }
+    }
+
+    private fun saveSession(session: WorkoutSession) {
+        prefs.edit { putString(KEY_SESSION, Json.encodeToString(session)) }
     }
 
     companion object {
         private const val PREFS_NAME = "workout_session_prefs"
-        private const val KEY_WORKOUT_ID = "active_workout_id"
-        private const val KEY_START_TIME = "workout_start_time"
+        private const val KEY_SESSION = "active_session"
     }
 }

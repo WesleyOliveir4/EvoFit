@@ -30,6 +30,7 @@ import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
+import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
@@ -77,6 +78,7 @@ val domainModule = module {
     factory { GetWorkoutDoneHistoryUseCase(get()) }
     factory { GetCurrentWeekRangeUseCase() }
     factory { UpdateWorkoutsOrderUseCase(get()) }
+    factory { GetActiveWorkoutSessionUseCase(get(), get()) }
 }
 
 val splashModule = module {
@@ -110,6 +112,7 @@ val workoutModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -133,6 +136,7 @@ val workoutModule = module {
     viewModel { (workoutId: Int) ->
         WorkoutPreviewViewModel(
             workoutId = workoutId,
+            get(),
             get(),
             get()
         )

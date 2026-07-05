@@ -172,7 +172,10 @@ fun NavNavigation() {
             WorkoutStartScreen(
                 workoutId = workoutId,
                 onBackClick = {
-                    navController.popBackStack()
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 },
                 onFinishWorkoutClick = {
                     navController.navigate(NavRoutes.Home.route) {

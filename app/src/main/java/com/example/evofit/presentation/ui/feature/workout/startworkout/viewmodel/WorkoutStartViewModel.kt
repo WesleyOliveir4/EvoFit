@@ -3,6 +3,7 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.core.common.AppConstants
+import com.example.evofit.domain.model.CompletedSet
 import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
@@ -73,10 +74,20 @@ class WorkoutStartViewModel(
                 workoutDomain = workout
                 workout?.let { w ->
                     val groupName = w.muscleGroup?.name ?: ""
-                    
+
                     val exerciseIds = w.exercises.map { it.exerciseId }
                     val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
                         .associateBy { it.id }
+
+                    // Restaura as séries já marcadas como feitas, caso exista uma sessão
+                    // salva para este mesmo treino (usuário saiu do app e voltou, ou está
+                    // retomando pelo card "Treino em andamento" da Home).
+                    val savedSession = sessionRepository.getActiveSession()
+                    val completedSets = if (savedSession?.workoutId == workoutId.toLong()) {
+                        savedSession.completedSets
+                    } else {
+                        emptyList()
+                    }
 
                     val exercises = w.exercises.map { workoutExercise ->
                         val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
@@ -87,12 +98,16 @@ class WorkoutStartViewModel(
                             name = exerciseInfo?.name ?: "",
                             unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
                             sets = workoutExercise.sets.mapIndexed { index, set ->
+                                val setNumber = index + 1
                                 SetProgressState(
-                                    setNumber = index + 1,
+                                    setNumber = setNumber,
                                     weight = set.load,
                                     reps = set.reps,
                                     time = set.time,
-                                    distance = set.distance
+                                    distance = set.distance,
+                                    isDone = completedSets.any {
+                                        it.workoutExerciseId == workoutExercise.id && it.setNumber == setNumber
+                                    }
                                 )
                             }
                         )
@@ -112,8 +127,11 @@ class WorkoutStartViewModel(
 
     private fun startOrResumeTimer() {
         val now = System.currentTimeMillis()
-        val startTime = sessionRepository.getSessionStartTime(workoutId) ?: run {
-            sessionRepository.startSession(workoutId, now)
+        val activeSession = sessionRepository.getActiveSession()
+        val startTime = if (activeSession?.workoutId == workoutId.toLong()) {
+            activeSession.startTime
+        } else {
+            sessionRepository.startSession(workoutId.toLong(), now)
             now
         }
 
@@ -152,6 +170,20 @@ class WorkoutStartViewModel(
             }
             currentState.copy(exercises = updatedExercises)
         }
+        persistCompletedSets()
+    }
+
+    /**
+     * Salva quais séries já foram marcadas como feitas, para que o progresso não se
+     * perca se o usuário sair do app antes de finalizar o treino.
+     */
+    private fun persistCompletedSets() {
+        val completedSets = _uiState.value.exercises.flatMap { exercise ->
+            exercise.sets.filter { it.isDone }.map { set ->
+                CompletedSet(workoutExerciseId = exercise.workoutExerciseId, setNumber = set.setNumber)
+            }
+        }
+        sessionRepository.updateCompletedSets(completedSets)
     }
 
     fun onFinishClick() {
@@ -166,7 +198,7 @@ class WorkoutStartViewModel(
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
             val userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID
-            
+
             val doneExercises = _uiState.value.exercises.mapNotNull { exercise ->
                 val doneSets = exercise.sets.filter { it.isDone }.map { set ->
                     ExerciseSet(

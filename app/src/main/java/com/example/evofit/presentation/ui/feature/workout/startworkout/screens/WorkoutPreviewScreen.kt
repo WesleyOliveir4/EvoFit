@@ -38,14 +38,34 @@ fun WorkoutPreviewScreen(
     onBackClick: () -> Unit = {},
     onStartWorkoutClick: () -> Unit = {}
 ) {
-    val previewState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    previewState?.let { preview ->
+    uiState.preview?.let { preview ->
         WorkoutPreviewContent(
             preview = preview,
             onBackClick = onBackClick,
-            onStartWorkoutClick = onStartWorkoutClick
+            onStartWorkoutClick = { viewModel.onStartWorkoutClicked(onProceed = onStartWorkoutClick) }
         )
+
+        if (uiState.hasActiveSessionConflict) {
+            AlertDialog(
+                onDismissRequest = { viewModel.onDismissActiveSessionDialog() },
+                title = { Text(stringResource(R.string.workout_active_session_dialog_title)) },
+                text = { Text(stringResource(R.string.workout_active_session_dialog_message)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.onConfirmDiscardActiveSession(onProceed = onStartWorkoutClick)
+                    }) {
+                        Text(stringResource(R.string.workout_active_session_dialog_confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.onDismissActiveSessionDialog() }) {
+                        Text(stringResource(R.string.workout_active_session_dialog_cancel))
+                    }
+                }
+            )
+        }
     } ?: Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }

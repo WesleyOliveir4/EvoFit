@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.domain.model.ActiveWorkoutSession
+import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
@@ -15,9 +17,12 @@ import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -33,10 +38,13 @@ class WorkoutViewModel(
     private val getWorkoutsUseCase: GetWorkoutsUseCase,
     private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
-    private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase
+    private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase,
+    private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase
 ) : ViewModel() {
 
     private val _updateOrderFlow = MutableSharedFlow<List<WorkoutUIModel>>()
+
+    private val _activeSession = MutableStateFlow<ActiveWorkoutSession?>(null)
 
     init {
         viewModelScope.launch {
@@ -46,21 +54,28 @@ class WorkoutViewModel(
                     performUpdateOrder(orderedList)
                 }
         }
+        refreshActiveSession()
+    }
+
+    fun refreshActiveSession() {
+        viewModelScope.launch {
+            _activeSession.value = getActiveWorkoutSessionUseCase()
+        }
     }
 
     private suspend fun performUpdateOrder(orderedList: List<WorkoutUIModel>) {
         val userId = getUserIdUseCase() ?: return
         val currentWorkouts = getWorkoutsUseCase(userId).first()
-        
+
         val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
             currentWorkouts.find { it.id.toInt() == uiModel.id }
         }
-        
+
         updateWorkoutsOrderUseCase(reorderedWorkouts)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<WorkoutState> = getOnboardingDataUseCase()
+    private val baseState: Flow<WorkoutState> = getOnboardingDataUseCase()
         .flatMapLatest { userData ->
             val userId = getUserIdUseCase() ?: ""
             if (userId.isEmpty()) {
@@ -69,7 +84,7 @@ class WorkoutViewModel(
                 val history = getWorkoutDoneHistoryUseCase(userId)
                 getWorkoutsUseCase(userId).map { workouts ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
-                    
+
                     WorkoutState(
                         userName = userData.name,
                         workouts = workouts.map { workout ->
@@ -90,11 +105,15 @@ class WorkoutViewModel(
                     )
                 }
             }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Companion.WhileSubscribed(5000),
-            initialValue = WorkoutState()
-        )
+        }
+
+    val uiState: StateFlow<WorkoutState> = combine(baseState, _activeSession) { state, activeSession ->
+        state.copy(activeSession = activeSession)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Companion.WhileSubscribed(5000),
+        initialValue = WorkoutState()
+    )
 
     fun updateWorkoutOrder(orderedList: List<WorkoutUIModel>) {
         viewModelScope.launch {

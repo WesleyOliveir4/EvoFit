@@ -19,12 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.example.evofit.R
+import com.example.evofit.domain.model.ActiveWorkoutSession
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
+import com.example.evofit.presentation.ui.feature.workout.components.training.ActiveWorkoutCard
 import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
@@ -41,7 +45,11 @@ fun WorkoutScreen(
     onNavigate: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refreshActiveSession()
+    }
+
     var localWorkouts by remember { mutableStateOf<List<WorkoutUIModel>>(emptyList()) }
     
     LaunchedEffect(uiState.workouts) {
@@ -54,6 +62,7 @@ fun WorkoutScreen(
         totalWorkouts = uiState.totalWorkouts,
         workoutsThisWeek = uiState.workoutsThisWeek,
         history = uiState.history,
+        activeSession = uiState.activeSession,
         onMove = { from, to ->
             val mutableList = localWorkouts.toMutableList()
             mutableList.add(to, mutableList.removeAt(from))
@@ -63,6 +72,9 @@ fun WorkoutScreen(
         onNavigate = onNavigate,
         onWorkoutClick = { workout ->
             onNavigate(NavRoutes.WorkoutPreview.createRoute(workout.id))
+        },
+        onActiveSessionClick = { activeSession ->
+            onNavigate(NavRoutes.WorkoutStart.createRoute(activeSession.workout.id.toInt()))
         },
         onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.route) }
     )
@@ -79,6 +91,8 @@ fun WorkoutContent(
     onNavigate: (String) -> Unit,
     onWorkoutClick: (WorkoutUIModel) -> Unit,
     onAddWorkoutClick: () -> Unit,
+    activeSession: ActiveWorkoutSession? = null,
+    onActiveSessionClick: (ActiveWorkoutSession) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -142,6 +156,24 @@ fun WorkoutContent(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            if (activeSession != null) {
+                item {
+                    Text(
+                        text = stringResource(R.string.main_workout_active_session_title),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ActiveWorkoutCard(
+                        workoutName = activeSession.workout.name.ifEmpty { activeSession.workout.muscleGroupId },
+                        onClick = { onActiveSessionClick(activeSession) }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
             }
 
             item {

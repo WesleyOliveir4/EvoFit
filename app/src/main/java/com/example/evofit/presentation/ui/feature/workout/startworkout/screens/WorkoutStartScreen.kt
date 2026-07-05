@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.startworkout.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,13 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -60,6 +66,8 @@ fun WorkoutStartScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    BackHandler { onBackClick() }
+
     if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -70,7 +78,8 @@ fun WorkoutStartScreen(
             onToggleSetDone = { workoutExerciseId, setNumber ->
                 viewModel.toggleSetDone(workoutExerciseId, setNumber)
             },
-            onFinishWorkoutClick = { viewModel.onFinishClick() }
+            onFinishWorkoutClick = { viewModel.onFinishClick() },
+            onBackClick = onBackClick
         )
 
         if (uiState.showFinishDialog) {
@@ -114,7 +123,8 @@ fun WorkoutStartScreen(
 fun WorkoutStartContent(
     uiState: WorkoutStartUiState,
     onToggleSetDone: (Long, Int) -> Unit,
-    onFinishWorkoutClick: () -> Unit
+    onFinishWorkoutClick: () -> Unit,
+    onBackClick: () -> Unit = {}
 ) {
     val totalSets = uiState.exercises.sumOf { it.sets.size }
     val doneSets = uiState.exercises.sumOf { it.sets.count { set -> set.isDone } }
@@ -135,6 +145,19 @@ fun WorkoutStartContent(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick, modifier = Modifier.size(40.dp)) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.workout_start_back_desc),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,

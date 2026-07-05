@@ -87,6 +87,8 @@
     <string name="main_workout_stats_total_label">Treinos</string>
     <string name="main_workout_stats_week_label">Esta semana</string>
     <string name="main_workout_section_title">MEUS TREINOS</string>
+    <string name="main_workout_active_session_title">TREINO EM ANDAMENTO</string>
+    <string name="main_workout_active_session_resume">Toque para continuar</string>
     <string name="main_workout_exercise_count">%1$d exercícios</string>
     <string name="main_workout_series_count">%1$d séries</string>
     <string name="main_workout_exercise_series_format">%1$s · %2$s</string>
@@ -133,6 +135,7 @@
     <string name="workout_preview_unknown_exercise">Exercício</string>
     <!-- Workout Start Screen -->
     <string name="workout_start_status">Em andamento · %1$d/%2$d séries</string>
+    <string name="workout_start_back_desc">Voltar</string>
     <string name="workout_start_exercise_progress">%1$d/%2$d séries</string>
     <string name="workout_start_finish_button">Finalizar Treino</string>
     <string name="workout_start_expand_collapse_desc">Expandir/Colapsar</string>
@@ -147,4 +150,8 @@
     <string name="workout_finish_dialog_message">Você concluiu %1$d de %2$d exercícios. Deseja finalizar o treino e salvar seu progresso?</string>
     <string name="workout_finish_dialog_confirm">Finalizar</string>
     <string name="workout_finish_dialog_cancel">Continuar Treinando</string>
+    <string name="workout_active_session_dialog_title">Treino em andamento</string>
+    <string name="workout_active_session_dialog_message">Você já tem um treino em andamento. Ao iniciar este, o progresso do treino anterior não será salvo. Deseja continuar?</string>
+    <string name="workout_active_session_dialog_confirm">Iniciar mesmo assim</string>
+    <string name="workout_active_session_dialog_cancel">Cancelar</string>
 </resources>
