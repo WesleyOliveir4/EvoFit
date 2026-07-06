@@ -62,7 +62,7 @@ import org.koin.core.parameter.parametersOf
 fun WorkoutStartScreen(
     workoutId: Int,
     viewModel: WorkoutStartViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
-    onFinishWorkoutClick: () -> Unit = {},
+    onFinishWorkoutClick: (Long?) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -114,7 +114,7 @@ fun WorkoutStartScreen(
 
         LaunchedEffect(uiState.workoutCompleted) {
             if (uiState.workoutCompleted) {
-                onFinishWorkoutClick()
+                onFinishWorkoutClick(uiState.workoutDoneId)
             }
         }
     }

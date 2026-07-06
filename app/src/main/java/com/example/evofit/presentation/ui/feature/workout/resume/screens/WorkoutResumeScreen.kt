@@ -37,9 +37,10 @@ import org.koin.core.parameter.parametersOf
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutResumeScreen(
-    workoutId: Long,
+    workoutId: Long? = null,
+    workoutDoneId: Long? = null,
     onContinueClick: () -> Unit,
-    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId) }
+    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -47,9 +48,12 @@ fun WorkoutResumeScreen(
         workoutName = uiState.workoutName,
         totalExercises = uiState.totalExercises,
         totalSets = uiState.totalSets,
+        completedSets = uiState.completedSets,
+        duration = uiState.duration,
         formattedDate = uiState.formattedDate,
         onContinueClick = onContinueClick,
-        isLoading = uiState.isLoading
+        isLoading = uiState.isLoading,
+        isWorkoutDone = uiState.isWorkoutDone
     )
 }
 
@@ -58,9 +62,12 @@ fun WorkoutResumeContent(
     workoutName: String,
     totalExercises: Int,
     totalSets: Int,
+    completedSets: Int? = null,
+    duration: String? = null,
     formattedDate: String,
     onContinueClick: () -> Unit,
     isLoading: Boolean = false,
+    isWorkoutDone: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -108,7 +115,6 @@ fun WorkoutResumeContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // 1. Ícone Superior de Confirmação (Sucesso)
                 Box(
                     modifier = Modifier
                         .size(72.dp)
@@ -125,9 +131,8 @@ fun WorkoutResumeContent(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 2. Título de Sucesso
                 Text(
-                    text = stringResource(R.string.workout_resume_title),
+                    text = if (isWorkoutDone) "Treino finalizado!" else stringResource(R.string.workout_resume_title),
                     color = TextPrimary,
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
@@ -136,9 +141,12 @@ fun WorkoutResumeContent(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // 3. Subtítulo com o nome do treino injetado dinamicamente
                 Text(
-                    text = stringResource(R.string.workout_resume_subtitle, workoutName),
+                    text = if (isWorkoutDone) {
+                        "Bom trabalho! Seu treino foi registrado."
+                    } else {
+                        stringResource(R.string.workout_resume_subtitle, workoutName)
+                    },
                     color = TextSecondary,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center
@@ -146,21 +154,21 @@ fun WorkoutResumeContent(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // 4. Card de Resumo das Estatísticas do Treino
                 WorkoutSummaryCard(
                     totalExercises = totalExercises,
                     totalSets = totalSets,
+                    completedSets = completedSets,
+                    duration = duration,
                     formattedDate = formattedDate
                 )
 
-                // Pequeno espaçamento extra para equilibrar o peso visual com a bottom bar
                 Spacer(modifier = Modifier.height(56.dp))
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 private fun WorkoutResumeScreenPreview() {
     EvoFitTheme {
@@ -168,8 +176,11 @@ private fun WorkoutResumeScreenPreview() {
             workoutName = "Costas predio",
             totalExercises = 4,
             totalSets = 10,
+            completedSets = 8,
+            duration = "00:45:00",
             formattedDate = "25/05/2024",
-            onContinueClick = {}
+            onContinueClick = {},
+            isWorkoutDone = true
         )
     }
 }

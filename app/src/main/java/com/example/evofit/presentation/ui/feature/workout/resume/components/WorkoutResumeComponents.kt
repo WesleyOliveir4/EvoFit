@@ -40,6 +40,8 @@ import com.example.evofit.presentation.ui.theme.TextSecondary
 fun WorkoutSummaryCard(
     totalExercises: Int,
     totalSets: Int,
+    completedSets: Int? = null,
+    duration: String? = null,
     formattedDate: String,
     modifier: Modifier = Modifier
 ) {
@@ -69,16 +71,33 @@ fun WorkoutSummaryCard(
                 value = "$totalExercises"
             )
 
+            val setsValue = if (completedSets != null) {
+                stringResource(R.string.workout_resume_value_sets_format, completedSets, totalSets)
+            } else {
+                "$totalSets"
+            }
+
             ResumeRowItem(
                 icon = Icons.Default.Refresh,
                 label = stringResource(R.string.workout_resume_label_sets),
-                value = "$totalSets"
+                value = setsValue
             )
 
-            // Linha 3: Criado em
+            if (duration != null) {
+                ResumeRowItem(
+                    icon = Icons.Default.Refresh, // You might want a timer icon here
+                    label = stringResource(R.string.workout_resume_label_duration),
+                    value = duration
+                )
+            }
+
             ResumeRowItem(
                 icon = Icons.Default.DateRange,
-                label = stringResource(R.string.workout_resume_label_created_at),
+                label = if (duration != null) {
+                    stringResource(R.string.workout_resume_label_finished_at)
+                } else {
+                    stringResource(R.string.workout_resume_label_created_at)
+                },
                 value = formattedDate
             )
         }

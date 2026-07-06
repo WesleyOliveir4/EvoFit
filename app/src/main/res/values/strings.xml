@@ -180,5 +180,8 @@
     <string name="workout_resume_label_exercises">Exercícios</string>
     <string name="workout_resume_label_sets">Séries</string>
     <string name="workout_resume_label_created_at">Criado em</string>
+    <string name="workout_resume_label_finished_at">Finalizado em</string>
+    <string name="workout_resume_label_duration">Duração</string>
+    <string name="workout_resume_value_sets_format">%1$d de %2$d</string>
     <string name="workout_resume_button_confirm">Entendido</string>
 </resources>

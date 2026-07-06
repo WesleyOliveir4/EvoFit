@@ -87,10 +87,14 @@ class WorkoutRepositoryImpl(
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
         val existingHistory = userDao.getWorkoutDoneHistory(userId)
         
+        // Atribui um ID incremental baseado no último ID da lista
+        val nextId = (existingHistory?.history?.maxOfOrNull { it.id } ?: 0L) + 1
+        val workoutWithId = workoutDone.copy(id = nextId)
+        
         val updatedList = if (existingHistory != null) {
-            existingHistory.history + workoutDone
+            existingHistory.history + workoutWithId
         } else {
-            listOf(workoutDone)
+            listOf(workoutWithId)
         }
         
         userDao.insertWorkoutDoneHistory(

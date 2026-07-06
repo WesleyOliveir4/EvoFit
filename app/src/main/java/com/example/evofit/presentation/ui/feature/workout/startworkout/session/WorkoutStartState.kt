@@ -8,7 +8,8 @@ data class WorkoutStartUiState(
     val isLoading: Boolean = true,
     val elapsedTime: String = "00:00:00",
     val showFinishDialog: Boolean = false,
-    val workoutCompleted: Boolean = false
+    val workoutCompleted: Boolean = false,
+    val workoutDoneId: Long? = null
 )
 
 data class ExerciseProgressState(

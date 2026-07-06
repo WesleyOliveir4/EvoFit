@@ -29,6 +29,7 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCaseImpl
+import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCaseImpl
@@ -90,6 +91,7 @@ val domainModule = module {
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
     factory { SaveWorkoutDoneUseCase(get()) }
     factory { GetWorkoutDoneHistoryUseCase(get()) }
+    factory { GetWorkoutDoneByIdUseCase(get(), get()) }
     factory { GetCurrentWeekRangeUseCase() }
     factory<UpdateWorkoutsOrderUseCase> { (UpdateWorkoutsOrderUseCaseImpl(get())) }
     factory<GetActiveWorkoutSessionUseCase> { GetActiveWorkoutSessionUseCaseImpl(get(), get()) }
@@ -155,10 +157,12 @@ val workoutModule = module {
             get()
         )
     }
-    viewModel { (workoutId: Long) ->
+    viewModel { (workoutId: Long?, workoutDoneId: Long?) ->
         WorkoutResumeViewModel(
             workoutId = workoutId,
-            getWorkoutByIdUseCase = get()
+            workoutDoneId = workoutDoneId,
+            getWorkoutByIdUseCase = get(),
+            getWorkoutDoneByIdUseCase = get()
         )
     }
     viewModel { (workoutId: Int) ->
@@ -178,6 +182,7 @@ val workoutModule = module {
             getExerciseDataUseCase = get(),
             saveWorkoutDoneUseCase = get(),
             getUserIdUseCase = get(),
+            getWorkoutDoneHistoryUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),

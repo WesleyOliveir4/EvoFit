@@ -17,6 +17,7 @@ import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCase
+import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.presentation.mapper.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
@@ -37,6 +38,7 @@ class WorkoutStartViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
+    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val startWorkoutSessionUseCase: StartWorkoutSessionUseCase,
     private val updateCompletedSetsUseCase: UpdateCompletedSetsUseCase,
@@ -219,7 +221,15 @@ class WorkoutStartViewModel(
 
             saveWorkoutDoneUseCase(userId, workoutDone)
             clearWorkoutSessionUseCase()
-            _uiState.update { it.copy(showFinishDialog = false, workoutCompleted = true) }
+
+            val history = getWorkoutDoneHistoryUseCase(userId)
+            val lastWorkoutDone = history.lastOrNull()
+
+            _uiState.update { it.copy(
+                showFinishDialog = false, 
+                workoutCompleted = true,
+                workoutDoneId = lastWorkoutDone?.id
+            ) }
         }
     }
 }

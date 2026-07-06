@@ -194,9 +194,9 @@ fun NavNavigation() {
                         launchSingleTop = true
                     }
                 },
-                onFinishWorkoutClick = {
-                    navController.navigate(NavRoutes.Home.route) {
-                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                onFinishWorkoutClick = { workoutDoneId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutDoneId = workoutDoneId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
                     }
                 }
             )
@@ -204,11 +204,17 @@ fun NavNavigation() {
 
         composable(
             route = NavRoutes.WorkoutResume.route,
-            arguments = listOf(navArgument("workoutId") { type = NavType.LongType })
+            arguments = listOf(
+                navArgument("workoutId") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = -1L }
+            )
         ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getLong("workoutId") ?: 0L
+            val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != -1L }
+            val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != -1L }
+            
             WorkoutResumeScreen(
                 workoutId = workoutId,
+                workoutDoneId = workoutDoneId,
                 onContinueClick = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Home.route) { inclusive = true }
