@@ -54,7 +54,7 @@ fun AppBottomNavigation(
     onNavigate: (String) -> Unit
 ) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = Color(0xFF1C1C1E),
         tonalElevation = 8.dp
     ) {
         NavigationBarItem(

@@ -52,11 +52,13 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmode
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
+import com.example.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import org.koin.core.parameter.parametersOf
 
 val dataModule = module {
     single {
@@ -151,6 +153,12 @@ val workoutModule = module {
             get(),
             get(),
             get()
+        )
+    }
+    viewModel { (workoutId: Long) ->
+        WorkoutResumeViewModel(
+            workoutId = workoutId,
+            getWorkoutByIdUseCase = get()
         )
     }
     viewModel { (workoutId: Int) ->

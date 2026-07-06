@@ -26,6 +26,10 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.WorkoutUIModel
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import androidx.compose.material.icons.filled.Favorite
+
 @Composable
 fun WorkoutListItem(
     workout: WorkoutUIModel,
@@ -130,6 +134,25 @@ fun WorkoutListItem(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WorkoutListItemPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            WorkoutListItem(
+                workout = WorkoutUIModel(
+                    id = 1,
+                    title = "Treino de Peito",
+                    exercises = 5,
+                    series = 15,
+                    icon = Icons.Default.Favorite
+                ),
+                onClick = {}
             )
         }
     }

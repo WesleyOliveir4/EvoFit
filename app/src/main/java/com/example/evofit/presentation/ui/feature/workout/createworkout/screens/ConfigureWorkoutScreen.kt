@@ -60,7 +60,7 @@ fun ConfigureWorkoutScreen(
     exerciseIds: List<String>,
     workoutName: String,
     onBackClick: () -> Unit,
-    onFinishClick: () -> Unit,
+    onFinishClick: (Long) -> Unit,
     editWorkoutId: Long? = null,
     onFinishEditClick: (Long) -> Unit = {},
     viewModel: ConfigureWorkoutViewModel = koinViewModel()
@@ -74,11 +74,15 @@ fun ConfigureWorkoutScreen(
 
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
-            val savedEditId = uiState.editWorkoutId
-            if (savedEditId != null) {
-                onFinishEditClick(savedEditId)
+            val savedWorkoutId = uiState.savedWorkoutId
+            val editWorkoutId = uiState.editWorkoutId
+            if (editWorkoutId != null) {
+                onFinishEditClick(editWorkoutId)
+            } else if (savedWorkoutId != null) {
+                onFinishClick(savedWorkoutId)
             } else {
-                onFinishClick()
+                // Fallback or old behavior if needed
+                onFinishClick(-1)
             }
         }
     }

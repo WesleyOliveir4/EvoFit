@@ -20,6 +20,9 @@ import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExercisePreviewItem
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 @Composable
 fun ExercisePreviewCard(
     index: Int,
@@ -92,6 +95,26 @@ fun ExercisePreviewCard(
                     fontSize = 14.sp
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun ExercisePreviewCardPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            ExercisePreviewCard(
+                index = 1,
+                item = ExercisePreviewItem(
+                    workoutExerciseId = 1,
+                    name = "Supino Reto",
+                    setsCount = 3,
+                    weight = 60.0,
+                    reps = 10,
+                    unit = MeasurementUnit.WEIGHT
+                )
+            )
         }
     }
 }

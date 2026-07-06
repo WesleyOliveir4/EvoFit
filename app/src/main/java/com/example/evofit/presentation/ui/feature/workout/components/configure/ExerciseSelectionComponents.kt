@@ -37,6 +37,12 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.model.MuscleGroupItem
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 /**
  * Card de seleção de grupo muscular, usado em [com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen].
  */
@@ -214,6 +220,39 @@ fun ExercisePageSegmentedIndicator(
                         },
                         shape = RoundedCornerShape(2.dp)
                     )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun ExerciseSelectionComponentsPreview() {
+    EvoFitTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            MuscleGroupCard(
+                item = MuscleGroupItem("1", "Peito", Icons.Default.FitnessCenter),
+                onClick = {}
+            )
+            
+            ExerciseRowItem(
+                item = ExerciseSelectionUIModel("1", "Supino Reto"),
+                isSelected = true,
+                onCheckedChange = {}
+            )
+
+            ExerciseRowItem(
+                item = ExerciseSelectionUIModel("2", "Supino Inclinado"),
+                isSelected = false,
+                onCheckedChange = {}
+            )
+            
+            ExercisePageSegmentedIndicator(
+                totalCount = 5,
+                currentIndex = 2
             )
         }
     }

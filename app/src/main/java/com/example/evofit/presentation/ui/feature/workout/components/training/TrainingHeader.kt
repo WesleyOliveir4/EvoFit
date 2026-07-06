@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 @Composable
 fun HeaderSection(
     userName: String,
@@ -50,6 +53,16 @@ fun HeaderSection(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun HeaderSectionPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            HeaderSection(userName = "Gabriel")
         }
     }
 }

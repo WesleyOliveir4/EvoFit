@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.evofit.R
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 /**
  * Componente de entrada de peso usado em telas de configuração de treino. Abre um diálogo
  * com o seletor giratório ([WeightWheel]) ao ser tocado.
@@ -219,6 +222,28 @@ fun WeightPickerDialog(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun CompactWeightDisplayPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            CompactWeightDisplay(weight = 60.0)
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WeightPickerDialogPreview() {
+    EvoFitTheme {
+        WeightPickerDialog(
+            initialWeight = 60.0,
+            onConfirm = {},
+            onDismiss = {}
+        )
     }
 }
 

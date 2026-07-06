@@ -32,6 +32,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 /**
  * Seletor giratório de peso (estilo "wheel picker"), usado dentro de [WeightPickerDialog].
  * Pode ser exibido em modo compacto (linha horizontal) ou expandido (coluna vertical).
@@ -129,5 +132,32 @@ fun WeightWheel(
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
             }
         )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WeightWheelPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            WeightWheel(
+                initialWeight = 60.0,
+                onWeightSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WeightWheelExpandedPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            WeightWheel(
+                initialWeight = 60.0,
+                onWeightSelected = {},
+                isExpanded = true
+            )
+        }
     }
 }

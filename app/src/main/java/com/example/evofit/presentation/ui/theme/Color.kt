@@ -9,7 +9,8 @@ val AppSurface = Color(0xFF1E1E1E)
 val AppSurfaceVariant = Color(0xFF2C2C2E)
 
 // Functional Colors
-val IconContainerBg = Color(0xFF1A231A)
+val IconContainerBg = Color(0xFF1F2E1F)
+//val IconContainerBg = Color(0xFF1A231A)
 val InputFieldBg = Color(0xFF232323)
 val InputBorder = Color(0xFF333333)
 val WelcomeBoxBg = Color(0xFF102312)

@@ -172,4 +172,13 @@
     <string name="workout_active_session_dialog_message">Você já tem um treino em andamento. Ao iniciar este, o progresso do treino anterior não será salvo. Deseja continuar?</string>
     <string name="workout_active_session_dialog_confirm">Iniciar mesmo assim</string>
     <string name="workout_active_session_dialog_cancel">Cancelar</string>
+
+    <!-- Workout Resume Screen -->
+    <string name="workout_resume_title">Treino criado!</string>
+    <string name="workout_resume_subtitle">\"%1$s\" está pronto para uso.</string>
+    <string name="workout_resume_label_summary">RESUMO</string>
+    <string name="workout_resume_label_exercises">Exercícios</string>
+    <string name="workout_resume_label_sets">Séries</string>
+    <string name="workout_resume_label_created_at">Criado em</string>
+    <string name="workout_resume_button_confirm">Entendido</string>
 </resources>

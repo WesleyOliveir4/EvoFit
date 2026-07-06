@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 
 
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+
 @Composable
 fun ActiveWorkoutCard(
     workoutName: String,
@@ -88,6 +91,19 @@ fun ActiveWorkoutCard(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun ActiveWorkoutCardPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            ActiveWorkoutCard(
+                workoutName = "Treino de Peito",
+                onClick = {}
             )
         }
     }

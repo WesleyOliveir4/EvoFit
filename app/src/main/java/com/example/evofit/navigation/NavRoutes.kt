@@ -22,4 +22,7 @@ sealed class NavRoutes(val route: String) {
     object WorkoutStart : NavRoutes("workout_start/{workoutId}") {
         fun createRoute(workoutId: Int) = "workout_start/$workoutId"
     }
+    object WorkoutResume : NavRoutes("workout_resume/{workoutId}") {
+        fun createRoute(workoutId: Long) = "workout_resume/$workoutId"
+    }
 }

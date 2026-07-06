@@ -14,6 +14,7 @@ import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
+import com.example.evofit.presentation.ui.feature.workout.resume.screens.WorkoutResumeScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
@@ -148,9 +149,9 @@ fun NavNavigation() {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onFinishClick = {
-                    navController.navigate(NavRoutes.Home.route) {
-                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                onFinishClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
                     }
                 },
                 onFinishEditClick = { workoutId ->
@@ -194,6 +195,21 @@ fun NavNavigation() {
                     }
                 },
                 onFinishWorkoutClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutResume.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getLong("workoutId") ?: 0L
+            WorkoutResumeScreen(
+                workoutId = workoutId,
+                onContinueClick = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Home.route) { inclusive = true }
                     }
