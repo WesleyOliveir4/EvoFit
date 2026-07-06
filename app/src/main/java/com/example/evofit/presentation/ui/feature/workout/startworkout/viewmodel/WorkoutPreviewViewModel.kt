@@ -12,14 +12,12 @@ import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
 import com.example.evofit.presentation.ui.feature.workout.startworkout.state.WorkoutPreviewUiState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 
 class WorkoutPreviewViewModel(
     private val workoutId: Int,
@@ -30,78 +28,67 @@ class WorkoutPreviewViewModel(
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
 ) : ViewModel() {
 
-    private val previewFlow = getWorkoutByIdUseCase(workoutId.toLong())
-        .map { workout ->
-            workout?.let { workoutSelected ->
-                val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
-                val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
-                    .associateBy { it.id }
+    private val _uiState = MutableStateFlow(WorkoutPreviewUiState())
+    val uiState: StateFlow<WorkoutPreviewUiState> = _uiState.asStateFlow()
 
-                val exercises = workoutSelected.exercises.map { workoutExercise ->
-                    val exercise = exerciseDataMap[workoutExercise.exerciseId]
-                    val unit = exercise?.unit ?: MeasurementUnit.WEIGHT
+    init {
+        loadWorkoutPreview()
+    }
 
-                    val setsCount = workoutExercise.sets.size
+    private fun loadWorkoutPreview() {
+        viewModelScope.launch {
+            getWorkoutByIdUseCase(workoutId.toLong())
+                .map { workout ->
+                    workout?.let { workoutSelected ->
+                        val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
+                        val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                            .associateBy { it.id }
 
-                    val bestSet = when (unit) {
-                        MeasurementUnit.WEIGHT -> workoutExercise.sets.maxByOrNull { it.load }
-                        MeasurementUnit.DISTANCE -> workoutExercise.sets.maxByOrNull { it.distance ?: 0.0 }
-                        MeasurementUnit.TIME -> workoutExercise.sets.maxByOrNull { it.time ?: 0 }
-                        MeasurementUnit.REPS -> workoutExercise.sets.maxByOrNull { it.reps }
+                        val exercises = workoutSelected.exercises.map { workoutExercise ->
+                            val exercise = exerciseDataMap[workoutExercise.exerciseId]
+                            val unit = exercise?.unit ?: MeasurementUnit.WEIGHT
+
+                            val setsCount = workoutExercise.sets.size
+
+                            val bestSet = when (unit) {
+                                MeasurementUnit.WEIGHT -> workoutExercise.sets.maxByOrNull { it.load }
+                                MeasurementUnit.DISTANCE -> workoutExercise.sets.maxByOrNull { it.distance ?: 0.0 }
+                                MeasurementUnit.TIME -> workoutExercise.sets.maxByOrNull { it.time ?: 0 }
+                                MeasurementUnit.REPS -> workoutExercise.sets.maxByOrNull { it.reps }
+                            }
+
+                            ExercisePreviewItem(
+                                workoutExerciseId = workoutExercise.id,
+                                name = exercise?.name ?: "",
+                                setsCount = setsCount,
+                                weight = bestSet?.load ?: 0.0,
+                                reps = bestSet?.reps ?: 0,
+                                unit = unit,
+                                time = bestSet?.time,
+                                distance = bestSet?.distance
+                            )
+                        }
+
+                        WorkoutDetailPreview(
+                            title = workoutSelected.name.ifEmpty { workoutSelected.muscleGroupId },
+                            muscleGroupId = workoutSelected.muscleGroupId,
+                            totalExercises = workoutSelected.exercises.size,
+                            totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
+                            exercises = exercises
+                        )
                     }
-
-                    ExercisePreviewItem(
-                        workoutExerciseId = workoutExercise.id,
-                        name = exercise?.name ?: "",
-                        setsCount = setsCount,
-                        weight = bestSet?.load ?: 0.0,
-                        reps = bestSet?.reps ?: 0,
-                        unit = unit,
-                        time = bestSet?.time,
-                        distance = bestSet?.distance
-                    )
                 }
-
-                WorkoutDetailPreview(
-                    title = workoutSelected.name.ifEmpty { workoutSelected.muscleGroupId },
-                    muscleGroupId = workoutSelected.muscleGroupId,
-                    totalExercises = workoutSelected.exercises.size,
-                    totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
-                    exercises = exercises
-                )
-            }
+                .collect { preview ->
+                    _uiState.update { it.copy(preview = preview) }
+                }
         }
-
-    private val _hasActiveSessionConflict = MutableStateFlow(false)
-    private val _showDeleteDialog = MutableStateFlow(false)
-    private val _isDeleted = MutableStateFlow(false)
-    private val _showEditBlockedDialog = MutableStateFlow(false)
-
-    val uiState: StateFlow<WorkoutPreviewUiState> = combine(
-        previewFlow,
-        _hasActiveSessionConflict,
-        _showDeleteDialog,
-        _isDeleted,
-        _showEditBlockedDialog
-    ) { preview, conflict, showDelete, isDeleted, editBlocked ->
-        WorkoutPreviewUiState(
-            preview = preview,
-            hasActiveSessionConflict = conflict,
-            showDeleteDialog = showDelete,
-            isDeleted = isDeleted,
-            showEditBlockedDialog = editBlocked
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = WorkoutPreviewUiState()
-    )
+    }
 
     fun onStartWorkoutClicked(onProceed: () -> Unit) {
         viewModelScope.launch {
             val hasActiveSession = getActiveWorkoutSessionUseCase().first() != null
             if (hasActiveSession) {
-                _hasActiveSessionConflict.value = true
+                _uiState.update { it.copy(hasActiveSessionConflict = true) }
             } else {
                 onProceed()
             }
@@ -111,28 +98,38 @@ class WorkoutPreviewViewModel(
     fun onConfirmDiscardActiveSession(onProceed: () -> Unit) {
         viewModelScope.launch {
             clearWorkoutSessionUseCase()
-            _hasActiveSessionConflict.value = false
+            _uiState.update { it.copy(hasActiveSessionConflict = false) }
             onProceed()
         }
     }
 
     fun onDismissActiveSessionDialog() {
-        _hasActiveSessionConflict.value = false
+        _uiState.update { it.copy(hasActiveSessionConflict = false) }
     }
 
     fun onDeleteClicked() {
-        _showDeleteDialog.value = true
+        viewModelScope.launch {
+            val activeSession = getActiveWorkoutSessionUseCase().first()
+            if (activeSession != null && activeSession.workout.id == workoutId.toLong()) {
+                _uiState.update { it.copy(showDeleteBlockedDialog = true) }
+            } else {
+                _uiState.update { it.copy(showDeleteDialog = true) }
+            }
+        }
     }
 
     fun onDismissDeleteDialog() {
-        _showDeleteDialog.value = false
+        _uiState.update { it.copy(showDeleteDialog = false) }
+    }
+
+    fun onDismissDeleteBlockedDialog() {
+        _uiState.update { it.copy(showDeleteBlockedDialog = false) }
     }
 
     fun onConfirmDelete() {
         viewModelScope.launch {
             deleteWorkoutUseCase(workoutId.toLong())
-            _showDeleteDialog.value = false
-            _isDeleted.value = true
+            _uiState.update { it.copy(showDeleteDialog = false, isDeleted = true) }
         }
     }
 
@@ -140,7 +137,7 @@ class WorkoutPreviewViewModel(
         viewModelScope.launch {
             val activeSession = getActiveWorkoutSessionUseCase().first()
             if (activeSession != null && activeSession.workout.id == workoutId.toLong()) {
-                _showEditBlockedDialog.value = true
+                _uiState.update { it.copy(showEditBlockedDialog = true) }
             } else {
                 onProceed()
             }
@@ -148,6 +145,6 @@ class WorkoutPreviewViewModel(
     }
 
     fun onDismissEditBlockedDialog() {
-        _showEditBlockedDialog.value = false
+        _uiState.update { it.copy(showEditBlockedDialog = false) }
     }
 }

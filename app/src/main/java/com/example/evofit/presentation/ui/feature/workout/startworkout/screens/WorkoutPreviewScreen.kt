@@ -7,8 +7,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BackHand
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FrontHand
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +34,8 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialog
+import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,56 +66,45 @@ fun WorkoutPreviewScreen(
         )
 
         if (uiState.hasActiveSessionConflict) {
-            AlertDialog(
-                onDismissRequest = { viewModel.onDismissActiveSessionDialog() },
-                title = { Text(stringResource(R.string.workout_active_session_dialog_title)) },
-                text = { Text(stringResource(R.string.workout_active_session_dialog_message)) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        viewModel.onConfirmDiscardActiveSession(onProceed = onStartWorkoutClick)
-                    }) {
-                        Text(stringResource(R.string.workout_active_session_dialog_confirm))
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.onDismissActiveSessionDialog() }) {
-                        Text(stringResource(R.string.workout_active_session_dialog_cancel))
-                    }
-                }
+            EvoFitCautionDialog(
+                title = stringResource(R.string.workout_active_session_dialog_title),
+                description = stringResource(R.string.workout_active_session_dialog_message),
+                confirmButtonText = stringResource(R.string.workout_active_session_dialog_confirm),
+                dismissButtonText = stringResource(R.string.workout_active_session_dialog_cancel),
+                onConfirm = { viewModel.onConfirmDiscardActiveSession(onProceed = onStartWorkoutClick) },
+                onDismiss = { viewModel.onDismissActiveSessionDialog() }
             )
         }
 
         if (uiState.showDeleteDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.onDismissDeleteDialog() },
-                title = { Text(stringResource(R.string.workout_delete_dialog_title)) },
-                text = { Text(stringResource(R.string.workout_delete_dialog_message)) },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.onConfirmDelete() }) {
-                        Text(
-                            text = stringResource(R.string.workout_delete_dialog_confirm),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.onDismissDeleteDialog() }) {
-                        Text(stringResource(R.string.workout_delete_dialog_cancel))
-                    }
-                }
+            EvoFitAlertDialog(
+                title = stringResource(R.string.workout_delete_dialog_title),
+                description = stringResource(R.string.workout_delete_dialog_message),
+                icon = Icons.Default.Delete,
+                confirmButtonText = stringResource(R.string.workout_delete_dialog_confirm),
+                dismissButtonText = stringResource(R.string.workout_delete_dialog_cancel),
+                onConfirm = { viewModel.onConfirmDelete() },
+                onDismiss = { viewModel.onDismissDeleteDialog() }
             )
         }
 
         if (uiState.showEditBlockedDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.onDismissEditBlockedDialog() },
-                title = { Text(stringResource(R.string.workout_edit_blocked_dialog_title)) },
-                text = { Text(stringResource(R.string.workout_edit_blocked_dialog_message)) },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.onDismissEditBlockedDialog() }) {
-                        Text(stringResource(R.string.workout_edit_blocked_dialog_confirm))
-                    }
-                }
+            EvoFitAlertDialog(
+                title = stringResource(R.string.workout_edit_blocked_dialog_title),
+                description = stringResource(R.string.workout_edit_blocked_dialog_message),
+                icon = Icons.Default.FrontHand,
+                confirmButtonText = stringResource(R.string.workout_edit_blocked_dialog_confirm),
+                onConfirm = { viewModel.onDismissEditBlockedDialog() },
+            )
+        }
+
+        if (uiState.showDeleteBlockedDialog) {
+            EvoFitAlertDialog(
+                title = stringResource(R.string.workout_delete_blocked_dialog_title),
+                description = stringResource(R.string.workout_delete_blocked_dialog_message),
+                icon = Icons.Default.FrontHand,
+                confirmButtonText = stringResource(R.string.workout_delete_blocked_dialog_confirm),
+                onConfirm = { viewModel.onDismissDeleteBlockedDialog() },
             )
         }
     } ?: Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

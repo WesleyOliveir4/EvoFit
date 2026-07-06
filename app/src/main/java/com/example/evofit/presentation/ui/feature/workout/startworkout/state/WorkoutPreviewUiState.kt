@@ -7,5 +7,6 @@ data class WorkoutPreviewUiState(
     val hasActiveSessionConflict: Boolean = false,
     val showDeleteDialog: Boolean = false,
     val isDeleted: Boolean = false,
-    val showEditBlockedDialog: Boolean = false
+    val showEditBlockedDialog: Boolean = false,
+    val showDeleteBlockedDialog: Boolean = false
 )

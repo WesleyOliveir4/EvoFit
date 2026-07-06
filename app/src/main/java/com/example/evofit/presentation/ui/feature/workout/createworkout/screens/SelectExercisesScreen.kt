@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
+import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.ExerciseRowItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
 import com.example.evofit.presentation.ui.theme.*
@@ -69,20 +71,15 @@ fun SelectExercisesScreen(
     )
 
     if (uiState.showCancelEditDialog) {
-        AlertDialog(
-            onDismissRequest = { viewModel.onDismissCancelEditDialog() },
-            title = { Text(stringResource(R.string.select_exercises_cancel_edit_dialog_title)) },
-            text = { Text(stringResource(R.string.select_exercises_cancel_edit_dialog_message)) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) }) {
-                    Text(stringResource(R.string.select_exercises_cancel_edit_dialog_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.onDismissCancelEditDialog() }) {
-                    Text(stringResource(R.string.select_exercises_cancel_edit_dialog_cancel))
-                }
-            }
+
+        EvoFitActionDialog(
+            title = stringResource(R.string.select_exercises_cancel_edit_dialog_title),
+            description = stringResource(R.string.select_exercises_cancel_edit_dialog_message),
+            icon = Icons.Default.EditOff,
+            confirmButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_confirm),
+            dismissButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_cancel),
+            onConfirm = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) },
+            onDismiss = { viewModel.onDismissCancelEditDialog() }
         )
     }
 }

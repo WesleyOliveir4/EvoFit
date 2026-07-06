@@ -13,6 +13,10 @@ val IconContainerBg = Color(0xFF1A231A)
 val InputFieldBg = Color(0xFF232323)
 val InputBorder = Color(0xFF333333)
 val WelcomeBoxBg = Color(0xFF102312)
+val EvoDestructiveRed = Color(0xFFFF453A)
+val EvoIconBgRed = Color(0xFF3A1A1A)
+val EvoWarningYellow = Color(0xFFFFD60A)
+val EvoIconBgYellow = Color(0xFF3A321A)
 
 // Text Colors
 val TextPrimary = Color(0xFFFFFFFF)
