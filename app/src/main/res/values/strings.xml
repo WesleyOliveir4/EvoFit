@@ -184,5 +184,8 @@
     <string name="workout_resume_label_finished_at">Finalizado em</string>
     <string name="workout_resume_label_duration">Duração</string>
     <string name="workout_resume_value_sets_format">%1$d de %2$d</string>
+    <string name="workout_resume_updated_title">Treino atualizado!</string>
+    <string name="workout_resume_updated_subtitle">Seu treino \%1$s\ foi configurado com sucesso.</string>
+    <string name="workout_resume_done_title">Treino finalizado!</string>
     <string name="workout_resume_button_confirm">Entendido</string>
 </resources>

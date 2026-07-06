@@ -150,13 +150,13 @@ fun NavNavigation() {
                     navController.popBackStack()
                 },
                 onFinishClick = { workoutId ->
-                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutId)) {
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutId = workoutId)) {
                         popUpTo(NavRoutes.Home.route) { inclusive = false }
                     }
                 },
                 onFinishEditClick = { workoutId ->
-                    navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId.toInt())) {
-                        popUpTo(NavRoutes.WorkoutPreview.route) { inclusive = true }
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(editWorkoutId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
                     }
                 }
             )
@@ -206,18 +206,40 @@ fun NavNavigation() {
             route = NavRoutes.WorkoutResume.route,
             arguments = listOf(
                 navArgument("workoutId") { type = NavType.LongType; defaultValue = -1L },
-                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = -1L }
+                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
             )
         ) { backStackEntry ->
             val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != -1L }
             val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != -1L }
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
             
             WorkoutResumeScreen(
                 workoutId = workoutId,
                 workoutDoneId = workoutDoneId,
+                editWorkoutId = editWorkoutId,
                 onContinueClick = {
-                    navController.navigate(NavRoutes.Home.route) {
-                        popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    when {
+                        workoutDoneId != null -> {
+                            navController.navigate(NavRoutes.Home.route) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = true }
+                            }
+                        }
+                        editWorkoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId.toInt())) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        workoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId.toInt())) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        else -> {
+                            navController.navigate(NavRoutes.Home.route) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = true }
+                            }
+                        }
                     }
                 }
             )

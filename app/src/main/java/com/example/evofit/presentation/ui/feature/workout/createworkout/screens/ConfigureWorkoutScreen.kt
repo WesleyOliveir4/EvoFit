@@ -81,7 +81,7 @@ fun ConfigureWorkoutScreen(
             } else if (savedWorkoutId != null) {
                 onFinishClick(savedWorkoutId)
             } else {
-                // Fallback or old behavior if needed
+                //Adicionar Tela de Erro
                 onFinishClick(-1)
             }
         }

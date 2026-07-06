@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class WorkoutResumeViewModel(
     private val workoutId: Long? = null,
     private val workoutDoneId: Long? = null,
+    private val editWorkoutId: Long? = null,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getWorkoutDoneByIdUseCase: GetWorkoutDoneByIdUseCase
 ) : ViewModel() {
@@ -29,7 +30,9 @@ class WorkoutResumeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             
-            if (workoutDoneId != null) {
+            val idToLoad = workoutId?.takeIf { it != -1L } ?: editWorkoutId?.takeIf { it != -1L }
+
+            if (workoutDoneId != null && workoutDoneId != -1L) {
                 val workoutDone = getWorkoutDoneByIdUseCase(workoutDoneId)
                 workoutDone?.let { workoutDone ->
                     val doneSetsCount = workoutDone.exercises.sumOf { it.sets.size }
@@ -48,8 +51,8 @@ class WorkoutResumeViewModel(
                         )
                     }
                 }
-            } else if (workoutId != null && workoutId != -1L) {
-                getWorkoutByIdUseCase(workoutId).collect { workout ->
+            } else if (idToLoad != null) {
+                getWorkoutByIdUseCase(idToLoad).collect { workout ->
                     workout?.let { workoutSelected ->
                         _uiState.update {
                             it.copy(

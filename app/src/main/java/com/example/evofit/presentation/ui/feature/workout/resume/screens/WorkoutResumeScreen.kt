@@ -2,14 +2,29 @@ package com.example.evofit.presentation.ui.feature.workout.resume.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import java.time.LocalDate
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,8 +54,9 @@ import org.koin.core.parameter.parametersOf
 fun WorkoutResumeScreen(
     workoutId: Long? = null,
     workoutDoneId: Long? = null,
+    editWorkoutId: Long? = null,
     onContinueClick: () -> Unit,
-    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId) }
+    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId, editWorkoutId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -53,7 +69,8 @@ fun WorkoutResumeScreen(
         formattedDate = uiState.formattedDate,
         onContinueClick = onContinueClick,
         isLoading = uiState.isLoading,
-        isWorkoutDone = uiState.isWorkoutDone
+        isWorkoutDone = uiState.isWorkoutDone,
+        isEditMode = editWorkoutId != null
     )
 }
 
@@ -68,6 +85,7 @@ fun WorkoutResumeContent(
     onContinueClick: () -> Unit,
     isLoading: Boolean = false,
     isWorkoutDone: Boolean = false,
+    isEditMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -132,7 +150,11 @@ fun WorkoutResumeContent(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = if (isWorkoutDone) "Treino finalizado!" else stringResource(R.string.workout_resume_title),
+                    text = when {
+                        isWorkoutDone -> stringResource(R.string.workout_resume_done_title)
+                        isEditMode -> stringResource(R.string.workout_resume_updated_title)
+                        else -> stringResource(R.string.workout_resume_title)
+                    },
                     color = TextPrimary,
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
@@ -142,11 +164,10 @@ fun WorkoutResumeContent(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = if (isWorkoutDone) {
-                        stringResource(R.string.workout_done_resume_subtitle, workoutName)
-
-                    } else {
-                        stringResource(R.string.workout_resume_subtitle, workoutName)
+                    text = when {
+                        isWorkoutDone -> stringResource(R.string.workout_done_resume_subtitle, workoutName)
+                        isEditMode -> stringResource(R.string.workout_resume_updated_subtitle, workoutName)
+                        else -> stringResource(R.string.workout_resume_subtitle, workoutName)
                     },
                     color = TextSecondary,
                     fontSize = 16.sp,

@@ -22,8 +22,8 @@ sealed class NavRoutes(val route: String) {
     object WorkoutStart : NavRoutes("workout_start/{workoutId}") {
         fun createRoute(workoutId: Int) = "workout_start/$workoutId"
     }
-    object WorkoutResume : NavRoutes("workout_resume?workoutId={workoutId}&workoutDoneId={workoutDoneId}") {
-        fun createRoute(workoutId: Long? = null, workoutDoneId: Long? = null) =
-            "workout_resume?workoutId=${workoutId ?: -1L}&workoutDoneId=${workoutDoneId ?: -1L}"
+    object WorkoutResume : NavRoutes("workout_resume?workoutId={workoutId}&workoutDoneId={workoutDoneId}&editWorkoutId={editWorkoutId}") {
+        fun createRoute(workoutId: Long? = null, workoutDoneId: Long? = null, editWorkoutId: Long? = null) =
+            "workout_resume?workoutId=${workoutId ?: -1L}&workoutDoneId=${workoutDoneId ?: -1L}&editWorkoutId=${editWorkoutId ?: -1L}"
     }
 }
