@@ -201,10 +201,14 @@ class WorkoutStartViewModel(
                 if (doneSets.isEmpty()) {
                     null
                 } else {
+                    // Obtendo o total de séries a partir do workout original (template)
+                    val totalSetsPlanned = workout.exercises.find { it.id == exercise.workoutExerciseId }?.sets?.size ?: 0
+
                     WorkoutExercise(
                         id = exercise.workoutExerciseId,
                         exerciseId = exercise.exerciseId,
-                        sets = doneSets
+                        sets = doneSets,
+                        totalSets = totalSetsPlanned
                     )
                 }
             }

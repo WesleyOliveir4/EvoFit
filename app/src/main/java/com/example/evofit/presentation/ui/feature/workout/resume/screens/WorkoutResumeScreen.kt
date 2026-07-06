@@ -143,7 +143,8 @@ fun WorkoutResumeContent(
 
                 Text(
                     text = if (isWorkoutDone) {
-                        "Bom trabalho! Seu treino foi registrado."
+                        stringResource(R.string.workout_done_resume_subtitle, workoutName)
+
                     } else {
                         stringResource(R.string.workout_resume_subtitle, workoutName)
                     },

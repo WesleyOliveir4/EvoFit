@@ -1,6 +1,7 @@
 package com.example.evofit.presentation.ui.feature.workout.resume.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +15,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,7 +49,12 @@ fun WorkoutSummaryCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant,
+            shape = RoundedCornerShape(24.dp)
+        ),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = AppSurface)
     ) {
@@ -85,7 +93,7 @@ fun WorkoutSummaryCard(
 
             if (duration != null) {
                 ResumeRowItem(
-                    icon = Icons.Default.Refresh, // You might want a timer icon here
+                    icon = Icons.Default.Timelapse, // You might want a timer icon here
                     label = stringResource(R.string.workout_resume_label_duration),
                     value = duration
                 )

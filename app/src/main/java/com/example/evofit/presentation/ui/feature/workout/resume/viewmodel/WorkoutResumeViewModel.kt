@@ -31,29 +31,32 @@ class WorkoutResumeViewModel(
             
             if (workoutDoneId != null) {
                 val workoutDone = getWorkoutDoneByIdUseCase(workoutDoneId)
-                workoutDone?.let { wd ->
+                workoutDone?.let { workoutDone ->
+                    val doneSetsCount = workoutDone.exercises.sumOf { it.sets.size }
+                    val totalSetsPlanned = workoutDone.exercises.sumOf { it.totalSets }
+                    
                     _uiState.update {
                         it.copy(
-                            workoutName = wd.name,
-                            totalExercises = wd.exercises.size,
-                            totalSets = wd.exercises.sumOf { ex -> ex.sets.size },
-                            completedSets = wd.exercises.sumOf { ex -> ex.sets.size }, 
-                            duration = wd.time,
-                            formattedDate = wd.date,
+                            workoutName = workoutDone.name,
+                            totalExercises = workoutDone.exercises.size,
+                            totalSets = totalSetsPlanned,
+                            completedSets = doneSetsCount,
+                            duration = workoutDone.time,
+                            formattedDate = workoutDone.date,
                             isLoading = false,
                             isWorkoutDone = true
                         )
                     }
                 }
-            } else if (workoutId != null) {
+            } else if (workoutId != null && workoutId != -1L) {
                 getWorkoutByIdUseCase(workoutId).collect { workout ->
-                    workout?.let { w ->
+                    workout?.let { workoutSelected ->
                         _uiState.update {
                             it.copy(
-                                workoutName = w.name,
-                                totalExercises = w.exercises.size,
-                                totalSets = w.exercises.sumOf { ex -> ex.sets.size },
-                                formattedDate = w.date,
+                                workoutName = workoutSelected.name,
+                                totalExercises = workoutSelected.exercises.size,
+                                totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
+                                formattedDate = workoutSelected.date,
                                 isLoading = false,
                                 isWorkoutDone = false
                             )
@@ -62,5 +65,16 @@ class WorkoutResumeViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Retorna a proporção de séries realizadas vs. planejadas.
+     * Útil para componentes que precisam desta informação como referência.
+     */
+    fun getSetsRatio(): Pair<Int, Int> {
+        val state = _uiState.value
+        val done = state.completedSets ?: 0
+        val total = state.totalSets
+        return Pair(done, total)
     }
 }

@@ -175,7 +175,8 @@
 
     <!-- Workout Resume Screen -->
     <string name="workout_resume_title">Treino criado!</string>
-    <string name="workout_resume_subtitle">\"%1$s\" está pronto para uso.</string>
+    <string name="workout_resume_subtitle">\%1$s\ está pronto para uso.</string>
+    <string name="workout_done_resume_subtitle">Bom trabalho! Seu treino \%1$s\ foi registrado.</string>
     <string name="workout_resume_label_summary">RESUMO</string>
     <string name="workout_resume_label_exercises">Exercícios</string>
     <string name="workout_resume_label_sets">Séries</string>
