@@ -78,6 +78,30 @@ interface UserDao {
         return workoutId
     }
 
+    @Query("DELETE FROM workout_exercises WHERE workoutId = :workoutId")
+    suspend fun deleteWorkoutExercisesForWorkout(workoutId: Long)
+
+    @Query("DELETE FROM workouts WHERE workoutId = :workoutId")
+    suspend fun deleteWorkoutById(workoutId: Long)
+
+    /**
+     * Atualiza um treino existente substituindo por completo seus exercícios/séries.
+     * A remoção de workout_exercises aciona o CASCADE de exercise_sets automaticamente.
+     */
+    @Transaction
+    suspend fun updateFullWorkout(
+        workout: WorkoutEntity,
+        exercises: List<WorkoutExerciseEntity>,
+        sets: List<List<ExerciseSetEntity>>
+    ) {
+        updateWorkouts(listOf(workout))
+        deleteWorkoutExercisesForWorkout(workout.workoutId)
+        exercises.forEachIndexed { index, exercise ->
+            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))
+            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+        }
+    }
+
     // Workout History
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)

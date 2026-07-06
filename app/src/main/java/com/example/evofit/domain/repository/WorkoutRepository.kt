@@ -8,6 +8,8 @@ interface WorkoutRepository {
     fun getWorkouts(userId: String): Flow<List<Workout>>
     fun getWorkoutById(workoutId: Long): Flow<Workout?>
     suspend fun saveWorkout(workout: Workout): Long
+    suspend fun updateWorkout(workout: Workout): Long
+    suspend fun deleteWorkout(workoutId: Long)
     suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone)
     suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone>
     suspend fun updateWorkoutsOrder(workouts: List<Workout>)

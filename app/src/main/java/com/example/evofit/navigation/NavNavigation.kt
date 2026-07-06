@@ -107,20 +107,25 @@ fun NavNavigation() {
 
         composable(
             route = NavRoutes.SelectExercises.route,
-            arguments = listOf(navArgument("muscleGroupId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("muscleGroupId") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+            )
         ) { backStackEntry ->
             val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
             SelectExercisesScreen(
                 muscleGroupId = muscleGroupId,
+                editWorkoutId = editWorkoutId,
                 onBackClick = {
                     navController.popBackStack()
                 },
                 onNavigate = { route ->
                     navController.navigate(route)
                 },
-                onConfigureExercisesClick = { exerciseIds, workoutName ->
+                onConfigureExercisesClick = { exerciseIds, workoutName, editId ->
                     val idsParam = exerciseIds.joinToString(",")
-                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam, workoutName))
+                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam, workoutName, editId))
                 }
             )
         }
@@ -129,20 +134,28 @@ fun NavNavigation() {
             route = NavRoutes.ConfigureWorkout.route,
             arguments = listOf(
                 navArgument("exerciseIds") { type = NavType.StringType },
-                navArgument("workoutName") { type = NavType.StringType }
+                navArgument("workoutName") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
             )
         ) { backStackEntry ->
             val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
             val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
             ConfigureWorkoutScreen(
                 exerciseIds = exerciseIds,
                 workoutName = workoutName,
+                editWorkoutId = editWorkoutId,
                 onBackClick = {
                     navController.popBackStack()
                 },
                 onFinishClick = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Home.route) { inclusive = true }
+                    }
+                },
+                onFinishEditClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId.toInt())) {
+                        popUpTo(NavRoutes.WorkoutPreview.route) { inclusive = true }
                     }
                 }
             )
@@ -160,6 +173,9 @@ fun NavNavigation() {
                 },
                 onStartWorkoutClick = {
                     navController.navigate(NavRoutes.WorkoutStart.createRoute(workoutId))
+                },
+                onEditClick = { muscleGroupId, editWorkoutId ->
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(muscleGroupId, editWorkoutId))
                 }
             )
         }

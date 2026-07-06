@@ -15,6 +15,7 @@ data class ExercisePreviewItem(
 
 data class WorkoutDetailPreview(
     val title: String,
+    val muscleGroupId: String,
     val totalExercises: Int,
     val totalSets: Int,
     val exercises: List<ExercisePreviewItem>

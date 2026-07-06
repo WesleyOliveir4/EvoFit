@@ -10,10 +10,13 @@ import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
+import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
 import com.example.evofit.presentation.mapper.DateMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -24,7 +27,8 @@ data class ConfigureWorkoutUiState(
     val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
-    val savedWorkoutId: Long? = null
+    val savedWorkoutId: Long? = null,
+    val editWorkoutId: Long? = null
 )
 
 data class ExerciseConfigState(
@@ -44,38 +48,64 @@ data class SetState(
 class ConfigureWorkoutViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
-    private val getUserIdUseCase: GetUserIdUseCase
+    private val getUserIdUseCase: GetUserIdUseCase,
+    private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
+    private val updateWorkoutUseCase: UpdateWorkoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConfigureWorkoutUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun loadExercises(exerciseIds: List<String>, workoutName: String) {
+    // Preservados do treino original ao editar, para não perder a posição na lista
+    // nem a data de criação original ao salvar a edição.
+    private var originalOrderIndex: Int = 0
+    private var originalDate: String = DateMapper.formatDate(Date())
+
+    fun loadExercises(exerciseIds: List<String>, workoutName: String, editWorkoutId: Long? = null) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, workoutName = workoutName) }
+            _uiState.update { it.copy(isLoading = true, workoutName = workoutName, editWorkoutId = editWorkoutId) }
             val selectedExercises = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
             val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
                 muscleGroups.find { it.id == first.muscleGroupId }?.type
             }
 
+            // Ao editar, recupera as séries já configuradas para os exercícios que forem mantidos.
+            val existingWorkout = editWorkoutId?.let { getWorkoutByIdUseCase(it).first() }
+            val existingExercisesById = existingWorkout?.exercises?.associateBy { it.exerciseId } ?: emptyMap()
+            existingWorkout?.let {
+                originalOrderIndex = it.orderIndex
+                originalDate = it.date
+            }
+
             val configs = selectedExercises.map { exercise ->
-                val defaultWeight = when (exercise.unit) {
-                    MeasurementUnit.DISTANCE -> 1.0
-                    else -> 20.0
+                val existing = existingExercisesById[exercise.id]
+                if (existing != null) {
+                    ExerciseConfigState(
+                        exerciseId = exercise.id,
+                        name = exercise.name,
+                        muscleGroupId = exercise.muscleGroupId,
+                        unit = exercise.unit,
+                        sets = existing.sets.mapIndexed { index, set -> set.toSetState(index + 1) }
+                    )
+                } else {
+                    val defaultWeight = when (exercise.unit) {
+                        MeasurementUnit.DISTANCE -> 1.0
+                        else -> 20.0
+                    }
+                    val defaultReps = when (exercise.unit) {
+                        MeasurementUnit.DISTANCE -> 5
+                        MeasurementUnit.TIME -> 1
+                        else -> 10
+                    }
+                    ExerciseConfigState(
+                        exerciseId = exercise.id,
+                        name = exercise.name,
+                        muscleGroupId = exercise.muscleGroupId,
+                        unit = exercise.unit,
+                        sets = listOf(SetState(1, defaultWeight, defaultReps))
+                    )
                 }
-                val defaultReps = when (exercise.unit) {
-                    MeasurementUnit.DISTANCE -> 5
-                    MeasurementUnit.TIME -> 1
-                    else -> 10
-                }
-                ExerciseConfigState(
-                    exerciseId = exercise.id,
-                    name = exercise.name,
-                    muscleGroupId = exercise.muscleGroupId,
-                    unit = exercise.unit,
-                    sets = listOf(SetState(1, defaultWeight, defaultReps))
-                )
             }
 
             _uiState.update {
@@ -85,6 +115,15 @@ class ConfigureWorkoutViewModel(
                     isLoading = false
                 )
             }
+        }
+    }
+
+    private fun ExerciseSet.toSetState(setNumber: Int): SetState {
+        return when (unit) {
+            MeasurementUnit.DISTANCE -> SetState(setNumber, weight = distance ?: 0.0, reps = time ?: 0)
+            MeasurementUnit.TIME -> SetState(setNumber, weight = 0.0, reps = time ?: 0)
+            MeasurementUnit.REPS -> SetState(setNumber, weight = 0.0, reps = reps)
+            MeasurementUnit.WEIGHT -> SetState(setNumber, weight = load, reps = reps)
         }
     }
 
@@ -150,76 +189,120 @@ class ConfigureWorkoutViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
-            val firstConfig = currentState.exerciseConfigs.firstOrNull()
-            val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
-
-            val workoutExercises = currentState.exerciseConfigs.map { config ->
-                WorkoutExercise(
-                    exerciseId = config.exerciseId,
-                    sets = config.sets.map { set ->
-                        when (config.unit) {
-                            MeasurementUnit.DISTANCE -> {
-                                ExerciseSet(
-                                    exerciseName = config.name,
-                                    setNumber = set.setNumber,
-                                    reps = 0,
-                                    load = 0.0,
-                                    unit = config.unit,
-                                    distance = set.weight,
-                                    time = set.reps
-                                )
-                            }
-                            MeasurementUnit.TIME -> {
-                                ExerciseSet(
-                                    exerciseName = config.name,
-                                    setNumber = set.setNumber,
-                                    reps = 0,
-                                    load = 0.0,
-                                    unit = config.unit,
-                                    time = set.reps
-                                )
-                            }
-                            MeasurementUnit.REPS -> {
-                                ExerciseSet(
-                                    exerciseName = config.name,
-                                    setNumber = set.setNumber,
-                                    reps = set.reps,
-                                    load = 0.0,
-                                    unit = config.unit
-                                )
-                            }
-                            MeasurementUnit.WEIGHT -> {
-                                ExerciseSet(
-                                    exerciseName = config.name,
-                                    setNumber = set.setNumber,
-                                    reps = set.reps,
-                                    load = set.weight,
-                                    unit = config.unit
-                                )
-                            }
-                        }
-                    }
-                )
-            }
+            val (muscleGroup, workoutExercises) = buildMuscleGroupAndExercises(currentState)
 
             val workout = Workout(
                 userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
                 name = currentState.workoutName,
-                muscleGroupId = firstConfig?.muscleGroupId ?: "",
+                muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
                 muscleGroup = muscleGroup,
                 date = DateMapper.formatDate(Date()),
                 exercises = workoutExercises
             )
 
             val workoutId = saveWorkoutUseCase(workout)
-            _uiState.update { 
+            _uiState.update {
                 it.copy(
-                    isLoading = false, 
+                    isLoading = false,
                     isSaved = true,
                     savedWorkoutId = workoutId
-                ) 
+                )
             }
         }
+    }
+
+    /**
+     * Salva as alterações de um treino existente (fluxo de edição), preservando id,
+     * posição na lista e data de criação original.
+     */
+    fun saveEditedWorkout() {
+        val currentState = _uiState.value
+        val editWorkoutId = currentState.editWorkoutId ?: return
+        if (currentState.isLoading) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val (muscleGroup, workoutExercises) = buildMuscleGroupAndExercises(currentState)
+
+            val workout = Workout(
+                id = editWorkoutId,
+                userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
+                name = currentState.workoutName,
+                muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
+                muscleGroup = muscleGroup,
+                date = originalDate,
+                exercises = workoutExercises,
+                orderIndex = originalOrderIndex
+            )
+
+            updateWorkoutUseCase(workout)
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    isSaved = true,
+                    savedWorkoutId = editWorkoutId
+                )
+            }
+        }
+    }
+
+    private suspend fun buildMuscleGroupAndExercises(
+        currentState: ConfigureWorkoutUiState
+    ): Pair<com.example.evofit.domain.model.MuscleGroup?, List<WorkoutExercise>> {
+        val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
+        val firstConfig = currentState.exerciseConfigs.firstOrNull()
+        val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
+
+        val workoutExercises = currentState.exerciseConfigs.map { config ->
+            WorkoutExercise(
+                exerciseId = config.exerciseId,
+                sets = config.sets.map { set ->
+                    when (config.unit) {
+                        MeasurementUnit.DISTANCE -> {
+                            ExerciseSet(
+                                exerciseName = config.name,
+                                setNumber = set.setNumber,
+                                reps = 0,
+                                load = 0.0,
+                                unit = config.unit,
+                                distance = set.weight,
+                                time = set.reps
+                            )
+                        }
+                        MeasurementUnit.TIME -> {
+                            ExerciseSet(
+                                exerciseName = config.name,
+                                setNumber = set.setNumber,
+                                reps = 0,
+                                load = 0.0,
+                                unit = config.unit,
+                                time = set.reps
+                            )
+                        }
+                        MeasurementUnit.REPS -> {
+                            ExerciseSet(
+                                exerciseName = config.name,
+                                setNumber = set.setNumber,
+                                reps = set.reps,
+                                load = 0.0,
+                                unit = config.unit
+                            )
+                        }
+                        MeasurementUnit.WEIGHT -> {
+                            ExerciseSet(
+                                exerciseName = config.name,
+                                setNumber = set.setNumber,
+                                reps = set.reps,
+                                load = set.weight,
+                                unit = config.unit
+                            )
+                        }
+                    }
+                }
+            )
+        }
+
+        return muscleGroup to workoutExercises
     }
 }

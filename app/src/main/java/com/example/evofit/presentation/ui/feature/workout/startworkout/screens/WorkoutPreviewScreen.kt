@@ -7,8 +7,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,15 +39,26 @@ fun WorkoutPreviewScreen(
     workoutId: Int,
     viewModel: WorkoutPreviewViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
     onBackClick: () -> Unit = {},
-    onStartWorkoutClick: () -> Unit = {}
+    onStartWorkoutClick: () -> Unit = {},
+    onEditClick: (String, Long) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) {
+            onBackClick()
+        }
+    }
 
     uiState.preview?.let { preview ->
         WorkoutPreviewContent(
             preview = preview,
             onBackClick = onBackClick,
-            onStartWorkoutClick = { viewModel.onStartWorkoutClicked(onProceed = onStartWorkoutClick) }
+            onStartWorkoutClick = { viewModel.onStartWorkoutClicked(onProceed = onStartWorkoutClick) },
+            onEditClick = {
+                viewModel.onEditClicked(onProceed = { onEditClick(preview.muscleGroupId, workoutId.toLong()) })
+            },
+            onDeleteClick = { viewModel.onDeleteClicked() }
         )
 
         if (uiState.hasActiveSessionConflict) {
@@ -66,6 +80,40 @@ fun WorkoutPreviewScreen(
                 }
             )
         }
+
+        if (uiState.showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { viewModel.onDismissDeleteDialog() },
+                title = { Text(stringResource(R.string.workout_delete_dialog_title)) },
+                text = { Text(stringResource(R.string.workout_delete_dialog_message)) },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.onConfirmDelete() }) {
+                        Text(
+                            text = stringResource(R.string.workout_delete_dialog_confirm),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.onDismissDeleteDialog() }) {
+                        Text(stringResource(R.string.workout_delete_dialog_cancel))
+                    }
+                }
+            )
+        }
+
+        if (uiState.showEditBlockedDialog) {
+            AlertDialog(
+                onDismissRequest = { viewModel.onDismissEditBlockedDialog() },
+                title = { Text(stringResource(R.string.workout_edit_blocked_dialog_title)) },
+                text = { Text(stringResource(R.string.workout_edit_blocked_dialog_message)) },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.onDismissEditBlockedDialog() }) {
+                        Text(stringResource(R.string.workout_edit_blocked_dialog_confirm))
+                    }
+                }
+            )
+        }
     } ?: Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
@@ -76,7 +124,9 @@ fun WorkoutPreviewScreen(
 fun WorkoutPreviewContent(
     preview: WorkoutDetailPreview,
     onBackClick: () -> Unit,
-    onStartWorkoutClick: () -> Unit
+    onStartWorkoutClick: () -> Unit,
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -94,8 +144,24 @@ fun WorkoutPreviewContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.workout_preview_back_desc),
                             tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onEditClick) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.workout_preview_edit_desc),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    IconButton(onClick = onDeleteClick) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.workout_preview_delete_desc),
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 },
@@ -179,6 +245,7 @@ private fun WorkoutPreviewScreenPreview() {
         WorkoutPreviewContent(
             preview = WorkoutDetailPreview(
                 title = "Treino Completo",
+                muscleGroupId = "chest",
                 totalExercises = 4,
                 totalSets = 10,
                 exercises = listOf(

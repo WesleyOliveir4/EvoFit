@@ -60,6 +60,22 @@ class WorkoutRepositoryImpl(
         return userDao.insertFullWorkoutReturnId(workoutEntity, exercises, sets)
     }
 
+    override suspend fun updateWorkout(workout: Workout): Long {
+        val workoutEntity = workout.toEntity()
+
+        val exercises = workout.exercises.map { it.toEntity(0) }
+        val sets = workout.exercises.map { exercise ->
+            exercise.sets.map { it.toEntity(0) }
+        }
+
+        userDao.updateFullWorkout(workoutEntity, exercises, sets)
+        return workout.id
+    }
+
+    override suspend fun deleteWorkout(workoutId: Long) {
+        userDao.deleteWorkoutById(workoutId)
+    }
+
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
         userDao.updateWorkoutsOrder(workouts.map { it.toEntity() })
     }

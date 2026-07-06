@@ -4,5 +4,8 @@ import com.example.evofit.presentation.model.WorkoutDetailPreview
 
 data class WorkoutPreviewUiState(
     val preview: WorkoutDetailPreview? = null,
-    val hasActiveSessionConflict: Boolean = false
+    val hasActiveSessionConflict: Boolean = false,
+    val showDeleteDialog: Boolean = false,
+    val isDeleted: Boolean = false,
+    val showEditBlockedDialog: Boolean = false
 )

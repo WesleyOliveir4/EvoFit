@@ -15,6 +15,10 @@ import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCaseImpl
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCaseImpl
+import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
+import com.example.evofit.domain.usecase.DeleteWorkoutUseCaseImpl
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCaseImpl
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
@@ -90,6 +94,8 @@ val domainModule = module {
     factory<StartWorkoutSessionUseCase> { StartWorkoutSessionUseCaseImpl(get()) }
     factory<UpdateCompletedSetsUseCase> { UpdateCompletedSetsUseCaseImpl(get()) }
     factory<ClearWorkoutSessionUseCase> { ClearWorkoutSessionUseCaseImpl(get()) }
+    factory<DeleteWorkoutUseCase> { DeleteWorkoutUseCaseImpl(get()) }
+    factory<UpdateWorkoutUseCase> { UpdateWorkoutUseCaseImpl(get()) }
 }
 
 val splashModule = module {
@@ -134,11 +140,14 @@ val workoutModule = module {
     }
     viewModel {
         SelectExercisesViewModel(
+            get(),
             get()
         )
     }
     viewModel {
         ConfigureWorkoutViewModel(
+            get(),
+            get(),
             get(),
             get(),
             get()
@@ -147,6 +156,7 @@ val workoutModule = module {
     viewModel { (workoutId: Int) ->
         WorkoutPreviewViewModel(
             workoutId = workoutId,
+            get(),
             get(),
             get(),
             get()

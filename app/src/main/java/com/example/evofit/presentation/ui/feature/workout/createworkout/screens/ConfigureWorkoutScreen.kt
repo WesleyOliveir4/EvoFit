@@ -37,18 +37,25 @@ fun ConfigureWorkoutScreen(
     workoutName: String,
     onBackClick: () -> Unit,
     onFinishClick: () -> Unit,
+    editWorkoutId: Long? = null,
+    onFinishEditClick: (Long) -> Unit = {},
     viewModel: ConfigureWorkoutViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(exerciseIds, workoutName) {
-        viewModel.loadExercises(exerciseIds, workoutName)
+    LaunchedEffect(exerciseIds, workoutName, editWorkoutId) {
+        viewModel.loadExercises(exerciseIds, workoutName, editWorkoutId)
     }
 
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
-            onFinishClick()
+            val savedEditId = uiState.editWorkoutId
+            if (savedEditId != null) {
+                onFinishEditClick(savedEditId)
+            } else {
+                onFinishClick()
+            }
         }
     }
 
@@ -123,7 +130,11 @@ fun ConfigureWorkoutScreen(
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         } else {
-                            viewModel.saveWorkout()
+                            if (uiState.editWorkoutId != null) {
+                                viewModel.saveEditedWorkout()
+                            } else {
+                                viewModel.saveWorkout()
+                            }
                         }
                     },
                     enabled = !uiState.isLoading,

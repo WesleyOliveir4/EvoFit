@@ -8,5 +8,7 @@ data class SelectExercisesUiState(
     val tempWorkoutName: String = "",
     val isEditingName: Boolean = false,
     val exercises: List<ExerciseSelectionUIModel> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val editWorkoutId: Long? = null,
+    val showCancelEditDialog: Boolean = false
 )

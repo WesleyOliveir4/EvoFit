@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,33 +34,57 @@ fun SelectExercisesScreen(
     muscleGroupId: String,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
-    onConfigureExercisesClick: (List<String>, String) -> Unit,
+    onConfigureExercisesClick: (List<String>, String, Long?) -> Unit,
+    editWorkoutId: Long? = null,
     viewModel: SelectExercisesViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedIds = viewModel.selectedExerciseIds
 
-    LaunchedEffect(muscleGroupId) {
-        viewModel.loadExercises(muscleGroupId)
+    LaunchedEffect(muscleGroupId, editWorkoutId) {
+        viewModel.loadExercises(muscleGroupId, editWorkoutId)
     }
+
+    BackHandler { viewModel.onBackPressed(onProceed = onBackClick) }
 
     SelectExercisesContent(
         muscleGroupName = uiState.muscleGroupName,
         workoutName = uiState.workoutName,
         tempWorkoutName = uiState.tempWorkoutName,
         isEditingName = uiState.isEditingName,
+        isEditMode = uiState.editWorkoutId != null,
         exercises = uiState.exercises,
         selectedExerciseIds = selectedIds,
         isLoading = uiState.isLoading,
-        onBackClick = onBackClick,
+        onBackClick = { viewModel.onBackPressed(onProceed = onBackClick) },
         onNavigate = onNavigate,
         onExerciseToggle = { viewModel.toggleExerciseSelection(it) },
-        onConfigureExercisesClick = { onConfigureExercisesClick(selectedIds, uiState.workoutName) },
+        onConfigureExercisesClick = {
+            onConfigureExercisesClick(selectedIds, uiState.workoutName, uiState.editWorkoutId)
+        },
         onStartEditingName = { viewModel.startEditingName() },
         onCancelEditingName = { viewModel.cancelEditingName() },
         onConfirmEditingName = { viewModel.confirmEditingName() },
         onTempNameChange = { viewModel.updateTempName(it) }
     )
+
+    if (uiState.showCancelEditDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissCancelEditDialog() },
+            title = { Text(stringResource(R.string.select_exercises_cancel_edit_dialog_title)) },
+            text = { Text(stringResource(R.string.select_exercises_cancel_edit_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) }) {
+                    Text(stringResource(R.string.select_exercises_cancel_edit_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissCancelEditDialog() }) {
+                    Text(stringResource(R.string.select_exercises_cancel_edit_dialog_cancel))
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +104,8 @@ fun SelectExercisesContent(
     onStartEditingName: () -> Unit,
     onCancelEditingName: () -> Unit,
     onConfirmEditingName: () -> Unit,
-    onTempNameChange: (String) -> Unit
+    onTempNameChange: (String) -> Unit,
+    isEditMode: Boolean = false
 ) {
     val isButtonEnabled = selectedExerciseIds.isNotEmpty()
 
@@ -89,7 +115,11 @@ fun SelectExercisesContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.select_exercises_title),
+                        text = if (isEditMode) {
+                            stringResource(R.string.select_exercises_edit_title)
+                        } else {
+                            stringResource(R.string.select_exercises_title)
+                        },
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold

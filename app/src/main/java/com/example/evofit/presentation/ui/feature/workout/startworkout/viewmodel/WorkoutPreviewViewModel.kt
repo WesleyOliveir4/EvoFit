@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.repository.WorkoutSessionRepository
+import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
@@ -23,7 +24,8 @@ class WorkoutPreviewViewModel(
     private val workoutId: Int,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
-    private val sessionRepository: WorkoutSessionRepository
+    private val sessionRepository: WorkoutSessionRepository,
+    private val deleteWorkoutUseCase: DeleteWorkoutUseCase
 ) : ViewModel() {
 
     private val previewFlow = getWorkoutByIdUseCase(workoutId.toLong())
@@ -60,6 +62,7 @@ class WorkoutPreviewViewModel(
 
                 WorkoutDetailPreview(
                     title = workoutSelected.name.ifEmpty { workoutSelected.muscleGroupId },
+                    muscleGroupId = workoutSelected.muscleGroupId,
                     totalExercises = workoutSelected.exercises.size,
                     totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
                     exercises = exercises
@@ -68,12 +71,24 @@ class WorkoutPreviewViewModel(
         }
 
     private val _hasActiveSessionConflict = MutableStateFlow(false)
+    private val _showDeleteDialog = MutableStateFlow(false)
+    private val _isDeleted = MutableStateFlow(false)
+    private val _showEditBlockedDialog = MutableStateFlow(false)
 
     val uiState: StateFlow<WorkoutPreviewUiState> = combine(
         previewFlow,
-        _hasActiveSessionConflict
-    ) { preview, conflict ->
-        WorkoutPreviewUiState(preview = preview, hasActiveSessionConflict = conflict)
+        _hasActiveSessionConflict,
+        _showDeleteDialog,
+        _isDeleted,
+        _showEditBlockedDialog
+    ) { preview, conflict, showDelete, isDeleted, editBlocked ->
+        WorkoutPreviewUiState(
+            preview = preview,
+            hasActiveSessionConflict = conflict,
+            showDeleteDialog = showDelete,
+            isDeleted = isDeleted,
+            showEditBlockedDialog = editBlocked
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -101,5 +116,36 @@ class WorkoutPreviewViewModel(
 
     fun onDismissActiveSessionDialog() {
         _hasActiveSessionConflict.value = false
+    }
+
+    fun onDeleteClicked() {
+        _showDeleteDialog.value = true
+    }
+
+    fun onDismissDeleteDialog() {
+        _showDeleteDialog.value = false
+    }
+
+    fun onConfirmDelete() {
+        viewModelScope.launch {
+            deleteWorkoutUseCase(workoutId.toLong())
+            _showDeleteDialog.value = false
+            _isDeleted.value = true
+        }
+    }
+
+    fun onEditClicked(onProceed: () -> Unit) {
+        viewModelScope.launch {
+            val activeSession = sessionRepository.getActiveSession().first()
+            if (activeSession != null && activeSession.workoutId == workoutId.toLong()) {
+                _showEditBlockedDialog.value = true
+            } else {
+                onProceed()
+            }
+        }
+    }
+
+    fun onDismissEditBlockedDialog() {
+        _showEditBlockedDialog.value = false
     }
 }

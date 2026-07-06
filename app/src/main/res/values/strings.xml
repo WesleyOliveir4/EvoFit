@@ -115,7 +115,12 @@
 
     <!-- Select Exercises Screen -->
     <string name="select_exercises_title">Selecionar Exercícios</string>
+    <string name="select_exercises_edit_title">Editar Treino</string>
     <string name="select_exercises_back_desc">Voltar</string>
+    <string name="select_exercises_cancel_edit_dialog_title">Cancelar edição?</string>
+    <string name="select_exercises_cancel_edit_dialog_message">As alterações feitas nesta edição serão descartadas. Deseja continuar?</string>
+    <string name="select_exercises_cancel_edit_dialog_confirm">Descartar</string>
+    <string name="select_exercises_cancel_edit_dialog_cancel">Continuar Editando</string>
     <string name="select_exercises_button_configure">Configurar Exercícios</string>
     <string name="select_exercises_confirm_desc">Confirmar</string>
     <string name="select_exercises_cancel_desc">Cancelar</string>
@@ -131,6 +136,16 @@
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>
     <string name="workout_preview_sets">Séries</string>
+    <string name="workout_preview_back_desc">Voltar</string>
+    <string name="workout_preview_edit_desc">Editar treino</string>
+    <string name="workout_preview_delete_desc">Excluir treino</string>
+    <string name="workout_delete_dialog_title">Excluir treino?</string>
+    <string name="workout_delete_dialog_message">Essa ação não pode ser desfeita. Tem certeza que deseja excluir este treino?</string>
+    <string name="workout_delete_dialog_confirm">Excluir</string>
+    <string name="workout_delete_dialog_cancel">Cancelar</string>
+    <string name="workout_edit_blocked_dialog_title">Treino em andamento</string>
+    <string name="workout_edit_blocked_dialog_message">Este treino está em andamento e não pode ser editado agora. Finalize ou cancele o treino em andamento antes de editá-lo.</string>
+    <string name="workout_edit_blocked_dialog_confirm">Entendi</string>
     <string name="workout_preview_start_training">Iniciar Treino</string>
     <string name="workout_preview_unknown_exercise">Exercício</string>
     <!-- Workout Start Screen -->
