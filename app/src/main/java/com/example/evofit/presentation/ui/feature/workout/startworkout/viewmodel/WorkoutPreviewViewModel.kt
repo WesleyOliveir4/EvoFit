@@ -3,8 +3,9 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.viewmode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.domain.repository.WorkoutSessionRepository
+import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
+import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
@@ -24,8 +25,9 @@ class WorkoutPreviewViewModel(
     private val workoutId: Int,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
-    private val sessionRepository: WorkoutSessionRepository,
-    private val deleteWorkoutUseCase: DeleteWorkoutUseCase
+    private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
+    private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
+    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
 ) : ViewModel() {
 
     private val previewFlow = getWorkoutByIdUseCase(workoutId.toLong())
@@ -97,7 +99,7 @@ class WorkoutPreviewViewModel(
 
     fun onStartWorkoutClicked(onProceed: () -> Unit) {
         viewModelScope.launch {
-            val hasActiveSession = sessionRepository.getActiveSession().first() != null
+            val hasActiveSession = getActiveWorkoutSessionUseCase().first() != null
             if (hasActiveSession) {
                 _hasActiveSessionConflict.value = true
             } else {
@@ -108,7 +110,7 @@ class WorkoutPreviewViewModel(
 
     fun onConfirmDiscardActiveSession(onProceed: () -> Unit) {
         viewModelScope.launch {
-            sessionRepository.clearSession()
+            clearWorkoutSessionUseCase()
             _hasActiveSessionConflict.value = false
             onProceed()
         }
@@ -136,8 +138,8 @@ class WorkoutPreviewViewModel(
 
     fun onEditClicked(onProceed: () -> Unit) {
         viewModelScope.launch {
-            val activeSession = sessionRepository.getActiveSession().first()
-            if (activeSession != null && activeSession.workoutId == workoutId.toLong()) {
+            val activeSession = getActiveWorkoutSessionUseCase().first()
+            if (activeSession != null && activeSession.workout.id == workoutId.toLong()) {
                 _showEditBlockedDialog.value = true
             } else {
                 onProceed()

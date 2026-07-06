@@ -156,10 +156,11 @@ val workoutModule = module {
     viewModel { (workoutId: Int) ->
         WorkoutPreviewViewModel(
             workoutId = workoutId,
-            get(),
-            get(),
-            get(),
-            get()
+            getWorkoutByIdUseCase = get(),
+            getExerciseDataUseCase = get(),
+            deleteWorkoutUseCase = get(),
+            getActiveWorkoutSessionUseCase = get(),
+            clearWorkoutSessionUseCase = get()
         )
     }
     viewModel { (workoutId: Int) ->

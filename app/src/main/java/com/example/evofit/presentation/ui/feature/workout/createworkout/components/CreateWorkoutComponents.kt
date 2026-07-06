@@ -26,8 +26,8 @@ import com.example.evofit.presentation.mapper.toIcon
 import com.example.evofit.presentation.ui.feature.workout.components.configure.AddSetDashedButton
 import com.example.evofit.presentation.ui.feature.workout.components.configure.RepsCounterComponent
 import com.example.evofit.presentation.ui.feature.workout.components.configure.WeightWheelSelector
-import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ExerciseConfigState
-import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SetState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable

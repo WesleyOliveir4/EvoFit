@@ -2,10 +2,9 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmod
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.domain.model.MuscleGroupType
-import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.core.common.AppConstants
 import com.example.evofit.domain.model.ExerciseSet
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
@@ -14,36 +13,15 @@ import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
 import com.example.evofit.presentation.mapper.DateMapper
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ConfigureWorkoutUiState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
-
-data class ConfigureWorkoutUiState(
-    val workoutName: String = "",
-    val exerciseConfigs: List<ExerciseConfigState> = emptyList(),
-    val muscleGroupType: MuscleGroupType? = null,
-    val isLoading: Boolean = false,
-    val isSaved: Boolean = false,
-    val savedWorkoutId: Long? = null,
-    val editWorkoutId: Long? = null
-)
-
-data class ExerciseConfigState(
-    val exerciseId: String,
-    val name: String,
-    val muscleGroupId: String,
-    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
-    val sets: List<SetState> = listOf(SetState(1, 20.0, 10))
-)
-
-data class SetState(
-    val setNumber: Int,
-    val weight: Double,
-    val reps: Int
-)
 
 class ConfigureWorkoutViewModel(
     private val getExerciseDataUseCase: GetExerciseDataUseCase,
@@ -55,22 +33,18 @@ class ConfigureWorkoutViewModel(
 
     private val _uiState = MutableStateFlow(ConfigureWorkoutUiState())
     val uiState = _uiState.asStateFlow()
-
-    // Preservados do treino original ao editar, para não perder a posição na lista
-    // nem a data de criação original ao salvar a edição.
     private var originalOrderIndex: Int = 0
     private var originalDate: String = DateMapper.formatDate(Date())
 
-    fun loadExercises(exerciseIds: List<String>, workoutName: String, editWorkoutId: Long? = null) {
+    fun loadExercises(exerciseIds: List<String>, editWorkoutId: Long? = null) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, workoutName = workoutName, editWorkoutId = editWorkoutId) }
+            _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
             val selectedExercises = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
             val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
             val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
                 muscleGroups.find { it.id == first.muscleGroupId }?.type
             }
 
-            // Ao editar, recupera as séries já configuradas para os exercícios que forem mantidos.
             val existingWorkout = editWorkoutId?.let { getWorkoutByIdUseCase(it).first() }
             val existingExercisesById = existingWorkout?.exercises?.associateBy { it.exerciseId } ?: emptyMap()
             existingWorkout?.let {
@@ -182,7 +156,7 @@ class ConfigureWorkoutViewModel(
         }
     }
 
-    fun saveWorkout() {
+    fun saveWorkout(workoutName: String) {
         val currentState = _uiState.value
         if (currentState.isLoading) return
 
@@ -193,7 +167,7 @@ class ConfigureWorkoutViewModel(
 
             val workout = Workout(
                 userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
-                name = currentState.workoutName,
+                name = workoutName,
                 muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
                 muscleGroup = muscleGroup,
                 date = DateMapper.formatDate(Date()),
@@ -211,11 +185,8 @@ class ConfigureWorkoutViewModel(
         }
     }
 
-    /**
-     * Salva as alterações de um treino existente (fluxo de edição), preservando id,
-     * posição na lista e data de criação original.
-     */
-    fun saveEditedWorkout() {
+
+    fun saveEditedWorkout(workoutName: String) {
         val currentState = _uiState.value
         val editWorkoutId = currentState.editWorkoutId ?: return
         if (currentState.isLoading) return
@@ -228,7 +199,7 @@ class ConfigureWorkoutViewModel(
             val workout = Workout(
                 id = editWorkoutId,
                 userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
-                name = currentState.workoutName,
+                name = workoutName,
                 muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
                 muscleGroup = muscleGroup,
                 date = originalDate,
