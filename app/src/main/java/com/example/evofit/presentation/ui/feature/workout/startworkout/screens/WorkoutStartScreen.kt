@@ -48,6 +48,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.startworkout.components.ExerciseTrackingCard
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
@@ -86,29 +87,17 @@ fun WorkoutStartScreen(
         if (uiState.showFinishDialog) {
             val totalExercises = uiState.exercises.size
             val completedExercises = uiState.exercises.count { it.sets.all { set -> set.isDone } }
-            
-            AlertDialog(
-                onDismissRequest = { viewModel.onDismissFinishDialog() },
-                title = { Text(stringResource(R.string.workout_finish_dialog_title)) },
-                text = {
-                    Text(
-                        stringResource(
-                            R.string.workout_finish_dialog_message,
-                            completedExercises,
-                            totalExercises
-                        )
-                    )
-                },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.onConfirmFinish() }) {
-                        Text(stringResource(R.string.workout_finish_dialog_confirm))
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.onDismissFinishDialog() }) {
-                        Text(stringResource(R.string.workout_finish_dialog_cancel))
-                    }
-                }
+            EvoFitActionDialog(
+                title = stringResource(R.string.workout_finish_dialog_title),
+                description = stringResource(
+                    R.string.workout_finish_dialog_message,
+                    completedExercises,
+                    totalExercises
+                ),
+                confirmButtonText = stringResource(R.string.workout_finish_dialog_confirm),
+                dismissButtonText = stringResource(R.string.workout_finish_dialog_cancel),
+                onDismiss = { viewModel.onDismissFinishDialog() },
+                onConfirm = { viewModel.onConfirmFinish() }
             )
         }
 

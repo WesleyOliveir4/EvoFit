@@ -154,7 +154,6 @@ fun WorkoutPreviewContent(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(R.string.workout_preview_delete_desc),
-                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 },
