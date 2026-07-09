@@ -133,6 +133,27 @@
     <string name="nav_evo">Evo</string>
     <string name="nav_profile">Perfil</string>
 
+    <!-- Evo Home Screen -->
+    <string name="evo_home_title">Evo</string>
+    <string name="evo_home_filter_period_3_months">3 meses</string>
+    <string name="evo_home_filter_description">Mudar período</string>
+    <string name="evo_home_strength_title">TOP GANHOS DE FORÇA</string>
+    <string name="evo_home_most_evolved_title">MAIS EVOLUÍDO</string>
+    <string name="evo_home_workouts_title">TREINOS</string>
+    <string name="evo_home_workouts_completed">concluídos</string>
+    <string name="evo_home_top_1">1º</string>
+    <string name="evo_home_top_2">2º</string>
+    <string name="evo_home_top_3">3º</string>
+    <string name="evo_home_mock_exercise_1">Supino reto</string>
+    <string name="evo_home_mock_exercise_2">Agachamento</string>
+    <string name="evo_home_mock_exercise_3">Rosca direta</string>
+    <string name="evo_home_mock_progress_1">+15kg</string>
+    <string name="evo_home_mock_progress_2">+12kg</string>
+    <string name="evo_home_mock_progress_3">+8kg</string>
+    <string name="evo_home_mock_muscle_evolved">Costas</string>
+    <string name="evo_home_mock_muscle_percentage">+18%</string>
+    <string name="evo_home_mock_workouts_count">128</string>
+
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>
     <string name="workout_preview_sets">Séries</string>

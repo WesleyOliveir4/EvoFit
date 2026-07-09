@@ -18,6 +18,7 @@ import com.example.evofit.presentation.ui.feature.workout.resume.screens.Workout
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
+import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
 
 @Composable
 fun NavNavigation() {
@@ -86,6 +87,14 @@ fun NavNavigation() {
 
         composable(NavRoutes.Home.route) {
             WorkoutScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Evo.route) {
+            EvoHomeScreen(
                 onNavigate = { route ->
                     navController.navigate(route)
                 }
