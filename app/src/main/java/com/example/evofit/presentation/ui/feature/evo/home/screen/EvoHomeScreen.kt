@@ -40,15 +40,21 @@ import com.example.evofit.presentation.ui.feature.evo.home.components.StrengthPr
 import com.example.evofit.presentation.ui.feature.evo.home.components.WorkoutsCompletedCard
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
+import androidx.compose.runtime.collectAsState
+import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
+import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
+import org.koin.androidx.compose.koinViewModel
+
 @Composable
 fun EvoHomeScreen(
-    onNavigate: (String) -> Unit = {}
+    onNavigate: (String) -> Unit = {},
+    viewModel: EvoHomeViewModel = koinViewModel()
 ) {
-    var selectedPeriod by remember { mutableStateOf("3 meses") }
+    val uiState by viewModel.uiState.collectAsState()
 
     EvoHomeContent(
-        selectedPeriod = selectedPeriod,
-        onPeriodSelected = { selectedPeriod = it },
+        uiState = uiState,
+        onPeriodSelected = { viewModel.onPeriodSelected(it) },
         onNavigate = onNavigate
     )
 }
@@ -56,7 +62,7 @@ fun EvoHomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EvoHomeContent(
-    selectedPeriod: String,
+    uiState: EvoHomeUiState,
     onPeriodSelected: (String) -> Unit,
     onNavigate: (String) -> Unit
 ) {
@@ -82,7 +88,7 @@ fun EvoHomeContent(
 
                 // Filtro de Período funcional
                 EvoFitDropdownFilter(
-                    selectedOption = selectedPeriod,
+                    selectedOption = uiState.selectedPeriod,
                     onOptionSelected = onPeriodSelected
                 )
             }
@@ -104,27 +110,45 @@ fun EvoHomeContent(
         ) {
             
             StrengthGainsCard {
-                StrengthProgressRow(position = stringResource(R.string.evo_home_top_1), exerciseName = stringResource(R.string.evo_home_mock_exercise_1), progressValue = stringResource(R.string.evo_home_mock_progress_1))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 12.dp))
-                
-                StrengthProgressRow(position = stringResource(R.string.evo_home_top_2), exerciseName = stringResource(R.string.evo_home_mock_exercise_2), progressValue = stringResource(R.string.evo_home_mock_progress_2))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 12.dp))
-                
-                StrengthProgressRow(position = stringResource(R.string.evo_home_top_3), exerciseName = stringResource(R.string.evo_home_mock_exercise_3), progressValue = stringResource(R.string.evo_home_mock_progress_3))
+                val gains = uiState.strengthGains
+                if (gains.isNullOrEmpty()) {
+                    Text(
+                        text = "Dados insuficientes para este período",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                } else {
+                    gains.forEachIndexed { index, gain ->
+                        StrengthProgressRow(
+                            position = "${index + 1}º",
+                            exerciseName = gain.exerciseName,
+                            progressValue = "+${String.format("%.1f", gain.gainKg)}kg"
+                        )
+                        if (index < gains.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                thickness = 0.5.dp,
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            )
+                        }
+                    }
+                }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                val evolution = uiState.mostEvolvedMuscle
                 MostEvolvedCard(
-                    muscleName = stringResource(R.string.evo_home_mock_muscle_evolved),
-                    percentage = stringResource(R.string.evo_home_mock_muscle_percentage),
+                    muscleName = evolution?.muscleGroupName ?: "---",
+                    percentage = evolution?.let { "+${String.format("%.0f", it.evolutionPercentage)}%" } ?: "---",
                     modifier = Modifier.weight(1f)
                 )
 
                 WorkoutsCompletedCard(
-                    count = stringResource(R.string.evo_home_mock_workouts_count),
+                    count = uiState.workoutsCount.toString(),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -139,7 +163,10 @@ fun EvoHomeContent(
 private fun EvoHomeContentPreview() {
     EvoFitTheme() {
         EvoHomeContent(
-            selectedPeriod = "3 meses",
+            uiState = EvoHomeUiState(
+                selectedPeriod = "3 meses",
+                workoutsCount = 24
+            ),
             onPeriodSelected = {},
             onNavigate = {}
         )
