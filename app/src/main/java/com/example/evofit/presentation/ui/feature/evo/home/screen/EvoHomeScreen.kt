@@ -41,6 +41,7 @@ import com.example.evofit.presentation.ui.feature.evo.home.components.WorkoutsCo
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 import androidx.compose.runtime.collectAsState
+import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -63,7 +64,7 @@ fun EvoHomeScreen(
 @Composable
 fun EvoHomeContent(
     uiState: EvoHomeUiState,
-    onPeriodSelected: (String) -> Unit,
+    onPeriodSelected: (EvoPeriod) -> Unit,
     onNavigate: (String) -> Unit
 ) {
     Scaffold(
@@ -88,8 +89,13 @@ fun EvoHomeContent(
 
                 // Filtro de Período funcional
                 EvoFitDropdownFilter(
-                    selectedOption = uiState.selectedPeriod,
-                    onOptionSelected = onPeriodSelected
+                    selectedOption = uiState.selectedPeriod.displayName,
+                    options = EvoPeriod.entries.map { it.displayName },
+                    onOptionSelected = { displayName ->
+                        EvoPeriod.entries.find { it.displayName == displayName }?.let {
+                            onPeriodSelected(it)
+                        }
+                    }
                 )
             }
         },
@@ -164,7 +170,7 @@ private fun EvoHomeContentPreview() {
     EvoFitTheme() {
         EvoHomeContent(
             uiState = EvoHomeUiState(
-                selectedPeriod = "3 meses",
+                selectedPeriod = EvoPeriod.LAST_90_DAYS,
                 workoutsCount = 24
             ),
             onPeriodSelected = {},

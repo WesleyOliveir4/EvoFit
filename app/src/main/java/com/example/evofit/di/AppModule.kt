@@ -25,15 +25,20 @@ import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCaseImpl
+import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCase
+import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCaseImpl
 import com.example.evofit.domain.usecase.GetMostEvolvedMuscleUseCase
+import com.example.evofit.domain.usecase.GetMostEvolvedMuscleUseCaseImpl
 import com.example.evofit.domain.usecase.GetStrengthGainsUseCase
+import com.example.evofit.domain.usecase.GetStrengthGainsUseCaseImpl
+import com.example.evofit.domain.usecase.GetWorkoutsCountUseCase
+import com.example.evofit.domain.usecase.GetWorkoutsCountUseCaseImpl
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
-import com.example.evofit.domain.usecase.GetWorkoutsCountUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCaseImpl
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
@@ -97,9 +102,10 @@ val domainModule = module {
     factory { GetWorkoutDoneHistoryUseCase(get()) }
     factory { GetWorkoutDoneByIdUseCase(get(), get()) }
     factory { GetCurrentWeekRangeUseCase() }
-    factory { GetStrengthGainsUseCase(get()) }
-    factory { GetMostEvolvedMuscleUseCase(get()) }
-    factory { GetWorkoutsCountUseCase(get()) }
+    factory<GetStrengthGainsUseCase> { GetStrengthGainsUseCaseImpl() }
+    factory<GetMostEvolvedMuscleUseCase> { GetMostEvolvedMuscleUseCaseImpl() }
+    factory<GetWorkoutsCountUseCase> { GetWorkoutsCountUseCaseImpl() }
+    factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get()) }
     factory<UpdateWorkoutsOrderUseCase> { (UpdateWorkoutsOrderUseCaseImpl(get())) }
     factory<GetActiveWorkoutSessionUseCase> { GetActiveWorkoutSessionUseCaseImpl(get(), get()) }
     factory<StartWorkoutSessionUseCase> { StartWorkoutSessionUseCaseImpl(get()) }
@@ -132,8 +138,6 @@ val homeModule = module {
     }
     viewModel {
         EvoHomeViewModel(
-            get(),
-            get(),
             get(),
             get()
         )

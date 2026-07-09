@@ -505,9 +505,9 @@ fun EvoFitDropdownFilter(
     selectedOption: String,
     onOptionSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    options: List<String> = listOf("1 mês", "3 meses", "6 meses", "Tudo"),
     initialExpanded: Boolean = false
 ) {
-    val options = listOf("1 mês", "3 meses", "6 meses", "Tudo")
     var isExpanded by remember { mutableStateOf(initialExpanded) }
 
     // Rotação suave do ícone de seta (sobe quando aberto, desce quando fechado)
