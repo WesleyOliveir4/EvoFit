@@ -19,6 +19,12 @@ val EvoIconBgRed = Color(0xFF3A1A1A)
 val EvoWarningYellow = Color(0xFFFFD60A)
 val EvoIconBgYellow = Color(0xFF3A321A)
 
+// Analytics Colors
+val EvoOrange = Color(0xFFE5984A)
+val EvoBlue = Color(0xFF5A9EED)
+val EvoGreen = Color(0xFF5ED961)
+val EvoDarkBg = Color(0xFF121212)
+
 // Text Colors
 val TextPrimary = Color(0xFFFFFFFF)
 val TextSecondary = Color(0xFF8E8E93)

@@ -19,10 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,19 +29,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitDropdownFilter
+import com.example.evofit.presentation.ui.feature.evo.home.components.AverageWorkoutTimeCard
+import com.example.evofit.presentation.ui.feature.evo.home.components.KmPerWeekCard
+import com.example.evofit.presentation.ui.feature.evo.home.components.LeastTrainedCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.MostEvolvedCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.StrengthGainsCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.StrengthProgressRow
 import com.example.evofit.presentation.ui.feature.evo.home.components.WorkoutsCompletedCard
-import com.example.evofit.presentation.ui.theme.EvoFitTheme
-
-import androidx.compose.runtime.collectAsState
-import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -79,7 +78,6 @@ fun EvoHomeContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Título da Aba
                 Text(
                     text = stringResource(R.string.evo_home_title),
                     color = MaterialTheme.colorScheme.onBackground,
@@ -87,13 +85,16 @@ fun EvoHomeContent(
                     fontWeight = FontWeight.Black
                 )
 
-                // Filtro de Período funcional
+                val periods = EvoPeriod.entries
+                val periodNames = periods.map { stringResource(it.displayNameRes) }
+
                 EvoFitDropdownFilter(
-                    selectedOption = uiState.selectedPeriod.displayName,
-                    options = EvoPeriod.entries.map { it.displayName },
-                    onOptionSelected = { displayName ->
-                        EvoPeriod.entries.find { it.displayName == displayName }?.let {
-                            onPeriodSelected(it)
+                    selectedOption = stringResource(uiState.selectedPeriod.displayNameRes),
+                    options = periodNames,
+                    onOptionSelected = { selectedName ->
+                        val index = periodNames.indexOf(selectedName)
+                        if (index != -1) {
+                            onPeriodSelected(periods[index])
                         }
                     }
                 )
@@ -119,7 +120,7 @@ fun EvoHomeContent(
                 val gains = uiState.strengthGains
                 if (gains.isNullOrEmpty()) {
                     Text(
-                        text = "Dados insuficientes para este período",
+                        text = stringResource(R.string.evo_home_insufficient_data),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 8.dp)
@@ -127,9 +128,9 @@ fun EvoHomeContent(
                 } else {
                     gains.forEachIndexed { index, gain ->
                         StrengthProgressRow(
-                            position = "${index + 1}º",
+                            position = stringResource(R.string.evo_home_ranking_format, index + 1),
                             exerciseName = gain.exerciseName,
-                            progressValue = "+${String.format("%.1f", gain.gainKg)}kg"
+                            progressValue = stringResource(R.string.evo_home_gain_kg_format, gain.gainKg)
                         )
                         if (index < gains.size - 1) {
                             HorizontalDivider(
@@ -148,9 +149,11 @@ fun EvoHomeContent(
             ) {
                 val evolution = uiState.mostEvolvedMuscle
                 MostEvolvedCard(
-                    muscleName = evolution?.muscleGroupName ?: "---",
-                    percentage = evolution?.let { "+${String.format("%.0f", it.evolutionPercentage)}%" } ?: "---",
-                    modifier = Modifier.weight(1f)
+                    muscleName = evolution?.muscleGroupName ?: stringResource(R.string.evo_home_empty_value),
+                    percentage = evolution?.let { 
+                        stringResource(R.string.evo_home_evolution_percentage_format, it.evolutionPercentage) 
+                    } ?: stringResource(R.string.evo_home_empty_value),
+                    modifier = Modifier.weight(1.5f)
                 )
 
                 WorkoutsCompletedCard(
@@ -158,16 +161,29 @@ fun EvoHomeContent(
                     modifier = Modifier.weight(1f)
                 )
             }
-            
+
+            LeastTrainedCard(
+                muscleName = uiState.leastTrainedGroup?.first ?: stringResource(R.string.evo_home_empty_value),
+                sessionsCount = uiState.leastTrainedGroup?.second ?: 0
+            )
+
+            KmPerWeekCard(
+                kmPerWeek = uiState.kmPerWeek
+            )
+
+            AverageWorkoutTimeCard(
+                averageTimeMinutes = uiState.averageWorkoutTime
+            )
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
 private fun EvoHomeContentPreview() {
-    EvoFitTheme() {
+    EvoFitTheme {
         EvoHomeContent(
             uiState = EvoHomeUiState(
                 selectedPeriod = EvoPeriod.LAST_90_DAYS,

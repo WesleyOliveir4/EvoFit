@@ -12,7 +12,10 @@ class GetEvoHomeSummaryUseCaseImpl(
     private val repository: WorkoutRepository,
     private val getStrengthGainsUseCase: GetStrengthGainsUseCase,
     private val getMostEvolvedMuscleUseCase: GetMostEvolvedMuscleUseCase,
-    private val getWorkoutsCountUseCase: GetWorkoutsCountUseCase
+    private val getWorkoutsCountUseCase: GetWorkoutsCountUseCase,
+    private val getLeastTrainedGroupUseCase: GetLeastTrainedGroupUseCase,
+    private val getKmPerWeekUseCase: GetKmPerWeekUseCase,
+    private val getAverageWorkoutTimeUseCase: GetAverageWorkoutTimeUseCase
 ) : GetEvoHomeSummaryUseCase {
 
     override suspend fun invoke(userId: String, period: EvoPeriod): EvoHomeSummary {
@@ -21,7 +24,10 @@ class GetEvoHomeSummaryUseCaseImpl(
         return EvoHomeSummary(
             strengthGains = getStrengthGainsUseCase(history),
             mostEvolvedMuscle = getMostEvolvedMuscleUseCase(history),
-            workoutsCount = getWorkoutsCountUseCase(history)
+            workoutsCount = getWorkoutsCountUseCase(history),
+            leastTrainedGroup = getLeastTrainedGroupUseCase(history),
+            kmPerWeek = getKmPerWeekUseCase(history),
+            averageWorkoutTime = getAverageWorkoutTimeUseCase(history)
         )
     }
 }

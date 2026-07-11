@@ -1,11 +1,13 @@
 package com.example.evofit.domain.model
 
-enum class EvoPeriod(val displayName: String) {
-    LAST_7_DAYS("7 dias"),
-    LAST_30_DAYS("1 mês"),
-    LAST_90_DAYS("3 meses"),
-    LAST_180_DAYS("6 meses"),
-    ALL_TIME("Tudo")
+import com.example.evofit.R
+
+enum class EvoPeriod(val displayNameRes: Int) {
+    LAST_7_DAYS(R.string.evo_period_7_days),
+    LAST_30_DAYS(R.string.evo_period_30_days),
+    LAST_90_DAYS(R.string.evo_period_90_days),
+    LAST_180_DAYS(R.string.evo_period_180_days),
+    ALL_TIME(R.string.evo_period_all_time)
 }
 
 data class StrengthGain(
@@ -21,5 +23,8 @@ data class MuscleEvolution(
 data class EvoHomeSummary(
     val strengthGains: List<StrengthGain>?,
     val mostEvolvedMuscle: MuscleEvolution?,
-    val workoutsCount: Int
+    val workoutsCount: Int,
+    val leastTrainedGroup: Pair<String, Int>?,
+    val kmPerWeek: Double,
+    val averageWorkoutTime: Int
 )

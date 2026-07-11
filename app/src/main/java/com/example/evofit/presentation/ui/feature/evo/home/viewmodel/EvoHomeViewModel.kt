@@ -42,7 +42,10 @@ class EvoHomeViewModel(
                     isLoading = false,
                     strengthGains = summary.strengthGains,
                     mostEvolvedMuscle = summary.mostEvolvedMuscle,
-                    workoutsCount = summary.workoutsCount
+                    workoutsCount = summary.workoutsCount,
+                    leastTrainedGroup = summary.leastTrainedGroup,
+                    kmPerWeek = summary.kmPerWeek,
+                    averageWorkoutTime = summary.averageWorkoutTime
                 )
             }
         }

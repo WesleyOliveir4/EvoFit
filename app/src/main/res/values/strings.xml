@@ -138,13 +138,18 @@
     <string name="evo_home_filter_period_3_months">3 meses</string>
     <string name="evo_home_filter_description">Mudar período</string>
     <string name="evo_home_strength_title">TOP GANHOS DE FORÇA</string>
-    <string name="evo_home_most_evolved_title">MAIS EVOLUÍDO</string>
+    <string name="evo_home_most_evolved_title">MAIOR EVOLUÇÃO</string>
     <string name="evo_home_workouts_title">TREINOS</string>
     <string name="evo_home_workouts_completed">concluídos</string>
-    <string name="evo_home_top_1">1º</string>
-    <string name="evo_home_top_2">2º</string>
-    <string name="evo_home_top_3">3º</string>
-    <string name="evo_home_mock_exercise_1">Supino reto</string>
+    <string name="evo_home_ranking_format">%1$dº</string>
+    <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
+    <string name="evo_home_empty_value">---</string>
+    <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
+    <string name="evo_period_7_days">7 dias</string>
+    <string name="evo_period_30_days">1 mês</string>
+    <string name="evo_period_90_days">3 meses</string>
+    <string name="evo_period_180_days">6 meses</string>
+    <string name="evo_period_all_time">Tudo</string>
     <string name="evo_home_mock_exercise_2">Agachamento</string>
     <string name="evo_home_mock_exercise_3">Rosca direta</string>
     <string name="evo_home_mock_progress_1">+15kg</string>
@@ -153,6 +158,15 @@
     <string name="evo_home_mock_muscle_evolved">Costas</string>
     <string name="evo_home_mock_muscle_percentage">+18%</string>
     <string name="evo_home_mock_workouts_count">128</string>
+    <string name="evo_home_insufficient_data">Dados insuficientes para este período</string>
+    <string name="evo_home_least_trained_title">GRUPO MENOS TREINADO</string>
+    <string name="evo_home_sessions_count">%1$d sessões</string>
+    <string name="evo_home_km_per_week_title">KM POR SEMANA</string>
+    <string name="evo_home_average_label">média</string>
+    <string name="evo_home_avg_time_title">TEMPO MÉDIO POR DIA</string>
+    <string name="evo_home_per_session_label">por sessão</string>
+    <string name="evo_home_km_value">%1$s km</string>
+    <string name="evo_home_time_value">%1$d min</string>
 
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>

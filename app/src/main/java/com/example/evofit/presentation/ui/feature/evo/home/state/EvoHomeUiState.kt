@@ -9,5 +9,8 @@ data class EvoHomeUiState(
     val selectedPeriod: EvoPeriod = EvoPeriod.LAST_30_DAYS,
     val strengthGains: List<StrengthGain>? = null,
     val mostEvolvedMuscle: MuscleEvolution? = null,
-    val workoutsCount: Int = 0
+    val workoutsCount: Int = 0,
+    val leastTrainedGroup: Pair<String, Int>? = null,
+    val kmPerWeek: Double = 0.0,
+    val averageWorkoutTime: Int = 0
 )
