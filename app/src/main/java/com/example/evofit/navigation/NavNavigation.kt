@@ -1,15 +1,23 @@
 package com.example.evofit.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.evofit.presentation.ui.feature.home.screens.HomeScreen
+import androidx.navigation.navArgument
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
+import com.example.evofit.presentation.ui.feature.workout.resume.screens.WorkoutResumeScreen
+import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
+import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
+import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
 
 @Composable
 fun NavNavigation() {
@@ -77,7 +85,164 @@ fun NavNavigation() {
         }
 
         composable(NavRoutes.Home.route) {
-            HomeScreen()
+            WorkoutScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                }
+            )
+        }
+
+        composable(NavRoutes.NewWorkout.route) {
+            NewWorkoutScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onGroupSelected = { groupId ->
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(groupId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.SelectExercises.route,
+            arguments = listOf(
+                navArgument("muscleGroupId") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+            )
+        ) { backStackEntry ->
+            val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            SelectExercisesScreen(
+                muscleGroupId = muscleGroupId,
+                editWorkoutId = editWorkoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onConfigureExercisesClick = { exerciseIds, workoutName, editId ->
+                    val idsParam = exerciseIds.joinToString(",")
+                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam, workoutName, editId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.ConfigureWorkout.route,
+            arguments = listOf(
+                navArgument("exerciseIds") { type = NavType.StringType },
+                navArgument("workoutName") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+            )
+        ) { backStackEntry ->
+            val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
+            val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            ConfigureWorkoutScreen(
+                exerciseIds = exerciseIds,
+                workoutName = workoutName,
+                editWorkoutId = editWorkoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onFinishClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                },
+                onFinishEditClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(editWorkoutId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutPreview.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getInt("workoutId") ?: 0
+            WorkoutPreviewScreen(
+                workoutId = workoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onStartWorkoutClick = {
+                    navController.navigate(NavRoutes.WorkoutStart.createRoute(workoutId))
+                },
+                onEditClick = { muscleGroupId, editWorkoutId ->
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(muscleGroupId, editWorkoutId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutStart.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getInt("workoutId") ?: 0
+            WorkoutStartScreen(
+                workoutId = workoutId,
+                onBackClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onFinishWorkoutClick = { workoutDoneId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutDoneId = workoutDoneId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutResume.route,
+            arguments = listOf(
+                navArgument("workoutId") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+            )
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != -1L }
+            val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != -1L }
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            
+            WorkoutResumeScreen(
+                workoutId = workoutId,
+                workoutDoneId = workoutDoneId,
+                editWorkoutId = editWorkoutId,
+                onContinueClick = {
+                    when {
+                        workoutDoneId != null -> {
+                            navController.navigate(NavRoutes.Home.route) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = true }
+                            }
+                        }
+                        editWorkoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId.toInt())) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        workoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId.toInt())) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        else -> {
+                            navController.navigate(NavRoutes.Home.route) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = true }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }

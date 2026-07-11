@@ -4,7 +4,10 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.evofit.domain.model.MeasurementUnit
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(
     tableName = "exercise_sets",
     foreignKeys = [
@@ -22,5 +25,8 @@ data class ExerciseSetEntity(
     val workoutExerciseId: Long,
     val setNumber: Int,
     val reps: Int,
-    val load: Double
+    val load: Double,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val time: Int? = null,
+    val distance: Double? = null
 )

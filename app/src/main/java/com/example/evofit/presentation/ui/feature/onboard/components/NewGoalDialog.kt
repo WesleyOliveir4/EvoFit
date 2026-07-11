@@ -50,8 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.evofit.R
-import com.example.evofit.data.model.ExerciseModel
-import com.example.evofit.data.model.MuscleGroupModel
+import com.example.evofit.domain.model.Exercise
+import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.ExerciseCategory
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.MeasurementUnit
@@ -70,8 +71,8 @@ enum class GoalFlowStep {
 fun NewGoalDialog(
     onDismissRequest: () -> Unit,
     onGoalConfirmed: (UserGoal) -> Unit,
-    muscleGroups: List<MuscleGroupModel>,
-    getExercises: (String) -> List<ExerciseModel>,
+    muscleGroups: List<MuscleGroup>,
+    getExercises: (String) -> List<Exercise>,
     initialSuggestion: GoalSuggestion? = null
 ) {
     var currentStep by remember(initialSuggestion) {
@@ -108,7 +109,7 @@ fun NewGoalDialog(
     var weightObjective by remember(initialSuggestion) { mutableStateOf("") }
     
     var selectedCardio by remember(initialSuggestion) { 
-        mutableStateOf<ExerciseModel?>(null) 
+        mutableStateOf<Exercise?>(null) 
     }
 
     LaunchedEffect(initialSuggestion, selectedExercise) {
@@ -281,12 +282,12 @@ private fun CategorySelectionStep(onCategorySelected: (String) -> Unit) {
 
 @Composable
 private fun StrengthFlow(
-    muscleGroups: List<MuscleGroupModel>,
-    selectedMuscle: MuscleGroupModel?,
-    onMuscleSelect: (MuscleGroupModel) -> Unit,
-    exercises: List<ExerciseModel>,
-    selectedExercise: ExerciseModel?,
-    onExerciseSelect: (ExerciseModel) -> Unit,
+    muscleGroups: List<MuscleGroup>,
+    selectedMuscle: MuscleGroup?,
+    onMuscleSelect: (MuscleGroup) -> Unit,
+    exercises: List<Exercise>,
+    selectedExercise: Exercise?,
+    onExerciseSelect: (Exercise) -> Unit,
     goalValue: String,
     onGoalValueChange: (String) -> Unit,
     onConfirm: () -> Unit
@@ -411,9 +412,9 @@ private fun StrengthFlow(
 
 @Composable
 private fun CardioFlow(
-    cardioExercises: List<ExerciseModel>,
-    selectedCardio: ExerciseModel?,
-    onCardioSelect: (ExerciseModel) -> Unit,
+    cardioExercises: List<Exercise>,
+    selectedCardio: Exercise?,
+    onCardioSelect: (Exercise) -> Unit,
     distance: String,
     onDistanceChange: (String) -> Unit,
     selectedTime: String,
@@ -569,15 +570,15 @@ private fun NewGoalDialogPreview() {
                 onDismissRequest = {},
                 onGoalConfirmed = {},
                 muscleGroups = listOf(
-                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("2", "Costas", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("3", "Corrida", ExerciseCategory.CARDIO)
+                    MuscleGroup("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+                    MuscleGroup("2", "Costas", MuscleGroupType.BACK, ExerciseCategory.STRENGTH),
+                    MuscleGroup("3", "Corrida", MuscleGroupType.CARDIO, ExerciseCategory.CARDIO)
                 ),
                 getExercises = { groupId ->
                     when (groupId) {
-                        "1" -> listOf(ExerciseModel("e1", "Supino Reto", "1"))
-                        "2" -> listOf(ExerciseModel("e2", "Remada", "2"))
-                        "3" -> listOf(ExerciseModel("e3", "Esteira", "3", MeasurementUnit.DISTANCE))
+                        "1" -> listOf(Exercise("e1", "Supino Reto", "1"))
+                        "2" -> listOf(Exercise("e2", "Remada", "2"))
+                        "3" -> listOf(Exercise("e3", "Esteira", "3", MeasurementUnit.DISTANCE))
                         else -> emptyList()
                     }
                 }
@@ -603,16 +604,16 @@ private fun StrengthFlowPreview() {
         Surface(modifier = Modifier.padding(16.dp)) {
             StrengthFlow(
                 muscleGroups = listOf(
-                    MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
-                    MuscleGroupModel("2", "Pernas", ExerciseCategory.STRENGTH)
+                    MuscleGroup("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+                    MuscleGroup("2", "Pernas", MuscleGroupType.LEGS, ExerciseCategory.STRENGTH)
                 ),
-                selectedMuscle = MuscleGroupModel("1", "Peito", ExerciseCategory.STRENGTH),
+                selectedMuscle = MuscleGroup("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
                 onMuscleSelect = {},
                 exercises = listOf(
-                    ExerciseModel("e1", "Supino Reto", "1"),
-                    ExerciseModel("e2", "Supino Inclinado", "1")
+                    Exercise("e1", "Supino Reto", "1"),
+                    Exercise("e2", "Supino Inclinado", "1")
                 ),
-                selectedExercise = ExerciseModel("e1", "Supino Reto", "1"),
+                selectedExercise = Exercise("e1", "Supino Reto", "1"),
                 onExerciseSelect = {},
                 goalValue = "80",
                 onGoalValueChange = {},
@@ -629,10 +630,10 @@ private fun CardioFlowPreview() {
         Surface(modifier = Modifier.padding(16.dp)) {
             CardioFlow(
                 cardioExercises = listOf(
-                    ExerciseModel("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
-                    ExerciseModel("c2", "Natação", "3", MeasurementUnit.TIME)
+                    Exercise("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
+                    Exercise("c2", "Natação", "3", MeasurementUnit.TIME)
                 ),
-                selectedCardio = ExerciseModel("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
+                selectedCardio = Exercise("c1", "Corrida", "3", MeasurementUnit.DISTANCE),
                 onCardioSelect = {},
                 distance = "5",
                 onDistanceChange = {},

@@ -20,9 +20,9 @@ import androidx.room.PrimaryKey
 data class UserGoalEntity(
     @PrimaryKey val id: String,
     val userId: String,
-    val type: String, // STRENGTH, CARDIO, WEIGHT
+    val type: String,
     val exerciseName: String?,
-    val value: String?, // For strength load or target weight
+    val value: String?,
     val unit: String?,
     val cardioType: String?,
     val distance: String?,

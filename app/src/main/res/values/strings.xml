@@ -80,4 +80,112 @@
     <string name="goal_display_cardio_with_distance">%1$s - %2$skm em %3$s</string>
     <string name="goal_display_cardio_no_distance">%1$s - %2$s</string>
     <string name="goal_display_target_weight">Meta de Peso: %1$skg</string>
+
+    <!-- Main Workout Screen -->
+    <string name="main_workout_greeting">Olá, %1$s </string>
+    <string name="main_workout_subtitle">Bora treinar?</string>
+    <string name="main_workout_stats_total_label">Treinos</string>
+    <string name="main_workout_stats_week_label">Esta semana</string>
+    <string name="main_workout_section_title">MEUS TREINOS</string>
+    <string name="main_workout_active_session_title">TREINO EM ANDAMENTO</string>
+    <string name="main_workout_active_session_resume">Toque para continuar</string>
+    <string name="main_workout_exercise_count">%1$d exercícios</string>
+    <string name="main_workout_series_count">%1$d séries</string>
+    <string name="main_workout_exercise_series_format">%1$s · %2$s</string>
+    <string name="main_workout_new_workout_desc">Novo Treino</string>
+    <string name="main_workout_drag_handle_desc">Arrastar</string>
+
+    <!-- Configure Workout Screen -->
+    <string name="configure_workout_title">Configurar (%1$d/%2$d)</string>
+    <string name="configure_workout_next">Próximo</string>
+    <string name="configure_workout_finish">Finalizar</string>
+    <string name="configure_workout_add_set">Adicionar série</string>
+    <string name="configure_workout_header_sets">%1$d séries</string>
+    <string name="configure_workout_col_set">Série</string>
+    <string name="configure_workout_col_weight">Peso (kg)</string>
+    <string name="configure_workout_col_reps">Reps</string>
+    <string name="configure_workout_col_distance">Distância (km)</string>
+    <string name="configure_workout_col_time">Tempo (min)</string>
+    <string name="configure_workout_col_reps_only">Repetições</string>
+
+    <!-- New Workout Screen -->
+    <string name="new_workout_title">Novo Treino</string>
+    <string name="new_workout_back_desc">Voltar</string>
+    <string name="new_workout_select_group">Selecione o grupo muscular</string>
+
+    <!-- Select Exercises Screen -->
+    <string name="select_exercises_title">Selecionar Exercícios</string>
+    <string name="select_exercises_edit_title">Editar Treino</string>
+    <string name="select_exercises_back_desc">Voltar</string>
+    <string name="select_exercises_cancel_edit_dialog_title">Cancelar edição?</string>
+    <string name="select_exercises_cancel_edit_dialog_message">As alterações feitas nesta edição serão descartadas. Deseja continuar?</string>
+    <string name="select_exercises_cancel_edit_dialog_confirm">Descartar</string>
+    <string name="select_exercises_cancel_edit_dialog_cancel">Continuar Editando</string>
+    <string name="select_exercises_button_configure">Configurar Exercícios</string>
+    <string name="select_exercises_confirm_desc">Confirmar</string>
+    <string name="select_exercises_cancel_desc">Cancelar</string>
+    <string name="select_exercises_label_name">Nome: </string>
+    <string name="select_exercises_edit_name_desc">Editar nome</string>
+    <string name="select_exercises_available_count">%1$d exercícios disponíveis</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_training">Treino</string>
+    <string name="nav_evo">Evo</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Workout Preview Screen -->
+    <string name="workout_preview_exercises">Exercícios</string>
+    <string name="workout_preview_sets">Séries</string>
+    <string name="workout_preview_back_desc">Voltar</string>
+    <string name="workout_preview_edit_desc">Editar treino</string>
+    <string name="workout_preview_delete_desc">Excluir treino</string>
+    <string name="workout_delete_dialog_title">Excluir treino?</string>
+    <string name="workout_delete_dialog_message">Essa ação não pode ser desfeita. Tem certeza que deseja excluir este treino?</string>
+    <string name="workout_delete_dialog_confirm">Excluir</string>
+    <string name="workout_delete_dialog_cancel">Cancelar</string>
+    <string name="workout_edit_blocked_dialog_title">Treino em andamento</string>
+    <string name="workout_edit_blocked_dialog_message">Este treino está em andamento e não pode ser editado agora. Finalize ou cancele o treino em andamento antes de editá-lo.</string>
+    <string name="workout_edit_blocked_dialog_confirm">Entendi</string>
+    <string name="workout_delete_blocked_dialog_title">Treino em andamento</string>
+    <string name="workout_delete_blocked_dialog_message">Este treino está em andamento e não pode ser excluído agora. Finalize ou cancele o treino em andamento antes de excluí-lo.</string>
+    <string name="workout_delete_blocked_dialog_confirm">Entendi</string>
+    <string name="workout_preview_start_training">Iniciar Treino</string>
+    <string name="workout_preview_unknown_exercise">Exercício</string>
+    <!-- Workout Start Screen -->
+    <string name="workout_start_status">Em andamento · %1$d/%2$d séries</string>
+    <string name="workout_start_back_desc">Voltar</string>
+    <string name="workout_start_exercise_progress">%1$d/%2$d séries</string>
+    <string name="workout_start_finish_button">Finalizar Treino</string>
+    <string name="workout_start_expand_collapse_desc">Expandir/Colapsar</string>
+    <string name="workout_start_column_set">Série</string>
+    <string name="workout_start_column_weight">Peso</string>
+    <string name="workout_start_column_reps">Reps</string>
+    <string name="workout_start_column_ok">OK</string>
+    <string name="workout_start_weight_kg">%1$skg</string>
+
+    <!-- Workout Finish Dialog -->
+    <string name="workout_finish_dialog_title">Finalizar Treino?</string>
+    <string name="workout_finish_dialog_message">Você concluiu %1$d de %2$d exercícios. Deseja finalizar o treino e salvar seu progresso?</string>
+    <string name="workout_finish_dialog_confirm">Finalizar</string>
+    <string name="workout_finish_dialog_cancel">Continuar Treinando</string>
+    <string name="workout_active_session_dialog_title">Treino em andamento</string>
+    <string name="workout_active_session_dialog_message">Você já tem um treino em andamento. Ao iniciar este, o progresso do treino anterior não será salvo. Deseja continuar?</string>
+    <string name="workout_active_session_dialog_confirm">Iniciar mesmo assim</string>
+    <string name="workout_active_session_dialog_cancel">Cancelar</string>
+
+    <!-- Workout Resume Screen -->
+    <string name="workout_resume_title">Treino criado!</string>
+    <string name="workout_resume_subtitle">\%1$s\ está pronto para uso.</string>
+    <string name="workout_done_resume_subtitle">Bom trabalho! Seu treino \%1$s\ foi registrado.</string>
+    <string name="workout_resume_label_summary">RESUMO</string>
+    <string name="workout_resume_label_exercises">Exercícios</string>
+    <string name="workout_resume_label_sets">Séries</string>
+    <string name="workout_resume_label_created_at">Criado em</string>
+    <string name="workout_resume_label_finished_at">Finalizado em</string>
+    <string name="workout_resume_label_duration">Duração</string>
+    <string name="workout_resume_value_sets_format">%1$d de %2$d</string>
+    <string name="workout_resume_updated_title">Treino atualizado!</string>
+    <string name="workout_resume_updated_subtitle">Seu treino \%1$s\ foi configurado com sucesso.</string>
+    <string name="workout_resume_done_title">Treino finalizado!</string>
+    <string name="workout_resume_button_confirm">Entendido</string>
 </resources>

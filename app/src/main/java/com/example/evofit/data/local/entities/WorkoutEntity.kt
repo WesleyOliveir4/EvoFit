@@ -20,7 +20,8 @@ import androidx.room.PrimaryKey
 data class WorkoutEntity(
     @PrimaryKey(autoGenerate = true) val workoutId: Long = 0,
     val userId: String,
+    val name: String,
     val muscleGroupId: String,
-    val date: Long,
-    val isCompleted: Boolean
+    val date: String,
+    val orderIndex: Int = 0
 )

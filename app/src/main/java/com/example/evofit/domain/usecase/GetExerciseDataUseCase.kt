@@ -1,16 +1,18 @@
 package com.example.evofit.domain.usecase
 
-import com.example.evofit.data.datasource.LocalExerciseDataSource
-import com.example.evofit.data.model.MuscleGroupModel
-import com.example.evofit.data.model.ExerciseModel
-
+import com.example.evofit.domain.model.Exercise
 import com.example.evofit.domain.model.GoalSuggestion
+import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.repository.ExerciseRepository
 
-class GetExerciseDataUseCase(private val dataSource: LocalExerciseDataSource) {
-    fun getMuscleGroups(): List<MuscleGroupModel> = dataSource.getAllMuscleGroups()
+class GetExerciseDataUseCase(private val repository: ExerciseRepository) {
+    fun getMuscleGroups(): List<MuscleGroup> = repository.getMuscleGroups()
     
-    fun getExercisesByGroup(groupId: String): List<ExerciseModel> = 
-        dataSource.getExercisesByMuscleGroup(groupId)
+    fun getExercisesByGroup(groupId: String): List<Exercise> = 
+        repository.getExercisesByGroup(groupId)
 
-    fun getSuggestions(): List<GoalSuggestion> = dataSource.getSuggestions()
+    fun getExercisesByIds(ids: List<String>): List<Exercise> =
+        repository.getExercisesByIds(ids)
+
+    fun getSuggestions(): List<GoalSuggestion> = repository.getSuggestions()
 }
