@@ -184,10 +184,11 @@ val workoutModule = module {
             get()
         )
     }
-    viewModel { (workoutId: Long?, workoutDoneId: Long?) ->
+    viewModel { (workoutId: Long?, workoutDoneId: Long?, editWorkoutId: Long?) ->
         WorkoutResumeViewModel(
             workoutId = workoutId,
             workoutDoneId = workoutDoneId,
+            editWorkoutId = editWorkoutId,
             getWorkoutByIdUseCase = get(),
             getWorkoutDoneByIdUseCase = get()
         )

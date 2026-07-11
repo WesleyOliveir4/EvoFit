@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.workout.resume.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.core.common.AppConstants
 import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
@@ -30,16 +31,15 @@ class WorkoutResumeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             
-            val idToLoad = workoutId?.takeIf { it != -1L } ?: editWorkoutId?.takeIf { it != -1L }
+            val idToLoad = workoutId?.takeIf { it != AppConstants.INVALID_ID } ?: editWorkoutId?.takeIf { it != AppConstants.INVALID_ID }
 
-            if (workoutDoneId != null && workoutDoneId != -1L) {
+            if (workoutDoneId != null && workoutDoneId != AppConstants.INVALID_ID) {
                 val workoutDone = getWorkoutDoneByIdUseCase(workoutDoneId)
-                workoutDone?.let { workoutDone ->
-                    val doneSetsCount = workoutDone.exercises.sumOf { it.sets.size }
-                    val totalSetsPlanned = workoutDone.exercises.sumOf { it.totalSets }
-                    
-                    _uiState.update {
-                        it.copy(
+                _uiState.update { state ->
+                    workoutDone?.let { workoutDone ->
+                        val doneSetsCount = workoutDone.exercises.sumOf { it.sets.size }
+                        val totalSetsPlanned = workoutDone.exercises.sumOf { it.totalSets }
+                        state.copy(
                             workoutName = workoutDone.name,
                             totalExercises = workoutDone.exercises.size,
                             totalSets = totalSetsPlanned,
@@ -49,35 +49,27 @@ class WorkoutResumeViewModel(
                             isLoading = false,
                             isWorkoutDone = true
                         )
-                    }
+                    } ?: state.copy(isLoading = false)
                 }
             } else if (idToLoad != null) {
                 getWorkoutByIdUseCase(idToLoad).collect { workout ->
-                    workout?.let { workoutSelected ->
-                        _uiState.update {
-                            it.copy(
-                                workoutName = workoutSelected.name,
-                                totalExercises = workoutSelected.exercises.size,
-                                totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
-                                formattedDate = workoutSelected.date,
+                    _uiState.update { state ->
+                        workout?.let { workout ->
+                            state.copy(
+                                workoutName = workout.name,
+                                totalExercises = workout.exercises.size,
+                                totalSets = workout.exercises.sumOf { ex -> ex.sets.size },
+                                formattedDate = workout.date,
                                 isLoading = false,
                                 isWorkoutDone = false
                             )
-                        }
+                        } ?: state.copy(isLoading = false)
                     }
                 }
+            } else {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
-
-    /**
-     * Retorna a proporção de séries realizadas vs. planejadas.
-     * Útil para componentes que precisam desta informação como referência.
-     */
-    fun getSetsRatio(): Pair<Int, Int> {
-        val state = _uiState.value
-        val done = state.completedSets ?: 0
-        val total = state.totalSets
-        return Pair(done, total)
-    }
+    
 }
