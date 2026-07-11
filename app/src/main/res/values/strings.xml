@@ -168,6 +168,10 @@
     <string name="evo_home_km_value">%1$s km</string>
     <string name="evo_home_time_value">%1$d min</string>
 
+    <string name="evo_home_exercise_analysis_title">Análise de exercícios</string>
+    <string name="evo_home_exercise_analysis_card_title">Analisar exercício específico</string>
+    <string name="evo_home_exercise_analysis_card_desc">Filtre por exercício e veja a evolução detalhada de carga, volume e frequência</string>
+
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>
     <string name="workout_preview_sets">Séries</string>
