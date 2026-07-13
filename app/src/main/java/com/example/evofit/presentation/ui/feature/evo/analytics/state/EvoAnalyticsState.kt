@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.evo.analytics.state
 
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.usecase.ExerciseWithRecords
@@ -20,7 +21,9 @@ data class EvoAnalyticsState(
     val exercisesForSelection: List<ExerciseWithRecords> = emptyList(),
     val selectedExerciseId: String? = null,
     val selectedExerciseName: String = "",
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val maxRecord: String = "-",
+    val secondaryRecord: String? = null,
     val totalSets: String = "-",
     val firstRecordDate: String = "-",
     val lastRecordDate: String = "-",

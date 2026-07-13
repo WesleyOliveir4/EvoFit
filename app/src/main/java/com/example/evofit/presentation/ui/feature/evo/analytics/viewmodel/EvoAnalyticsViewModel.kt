@@ -6,6 +6,7 @@ import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.ProcessExerciseAnalyticsUseCase
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ class EvoAnalyticsViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getTrainedMuscleGroupsUseCase: GetTrainedMuscleGroupsUseCase,
-    private val getExercisesWithRecordCountUseCase: GetExercisesWithRecordCountUseCase
+    private val getExercisesWithRecordCountUseCase: GetExercisesWithRecordCountUseCase,
+    private val processExerciseAnalyticsUseCase: ProcessExerciseAnalyticsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EvoAnalyticsState())
@@ -75,86 +77,25 @@ class EvoAnalyticsViewModel(
                 selectedExerciseName = exerciseName
             )
         }
-        processExerciseAnalytics(exerciseId)
-    }
-
-    private fun processExerciseAnalytics(exerciseId: String) {
-        val history = _uiState.value.historyRawData
         
-        val filteredWorkouts = history.filter { workout ->
-            workout.exercises.any { it.exerciseId == exerciseId }
-        }.sortedBy { it.date }
-
-        if (filteredWorkouts.isEmpty()) return
-
-        var maxLoad = 0.0
-        var totalSetsCount = 0
-        val chartDataLoad = mutableListOf<Pair<String, Double>>()
-        val chartDataVolume = mutableListOf<Pair<String, Double>>()
-
-        filteredWorkouts.forEach { workout ->
-            val workoutExercise = workout.exercises.first { it.exerciseId == exerciseId }
-            val sets = workoutExercise.sets
-            
-            val workoutMaxLoad = sets.maxOfOrNull { it.load } ?: 0.0
-            if (workoutMaxLoad > maxLoad) maxLoad = workoutMaxLoad
-            
-            totalSetsCount += sets.size
-            
-            val workoutVolume = sets.sumOf { it.load * it.reps }
-            
-            chartDataLoad.add(workout.date to workoutMaxLoad)
-            chartDataVolume.add(workout.date to workoutVolume)
-        }
-
-        val last6Load = chartDataLoad.takeLast(6).map {
-            AnalyticsChartPoint(label = formatDateToMonth(it.first), value = it.second.toFloat()) 
-        }
-        val last6Volume = chartDataVolume.takeLast(6).map { 
-            AnalyticsChartPoint(label = formatDateToMonth(it.first), value = it.second.toFloat()) 
-        }
-
-        _uiState.update {
-            it.copy(
-                maxRecord = "${maxLoad.toInt()}kg",
-                totalSets = totalSetsCount.toString(),
-                firstRecordDate = formatDate(filteredWorkouts.first().date),
-                lastRecordDate = formatDate(filteredWorkouts.last().date),
-                loadChartPoints = last6Load,
-                volumeChartPoints = last6Volume
-            )
-        }
-    }
-
-    private fun formatDateToMonth(dateStr: String): String {
-        return try {
-            val month = dateStr.split("-")[1]
-            when (month) {
-                "01" -> "Jan"
-                "02" -> "Fev"
-                "03" -> "Mar"
-                "04" -> "Abr"
-                "05" -> "Mai"
-                "06" -> "Jun"
-                "07" -> "Jul"
-                "08" -> "Ago"
-                "09" -> "Set"
-                "10" -> "Out"
-                "11" -> "Nov"
-                "12" -> "Dez"
-                else -> ""
+        processExerciseAnalyticsUseCase(exerciseId, _uiState.value.historyRawData)?.let { result ->
+            _uiState.update {
+                it.copy(
+                    unit = result.unit,
+                    maxRecord = result.maxRecord,
+                    secondaryRecord = result.secondaryRecord,
+                    totalSets = result.totalSets,
+                    firstRecordDate = result.firstRecordDate,
+                    lastRecordDate = result.lastRecordDate,
+                    // Mapeando do Domain Model (AnalyticsDataPoint) para o UI Model (AnalyticsChartPoint)
+                    loadChartPoints = result.loadChartPoints.map { point ->
+                        AnalyticsChartPoint(label = point.label, value = point.value)
+                    },
+                    volumeChartPoints = result.volumeChartPoints.map { point ->
+                        AnalyticsChartPoint(label = point.label, value = point.value)
+                    }
+                )
             }
-        } catch (e: Exception) {
-            ""
-        }
-    }
-
-    private fun formatDate(dateStr: String): String {
-        return try {
-            val parts = dateStr.split("-")
-            "${parts[2]}/${parts[1]}/${parts[0]}"
-        } catch (e: Exception) {
-            dateStr
         }
     }
 }
