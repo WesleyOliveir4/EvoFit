@@ -75,6 +75,8 @@ import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCaseImpl
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCaseImpl
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
+import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCaseImpl
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -120,7 +122,8 @@ val domainModule = module {
     factory<GetAverageWorkoutTimeUseCase> { GetAverageWorkoutTimeUseCaseImpl() }
     factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get()) }
     factory<FilterTrainedMuscleGroupsUseCase> { FilterTrainedMuscleGroupsUseCaseImpl() }
-    factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get(), get(), get()) }
+    factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get()) }
+    factory<GetExercisesWithRecordCountUseCase> { GetExercisesWithRecordCountUseCaseImpl(get()) }
     factory<UpdateWorkoutsOrderUseCase> { (UpdateWorkoutsOrderUseCaseImpl(get())) }
     factory<GetActiveWorkoutSessionUseCase> { GetActiveWorkoutSessionUseCaseImpl(get(), get()) }
     factory<StartWorkoutSessionUseCase> { StartWorkoutSessionUseCaseImpl(get()) }
@@ -227,7 +230,7 @@ val workoutModule = module {
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get()) }
 }
 
 val appModule = listOf(

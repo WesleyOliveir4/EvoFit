@@ -10,7 +10,13 @@ sealed class NavRoutes(val route: String) {
     object Summary : NavRoutes("summary")
     object Home : NavRoutes("home")
     object Evo : NavRoutes("evo")
+    
+    // Analytics Graph
+    object AnalyticsGraph : NavRoutes("analytics_graph")
     object MuscleGroupSelection : NavRoutes("muscle_group_selection")
+    object ExerciseSelection : NavRoutes("exercise_selection")
+    object ExerciseDetailAnalytics : NavRoutes("exercise_detail_analytics")
+
     object NewWorkout : NavRoutes("new_workout")
     object SelectExercises : NavRoutes("select_exercises/{muscleGroupId}?editWorkoutId={editWorkoutId}") {
         fun createRoute(muscleGroupId: String, editWorkoutId: Long? = null) =

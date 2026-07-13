@@ -1,26 +1,35 @@
 package com.example.evofit.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.example.evofit.core.common.AppConstants
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseDetailAnalyticsScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseSelectionScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
-import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
+import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.resume.screens.WorkoutResumeScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
-import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
-import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
-import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NavNavigation() {
@@ -98,20 +107,54 @@ fun NavNavigation() {
         composable(NavRoutes.Evo.route) {
             EvoHomeScreen(
                 onNavigate = { route ->
-                    navController.navigate(route)
+                    if (route == NavRoutes.MuscleGroupSelection.route) {
+                        navController.navigate(NavRoutes.AnalyticsGraph.route)
+                    } else {
+                        navController.navigate(route)
+                    }
                 }
             )
         }
 
-        composable(NavRoutes.MuscleGroupSelection.route) {
-            MuscleGroupSelectionScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onGroupSelected = { muscleGroup ->
-                    // TODO: Navegar para os exercícios desse grupo muscular
-                }
-            )
+        navigation(
+            startDestination = NavRoutes.MuscleGroupSelection.route,
+            route = NavRoutes.AnalyticsGraph.route
+        ) {
+            composable(NavRoutes.MuscleGroupSelection.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                MuscleGroupSelectionScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onGroupSelected = { _, _ ->
+                        navController.navigate(NavRoutes.ExerciseSelection.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ExerciseSelection.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                ExerciseSelectionScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onExerciseClick = { _ ->
+                        navController.navigate(NavRoutes.ExerciseDetailAnalytics.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ExerciseDetailAnalytics.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                ExerciseDetailAnalyticsScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         composable(NavRoutes.NewWorkout.route) {
@@ -267,4 +310,13 @@ fun NavNavigation() {
             )
         }
     }
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return koinViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return koinViewModel(viewModelStoreOwner = parentEntry)
 }

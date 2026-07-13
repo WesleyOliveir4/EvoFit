@@ -174,8 +174,10 @@
 
     <!-- Evo Analytics -->
     <string name="evo_analytics_select_muscle_group">Selecione o grupo muscular</string>
+    <string name="evo_analytics_select_exercise">Selecione um exercício</string>
     <string name="evo_analytics_back_desc">Voltar</string>
     <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>
+    <string name="evo_analytics_records_format">%1$d registros</string>
     <string name="muscle_group_chest">Peito</string>
     <string name="muscle_group_back">Costas</string>
     <string name="muscle_group_legs">Pernas</string>
