@@ -20,6 +20,7 @@ import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.W
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 
 @Composable
 fun NavNavigation() {
@@ -98,6 +99,17 @@ fun NavNavigation() {
             EvoHomeScreen(
                 onNavigate = { route ->
                     navController.navigate(route)
+                }
+            )
+        }
+
+        composable(NavRoutes.MuscleGroupSelection.route) {
+            MuscleGroupSelectionScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onGroupSelected = { muscleGroup ->
+                    // TODO: Navegar para os exercícios desse grupo muscular
                 }
             )
         }

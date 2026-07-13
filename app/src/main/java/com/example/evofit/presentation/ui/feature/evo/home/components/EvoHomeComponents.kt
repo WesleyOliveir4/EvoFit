@@ -398,7 +398,7 @@ fun AverageWorkoutTimeCard(
 }
 
 @Composable
-fun ExerciseAnalysisCard(
+fun ExerciseAnalyticsCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -461,7 +461,7 @@ fun ExerciseAnalysisCard(
 private fun ExerciseAnalysisCardPreview() {
     EvoFitTheme {
         Box(modifier = Modifier.padding(16.dp)) {
-            ExerciseAnalysisCard()
+            ExerciseAnalyticsCard()
         }
     }
 }

@@ -172,6 +172,17 @@
     <string name="evo_home_exercise_analysis_card_title">Analisar exercício específico</string>
     <string name="evo_home_exercise_analysis_card_desc">Filtre por exercício e veja a evolução detalhada de carga, volume e frequência</string>
 
+    <!-- Evo Analytics -->
+    <string name="evo_analytics_select_muscle_group">Selecione o grupo muscular</string>
+    <string name="evo_analytics_back_desc">Voltar</string>
+    <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>
+    <string name="muscle_group_chest">Peito</string>
+    <string name="muscle_group_back">Costas</string>
+    <string name="muscle_group_legs">Pernas</string>
+    <string name="muscle_group_shoulders">Ombro</string>
+    <string name="muscle_group_arms">Braço</string>
+    <string name="muscle_group_core">Core</string>
+
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>
     <string name="workout_preview_sets">Séries</string>

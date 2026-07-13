@@ -71,6 +71,11 @@ import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.Workout
 import com.example.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
+import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCase
+import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCaseImpl
+import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
+import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCaseImpl
+import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -114,6 +119,8 @@ val domainModule = module {
     factory<GetKmPerWeekUseCase> { GetKmPerWeekUseCaseImpl() }
     factory<GetAverageWorkoutTimeUseCase> { GetAverageWorkoutTimeUseCaseImpl() }
     factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get()) }
+    factory<FilterTrainedMuscleGroupsUseCase> { FilterTrainedMuscleGroupsUseCaseImpl() }
+    factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get(), get(), get()) }
     factory<UpdateWorkoutsOrderUseCase> { (UpdateWorkoutsOrderUseCaseImpl(get())) }
     factory<GetActiveWorkoutSessionUseCase> { GetActiveWorkoutSessionUseCaseImpl(get(), get()) }
     factory<StartWorkoutSessionUseCase> { StartWorkoutSessionUseCaseImpl(get()) }
@@ -219,11 +226,16 @@ val workoutModule = module {
     }
 }
 
+val evoModule = module {
+    viewModel { EvoAnalyticsViewModel(get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
     splashModule,
     onboardingModule,
     homeModule,
-    workoutModule
+    workoutModule,
+    evoModule
 )

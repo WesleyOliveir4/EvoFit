@@ -34,7 +34,7 @@ import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitDropdownFilter
 import com.example.evofit.presentation.ui.feature.evo.home.components.AverageWorkoutTimeCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.ExerciseAnalysisCard
+import com.example.evofit.presentation.ui.feature.evo.home.components.ExerciseAnalyticsCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.KmPerWeekCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.LeastTrainedCard
 import com.example.evofit.presentation.ui.feature.evo.home.components.MostEvolvedCard
@@ -184,8 +184,8 @@ fun EvoHomeContent(
                 modifier = Modifier.padding(top = 8.dp)
             )
 
-            ExerciseAnalysisCard(
-                onClick = { /* TODO: Navegar para análise de exercício */ }
+            ExerciseAnalyticsCard(
+                onClick = { onNavigate(NavRoutes.MuscleGroupSelection.route) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
