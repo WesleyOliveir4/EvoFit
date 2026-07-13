@@ -17,20 +17,32 @@ import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCaseImpl
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCaseImpl
-import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
-import com.example.evofit.domain.usecase.UpdateWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCaseImpl
+import com.example.evofit.domain.usecase.GetAverageWorkoutTimeUseCase
+import com.example.evofit.domain.usecase.GetAverageWorkoutTimeUseCaseImpl
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
+import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCase
+import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCaseImpl
 import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetKmPerWeekUseCase
+import com.example.evofit.domain.usecase.GetKmPerWeekUseCaseImpl
+import com.example.evofit.domain.usecase.GetLeastTrainedGroupUseCase
+import com.example.evofit.domain.usecase.GetLeastTrainedGroupUseCaseImpl
+import com.example.evofit.domain.usecase.GetMostEvolvedMuscleUseCase
+import com.example.evofit.domain.usecase.GetMostEvolvedMuscleUseCaseImpl
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCaseImpl
+import com.example.evofit.domain.usecase.GetStrengthGainsUseCase
+import com.example.evofit.domain.usecase.GetStrengthGainsUseCaseImpl
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.GetWorkoutsCountUseCase
+import com.example.evofit.domain.usecase.GetWorkoutsCountUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCaseImpl
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
@@ -44,8 +56,11 @@ import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.StartWorkoutSessionUseCaseImpl
 import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCase
 import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCaseImpl
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCaseImpl
+import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
 import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
@@ -56,10 +71,14 @@ import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.Workout
 import com.example.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
+import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCase
+import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCaseImpl
+import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
+import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCaseImpl
+import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import org.koin.core.parameter.parametersOf
 
 val dataModule = module {
     single {
@@ -93,6 +112,15 @@ val domainModule = module {
     factory { GetWorkoutDoneHistoryUseCase(get()) }
     factory { GetWorkoutDoneByIdUseCase(get(), get()) }
     factory { GetCurrentWeekRangeUseCase() }
+    factory<GetStrengthGainsUseCase> { GetStrengthGainsUseCaseImpl() }
+    factory<GetMostEvolvedMuscleUseCase> { GetMostEvolvedMuscleUseCaseImpl() }
+    factory<GetWorkoutsCountUseCase> { GetWorkoutsCountUseCaseImpl() }
+    factory<GetLeastTrainedGroupUseCase> { GetLeastTrainedGroupUseCaseImpl() }
+    factory<GetKmPerWeekUseCase> { GetKmPerWeekUseCaseImpl() }
+    factory<GetAverageWorkoutTimeUseCase> { GetAverageWorkoutTimeUseCaseImpl() }
+    factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get()) }
+    factory<FilterTrainedMuscleGroupsUseCase> { FilterTrainedMuscleGroupsUseCaseImpl() }
+    factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get(), get(), get()) }
     factory<UpdateWorkoutsOrderUseCase> { (UpdateWorkoutsOrderUseCaseImpl(get())) }
     factory<GetActiveWorkoutSessionUseCase> { GetActiveWorkoutSessionUseCaseImpl(get(), get()) }
     factory<StartWorkoutSessionUseCase> { StartWorkoutSessionUseCaseImpl(get()) }
@@ -120,6 +148,12 @@ val onboardingModule = module {
 val homeModule = module {
     viewModel {
         HomeViewModel(
+            get()
+        )
+    }
+    viewModel {
+        EvoHomeViewModel(
+            get(),
             get()
         )
     }
@@ -157,10 +191,11 @@ val workoutModule = module {
             get()
         )
     }
-    viewModel { (workoutId: Long?, workoutDoneId: Long?) ->
+    viewModel { (workoutId: Long?, workoutDoneId: Long?, editWorkoutId: Long?) ->
         WorkoutResumeViewModel(
             workoutId = workoutId,
             workoutDoneId = workoutDoneId,
+            editWorkoutId = editWorkoutId,
             getWorkoutByIdUseCase = get(),
             getWorkoutDoneByIdUseCase = get()
         )
@@ -191,11 +226,16 @@ val workoutModule = module {
     }
 }
 
+val evoModule = module {
+    viewModel { EvoAnalyticsViewModel(get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
     splashModule,
     onboardingModule,
     homeModule,
-    workoutModule
+    workoutModule,
+    evoModule
 )

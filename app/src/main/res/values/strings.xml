@@ -133,6 +133,56 @@
     <string name="nav_evo">Evo</string>
     <string name="nav_profile">Perfil</string>
 
+    <!-- Evo Home Screen -->
+    <string name="evo_home_title">Evo</string>
+    <string name="evo_home_filter_period_3_months">3 meses</string>
+    <string name="evo_home_filter_description">Mudar período</string>
+    <string name="evo_home_strength_title">TOP GANHOS DE FORÇA</string>
+    <string name="evo_home_most_evolved_title">MAIOR EVOLUÇÃO</string>
+    <string name="evo_home_workouts_title">TREINOS</string>
+    <string name="evo_home_workouts_completed">concluídos</string>
+    <string name="evo_home_ranking_format">%1$dº</string>
+    <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
+    <string name="evo_home_empty_value">---</string>
+    <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
+    <string name="evo_period_7_days">7 dias</string>
+    <string name="evo_period_30_days">1 mês</string>
+    <string name="evo_period_90_days">3 meses</string>
+    <string name="evo_period_180_days">6 meses</string>
+    <string name="evo_period_all_time">Tudo</string>
+    <string name="evo_home_mock_exercise_2">Agachamento</string>
+    <string name="evo_home_mock_exercise_3">Rosca direta</string>
+    <string name="evo_home_mock_progress_1">+15kg</string>
+    <string name="evo_home_mock_progress_2">+12kg</string>
+    <string name="evo_home_mock_progress_3">+8kg</string>
+    <string name="evo_home_mock_muscle_evolved">Costas</string>
+    <string name="evo_home_mock_muscle_percentage">+18%</string>
+    <string name="evo_home_mock_workouts_count">128</string>
+    <string name="evo_home_insufficient_data">Dados insuficientes para este período</string>
+    <string name="evo_home_least_trained_title">GRUPO MENOS TREINADO</string>
+    <string name="evo_home_sessions_count">%1$d sessões</string>
+    <string name="evo_home_km_per_week_title">KM POR SEMANA</string>
+    <string name="evo_home_average_label">média</string>
+    <string name="evo_home_avg_time_title">TEMPO MÉDIO POR DIA</string>
+    <string name="evo_home_per_session_label">por sessão</string>
+    <string name="evo_home_km_value">%1$s km</string>
+    <string name="evo_home_time_value">%1$d min</string>
+
+    <string name="evo_home_exercise_analysis_title">Análise de exercícios</string>
+    <string name="evo_home_exercise_analysis_card_title">Analisar exercício específico</string>
+    <string name="evo_home_exercise_analysis_card_desc">Filtre por exercício e veja a evolução detalhada de carga, volume e frequência</string>
+
+    <!-- Evo Analytics -->
+    <string name="evo_analytics_select_muscle_group">Selecione o grupo muscular</string>
+    <string name="evo_analytics_back_desc">Voltar</string>
+    <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>
+    <string name="muscle_group_chest">Peito</string>
+    <string name="muscle_group_back">Costas</string>
+    <string name="muscle_group_legs">Pernas</string>
+    <string name="muscle_group_shoulders">Ombro</string>
+    <string name="muscle_group_arms">Braço</string>
+    <string name="muscle_group_core">Core</string>
+
     <!-- Workout Preview Screen -->
     <string name="workout_preview_exercises">Exercícios</string>
     <string name="workout_preview_sets">Séries</string>

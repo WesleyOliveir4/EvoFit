@@ -40,6 +40,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -54,8 +72,8 @@ fun AppBottomNavigation(
     onNavigate: (String) -> Unit
 ) {
     NavigationBar(
-        containerColor = Color(0xFF1C1C1E),
-        tonalElevation = 8.dp
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp
     ) {
         NavigationBarItem(
             selected = currentRoute == "home",
@@ -479,5 +497,128 @@ private fun EvoFitCautionDialogPreview() {
             onConfirm = {},
             onDismiss = {}
         )
+    }
+}
+
+@Composable
+fun EvoFitDropdownFilter(
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    options: List<String> = listOf("1 mês", "3 meses", "6 meses", "Tudo"),
+    initialExpanded: Boolean = false
+) {
+    var isExpanded by remember { mutableStateOf(initialExpanded) }
+
+    // Rotação suave do ícone de seta (sobe quando aberto, desce quando fechado)
+    val arrowRotationState by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f,
+        label = "arrowRotation"
+    )
+
+    // O Box externo serve como a âncora de posicionamento para o DropdownMenu
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+                .clickable { isExpanded = !isExpanded }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = selectedOption,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .size(18.dp)
+                    .rotate(arrowRotationState)
+            )
+        }
+
+        // O Menu Suspenso
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false },
+            offset = DpOffset(x = 0.dp, y = 8.dp),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .width(120.dp)
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(20.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+        ) {
+            options.forEach { option ->
+                val isSelected = option == selectedOption
+
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = option,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    },
+                    onClick = {
+                        onOptionSelected(option)
+                        isExpanded = false
+                    },
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun EvoFitDropdownFilterPreview() {
+    EvoFitTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            var selected by remember { mutableStateOf("3 meses") }
+            EvoFitDropdownFilter(
+                selectedOption = selected,
+                onOptionSelected = { selected = it }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun EvoFitDropdownFilterExpandedPreview() {
+    EvoFitTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp) // Aumentado para garantir visibilidade do menu
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            // No Preview, o DropdownMenu às vezes precisa de um container para ser renderizado corretamente
+            EvoFitDropdownFilter(
+                selectedOption = "3 meses",
+                onOptionSelected = {},
+                initialExpanded = true
+            )
+        }
     }
 }

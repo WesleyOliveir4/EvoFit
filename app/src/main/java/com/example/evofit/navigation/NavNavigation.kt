@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.evofit.core.common.AppConstants
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
@@ -18,6 +19,8 @@ import com.example.evofit.presentation.ui.feature.workout.resume.screens.Workout
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
+import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 
 @Composable
 fun NavNavigation() {
@@ -92,6 +95,25 @@ fun NavNavigation() {
             )
         }
 
+        composable(NavRoutes.Evo.route) {
+            EvoHomeScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                }
+            )
+        }
+
+        composable(NavRoutes.MuscleGroupSelection.route) {
+            MuscleGroupSelectionScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onGroupSelected = { muscleGroup ->
+                    // TODO: Navegar para os exercícios desse grupo muscular
+                }
+            )
+        }
+
         composable(NavRoutes.NewWorkout.route) {
             NewWorkoutScreen(
                 onBackClick = {
@@ -110,11 +132,11 @@ fun NavNavigation() {
             route = NavRoutes.SelectExercises.route,
             arguments = listOf(
                 navArgument("muscleGroupId") { type = NavType.StringType },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
             val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             SelectExercisesScreen(
                 muscleGroupId = muscleGroupId,
                 editWorkoutId = editWorkoutId,
@@ -136,12 +158,12 @@ fun NavNavigation() {
             arguments = listOf(
                 navArgument("exerciseIds") { type = NavType.StringType },
                 navArgument("workoutName") { type = NavType.StringType },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
             val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
             val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             ConfigureWorkoutScreen(
                 exerciseIds = exerciseIds,
                 workoutName = workoutName,
@@ -205,14 +227,14 @@ fun NavNavigation() {
         composable(
             route = NavRoutes.WorkoutResume.route,
             arguments = listOf(
-                navArgument("workoutId") { type = NavType.LongType; defaultValue = -1L },
-                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = -1L },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = -1L }
+                navArgument("workoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != -1L }
-            val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != -1L }
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != -1L }
+            val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != AppConstants.INVALID_ID }
+            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             
             WorkoutResumeScreen(
                 workoutId = workoutId,

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(
-    private val getOnboardingDataUseCase: GetOnboardingDataUseCase
+    getOnboardingDataUseCase: GetOnboardingDataUseCase
 ) : ViewModel() {
 
     val userData: StateFlow<UserOnboardingData> = getOnboardingDataUseCase()
