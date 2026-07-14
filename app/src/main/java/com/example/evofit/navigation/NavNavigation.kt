@@ -1,5 +1,7 @@
 package com.example.evofit.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -21,6 +23,7 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummary
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
+import com.example.evofit.presentation.ui.feature.profile.screens.ProfileHomeScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -31,6 +34,7 @@ import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.W
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import org.koin.androidx.compose.koinViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
@@ -307,6 +311,13 @@ fun NavNavigation() {
                         }
                     }
                 }
+            )
+        }
+
+        composable(NavRoutes.Profile.route) {
+            ProfileHomeScreen(
+                onUserDataClick = { /* TODO: Navegar para edição de dados */ },
+                onGoalsClick = { /* TODO: Navegar para edição de metas */ }
             )
         }
     }

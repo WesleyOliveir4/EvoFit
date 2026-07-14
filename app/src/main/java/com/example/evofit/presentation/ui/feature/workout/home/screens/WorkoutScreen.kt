@@ -114,7 +114,7 @@ fun WorkoutContent(
         },
         bottomBar = { 
             AppBottomNavigation(
-                currentRoute = "home",
+                currentRoute = NavRoutes.Home.route,
                 onNavigate = onNavigate
             ) 
         }
