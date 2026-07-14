@@ -249,4 +249,8 @@
     <string name="profile_stats_records">Recordes</string>
     <string name="profile_stats_goals">Metas</string>
     <string name="profile_user_summary_format">%1$s anos   •   %2$s kg</string>
+    <!-- User Data Screen -->
+    <string name="user_data_edit_desc">Editar campos</string>
+    <string name="user_data_update_button">Atualizar informações</string>
+
 </resources>

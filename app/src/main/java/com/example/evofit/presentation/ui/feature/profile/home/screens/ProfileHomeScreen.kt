@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -37,11 +38,14 @@ import com.example.evofit.presentation.ui.theme.TextSecondary
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.example.evofit.navigation.NavRoutes
+import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileHomeScreen(
     viewModel: ProfileViewModel = koinViewModel(),
+    onNavigate: (String) -> Unit = {},
     onUserDataClick: () -> Unit = {},
     onGoalsClick: () -> Unit = {}
 ) {
@@ -51,6 +55,7 @@ fun ProfileHomeScreen(
         userName = uiState.name,
         userAge = uiState.age,
         userWeight = uiState.weight,
+        onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick
     )
@@ -62,6 +67,7 @@ fun ProfileHomeScreenContent(
     userName: String,
     userAge: String,
     userWeight: String,
+    onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit
 ) {
@@ -72,6 +78,7 @@ fun ProfileHomeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .statusBarsPadding()
                     .padding(horizontal = 24.dp, vertical = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -83,6 +90,12 @@ fun ProfileHomeScreenContent(
                     fontWeight = FontWeight.Black
                 )
             }
+        },
+        bottomBar = {
+            AppBottomNavigation(
+                currentRoute = NavRoutes.Profile.route,
+                onNavigate = onNavigate
+            )
         }
     ) { paddingValues ->
         Column(
@@ -172,6 +185,7 @@ private fun ProfileHomeScreenPreview() {
             userName = "Wesley",
             userAge = "28",
             userWeight = "78",
+            onNavigate = {},
             onUserDataClick = {},
             onGoalsClick = {}
         )

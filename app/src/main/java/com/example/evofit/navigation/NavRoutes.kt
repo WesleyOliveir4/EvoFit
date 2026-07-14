@@ -11,6 +11,7 @@ sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Evo : NavRoutes("evo")
     object Profile : NavRoutes("profile")
+    object ProfileUserData : NavRoutes("profile_user_data")
     
     // Analytics Graph
     object AnalyticsGraph : NavRoutes("analytics_graph")
