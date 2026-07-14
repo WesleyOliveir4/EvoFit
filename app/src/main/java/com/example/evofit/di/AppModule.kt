@@ -87,6 +87,7 @@ import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCaseImpl
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCaseImpl
+import com.example.evofit.presentation.ui.feature.profile.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -248,6 +249,10 @@ val evoModule = module {
     viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get()) }
 }
 
+val profileModule = module {
+    viewModel { ProfileViewModel(get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
@@ -255,5 +260,6 @@ val appModule = listOf(
     onboardingModule,
     homeModule,
     workoutModule,
-    evoModule
+    evoModule,
+    profileModule
 )

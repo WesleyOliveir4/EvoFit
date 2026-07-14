@@ -1,6 +1,13 @@
 package com.example.evofit.presentation.ui.feature.profile.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,25 +28,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.components.ProfileMenuItem
-import com.example.evofit.presentation.ui.feature.profile.components.ProfileStatsCard
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.AppSurface
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.evofit.presentation.ui.feature.profile.components.ProfileStatsCard
+import com.example.evofit.presentation.ui.feature.profile.viewmodel.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
+
 @Composable
 fun ProfileHomeScreen(
-    userName: String = "Wesley",
-    userAge: Int = 28,
-    userWeight: Int = 78,
+    viewModel: ProfileViewModel = koinViewModel(),
     onUserDataClick: () -> Unit = {},
     onGoalsClick: () -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     ProfileHomeScreenContent(
-        userName = userName,
-        userAge = userAge,
-        userWeight = userWeight,
+        userName = uiState.name,
+        userAge = uiState.age,
+        userWeight = uiState.weight,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick
     )
@@ -49,8 +61,8 @@ fun ProfileHomeScreen(
 fun ProfileHomeScreenContent(
     modifier: Modifier = Modifier,
     userName: String,
-    userAge: Int,
-    userWeight: Int,
+    userAge: String,
+    userWeight: String,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit
 ) {
@@ -143,12 +155,11 @@ fun ProfileHomeScreenContent(
 //                )
 //
 //                ProfileStatsCard(
-//                    totalWorkouts = "128",
-//                    records = "5",
-//                    goals = "3"
+//                    totalWorkouts = "0",
+//                    records = "0",
+//                    goals = "0"
 //                )
 //            }
-//
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -160,8 +171,8 @@ private fun ProfileHomeScreenPreview() {
     EvoFitTheme {
         ProfileHomeScreenContent(
             userName = "Wesley",
-            userAge = 28,
-            userWeight = 78,
+            userAge = "28",
+            userWeight = "78",
             onUserDataClick = {},
             onGoalsClick = {}
         )
