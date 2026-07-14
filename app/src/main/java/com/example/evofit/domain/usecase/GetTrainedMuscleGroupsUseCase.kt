@@ -1,19 +1,16 @@
 package com.example.evofit.domain.usecase
 
 import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.model.WorkoutDone
 
 interface GetTrainedMuscleGroupsUseCase {
-    suspend operator fun invoke(): List<MuscleGroup>
+    operator fun invoke(history: List<WorkoutDone>): List<MuscleGroup>
 }
 
 class GetTrainedMuscleGroupsUseCaseImpl(
-    private val getUserIdUseCase: GetUserIdUseCase,
-    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val filterTrainedMuscleGroupsUseCase: FilterTrainedMuscleGroupsUseCase
 ) : GetTrainedMuscleGroupsUseCase {
-    override suspend fun invoke(): List<MuscleGroup> {
-        val userId = getUserIdUseCase() ?: return emptyList()
-        val history = getWorkoutDoneHistoryUseCase(userId)
+    override fun invoke(history: List<WorkoutDone>): List<MuscleGroup> {
         return filterTrainedMuscleGroupsUseCase(history)
     }
 }

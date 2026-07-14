@@ -43,15 +43,18 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MuscleGroupSelectionScreen(
     onBackClick: () -> Unit = {},
-    onGroupSelected: (com.example.evofit.domain.model.MuscleGroup) -> Unit = {},
-    viewModel: EvoAnalyticsViewModel = koinViewModel()
+    onGroupSelected: (String, String) -> Unit = { _, _ -> },
+    viewModel: EvoAnalyticsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MuscleGroupSelectionContent(
         uiState = uiState,
         onBackClick = onBackClick,
-        onGroupSelected = onGroupSelected
+        onGroupSelected = { id, name ->
+            viewModel.onMuscleGroupSelected(id, name)
+            onGroupSelected(id, name)
+        }
     )
 }
 
@@ -60,7 +63,7 @@ fun MuscleGroupSelectionScreen(
 fun MuscleGroupSelectionContent(
     uiState: EvoAnalyticsState,
     onBackClick: () -> Unit,
-    onGroupSelected: (com.example.evofit.domain.model.MuscleGroup) -> Unit
+    onGroupSelected: (String, String) -> Unit
 ) {
     var selectedGroupId by remember { mutableStateOf("") }
 
@@ -127,7 +130,7 @@ fun MuscleGroupSelectionContent(
                             isSelected = isSelected,
                             onClick = {
                                 selectedGroupId = domainGroup.id
-                                onGroupSelected(domainGroup)
+                                onGroupSelected(domainGroup.id, domainGroup.name)
                             }
                         )
                     }
@@ -147,7 +150,7 @@ private fun MuscleGroupSelectionScreenPreview() {
                 isLoading = false
             ),
             onBackClick = {},
-            onGroupSelected = {}
+            onGroupSelected = { _, _ -> }
         )
     }
 }
