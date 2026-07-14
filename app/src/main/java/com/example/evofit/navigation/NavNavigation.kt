@@ -19,6 +19,7 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseS
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.login.screens.LoginScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
@@ -54,6 +55,23 @@ fun NavNavigation() {
                     navController.navigate(destination) {
                         popUpTo(NavRoutes.Splash.route) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable(NavRoutes.Login.route) {
+            LoginScreen(
+                onLoginClick = { email, password ->
+                    // A lógica de login viria aqui (ViewModel)
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onSignUpClick = {
+                    navController.navigate(NavRoutes.Onboarding.route)
+                },
+                onForgotPasswordClick = {
+                    // Navegar para recuperar senha
                 }
             )
         }

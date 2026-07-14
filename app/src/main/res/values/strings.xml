@@ -249,6 +249,21 @@
     <string name="profile_stats_records">Recordes</string>
     <string name="profile_stats_goals">Metas</string>
     <string name="profile_user_summary_format">%1$s anos   •   %2$s kg</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">EvoFit</string>
+    <string name="login_subtitle">Entre para continuar acompanhando sua evolução diária.</string>
+    <string name="login_label_email">E-MAIL</string>
+    <string name="login_placeholder_email">Seu e-mail cadastrado</string>
+    <string name="login_label_password">SENHA</string>
+    <string name="login_placeholder_password">Sua senha secreta</string>
+    <string name="login_forgot_password">Esqueci minha senha</string>
+    <string name="login_button_enter">Entrar</string>
+    <string name="login_no_account">Não possui uma conta?</string>
+    <string name="login_sign_up">Cadastre-se</string>
+    <string name="login_content_desc_hide_password">Ocultar senha</string>
+    <string name="login_content_desc_show_password">Mostrar senha</string>
+
     <!-- User Data Screen -->
     <string name="user_data_edit_desc">Editar campos</string>
     <string name="user_data_update_button">Atualizar informações</string>
