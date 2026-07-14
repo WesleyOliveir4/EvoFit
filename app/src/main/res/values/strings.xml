@@ -251,7 +251,7 @@
     <string name="profile_user_summary_format">%1$s anos   •   %2$s kg</string>
 
     <!-- Login Screen -->
-    <string name="login_title">EvoFit</string>
+    <string name="login_title">EvoFit ⚡</string>
     <string name="login_subtitle">Entre para continuar acompanhando sua evolução diária.</string>
     <string name="login_label_email">E-MAIL</string>
     <string name="login_placeholder_email">Seu e-mail cadastrado</string>
@@ -263,6 +263,15 @@
     <string name="login_sign_up">Cadastre-se</string>
     <string name="login_content_desc_hide_password">Ocultar senha</string>
     <string name="login_content_desc_show_password">Mostrar senha</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Cadastre-se ⚡</string>
+    <string name="register_subtitle">Crie sua conta para começar sua jornada no EvoFit.</string>
+    <string name="register_button_confirm">Criar Conta</string>
+    <string name="register_already_have_account">Já possui uma conta?</string>
+    <string name="register_login">Entrar</string>
+    <string name="register_error_generic">Ocorreu um erro ao realizar o cadastro.</string>
+    <string name="register_success">Conta criada com sucesso!</string>
 
     <!-- User Data Screen -->
     <string name="user_data_edit_desc">Editar campos</string>

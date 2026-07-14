@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.login.components
+package com.example.evofit.presentation.ui.feature.authentication.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -56,7 +56,8 @@ fun LoginInputField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = modifier,
@@ -64,7 +65,7 @@ fun LoginInputField(
     ) {
         Text(
             text = label,
-            color = TextSecondary,
+            color = if (enabled) TextSecondary else TextSecondary.copy(alpha = 0.5f),
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp
@@ -73,17 +74,21 @@ fun LoginInputField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
-            textStyle = TextStyle(color = TextPrimary, fontSize = 16.sp),
+            textStyle = TextStyle(color = if (enabled) TextPrimary else TextSecondary, fontSize = 16.sp),
             singleLine = true,
             shape = RoundedCornerShape(20.dp),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
+            enabled = enabled,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = AppSurface,
                 unfocusedContainerColor = AppSurface,
                 focusedBorderColor = AppGreen,
                 unfocusedBorderColor = Color.Transparent,
-                cursorColor = AppGreen
+                cursorColor = AppGreen,
+                disabledContainerColor = AppSurface,
+                disabledBorderColor = Color.Transparent,
+                disabledTextColor = TextSecondary
             ),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
@@ -96,7 +101,8 @@ fun LoginInputField(
 fun LoginFooter(
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -112,9 +118,12 @@ fun LoginFooter(
                 .height(56.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AppGreen,
-                contentColor = Color.Black
+                contentColor = Color.Black,
+                disabledContainerColor = AppGreen.copy(alpha = 0.5f),
+                disabledContentColor = Color.Black.copy(alpha = 0.5f)
             ),
-            shape = RoundedCornerShape(28.dp)
+            shape = RoundedCornerShape(28.dp),
+            enabled = enabled
         ) {
             Text(
                 text = stringResource(id = R.string.login_button_enter),
@@ -135,10 +144,10 @@ fun LoginFooter(
             )
             Text(
                 text = stringResource(id = R.string.login_sign_up),
-                color = AppGreen,
+                color = if (enabled) AppGreen else AppGreen.copy(alpha = 0.5f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { onSignUpClick() }
+                modifier = Modifier.clickable(enabled = enabled) { onSignUpClick() }
             )
         }
     }

@@ -19,7 +19,8 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseS
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
-import com.example.evofit.presentation.ui.feature.login.screens.LoginScreen
+import com.example.evofit.presentation.ui.feature.authentication.screens.LoginScreen
+import com.example.evofit.presentation.ui.feature.authentication.screens.RegisterScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
@@ -27,8 +28,6 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScre
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
-import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
-import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -61,17 +60,30 @@ fun NavNavigation() {
 
         composable(NavRoutes.Login.route) {
             LoginScreen(
-                onLoginClick = { email, password ->
-                    // A lógica de login viria aqui (ViewModel)
+                onLoginSuccess = {
                     navController.navigate(NavRoutes.Home.route) {
                         popUpTo(NavRoutes.Login.route) { inclusive = true }
                     }
                 },
                 onSignUpClick = {
-                    navController.navigate(NavRoutes.Onboarding.route)
+                    navController.navigate(NavRoutes.Register.route)
                 },
                 onForgotPasswordClick = {
                     // Navegar para recuperar senha
+                }
+            )
+        }
+
+        composable(NavRoutes.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(NavRoutes.Onboarding.route) {
+                        popUpTo(NavRoutes.Register.route) { inclusive = true }
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
