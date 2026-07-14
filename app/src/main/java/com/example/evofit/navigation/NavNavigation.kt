@@ -1,5 +1,7 @@
 package com.example.evofit.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -21,6 +23,11 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummary
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
+import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
+import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
+import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
+import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -31,6 +38,7 @@ import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.W
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
 import org.koin.androidx.compose.koinViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
@@ -306,6 +314,36 @@ fun NavNavigation() {
                             }
                         }
                     }
+                }
+            )
+        }
+
+        composable(NavRoutes.Profile.route) {
+            ProfileHomeScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onUserDataClick = {
+                    navController.navigate(NavRoutes.ProfileUserData.route)
+                },
+                onGoalsClick = {
+                    navController.navigate(NavRoutes.ProfilePersonalGoals.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.ProfilePersonalGoals.route) {
+            PersonalGoalsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.ProfileUserData.route) {
+            UserDataScreen(
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

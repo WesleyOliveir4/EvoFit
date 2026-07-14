@@ -24,6 +24,9 @@ interface UserDao {
     @Query("DELETE FROM user_goals WHERE userId = :userId")
     suspend fun deleteGoalsForUser(userId: String): Int
 
+    @Query("DELETE FROM user_goals WHERE id = :goalId")
+    suspend fun deleteGoalById(goalId: String): Int
+
     @Query("SELECT * FROM user_goals WHERE userId = :userId")
     fun getGoalsForUser(userId: String): Flow<List<UserGoalEntity>>
 

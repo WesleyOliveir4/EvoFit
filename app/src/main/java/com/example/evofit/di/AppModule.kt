@@ -87,6 +87,11 @@ import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCaseImpl
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCaseImpl
+import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
+import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
+import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -146,6 +151,8 @@ val domainModule = module {
     factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
     factory<ProcessRepsAnalyticsUseCase> { ProcessRepsAnalyticsUseCaseImpl() }
     factory<ProcessExerciseAnalyticsUseCase> { ProcessExerciseAnalyticsUseCaseImpl(get(), get(), get(), get()) }
+    factory { GetActiveUserGoalsUseCase(get()) }
+    factory { CalculateGoalProgressUseCase(get(), get()) }
 }
 
 val splashModule = module {
@@ -248,6 +255,12 @@ val evoModule = module {
     viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get()) }
 }
 
+val profileModule = module {
+    viewModel { ProfileViewModel(get(), get(), get(), get()) }
+    viewModel { UserDataViewModel(get(), get()) }
+    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
@@ -255,5 +268,6 @@ val appModule = listOf(
     onboardingModule,
     homeModule,
     workoutModule,
-    evoModule
+    evoModule,
+    profileModule
 )

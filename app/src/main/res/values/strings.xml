@@ -240,4 +240,26 @@
     <string name="workout_resume_updated_subtitle">Seu treino \%1$s\ foi configurado com sucesso.</string>
     <string name="workout_resume_done_title">Treino finalizado!</string>
     <string name="workout_resume_button_confirm">Entendido</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_my_account">MINHA CONTA</string>
+    <string name="profile_user_data">Dados do Usuário</string>
+    <string name="profile_personal_goals">Metas Pessoais</string>
+    <string name="profile_statistics">ESTATÍSTICAS</string>
+    <string name="profile_stats_records">Recordes</string>
+    <string name="profile_stats_goals">Metas</string>
+    <string name="profile_user_summary_format">%1$s anos   •   %2$s kg</string>
+    <!-- User Data Screen -->
+    <string name="user_data_edit_desc">Editar campos</string>
+    <string name="user_data_update_button">Atualizar informações</string>
+
+    <!-- Personal Goals Screen -->
+    <string name="profile_goals_title">Metas Pessoais</string>
+    <string name="profile_goals_subtitle">Suas metas a serem atingidas 🎯</string>
+    <string name="profile_goals_add_desc">Adicionar Meta</string>
+    <string name="profile_goals_label_current">Atual:</string>
+    <string name="profile_goals_label_target">Meta:</string>
+    <string name="profile_goals_empty">Nenhuma meta definida ainda.</string>
+    <string name="profile_goal_delete_description">Excluir meta</string>
+
 </resources>

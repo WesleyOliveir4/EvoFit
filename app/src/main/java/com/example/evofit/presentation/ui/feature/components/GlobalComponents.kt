@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
+import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -76,8 +77,8 @@ fun AppBottomNavigation(
         tonalElevation = 0.dp
     ) {
         NavigationBarItem(
-            selected = currentRoute == "home",
-            onClick = { onNavigate("home") },
+            selected = currentRoute == NavRoutes.Home.route,
+            onClick = { onNavigate(NavRoutes.Home.route) },
             icon = { Icon(Icons.Default.SettingsInputComponent, contentDescription = stringResource(R.string.nav_training)) },
             label = { Text(stringResource(R.string.nav_training)) },
             colors = NavigationBarItemDefaults.colors(
@@ -89,8 +90,8 @@ fun AppBottomNavigation(
             )
         )
         NavigationBarItem(
-            selected = currentRoute == "evo",
-            onClick = { onNavigate("evo") },
+            selected = currentRoute == NavRoutes.Evo.route,
+            onClick = { onNavigate(NavRoutes.Evo.route) },
             icon = { Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = stringResource(R.string.nav_evo)) },
             label = { Text(stringResource(R.string.nav_evo)) },
             colors = NavigationBarItemDefaults.colors(
@@ -102,8 +103,8 @@ fun AppBottomNavigation(
             )
         )
         NavigationBarItem(
-            selected = currentRoute == "profile",
-            onClick = { onNavigate("profile") },
+            selected = currentRoute == NavRoutes.Profile.route,
+            onClick = { onNavigate(NavRoutes.Profile.route) },
             icon = { Icon(Icons.Default.Person, contentDescription = stringResource(R.string.nav_profile)) },
             label = { Text(stringResource(R.string.nav_profile)) },
             colors = NavigationBarItemDefaults.colors(
