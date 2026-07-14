@@ -24,6 +24,7 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDat
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
+import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
@@ -325,7 +326,17 @@ fun NavNavigation() {
                 onUserDataClick = {
                     navController.navigate(NavRoutes.ProfileUserData.route)
                 },
-                onGoalsClick = { /* TODO: Navegar para edição de metas */ }
+                onGoalsClick = {
+                    navController.navigate(NavRoutes.ProfilePersonalGoals.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.ProfilePersonalGoals.route) {
+            PersonalGoalsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
 

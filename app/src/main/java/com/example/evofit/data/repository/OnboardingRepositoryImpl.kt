@@ -45,6 +45,10 @@ class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingReposit
         }
     }
 
+    override suspend fun deleteGoal(goalId: String) {
+        userDao.deleteGoalById(goalId)
+    }
+
     override fun isOnboardingCompleted(): Flow<Boolean> {
         return userDao.getUser().map { it?.isOnboardingCompleted ?: false }
     }

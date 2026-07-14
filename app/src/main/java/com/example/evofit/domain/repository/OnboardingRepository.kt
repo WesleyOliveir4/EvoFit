@@ -8,5 +8,6 @@ interface OnboardingRepository {
     suspend fun getUserId(): String?
     suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean)
     suspend fun completeOnboarding()
+    suspend fun deleteGoal(goalId: String)
     fun isOnboardingCompleted(): Flow<Boolean>
 }

@@ -253,4 +253,13 @@
     <string name="user_data_edit_desc">Editar campos</string>
     <string name="user_data_update_button">Atualizar informações</string>
 
+    <!-- Personal Goals Screen -->
+    <string name="profile_goals_title">Metas Pessoais</string>
+    <string name="profile_goals_subtitle">Suas metas a serem atingidas 🎯</string>
+    <string name="profile_goals_add_desc">Adicionar Meta</string>
+    <string name="profile_goals_label_current">Atual:</string>
+    <string name="profile_goals_label_target">Meta:</string>
+    <string name="profile_goals_empty">Nenhuma meta definida ainda.</string>
+    <string name="profile_goal_delete_description">Excluir meta</string>
+
 </resources>

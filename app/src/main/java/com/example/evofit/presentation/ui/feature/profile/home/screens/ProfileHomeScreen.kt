@@ -55,6 +55,9 @@ fun ProfileHomeScreen(
         userName = uiState.name,
         userAge = uiState.age,
         userWeight = uiState.weight,
+        totalWorkouts = uiState.totalWorkouts,
+        records = uiState.records,
+        goals = uiState.goals,
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick
@@ -67,6 +70,9 @@ fun ProfileHomeScreenContent(
     userName: String,
     userAge: String,
     userWeight: String,
+    totalWorkouts: String = "0",
+    records: String = "0",
+    goals: String = "0",
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit
@@ -156,22 +162,22 @@ fun ProfileHomeScreenContent(
                 )
             }
 
-//            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-//                Text(
-//                    text = stringResource(id = R.string.profile_statistics),
-//                    color = TextSecondary,
-//                    fontSize = 12.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    letterSpacing = 0.5.sp,
-//                    modifier = Modifier.padding(horizontal = 8.dp)
-//                )
-//
-//                ProfileStatsCard(
-//                    totalWorkouts = "0",
-//                    records = "0",
-//                    goals = "0"
-//                )
-//            }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = stringResource(id = R.string.profile_statistics),
+                    color = TextSecondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                com.example.evofit.presentation.ui.feature.profile.home.components.ProfileStatsCard(
+                    totalWorkouts = totalWorkouts,
+                    records = records,
+                    goals = goals
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
