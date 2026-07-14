@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.profile.state
+package com.example.evofit.presentation.ui.feature.profile.home.state
 
 data class ProfileUiState(
     val name: String = "",

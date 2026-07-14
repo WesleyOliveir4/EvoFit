@@ -87,7 +87,7 @@ import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCaseImpl
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCaseImpl
-import com.example.evofit.presentation.ui.feature.profile.viewmodel.ProfileViewModel
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel

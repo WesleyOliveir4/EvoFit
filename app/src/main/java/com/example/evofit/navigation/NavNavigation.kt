@@ -23,7 +23,7 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummary
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
-import com.example.evofit.presentation.ui.feature.profile.screens.ProfileHomeScreen
+import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen

@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.profile.screens
+package com.example.evofit.presentation.ui.feature.profile.home.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.profile.components.ProfileMenuItem
+import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItem
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.AppSurface
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -36,8 +36,7 @@ import com.example.evofit.presentation.ui.theme.TextSecondary
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.example.evofit.presentation.ui.feature.profile.components.ProfileStatsCard
-import com.example.evofit.presentation.ui.feature.profile.viewmodel.ProfileViewModel
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

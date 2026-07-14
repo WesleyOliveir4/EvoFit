@@ -1,9 +1,9 @@
-package com.example.evofit.presentation.ui.feature.profile.viewmodel
+package com.example.evofit.presentation.ui.feature.profile.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
-import com.example.evofit.presentation.ui.feature.profile.state.ProfileUiState
+import com.example.evofit.presentation.ui.feature.profile.home.state.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
