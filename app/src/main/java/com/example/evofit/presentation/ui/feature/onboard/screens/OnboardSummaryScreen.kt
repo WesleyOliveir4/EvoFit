@@ -212,8 +212,8 @@ fun OnboardSummaryScreenPreview() {
                 height = "175",
                 goals = emptyList()
             ),
-            currentPage = 3,
-            totalPages = 4,
+            currentPage = 5,
+            totalPages = 6,
             onStartTraining = {}
         )
     }

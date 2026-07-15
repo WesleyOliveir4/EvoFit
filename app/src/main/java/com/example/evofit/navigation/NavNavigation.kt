@@ -21,8 +21,10 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAna
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
 import com.example.evofit.presentation.ui.feature.authentication.screens.LoginScreen
 import com.example.evofit.presentation.ui.feature.authentication.screens.RegisterScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardHeightScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardWeightScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
@@ -42,12 +44,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
-    val totalSteps = 4
+    val totalSteps = 6
 
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Splash.route
     ) {
+        // ... (Splash, Login, Register screens)
         composable(NavRoutes.Splash.route) {
             SplashScreen(
                 onNavigate = { destination ->
@@ -60,8 +63,9 @@ fun NavNavigation() {
 
         composable(NavRoutes.Login.route) {
             LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(NavRoutes.Home.route) {
+                onLoginSuccess = { isOnboardingCompleted ->
+                    val destination = if (isOnboardingCompleted) NavRoutes.Home.route else NavRoutes.Onboarding.route
+                    navController.navigate(destination) {
                         popUpTo(NavRoutes.Login.route) { inclusive = true }
                     }
                 },
@@ -103,6 +107,26 @@ fun NavNavigation() {
                 currentPage = 1,
                 totalPages = totalSteps,
                 onContinue = {
+                    navController.navigate(NavRoutes.Weight.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Weight.route) {
+            OnboardWeightScreen(
+                currentPage = 2,
+                totalPages = totalSteps,
+                onContinue = {
+                    navController.navigate(NavRoutes.Height.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Height.route) {
+            OnboardHeightScreen(
+                currentPage = 3,
+                totalPages = totalSteps,
+                onContinue = {
                     navController.navigate(NavRoutes.Goals.route)
                 }
             )
@@ -110,7 +134,7 @@ fun NavNavigation() {
 
         composable(NavRoutes.Goals.route) {
             OnboardingGoalsScreen(
-                currentPage = 2,
+                currentPage = 4,
                 totalPages = totalSteps,
                 onContinue = {
                     navController.navigate(NavRoutes.Summary.route)
@@ -123,7 +147,7 @@ fun NavNavigation() {
 
         composable(NavRoutes.Summary.route) {
             OnboardSummaryScreen(
-                currentPage = 3,
+                currentPage = 5,
                 totalPages = totalSteps,
                 onStartTraining = {
                     navController.navigate(NavRoutes.Home.route) {

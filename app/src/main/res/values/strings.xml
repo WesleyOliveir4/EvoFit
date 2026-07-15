@@ -6,7 +6,7 @@
 
     <!-- Onboarding Welcome Screen -->
     <string name="onboarding_welcome_title">Bem-vindo ao</string>
-    <string name="onboarding_welcome_highlight">EvoFit 💪</string>
+    <string name="onboarding_welcome_highlight">EvoFit</string>
     <string name="onboarding_welcome_description">Vamos configurar seu perfil para acompanhar sua evolução.</string>
     <string name="onboarding_welcome_button_start">Começar</string>
 
@@ -17,6 +17,14 @@
     <string name="onboarding_user_data_label_age">Idade</string>
     <string name="onboarding_user_data_label_weight">Peso (kg)</string>
     <string name="onboarding_user_data_label_height">Altura (cm)</string>
+
+    <!-- Onboarding Weight Screen -->
+    <string name="onboarding_weight_title">Qual seu peso?</string>
+    <string name="onboarding_weight_description">Isso nos ajuda a calcular suas calorias e progresso.</string>
+
+    <!-- Onboarding Height Screen -->
+    <string name="onboarding_height_title">Qual sua altura?</string>
+    <string name="onboarding_height_description">Usamos sua altura para calcular seu IMC e metas.</string>
 
     <!-- Onboarding Goals Screen -->
     <string name="onboarding_goals_title">Suas metas</string>

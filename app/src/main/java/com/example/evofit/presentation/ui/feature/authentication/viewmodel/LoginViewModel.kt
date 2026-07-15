@@ -2,14 +2,17 @@ package com.example.evofit.presentation.ui.feature.authentication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
 import com.example.evofit.domain.usecase.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val isOnboardingCompletedUseCase: IsOnboardingCompletedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -36,7 +39,14 @@ class LoginViewModel(
         viewModelScope.launch {
             loginUseCase(currentState.email, currentState.password)
                 .onSuccess {
-                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                    val onboardingCompleted = isOnboardingCompletedUseCase().first()
+                    _uiState.update { 
+                        it.copy(
+                            isLoading = false, 
+                            isSuccess = true,
+                            isOnboardingCompleted = onboardingCompleted
+                        ) 
+                    }
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false, error = error.message) }
@@ -55,5 +65,6 @@ data class LoginUiState(
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
+    val isOnboardingCompleted: Boolean = true,
     val error: String? = null
 )

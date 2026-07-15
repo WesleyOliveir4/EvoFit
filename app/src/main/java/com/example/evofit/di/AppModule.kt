@@ -274,7 +274,7 @@ val profileModule = module {
 
 val authModule = module {
     viewModel { RegisterViewModel(get()) }
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
 }
 
 val appModule = listOf(

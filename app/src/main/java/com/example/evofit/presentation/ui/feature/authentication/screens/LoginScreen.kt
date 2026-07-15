@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
-    onLoginSuccess: () -> Unit = {},
+    onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {}
 ) {
@@ -42,7 +42,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            onLoginSuccess()
+            onLoginSuccess(uiState.isOnboardingCompleted)
             viewModel.resetSuccess()
         }
     }
