@@ -1,7 +1,7 @@
 package com.example.evofit.presentation.model
 
 data class WorkoutHistoryUIModel(
-    val id: Long,
+    val id: String,
     val name: String,
     val date: String,
     val time: String,
@@ -9,6 +9,6 @@ data class WorkoutHistoryUIModel(
 )
 
 data class ActiveSessionUIModel(
-    val workoutId: Int,
+    val workoutId: String,
     val workoutName: String
 )

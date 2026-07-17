@@ -1,8 +1,7 @@
 package com.example.evofit.data.repository
 
 import com.example.evofit.data.datasource.LocalExerciseDataSource
-import com.example.evofit.data.local.dao.UserDao
-import com.example.evofit.data.mapper.toData
+import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.mapper.toDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
@@ -13,11 +12,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class WorkoutRepositoryImpl(
-    private val userDao: UserDao,
+    private val workoutDataSource: WorkoutLocalDataSource,
     private val exerciseDataSource: LocalExerciseDataSource
 ) : WorkoutRepository {
     override fun getWorkouts(userId: String): Flow<List<Workout>> {
-        return userDao.getFullWorkouts(userId).map { fullWorkouts ->
+        return workoutDataSource.getFullWorkouts(userId).map { fullWorkouts ->
             val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
             fullWorkouts.map { fullWorkout ->
                 val group = muscleGroups.find { it.id == fullWorkout.workout.muscleGroupId }
@@ -28,7 +27,7 @@ class WorkoutRepositoryImpl(
     }
 
     override fun getWorkoutById(workoutId: String): Flow<Workout?> {
-        return userDao.getFullWorkoutById(workoutId).map { fullWorkout ->
+        return workoutDataSource.getFullWorkoutById(workoutId).map { fullWorkout ->
             fullWorkout?.let {
                 val group = exerciseDataSource.getAllMuscleGroups()
                     .find { it.id == fullWorkout.workout.muscleGroupId }
@@ -39,19 +38,14 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    /**
-     * Constrói um resolver de id -> nome de exercício a partir do catálogo local,
-     * usado para preencher ExerciseSet.exerciseName ao montar o domínio a partir das entidades.
-     */
     private fun buildExerciseNameResolver(exerciseIds: List<String>): (String) -> String {
         val namesById = exerciseDataSource.getExercisesByIds(exerciseIds).associate { it.id to it.name }
         return { exerciseId -> namesById[exerciseId] ?: "" }
     }
 
     override suspend fun saveWorkout(workout: Workout): String {
-        val nextOrderIndex = (userDao.getMaxOrderIndex(workout.userId) ?: -1) + 1
+        val nextOrderIndex = (workoutDataSource.getMaxOrderIndex(workout.userId) ?: -1) + 1
         
-        // Gerar UUIDs para toda a estrutura
         val workoutId = java.util.UUID.randomUUID().toString()
         val workoutEntity = workout.toEntity().copy(
             workoutId = workoutId,
@@ -70,13 +64,12 @@ class WorkoutRepositoryImpl(
         val exerciseEntities = exercises.map { it.first }
         val setsEntities = exercises.map { it.second }
 
-        return userDao.insertFullWorkoutReturnId(workoutEntity, exerciseEntities, setsEntities)
+        return workoutDataSource.insertFullWorkout(workoutEntity, exerciseEntities, setsEntities)
     }
 
     override suspend fun updateWorkout(workout: Workout): String {
         val workoutEntity = workout.toEntity()
 
-        // Para update, mantemos os IDs se existirem, ou geramos se forem novos
         val exercises = workout.exercises.map { exercise ->
             val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
             val exerciseEntity = exercise.toEntity(workout.id).copy(id = exerciseId)
@@ -90,24 +83,24 @@ class WorkoutRepositoryImpl(
         val exerciseEntities = exercises.map { it.first }
         val setsEntities = exercises.map { it.second }
 
-        userDao.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+        workoutDataSource.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
         return workout.id
     }
 
     override suspend fun deleteWorkout(workoutId: String) {
-        userDao.deleteWorkoutById(workoutId)
+        workoutDataSource.deleteWorkoutById(workoutId)
     }
 
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
-        userDao.updateWorkoutsOrder(workouts.map { it.toEntity() })
+        workoutDataSource.updateWorkoutsOrder(workouts.map { it.toEntity() })
     }
 
     override suspend fun getMaxOrderIndex(userId: String): Int {
-        return userDao.getMaxOrderIndex(userId) ?: -1
+        return workoutDataSource.getMaxOrderIndex(userId) ?: -1
     }
 
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
-        val existingHistory = userDao.getWorkoutDoneHistory(userId)
+        val existingHistory = workoutDataSource.getWorkoutDoneHistory(userId)
         
         val nextId = java.util.UUID.randomUUID().toString()
         val workoutWithId = workoutDone.copy(id = nextId)
@@ -118,7 +111,7 @@ class WorkoutRepositoryImpl(
             listOf(workoutWithId)
         }
         
-        userDao.insertWorkoutDoneHistory(
+        workoutDataSource.insertWorkoutDoneHistory(
             WorkoutDoneHistoryEntity(
                 userId = userId,
                 history = updatedList
@@ -127,6 +120,6 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
-        return userDao.getWorkoutDoneHistory(userId)?.history ?: emptyList()
+        return workoutDataSource.getWorkoutDoneHistory(userId)?.history ?: emptyList()
     }
 }

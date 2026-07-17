@@ -1,6 +1,6 @@
 package com.example.evofit.data.repository
 
-import com.example.evofit.data.local.dao.UserDao
+import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.mapper.mapToDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.domain.model.UserOnboardingData
@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingRepository {
+class OnboardingRepositoryImpl(private val userDataSource: UserLocalDataSource) : OnboardingRepository {
 
     override fun getUserData(): Flow<UserOnboardingData?> {
-        return userDao.getUser().flatMapLatest { userEntity ->
+        return userDataSource.getUser().flatMapLatest { userEntity ->
             if (userEntity == null) {
                 flowOf(null)
             } else {
-                userDao.getGoalsForUser(userEntity.id).map { goals ->
+                userDataSource.getGoalsForUser(userEntity.id).map { goals ->
                     mapToDomain(userEntity, goals)
                 }
             }
@@ -28,7 +28,7 @@ class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingReposit
     }
 
     override suspend fun getUserId(): String? {
-        return userDao.getUser().firstOrNull()?.id
+        return userDataSource.getUser().firstOrNull()?.id
     }
 
     override suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean) {
@@ -36,20 +36,20 @@ class OnboardingRepositoryImpl(private val userDao: UserDao) : OnboardingReposit
             isOnboardingCompleted = isCompleted
         )
         val goalEntities = data.goals.map { it.toEntity(userId) }
-        userDao.saveUserWithGoals(userEntity, goalEntities)
+        userDataSource.saveUserWithGoals(userEntity, goalEntities)
     }
 
     override suspend fun completeOnboarding() {
-        userDao.getUser().firstOrNull()?.let { user ->
-            userDao.updateUser(user.copy(isOnboardingCompleted = true))
+        userDataSource.getUser().firstOrNull()?.let { user ->
+            userDataSource.updateUser(user.copy(isOnboardingCompleted = true))
         }
     }
 
     override suspend fun deleteGoal(goalId: String) {
-        userDao.deleteGoalById(goalId)
+        userDataSource.deleteGoalById(goalId)
     }
 
     override fun isOnboardingCompleted(): Flow<Boolean> {
-        return userDao.getUser().map { it?.isOnboardingCompleted ?: false }
+        return userDataSource.getUser().map { it?.isOnboardingCompleted ?: false }
     }
 }

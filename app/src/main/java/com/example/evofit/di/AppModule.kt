@@ -10,6 +10,10 @@ import com.example.evofit.presentation.ui.feature.authentication.viewmodel.Regis
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 import androidx.room.Room
+import com.example.evofit.data.datasource.WorkoutLocalDataSource
+import com.example.evofit.data.datasource.WorkoutLocalDataSourceImpl
+import com.example.evofit.data.datasource.UserLocalDataSource
+import com.example.evofit.data.datasource.UserLocalDataSourceImpl
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.local.AppDatabase
 import com.example.evofit.data.repository.ExerciseRepositoryImpl
@@ -131,6 +135,8 @@ val dataModule = module {
 
     single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
+    single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
+    single<UserLocalDataSource> { UserLocalDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(androidContext()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
@@ -252,7 +258,7 @@ val workoutModule = module {
             get()
         )
     }
-    viewModel { (workoutId: Long?, workoutDoneId: Long?, editWorkoutId: Long?) ->
+    viewModel { (workoutId: String?, workoutDoneId: String?, editWorkoutId: String?) ->
         WorkoutResumeViewModel(
             workoutId = workoutId,
             workoutDoneId = workoutDoneId,
@@ -261,7 +267,7 @@ val workoutModule = module {
             getWorkoutDoneByIdUseCase = get()
         )
     }
-    viewModel { (workoutId: Int) ->
+    viewModel { (workoutId: String) ->
         WorkoutPreviewViewModel(
             workoutId = workoutId,
             getWorkoutByIdUseCase = get(),
@@ -271,7 +277,7 @@ val workoutModule = module {
             clearWorkoutSessionUseCase = get()
         )
     }
-    viewModel { (workoutId: Int) ->
+    viewModel { (workoutId: String) ->
         WorkoutStartViewModel(
             workoutId = workoutId,
             getWorkoutByIdUseCase = get(),

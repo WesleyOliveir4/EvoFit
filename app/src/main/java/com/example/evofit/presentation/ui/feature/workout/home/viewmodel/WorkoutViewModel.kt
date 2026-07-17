@@ -59,7 +59,7 @@ class WorkoutViewModel(
         val currentWorkouts = getWorkoutsUseCase(userId).first()
 
         val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
-            currentWorkouts.find { it.id.toInt() == uiModel.id }
+            currentWorkouts.find { it.id == uiModel.id }
         }
 
         updateWorkoutsOrderUseCase(reorderedWorkouts)
@@ -80,7 +80,7 @@ class WorkoutViewModel(
                         userName = userData.name,
                         workouts = workouts.map { workout ->
                             WorkoutUIModel(
-                                id = workout.id.toInt(),
+                                id = workout.id,
                                 title = workout.name.ifEmpty { workout.muscleGroupId },
                                 exercises = workout.exercises.size,
                                 series = workout.exercises.sumOf { it.sets.size }
@@ -125,7 +125,7 @@ class WorkoutViewModel(
         state.copy(
             activeSession = activeSession?.let {
                 ActiveSessionUIModel(
-                    workoutId = it.workout.id.toInt(),
+                    workoutId = it.workout.id,
                     workoutName = it.workout.name.ifEmpty { it.workout.muscleGroupId }
                 )
             }
