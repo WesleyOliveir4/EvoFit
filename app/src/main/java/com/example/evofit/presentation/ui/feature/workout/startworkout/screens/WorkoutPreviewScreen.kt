@@ -219,7 +219,10 @@ fun WorkoutPreviewContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            itemsIndexed(preview.exercises) { index, exercise ->
+            itemsIndexed(
+                items = preview.exercises,
+                key = { _, exercise -> exercise.workoutExerciseId }
+            ) { index, exercise ->
                 ExercisePreviewCard(index = index + 1, item = exercise)
             }
             

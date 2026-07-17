@@ -1,9 +1,11 @@
 package com.example.evofit.presentation.ui.feature.evo.home.state
 
+import androidx.compose.runtime.Immutable
 import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.presentation.model.MuscleEvolutionUIModel
 import com.example.evofit.presentation.model.StrengthGainUIModel
 
+@Immutable
 data class EvoHomeUiState(
     val isLoading: Boolean = false,
     val selectedPeriod: EvoPeriod = EvoPeriod.LAST_30_DAYS,

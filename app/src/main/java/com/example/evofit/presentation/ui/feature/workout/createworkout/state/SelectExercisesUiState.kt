@@ -1,7 +1,9 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.state
 
+import androidx.compose.runtime.Immutable
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 
+@Immutable
 data class SelectExercisesUiState(
     val muscleGroupName: String = "",
     val workoutName: String = "",

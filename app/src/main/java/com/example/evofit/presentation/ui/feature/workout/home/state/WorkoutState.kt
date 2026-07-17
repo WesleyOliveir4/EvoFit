@@ -1,9 +1,11 @@
 package com.example.evofit.presentation.ui.feature.workout.home.state
 
+import androidx.compose.runtime.Immutable
 import com.example.evofit.presentation.model.ActiveSessionUIModel
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 
+@Immutable
 data class WorkoutState(
     val userName: String = "",
     val workouts: List<WorkoutUIModel> = emptyList(),

@@ -231,7 +231,10 @@ fun WorkoutStartContent(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(uiState.exercises) { index, exercise ->
+            itemsIndexed(
+                items = uiState.exercises,
+                key = { _, exercise -> exercise.workoutExerciseId }
+            ) { index, exercise ->
                 ExerciseTrackingCard(
                     exercise = exercise,
                     index = index,

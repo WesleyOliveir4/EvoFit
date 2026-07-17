@@ -29,16 +29,17 @@
 * **Migration 5 -> 6:** Implementada para criar as novas tabelas de sessão ativa.
 * Sessão agora sobrevive a reinicializações de forma robusta.
 
----
-
-## ✅ Fase 7 — Sessão via FirebaseAuth
+### Fase 7 — Sessão via FirebaseAuth
 * `AuthRepository.isLoggedIn()` implementado sobre `firebaseAuth.currentUser`.
 * `IsUserLoggedInUseCase` criado e registrado no Koin.
 * `SplashViewModel` refatorado para decidir entre Login, Onboarding ou Home.
 
-## 🔜 Fase 8 — Cleanup de Compose
-* `key` em `LazyColumn`.
-* `@Immutable` nos `UiState`.
+### Fase 8 — Cleanup de Compose
+* `key` em `LazyColumn` e `LazyRow` em todas as telas principais.
+* `@Immutable` aplicado em todos os `UiState` da camada de apresentação.
+* Refatoração do `WeightWheel` para performance de scroll.
+
+---
 
 ## 🔜 Fase 9 — Firestore Sync (Opcional/Futuro)
 * Dual-write Room + Firestore usando UUIDs e `updatedAt`.

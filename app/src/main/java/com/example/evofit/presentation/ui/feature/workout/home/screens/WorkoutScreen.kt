@@ -201,7 +201,7 @@ fun WorkoutContent(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                items(history.takeLast(5).reversed()) { workoutDone ->
+                items(history.takeLast(5).reversed(), key = { it.id }) { workoutDone ->
                     WorkoutDoneItem(workoutDone = workoutDone)
                     Spacer(modifier = Modifier.height(12.dp))
                 }

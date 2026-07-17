@@ -1,7 +1,9 @@
 package com.example.evofit.presentation.ui.feature.workout.startworkout.session
 
+import androidx.compose.runtime.Immutable
 import com.example.evofit.domain.model.MeasurementUnit
 
+@Immutable
 data class WorkoutStartUiState(
     val workoutTitle: String = "",
     val exercises: List<ExerciseProgressState> = emptyList(),
@@ -12,6 +14,7 @@ data class WorkoutStartUiState(
     val workoutDoneId: String? = null
 )
 
+@Immutable
 data class ExerciseProgressState(
     val workoutExerciseId: String,
     val exerciseId: String,
@@ -20,6 +23,7 @@ data class ExerciseProgressState(
     val sets: List<SetProgressState>
 )
 
+@Immutable
 data class SetProgressState(
     val setNumber: Int,
     val weight: Double,
