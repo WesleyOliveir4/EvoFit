@@ -22,10 +22,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.example.evofit.R
-import com.example.evofit.domain.model.ActiveWorkoutSession
-import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.navigation.NavRoutes
+import com.example.evofit.presentation.model.ActiveSessionUIModel
+import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.training.ActiveWorkoutCard
@@ -70,7 +69,7 @@ fun WorkoutScreen(
             onNavigate(NavRoutes.WorkoutPreview.createRoute(workout.id))
         },
         onActiveSessionClick = { activeSession ->
-            onNavigate(NavRoutes.WorkoutStart.createRoute(activeSession.workout.id.toInt()))
+            onNavigate(NavRoutes.WorkoutStart.createRoute(activeSession.workoutId))
         },
         onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.route) }
     )
@@ -82,13 +81,13 @@ fun WorkoutContent(
     workouts: List<WorkoutUIModel>,
     totalWorkouts: Int,
     workoutsThisWeek: Int,
-    history: List<WorkoutDone>,
+    history: List<WorkoutHistoryUIModel>,
     onMove: (Int, Int) -> Unit,
     onNavigate: (String) -> Unit,
     onWorkoutClick: (WorkoutUIModel) -> Unit,
     onAddWorkoutClick: () -> Unit,
-    activeSession: ActiveWorkoutSession? = null,
-    onActiveSessionClick: (ActiveWorkoutSession) -> Unit = {},
+    activeSession: ActiveSessionUIModel? = null,
+    onActiveSessionClick: (ActiveSessionUIModel) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -165,7 +164,7 @@ fun WorkoutContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     ActiveWorkoutCard(
-                        workoutName = activeSession.workout.name.ifEmpty { activeSession.workout.muscleGroupId },
+                        workoutName = activeSession.workoutName,
                         onClick = { onActiveSessionClick(activeSession) }
                     )
                     Spacer(modifier = Modifier.height(24.dp))
@@ -215,7 +214,7 @@ fun WorkoutContent(
 
 @Composable
 fun WorkoutDoneItem(
-    workoutDone: WorkoutDone,
+    workoutDone: WorkoutHistoryUIModel,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -260,21 +259,10 @@ fun WorkoutDoneItem(
 
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(16.dp))
-                workoutDone.exercises.forEachIndexed { index, workoutExercise ->
-                    val sets = workoutExercise.sets
-                    val firstSet = sets.firstOrNull()
+                workoutDone.exercises.forEachIndexed { index, exerciseItem ->
                     ExercisePreviewCard(
                         index = index + 1,
-                        item = ExercisePreviewItem(
-                            workoutExerciseId = workoutExercise.id,
-                            name = firstSet?.exerciseName ?: "",
-                            setsCount = sets.size,
-                            weight = sets.maxOfOrNull { it.load } ?: 0.0,
-                            reps = sets.maxOfOrNull { it.reps } ?: 0,
-                            unit = firstSet?.unit ?: MeasurementUnit.WEIGHT,
-                            time = sets.maxOfOrNull { it.time ?: 0 } ?: 0,
-                            distance = sets.maxOfOrNull { it.distance ?: 0.0 } ?: 0.0
-                        )
+                        item = exerciseItem
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -290,8 +278,8 @@ private fun WorkoutContentPreview() {
         WorkoutContent(
             userName = "User",
             workouts = listOf(
-                WorkoutUIModel(1, "Peito", 3, 7, Icons.Default.Favorite),
-                WorkoutUIModel(2, "Costas", 2, 4, Icons.Default.ArrowBack)
+                WorkoutUIModel(1, "Peito", 3, 7),
+                WorkoutUIModel(2, "Costas", 2, 4)
             ),
             totalWorkouts = 2,
             workoutsThisWeek = 1,

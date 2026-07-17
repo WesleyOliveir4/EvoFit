@@ -59,6 +59,9 @@
     <string name="goal_category_resistance">Melhorar resistência</string>
     <string name="goal_category_weight_loss">Perder peso</string>
     <string name="goal_category_muscle_gain">Ganhar massa</string>
+    <string name="goal_category_label_strength">Força</string>
+    <string name="goal_category_label_cardio">Cardio</string>
+    <string name="goal_category_label_weight">Meta de Peso</string>
 
     <string name="goal_step_muscle_group">1. Qual grupo muscular?</string>
     <string name="goal_step_exercise">2. Qual exercício?</string>

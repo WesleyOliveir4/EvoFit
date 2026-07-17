@@ -28,7 +28,7 @@ import com.example.evofit.presentation.model.WorkoutUIModel
 
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FitnessCenter
 
 @Composable
 fun WorkoutListItem(
@@ -84,7 +84,7 @@ fun WorkoutListItem(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = workout.icon,
+                    imageVector = Icons.Default.FitnessCenter,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
@@ -149,8 +149,7 @@ private fun WorkoutListItemPreview() {
                     id = 1,
                     title = "Treino de Peito",
                     exercises = 5,
-                    series = 15,
-                    icon = Icons.Default.Favorite
+                    series = 15
                 ),
                 onClick = {}
             )

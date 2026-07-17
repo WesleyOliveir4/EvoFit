@@ -7,12 +7,13 @@ import com.example.evofit.domain.model.ExerciseSet
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
-import com.example.evofit.presentation.mapper.DateMapper
+import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ConfigureWorkoutUiState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
@@ -24,7 +25,8 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 class ConfigureWorkoutViewModel(
-    private val getExerciseDataUseCase: GetExerciseDataUseCase,
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
@@ -39,8 +41,8 @@ class ConfigureWorkoutViewModel(
     fun loadExercises(exerciseIds: List<String>, editWorkoutId: Long? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
-            val selectedExercises = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
-            val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
+            val selectedExercises = getExercisesByIdsUseCase(exerciseIds)
+            val muscleGroups = getMuscleGroupsUseCase()
             val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
                 muscleGroups.find { it.id == first.muscleGroupId }?.type
             }
@@ -221,7 +223,7 @@ class ConfigureWorkoutViewModel(
     private suspend fun buildMuscleGroupAndExercises(
         currentState: ConfigureWorkoutUiState
     ): Pair<com.example.evofit.domain.model.MuscleGroup?, List<WorkoutExercise>> {
-        val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
+        val muscleGroups = getMuscleGroupsUseCase()
         val firstConfig = currentState.exerciseConfigs.firstOrNull()
         val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
 

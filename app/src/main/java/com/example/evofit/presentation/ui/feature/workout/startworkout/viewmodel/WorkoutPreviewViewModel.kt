@@ -6,7 +6,7 @@ import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class WorkoutPreviewViewModel(
     private val workoutId: Int,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getExerciseDataUseCase: GetExerciseDataUseCase,
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
@@ -41,7 +41,7 @@ class WorkoutPreviewViewModel(
                 .map { workout ->
                     workout?.let { workoutSelected ->
                         val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
-                        val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                        val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                             .associateBy { it.id }
 
                         val exercises = workoutSelected.exercises.map { workoutExercise ->

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
+import com.example.evofit.presentation.model.MuscleEvolutionUIModel
+import com.example.evofit.presentation.model.StrengthGainUIModel
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,8 +42,15 @@ class EvoHomeViewModel(
             _uiState.update { 
                 it.copy(
                     isLoading = false,
-                    strengthGains = summary.strengthGains,
-                    mostEvolvedMuscle = summary.mostEvolvedMuscle,
+                    strengthGains = summary.strengthGains?.map {
+                        StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
+                    },
+                    mostEvolvedMuscle = summary.mostEvolvedMuscle?.let {
+                        MuscleEvolutionUIModel(
+                            muscleGroupName = it.muscleGroupName,
+                            evolutionPercentage = it.evolutionPercentage
+                        )
+                    },
                     workoutsCount = summary.workoutsCount,
                     leastTrainedGroup = summary.leastTrainedGroup,
                     kmPerWeek = summary.kmPerWeek,

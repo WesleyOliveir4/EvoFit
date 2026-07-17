@@ -30,7 +30,7 @@ fun OnboardHeightScreen(
     onContinue: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val userData by viewModel.uiState.collectAsStateWithLifecycle()
     
     val heightRange = remember { (100..250).toList() }
     val initialHeight = remember(userData.height) {

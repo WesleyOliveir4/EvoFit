@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,9 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.domain.model.MuscleGroup
-import com.example.evofit.domain.model.MuscleGroupType
-import com.example.evofit.presentation.mapper.toItem
+import com.example.evofit.presentation.model.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.configure.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
@@ -62,14 +61,12 @@ fun NewWorkoutScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewWorkoutContent(
-    muscleGroups: List<MuscleGroup>,
+    muscleGroups: List<MuscleGroupItem>,
     isLoading: Boolean,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onMuscleGroupClick: (String) -> Unit
 ) {
-    val muscleGroupItems = muscleGroups.map { it.toItem() }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -131,7 +128,7 @@ fun NewWorkoutContent(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                items(muscleGroupItems) { item ->
+                items(muscleGroups, key = { it.id }) { item ->
                     MuscleGroupCard(
                         item = item,
                         onClick = { onMuscleGroupClick(item.id) }
@@ -150,10 +147,10 @@ fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
             muscleGroups = listOf(
-                MuscleGroup(
+                MuscleGroupItem(
                     id = "1",
                     name = "Peito",
-                    type = MuscleGroupType.CHEST
+                    temporaryIcon = Icons.Default.Favorite
                 )
             ),
             isLoading = false,

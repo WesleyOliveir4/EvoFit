@@ -107,37 +107,4 @@ class WorkoutRepositoryImpl(
     override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
         return userDao.getWorkoutDoneHistory(userId)?.history ?: emptyList()
     }
-
-    override suspend fun getWorkoutDoneHistory(userId: String, period: com.example.evofit.domain.model.EvoPeriod): List<WorkoutDone> {
-        val allHistory = getWorkoutDoneHistory(userId)
-        val startDate = getStartDateForPeriod(period) ?: return allHistory
-
-        return allHistory.filter { workout ->
-            val workoutDate = com.example.evofit.presentation.mapper.DateMapper.parseDate(workout.date)
-            workoutDate != null && workoutDate.after(startDate)
-        }
-    }
-
-    private fun getStartDateForPeriod(period: com.example.evofit.domain.model.EvoPeriod): java.util.Date? {
-        val calendar = java.util.Calendar.getInstance()
-        return when (period) {
-            com.example.evofit.domain.model.EvoPeriod.LAST_7_DAYS -> {
-                calendar.add(java.util.Calendar.DAY_OF_YEAR, -7)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_30_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -1)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_90_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -3)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_180_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -6)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.ALL_TIME -> null
-        }
-    }
 }

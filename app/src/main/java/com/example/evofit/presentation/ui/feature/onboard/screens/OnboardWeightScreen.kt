@@ -30,7 +30,7 @@ fun OnboardWeightScreen(
     onContinue: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val userData by viewModel.uiState.collectAsStateWithLifecycle()
     
     val weightRange = remember { (30..200).toList() }
     val initialWeight = remember(userData.weight) {

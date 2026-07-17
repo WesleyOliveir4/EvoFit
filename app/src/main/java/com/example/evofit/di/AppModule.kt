@@ -3,7 +3,9 @@ package com.example.evofit.di
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.usecase.RegisterUseCase
+import com.example.evofit.domain.usecase.RegisterUseCaseImpl
 import com.example.evofit.domain.usecase.LoginUseCase
+import com.example.evofit.domain.usecase.LoginUseCaseImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -29,9 +31,17 @@ import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCaseImpl
 import com.example.evofit.domain.usecase.GetAverageWorkoutTimeUseCase
 import com.example.evofit.domain.usecase.GetAverageWorkoutTimeUseCaseImpl
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
+import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCaseImpl
 import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCase
 import com.example.evofit.domain.usecase.GetEvoHomeSummaryUseCaseImpl
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
+import com.example.evofit.domain.usecase.GetExercisesByGroupUseCaseImpl
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCaseImpl
+import com.example.evofit.domain.usecase.GetGoalSuggestionsUseCase
+import com.example.evofit.domain.usecase.GetGoalSuggestionsUseCaseImpl
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCaseImpl
 import com.example.evofit.domain.usecase.GetKmPerWeekUseCase
 import com.example.evofit.domain.usecase.GetKmPerWeekUseCaseImpl
 import com.example.evofit.domain.usecase.GetLeastTrainedGroupUseCase
@@ -47,7 +57,9 @@ import com.example.evofit.domain.usecase.GetUserIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
+import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutsCountUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsCountUseCaseImpl
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
@@ -57,6 +69,7 @@ import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
+import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCaseImpl
 import com.example.evofit.domain.usecase.SaveWorkoutUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
@@ -82,7 +95,7 @@ import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.FilterTrainedMuscleGroupsUseCaseImpl
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCaseImpl
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
+import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
 import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCaseImpl
 import com.example.evofit.domain.usecase.ProcessDistanceAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessDistanceAnalyticsUseCaseImpl
@@ -95,7 +108,9 @@ import com.example.evofit.domain.usecase.ProcessTimeAnalyticsUseCaseImpl
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessWeightAnalyticsUseCaseImpl
 import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
+import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCaseImpl
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
+import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCaseImpl
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
@@ -125,7 +140,10 @@ val dataModule = module {
 }
 
 val domainModule = module {
-    factory { GetExerciseDataUseCase(get()) }
+    factory<GetMuscleGroupsUseCase> { GetMuscleGroupsUseCaseImpl(get()) }
+    factory<GetExercisesByGroupUseCase> { GetExercisesByGroupUseCaseImpl(get()) }
+    factory<GetExercisesByIdsUseCase> { GetExercisesByIdsUseCaseImpl(get()) }
+    factory<GetGoalSuggestionsUseCase> { GetGoalSuggestionsUseCaseImpl(get()) }
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
     factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
@@ -134,17 +152,18 @@ val domainModule = module {
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
-    factory { SaveWorkoutDoneUseCase(get()) }
-    factory { GetWorkoutDoneHistoryUseCase(get()) }
-    factory { GetWorkoutDoneByIdUseCase(get(), get()) }
-    factory { GetCurrentWeekRangeUseCase() }
+    factory<SaveWorkoutDoneUseCase> { SaveWorkoutDoneUseCaseImpl(get()) }
+    factory<GetWorkoutDoneHistoryUseCase> { GetWorkoutDoneHistoryUseCaseImpl(get()) }
+    factory<GetWorkoutDoneByIdUseCase> { GetWorkoutDoneByIdUseCaseImpl(get(), get()) }
+    factory<GetCurrentWeekRangeUseCase> { GetCurrentWeekRangeUseCaseImpl() }
     factory<GetStrengthGainsUseCase> { GetStrengthGainsUseCaseImpl() }
     factory<GetMostEvolvedMuscleUseCase> { GetMostEvolvedMuscleUseCaseImpl() }
     factory<GetWorkoutsCountUseCase> { GetWorkoutsCountUseCaseImpl() }
     factory<GetLeastTrainedGroupUseCase> { GetLeastTrainedGroupUseCaseImpl() }
     factory<GetKmPerWeekUseCase> { GetKmPerWeekUseCaseImpl() }
     factory<GetAverageWorkoutTimeUseCase> { GetAverageWorkoutTimeUseCaseImpl() }
-    factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get()) }
+    factory<FilterWorkoutHistoryByPeriodUseCase> { FilterWorkoutHistoryByPeriodUseCaseImpl() }
+    factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory<FilterTrainedMuscleGroupsUseCase> { FilterTrainedMuscleGroupsUseCaseImpl() }
     factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get()) }
     factory<GetExercisesWithRecordCountUseCase> { GetExercisesWithRecordCountUseCaseImpl(get()) }
@@ -160,10 +179,10 @@ val domainModule = module {
     factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
     factory<ProcessRepsAnalyticsUseCase> { ProcessRepsAnalyticsUseCaseImpl() }
     factory<ProcessExerciseAnalyticsUseCase> { ProcessExerciseAnalyticsUseCaseImpl(get(), get(), get(), get()) }
-    factory { GetActiveUserGoalsUseCase(get()) }
-    factory { CalculateGoalProgressUseCase(get(), get()) }
-    factory { RegisterUseCase(get()) }
-    factory { LoginUseCase(get()) }
+    factory<GetActiveUserGoalsUseCase> { GetActiveUserGoalsUseCaseImpl(get()) }
+    factory<CalculateGoalProgressUseCase> { CalculateGoalProgressUseCaseImpl(get(), get()) }
+    factory<RegisterUseCase> { RegisterUseCaseImpl(get()) }
+    factory<LoginUseCase> { LoginUseCaseImpl(get()) }
 }
 
 val splashModule = module {
@@ -176,7 +195,10 @@ val onboardingModule = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            get(),
+            get(),
+            androidContext()
         )
     }
 }
@@ -184,7 +206,8 @@ val onboardingModule = module {
 val homeModule = module {
     viewModel {
         HomeViewModel(
-            get()
+            get(),
+            androidContext()
         )
     }
     viewModel {
@@ -215,11 +238,13 @@ val workoutModule = module {
     viewModel {
         SelectExercisesViewModel(
             get(),
+            get(),
             get()
         )
     }
     viewModel {
         ConfigureWorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -240,7 +265,7 @@ val workoutModule = module {
         WorkoutPreviewViewModel(
             workoutId = workoutId,
             getWorkoutByIdUseCase = get(),
-            getExerciseDataUseCase = get(),
+            getExercisesByIdsUseCase = get(),
             deleteWorkoutUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
             clearWorkoutSessionUseCase = get()
@@ -250,7 +275,7 @@ val workoutModule = module {
         WorkoutStartViewModel(
             workoutId = workoutId,
             getWorkoutByIdUseCase = get(),
-            getExerciseDataUseCase = get(),
+            getExercisesByIdsUseCase = get(),
             saveWorkoutDoneUseCase = get(),
             getUserIdUseCase = get(),
             getWorkoutDoneHistoryUseCase = get(),
@@ -269,7 +294,7 @@ val evoModule = module {
 val profileModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { UserDataViewModel(get(), get()) }
-    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get()) }
+    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {

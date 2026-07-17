@@ -8,7 +8,8 @@ import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,8 +28,7 @@ data class GoalUiModel(
     val category: String,
     val currentValue: String,
     val targetValue: String,
-    val percentage: Int,
-    val originalGoal: UserGoal
+    val percentage: Int
 )
 
 class PersonalGoalsViewModel(
@@ -36,7 +36,8 @@ class PersonalGoalsViewModel(
     private val getActiveUserGoalsUseCase: GetActiveUserGoalsUseCase,
     private val calculateGoalProgressUseCase: CalculateGoalProgressUseCase,
     private val onboardingRepository: com.example.evofit.domain.repository.OnboardingRepository,
-    private val getExerciseDataUseCase: GetExerciseDataUseCase
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
+    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PersonalGoalsUiState())
@@ -75,8 +76,7 @@ class PersonalGoalsViewModel(
                         category = category,
                         currentValue = "${progress.currentValue}$unit",
                         targetValue = "${progress.targetValue}$unit",
-                        percentage = progress.percentage,
-                        originalGoal = goal
+                        percentage = progress.percentage
                     )
                 }
                 _uiState.update { it.copy(goals = uiGoals, isLoading = false) }
@@ -102,6 +102,6 @@ class PersonalGoalsViewModel(
         }
     }
 
-    fun getMuscleGroups(): List<MuscleGroup> = getExerciseDataUseCase.getMuscleGroups()
-    fun getExercisesByGroup(groupId: String): List<Exercise> = getExerciseDataUseCase.getExercisesByGroup(groupId)
+    fun getMuscleGroups(): List<MuscleGroup> = getMuscleGroupsUseCase()
+    fun getExercisesByGroup(groupId: String): List<Exercise> = getExercisesByGroupUseCase(groupId)
 }

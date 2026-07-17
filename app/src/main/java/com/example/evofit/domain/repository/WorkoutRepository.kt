@@ -1,6 +1,5 @@
 package com.example.evofit.domain.repository
 
-import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +12,6 @@ interface WorkoutRepository {
     suspend fun deleteWorkout(workoutId: Long)
     suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone)
     suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone>
-    suspend fun getWorkoutDoneHistory(userId: String, period: EvoPeriod): List<WorkoutDone>
     suspend fun updateWorkoutsOrder(workouts: List<Workout>)
     suspend fun getMaxOrderIndex(userId: String): Int
 }

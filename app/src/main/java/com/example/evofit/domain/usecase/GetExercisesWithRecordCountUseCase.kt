@@ -13,10 +13,10 @@ interface GetExercisesWithRecordCountUseCase {
 }
 
 class GetExercisesWithRecordCountUseCaseImpl(
-    private val getExerciseDataUseCase: GetExerciseDataUseCase
+    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase
 ) : GetExercisesWithRecordCountUseCase {
     override fun invoke(muscleGroupId: String, history: List<WorkoutDone>): List<ExerciseWithRecords> {
-        val exercises = getExerciseDataUseCase.getExercisesByGroup(muscleGroupId)
+        val exercises = getExercisesByGroupUseCase(muscleGroupId)
 
         return exercises.map { exercise ->
             val count = history.flatMap { it.exercises }

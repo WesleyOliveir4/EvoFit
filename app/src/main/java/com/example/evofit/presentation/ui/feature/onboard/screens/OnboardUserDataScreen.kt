@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
@@ -33,7 +33,7 @@ fun OnboardUserDataScreen(
     onContinue: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val userData by viewModel.uiState.collectAsStateWithLifecycle()
 
     OnboardUserDataContent(
         userData = userData,
@@ -47,7 +47,7 @@ fun OnboardUserDataScreen(
 
 @Composable
 fun OnboardUserDataContent(
-    userData: UserOnboardingData,
+    userData: OnboardingUiState,
     currentPage: Int,
     totalPages: Int,
     onNameChange: (String) -> Unit,
@@ -126,7 +126,7 @@ fun OnboardUserDataContent(
 fun OnboardUserDataScreenPreview() {
     EvoFitTheme {
         OnboardUserDataContent(
-            userData = UserOnboardingData(
+            userData = OnboardingUiState(
                 name = "João",
                 age = "25",
                 goals = emptyList()
