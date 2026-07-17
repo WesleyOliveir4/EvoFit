@@ -2,6 +2,7 @@ package com.example.evofit.data.local.dao
 
 import androidx.room.*
 import com.example.evofit.data.local.entities.*
+import com.example.evofit.data.local.relations.ActiveSessionWithSets
 import com.example.evofit.data.local.relations.FullWorkout
 import kotlinx.coroutines.flow.Flow
 
@@ -111,4 +112,12 @@ interface UserDao {
 
     @Query("SELECT * FROM workout_done_history WHERE userId = :userId")
     suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
+
+    // Active Session
+    @Transaction
+    @Query("SELECT * FROM active_session LIMIT 1")
+    fun getActiveSessionWithSets(): Flow<ActiveSessionWithSets?>
+
+    @Query("DELETE FROM active_session")
+    suspend fun deleteActiveSession()
 }

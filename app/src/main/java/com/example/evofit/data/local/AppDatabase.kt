@@ -15,9 +15,11 @@ import com.example.evofit.data.local.entities.*
         WorkoutEntity::class,
         WorkoutExerciseEntity::class,
         ExerciseSetEntity::class,
-        WorkoutDoneHistoryEntity::class
+        WorkoutDoneHistoryEntity::class,
+        ActiveSessionEntity::class,
+        ActiveSessionSetEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -25,6 +27,26 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE active_session (
+                        workoutId TEXT NOT NULL PRIMARY KEY,
+                        startTime INTEGER NOT NULL
+                    )
+                """)
+                database.execSQL("""
+                    CREATE TABLE active_session_sets (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        workoutId TEXT NOT NULL,
+                        workoutExerciseId TEXT NOT NULL,
+                        setNumber INTEGER NOT NULL,
+                        FOREIGN KEY(workoutId) REFERENCES active_session(workoutId) ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """)
+            }
+        }
+
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // 1. UserEntity: Adicionar updatedAt

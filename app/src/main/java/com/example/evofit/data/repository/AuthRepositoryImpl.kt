@@ -24,4 +24,8 @@ class AuthRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override fun isLoggedIn(): Boolean {
+        return firebaseAuth.currentUser != null
+    }
 }

@@ -1,10 +1,13 @@
 package com.example.evofit.data.datasource
 
 import com.example.evofit.data.local.dao.UserDao
+import com.example.evofit.data.local.entities.ActiveSessionEntity
+import com.example.evofit.data.local.entities.ActiveSessionSetEntity
 import com.example.evofit.data.local.entities.ExerciseSetEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
+import com.example.evofit.data.local.relations.ActiveSessionWithSets
 import com.example.evofit.data.local.relations.FullWorkout
 import kotlinx.coroutines.flow.Flow
 
@@ -26,6 +29,11 @@ interface WorkoutLocalDataSource {
     suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>)
     suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
+
+    // Active Session
+    fun getActiveSession(): Flow<ActiveSessionWithSets?>
+    suspend fun insertActiveSession(session: ActiveSessionEntity, sets: List<ActiveSessionSetEntity>)
+    suspend fun deleteActiveSession()
 }
 
 class WorkoutLocalDataSourceImpl(
@@ -56,4 +64,14 @@ class WorkoutLocalDataSourceImpl(
     override suspend fun getWorkoutDoneHistory(userId: String) = userDao.getWorkoutDoneHistory(userId)
     
     override suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity) = userDao.insertWorkoutDoneHistory(history)
+
+    override fun getActiveSession(): Flow<ActiveSessionWithSets?> = userDao.getActiveSessionWithSets()
+
+    override suspend fun insertActiveSession(session: ActiveSessionEntity, sets: List<ActiveSessionSetEntity>) {
+        userDao.deleteActiveSession()
+        userDao.insertActiveSession(session)
+        userDao.insertActiveSessionSets(sets)
+    }
+
+    override suspend fun deleteActiveSession() = userDao.deleteActiveSession()
 }

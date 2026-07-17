@@ -70,6 +70,8 @@ import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCaseImpl
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCaseImpl
+import com.example.evofit.domain.usecase.IsUserLoggedInUseCase
+import com.example.evofit.domain.usecase.IsUserLoggedInUseCaseImpl
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.SaveOnboardingDataUseCaseImpl
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
@@ -129,7 +131,7 @@ val dataModule = module {
             androidContext(),
             AppDatabase::class.java,
             "evofit_database"
-        ).fallbackToDestructiveMigration()
+        ).addMigrations(AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6)
             .build()
     }
 
@@ -137,7 +139,7 @@ val dataModule = module {
     single { LocalExerciseDataSource() }
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get()) }
-    single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(androidContext()) }
+    single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
@@ -154,6 +156,7 @@ val domainModule = module {
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
     factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
+    factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
@@ -192,7 +195,7 @@ val domainModule = module {
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get()) }
+    viewModel { SplashViewModel(get(), get()) }
 }
 
 val onboardingModule = module {

@@ -1,14 +1,19 @@
 package com.example.evofit.data.mapper
 
+import com.example.evofit.data.local.entities.ActiveSessionEntity
+import com.example.evofit.data.local.entities.ActiveSessionSetEntity
 import com.example.evofit.data.local.entities.ExerciseSetEntity
+import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
 import com.example.evofit.data.local.relations.FullWorkout
 import com.example.evofit.data.local.relations.WorkoutExerciseWithSets
+import com.example.evofit.domain.model.CompletedSet
 import com.example.evofit.domain.model.ExerciseSet
+import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutExercise
-import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.model.WorkoutSession
 
 fun FullWorkout.toDomain(
     muscleGroup: MuscleGroup? = null,
@@ -79,5 +84,28 @@ fun ExerciseSet.toEntity(workoutExerciseId: String): ExerciseSetEntity {
         unit = unit,
         time = time,
         distance = distance
+    )
+}
+
+fun ActiveSessionEntity.toDomain(sets: List<ActiveSessionSetEntity>): WorkoutSession {
+    return WorkoutSession(
+        workoutId = workoutId,
+        startTime = startTime,
+        completedSets = sets.map { it.toDomain() }
+    )
+}
+
+fun ActiveSessionSetEntity.toDomain(): CompletedSet {
+    return CompletedSet(
+        workoutExerciseId = workoutExerciseId,
+        setNumber = setNumber
+    )
+}
+
+fun CompletedSet.toEntity(workoutId: String): ActiveSessionSetEntity {
+    return ActiveSessionSetEntity(
+        workoutId = workoutId,
+        workoutExerciseId = workoutExerciseId,
+        setNumber = setNumber
     )
 }
