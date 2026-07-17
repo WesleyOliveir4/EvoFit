@@ -10,5 +10,6 @@ data class UserEntity(
     val age: String,
     val weight: String,
     val height: String,
-    val isOnboardingCompleted: Boolean = false
+    val isOnboardingCompleted: Boolean = false,
+    val updatedAt: Long
 )

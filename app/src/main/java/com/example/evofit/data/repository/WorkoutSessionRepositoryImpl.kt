@@ -38,7 +38,7 @@ class WorkoutSessionRepositoryImpl(private val context: Context) : WorkoutSessio
             }
     }
 
-    override suspend fun startSession(workoutId: Long, startTimeMillis: Long) {
+    override suspend fun startSession(workoutId: String, startTimeMillis: Long) {
         val session = WorkoutSession(
             workoutId = workoutId,
             startTime = startTimeMillis,

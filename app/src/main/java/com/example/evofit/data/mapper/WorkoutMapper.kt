@@ -39,6 +39,7 @@ fun ExerciseSetEntity.toDomain(exerciseName: String = ""): ExerciseSet {
     return ExerciseSet(
         id = id,
         exerciseName = exerciseName,
+        workoutExerciseId = workoutExerciseId,
         setNumber = setNumber,
         reps = reps,
         load = load,
@@ -55,11 +56,12 @@ fun Workout.toEntity(): WorkoutEntity {
         name = name,
         muscleGroupId = muscleGroupId,
         date = date,
-        orderIndex = orderIndex
+        orderIndex = orderIndex,
+        updatedAt = System.currentTimeMillis() // Adicionado updatedAt
     )
 }
 
-fun WorkoutExercise.toEntity(workoutId: Long): WorkoutExerciseEntity {
+fun WorkoutExercise.toEntity(workoutId: String): WorkoutExerciseEntity {
     return WorkoutExerciseEntity(
         id = id,
         workoutId = workoutId,
@@ -67,7 +69,7 @@ fun WorkoutExercise.toEntity(workoutId: Long): WorkoutExerciseEntity {
     )
 }
 
-fun ExerciseSet.toEntity(workoutExerciseId: Long): ExerciseSetEntity {
+fun ExerciseSet.toEntity(workoutExerciseId: String): ExerciseSetEntity {
     return ExerciseSetEntity(
         id = id,
         workoutExerciseId = workoutExerciseId,

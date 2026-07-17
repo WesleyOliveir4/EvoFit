@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WorkoutStartViewModel(
-    private val workoutId: Int,
+    private val workoutId: String,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
@@ -59,7 +59,7 @@ class WorkoutStartViewModel(
     private fun loadWorkout() {
         viewModelScope.launch {
             combine(
-                getWorkoutByIdUseCase(workoutId.toLong()),
+                getWorkoutByIdUseCase(workoutId),
                 getActiveWorkoutSessionUseCase()
             ) { workout, activeSession ->
                 workoutDomain = workout
@@ -70,7 +70,7 @@ class WorkoutStartViewModel(
                     val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                         .associateBy { it.id }
 
-                    val completedSets = if (activeSession?.workout?.id == workoutId.toLong()) {
+                    val completedSets = if (activeSession?.workout?.id == workoutId) {
                         activeSession.completedSets
                     } else {
                         emptyList()
@@ -116,10 +116,10 @@ class WorkoutStartViewModel(
         viewModelScope.launch {
             val now = System.currentTimeMillis()
             val activeSession = getActiveWorkoutSessionUseCase().first()
-            val startTime = if (activeSession?.workout?.id == workoutId.toLong()) {
+            val startTime = if (activeSession?.workout?.id == workoutId) {
                 activeSession.startTime
             } else {
-                startWorkoutSessionUseCase(workoutId.toLong(), now)
+                startWorkoutSessionUseCase(workoutId, now)
                 now
             }
 
@@ -141,7 +141,7 @@ class WorkoutStartViewModel(
         return "%02d:%02d:%02d".format(hours, minutes, seconds)
     }
 
-    fun toggleSetDone(workoutExerciseId: Long, setNumber: Int) {
+    fun toggleSetDone(workoutExerciseId: String, setNumber: Int) {
         _uiState.update { currentState ->
             val updatedExercises = currentState.exercises.map { exercise ->
                 if (exercise.workoutExerciseId == workoutExerciseId) {

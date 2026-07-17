@@ -9,11 +9,11 @@ data class WorkoutStartUiState(
     val elapsedTime: String = "00:00:00",
     val showFinishDialog: Boolean = false,
     val workoutCompleted: Boolean = false,
-    val workoutDoneId: Long? = null
+    val workoutDoneId: String? = null
 )
 
 data class ExerciseProgressState(
-    val workoutExerciseId: Long,
+    val workoutExerciseId: String,
     val exerciseId: String,
     val name: String,
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,

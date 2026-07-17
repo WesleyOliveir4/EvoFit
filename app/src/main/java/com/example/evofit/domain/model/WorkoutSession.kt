@@ -4,14 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WorkoutSession(
-    val workoutId: Long,
+    val workoutId: String,
     val startTime: Long,
     val completedSets: List<CompletedSet> = emptyList()
 )
 
 @Serializable
 data class CompletedSet(
-    val workoutExerciseId: Long,
+    val workoutExerciseId: String,
     val setNumber: Int
 )
 

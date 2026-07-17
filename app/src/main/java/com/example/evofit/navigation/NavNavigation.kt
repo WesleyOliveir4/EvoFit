@@ -237,11 +237,11 @@ fun NavNavigation() {
             route = NavRoutes.SelectExercises.route,
             arguments = listOf(
                 navArgument("muscleGroupId") { type = NavType.StringType },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
             val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             SelectExercisesScreen(
                 muscleGroupId = muscleGroupId,
                 editWorkoutId = editWorkoutId,
@@ -263,12 +263,12 @@ fun NavNavigation() {
             arguments = listOf(
                 navArgument("exerciseIds") { type = NavType.StringType },
                 navArgument("workoutName") { type = NavType.StringType },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
             val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
             val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             ConfigureWorkoutScreen(
                 exerciseIds = exerciseIds,
                 workoutName = workoutName,
@@ -291,9 +291,9 @@ fun NavNavigation() {
 
         composable(
             route = NavRoutes.WorkoutPreview.route,
-            arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+            arguments = listOf(navArgument("workoutId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getInt("workoutId") ?: 0
+            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
             WorkoutPreviewScreen(
                 workoutId = workoutId,
                 onBackClick = {
@@ -310,9 +310,9 @@ fun NavNavigation() {
 
         composable(
             route = NavRoutes.WorkoutStart.route,
-            arguments = listOf(navArgument("workoutId") { type = NavType.IntType })
+            arguments = listOf(navArgument("workoutId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getInt("workoutId") ?: 0
+            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
             WorkoutStartScreen(
                 workoutId = workoutId,
                 onBackClick = {
@@ -332,14 +332,14 @@ fun NavNavigation() {
         composable(
             route = NavRoutes.WorkoutResume.route,
             arguments = listOf(
-                navArgument("workoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID },
-                navArgument("workoutDoneId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID },
-                navArgument("editWorkoutId") { type = NavType.LongType; defaultValue = AppConstants.INVALID_ID }
+                navArgument("workoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("workoutDoneId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getLong("workoutId")?.takeIf { it != AppConstants.INVALID_ID }
-            val workoutDoneId = backStackEntry.arguments?.getLong("workoutDoneId")?.takeIf { it != AppConstants.INVALID_ID }
-            val editWorkoutId = backStackEntry.arguments?.getLong("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutId = backStackEntry.arguments?.getString("workoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutDoneId = backStackEntry.arguments?.getString("workoutDoneId")?.takeIf { it != AppConstants.INVALID_ID }
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             
             WorkoutResumeScreen(
                 workoutId = workoutId,
@@ -353,12 +353,12 @@ fun NavNavigation() {
                             }
                         }
                         editWorkoutId != null -> {
-                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId.toInt())) {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId)) {
                                 popUpTo(NavRoutes.Home.route) { inclusive = false }
                             }
                         }
                         workoutId != null -> {
-                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId.toInt())) {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId)) {
                                 popUpTo(NavRoutes.Home.route) { inclusive = false }
                             }
                         }

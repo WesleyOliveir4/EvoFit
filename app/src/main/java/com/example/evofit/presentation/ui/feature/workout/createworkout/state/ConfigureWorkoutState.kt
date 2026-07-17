@@ -8,8 +8,8 @@ data class ConfigureWorkoutUiState(
     val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
-    val savedWorkoutId: Long? = null,
-    val editWorkoutId: Long? = null
+    val savedWorkoutId: String? = null,
+    val editWorkoutId: String? = null
 )
 
 data class ExerciseConfigState(

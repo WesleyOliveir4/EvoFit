@@ -26,7 +26,7 @@ class SelectExercisesViewModel(
     private val _selectedExerciseIds = mutableStateListOf<String>()
     val selectedExerciseIds: List<String> get() = _selectedExerciseIds
 
-    fun loadExercises(muscleGroupId: String, editWorkoutId: Long? = null) {
+    fun loadExercises(muscleGroupId: String, editWorkoutId: String? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
 

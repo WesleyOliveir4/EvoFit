@@ -40,11 +40,11 @@ import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutPreviewScreen(
-    workoutId: Int,
+    workoutId: String,
     viewModel: WorkoutPreviewViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
     onBackClick: () -> Unit = {},
     onStartWorkoutClick: () -> Unit = {},
-    onEditClick: (String, Long) -> Unit = { _, _ -> }
+    onEditClick: (String, String) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -60,7 +60,7 @@ fun WorkoutPreviewScreen(
             onBackClick = onBackClick,
             onStartWorkoutClick = { viewModel.onStartWorkoutClicked(onProceed = onStartWorkoutClick) },
             onEditClick = {
-                viewModel.onEditClicked(onProceed = { onEditClick(preview.muscleGroupId, workoutId.toLong()) })
+                viewModel.onEditClicked(onProceed = { onEditClick(preview.muscleGroupId, workoutId) })
             },
             onDeleteClick = { viewModel.onDeleteClicked() }
         )
@@ -242,7 +242,7 @@ private fun WorkoutPreviewScreenPreview() {
                 totalSets = 10,
                 exercises = listOf(
                     ExercisePreviewItem(
-                        workoutExerciseId = 1L,
+                        workoutExerciseId = "1",
                         name = "Supino reto",
                         setsCount = 3,
                         weight = 80.0,
@@ -250,7 +250,7 @@ private fun WorkoutPreviewScreenPreview() {
                         unit = MeasurementUnit.WEIGHT
                     ),
                     ExercisePreviewItem(
-                        workoutExerciseId = 2L,
+                        workoutExerciseId = "2",
                         name = "Corrida",
                         setsCount = 1,
                         weight = 0.0,
@@ -260,7 +260,7 @@ private fun WorkoutPreviewScreenPreview() {
                         time = 25
                     ),
                     ExercisePreviewItem(
-                        workoutExerciseId = 3L,
+                        workoutExerciseId = "3",
                         name = "Prancha",
                         setsCount = 3,
                         weight = 0.0,
@@ -269,7 +269,7 @@ private fun WorkoutPreviewScreenPreview() {
                         time = 2
                     ),
                     ExercisePreviewItem(
-                        workoutExerciseId = 4L,
+                        workoutExerciseId = "4",
                         name = "Abdominais",
                         setsCount = 3,
                         weight = 0.0,

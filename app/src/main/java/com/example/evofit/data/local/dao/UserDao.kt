@@ -65,27 +65,27 @@ interface UserDao {
 
     @Transaction
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
-    fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
+    fun getFullWorkoutById(workoutId: String): Flow<FullWorkout?>
 
     @Transaction
     suspend fun insertFullWorkoutReturnId(
         workout: WorkoutEntity,
         exercises: List<WorkoutExerciseEntity>,
         sets: List<List<ExerciseSetEntity>>
-    ): Long {
-        val workoutId = insertWorkout(workout)
+    ): String {
+        insertWorkout(workout)
         exercises.forEachIndexed { index, exercise ->
-            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workoutId))
-            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+            insertWorkoutExercise(exercise)
+            insertExerciseSets(sets[index])
         }
-        return workoutId
+        return workout.workoutId
     }
 
     @Query("DELETE FROM workout_exercises WHERE workoutId = :workoutId")
-    suspend fun deleteWorkoutExercisesForWorkout(workoutId: Long)
+    suspend fun deleteWorkoutExercisesForWorkout(workoutId: String)
 
     @Query("DELETE FROM workouts WHERE workoutId = :workoutId")
-    suspend fun deleteWorkoutById(workoutId: Long)
+    suspend fun deleteWorkoutById(workoutId: String)
 
     /**
      * Atualiza um treino existente substituindo por completo seus exercícios/séries.

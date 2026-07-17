@@ -38,7 +38,7 @@ class ConfigureWorkoutViewModel(
     private var originalOrderIndex: Int = 0
     private var originalDate: String = DateMapper.formatDate(Date())
 
-    fun loadExercises(exerciseIds: List<String>, editWorkoutId: Long? = null) {
+    fun loadExercises(exerciseIds: List<String>, editWorkoutId: String? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
             val selectedExercises = getExercisesByIdsUseCase(exerciseIds)

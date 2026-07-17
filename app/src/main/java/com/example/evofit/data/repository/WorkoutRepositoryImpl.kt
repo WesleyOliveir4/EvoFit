@@ -27,7 +27,7 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override fun getWorkoutById(workoutId: Long): Flow<Workout?> {
+    override fun getWorkoutById(workoutId: String): Flow<Workout?> {
         return userDao.getFullWorkoutById(workoutId).map { fullWorkout ->
             fullWorkout?.let {
                 val group = exerciseDataSource.getAllMuscleGroups()
@@ -48,31 +48,53 @@ class WorkoutRepositoryImpl(
         return { exerciseId -> namesById[exerciseId] ?: "" }
     }
 
-    override suspend fun saveWorkout(workout: Workout): Long {
+    override suspend fun saveWorkout(workout: Workout): String {
         val nextOrderIndex = (userDao.getMaxOrderIndex(workout.userId) ?: -1) + 1
-        val workoutEntity = workout.toEntity().copy(orderIndex = nextOrderIndex)
         
-        val exercises = workout.exercises.map { it.toEntity(0) }
-        val sets = workout.exercises.map { exercise ->
-            exercise.sets.map { it.toEntity(0) }
+        // Gerar UUIDs para toda a estrutura
+        val workoutId = java.util.UUID.randomUUID().toString()
+        val workoutEntity = workout.toEntity().copy(
+            workoutId = workoutId,
+            orderIndex = nextOrderIndex
+        )
+        
+        val exercises = workout.exercises.map { exercise ->
+            val exerciseId = java.util.UUID.randomUUID().toString()
+            val exerciseEntity = exercise.toEntity(workoutId).copy(id = exerciseId)
+            val sets = exercise.sets.map { set ->
+                set.toEntity(exerciseId).copy(id = java.util.UUID.randomUUID().toString())
+            }
+            exerciseEntity to sets
         }
 
-        return userDao.insertFullWorkoutReturnId(workoutEntity, exercises, sets)
+        val exerciseEntities = exercises.map { it.first }
+        val setsEntities = exercises.map { it.second }
+
+        return userDao.insertFullWorkoutReturnId(workoutEntity, exerciseEntities, setsEntities)
     }
 
-    override suspend fun updateWorkout(workout: Workout): Long {
+    override suspend fun updateWorkout(workout: Workout): String {
         val workoutEntity = workout.toEntity()
 
-        val exercises = workout.exercises.map { it.toEntity(0) }
-        val sets = workout.exercises.map { exercise ->
-            exercise.sets.map { it.toEntity(0) }
+        // Para update, mantemos os IDs se existirem, ou geramos se forem novos
+        val exercises = workout.exercises.map { exercise ->
+            val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
+            val exerciseEntity = exercise.toEntity(workout.id).copy(id = exerciseId)
+            val sets = exercise.sets.map { set ->
+                val setId = if (set.id.isEmpty()) java.util.UUID.randomUUID().toString() else set.id
+                set.toEntity(exerciseId).copy(id = setId)
+            }
+            exerciseEntity to sets
         }
 
-        userDao.updateFullWorkout(workoutEntity, exercises, sets)
+        val exerciseEntities = exercises.map { it.first }
+        val setsEntities = exercises.map { it.second }
+
+        userDao.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
         return workout.id
     }
 
-    override suspend fun deleteWorkout(workoutId: Long) {
+    override suspend fun deleteWorkout(workoutId: String) {
         userDao.deleteWorkoutById(workoutId)
     }
 
@@ -87,7 +109,7 @@ class WorkoutRepositoryImpl(
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
         val existingHistory = userDao.getWorkoutDoneHistory(userId)
         
-        val nextId = (existingHistory?.history?.maxOfOrNull { it.id } ?: 0L) + 1
+        val nextId = java.util.UUID.randomUUID().toString()
         val workoutWithId = workoutDone.copy(id = nextId)
         
         val updatedList = if (existingHistory != null) {
