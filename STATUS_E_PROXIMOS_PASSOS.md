@@ -41,5 +41,8 @@
 
 ---
 
-## 🔜 Fase 9 — Firestore Sync (Opcional/Futuro)
-* Dual-write Room + Firestore usando UUIDs e `updatedAt`.
+### Fase 9 — Firestore Sync (MVP Dual-write)
+* Estratégia de "Dual-write" implementada nos repositórios `WorkoutRepositoryImpl` e `OnboardingRepositoryImpl`.
+* Sincronização assíncrona para o Firestore via `CoroutineScope(Dispatchers.IO)`.
+* Suporte para persistência remota de perfis de usuário, metas, treinos e histórico.
+* Uso de UUIDs e `updatedAt` para garantir consistência básica.

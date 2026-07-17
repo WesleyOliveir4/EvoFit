@@ -8,7 +8,12 @@ import com.example.evofit.domain.usecase.LoginUseCase
 import com.example.evofit.domain.usecase.LoginUseCaseImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.example.evofit.data.datasource.UserRemoteDataSource
+import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
+import com.example.evofit.data.datasource.WorkoutRemoteDataSource
+import com.example.evofit.data.datasource.WorkoutRemoteDataSourceImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import androidx.room.Room
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSourceImpl
@@ -139,9 +144,12 @@ val dataModule = module {
     single { LocalExerciseDataSource() }
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get()) }
+    single { FirebaseFirestore.getInstance() }
+    single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
+    single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
-    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get()) }
+    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
     single<AuthRepository> { AuthRepositoryImpl(get()) }

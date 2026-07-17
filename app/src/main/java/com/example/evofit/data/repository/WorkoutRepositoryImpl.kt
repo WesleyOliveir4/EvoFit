@@ -2,19 +2,27 @@ package com.example.evofit.data.repository
 
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
+import com.example.evofit.data.datasource.WorkoutRemoteDataSource
 import com.example.evofit.data.mapper.toDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.WorkoutRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class WorkoutRepositoryImpl(
     private val workoutDataSource: WorkoutLocalDataSource,
-    private val exerciseDataSource: LocalExerciseDataSource
+    private val exerciseDataSource: LocalExerciseDataSource,
+    private val workoutRemoteDataSource: WorkoutRemoteDataSource
 ) : WorkoutRepository {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
     override fun getWorkouts(userId: String): Flow<List<Workout>> {
         return workoutDataSource.getFullWorkouts(userId).map { fullWorkouts ->
             val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
@@ -64,7 +72,17 @@ class WorkoutRepositoryImpl(
         val exerciseEntities = exercises.map { it.first }
         val setsEntities = exercises.map { it.second }
 
-        return workoutDataSource.insertFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+        val insertedId = workoutDataSource.insertFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
+
+        return insertedId
     }
 
     override suspend fun updateWorkout(workout: Workout): String {
@@ -84,15 +102,47 @@ class WorkoutRepositoryImpl(
         val setsEntities = exercises.map { it.second }
 
         workoutDataSource.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
+
         return workout.id
     }
 
     override suspend fun deleteWorkout(workoutId: String) {
+        val workout = workoutDataSource.getFullWorkoutById(workoutId).firstOrNull()?.workout
         workoutDataSource.deleteWorkoutById(workoutId)
+
+        workout?.let {
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.deleteWorkout(it.userId, workoutId)
+                } catch (e: Exception) {
+                    // Log error
+                }
+            }
+        }
     }
 
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
-        workoutDataSource.updateWorkoutsOrder(workouts.map { it.toEntity() })
+        val entities = workouts.map { it.toEntity() }
+        workoutDataSource.updateWorkoutsOrder(entities)
+
+        if (entities.isNotEmpty()) {
+            val userId = entities.first().userId
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.updateWorkoutsOrder(userId, entities)
+                } catch (e: Exception) {
+                    // Log error
+                }
+            }
+        }
     }
 
     override suspend fun getMaxOrderIndex(userId: String): Int {
@@ -111,12 +161,20 @@ class WorkoutRepositoryImpl(
             listOf(workoutWithId)
         }
         
-        workoutDataSource.insertWorkoutDoneHistory(
-            WorkoutDoneHistoryEntity(
-                userId = userId,
-                history = updatedList
-            )
+        val historyEntity = WorkoutDoneHistoryEntity(
+            userId = userId,
+            history = updatedList
         )
+
+        workoutDataSource.insertWorkoutDoneHistory(historyEntity)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveWorkoutDoneHistory(historyEntity)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
     }
 
     override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
