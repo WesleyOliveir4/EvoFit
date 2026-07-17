@@ -60,9 +60,9 @@ fun ConfigureWorkoutScreen(
     exerciseIds: List<String>,
     workoutName: String,
     onBackClick: () -> Unit,
-    onFinishClick: (Long) -> Unit,
-    editWorkoutId: Long? = null,
-    onFinishEditClick: (Long) -> Unit = {},
+    onFinishClick: (String) -> Unit,
+    editWorkoutId: String? = null,
+    onFinishEditClick: (String) -> Unit = {},
     viewModel: ConfigureWorkoutViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -82,7 +82,7 @@ fun ConfigureWorkoutScreen(
                 onFinishClick(savedWorkoutId)
             } else {
                 //Adicionar Tela de Erro
-                onFinishClick(-1)
+                onFinishClick("Error")
             }
         }
     }

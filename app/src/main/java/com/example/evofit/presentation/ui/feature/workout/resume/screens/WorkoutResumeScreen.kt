@@ -52,9 +52,9 @@ import org.koin.core.parameter.parametersOf
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutResumeScreen(
-    workoutId: Long? = null,
-    workoutDoneId: Long? = null,
-    editWorkoutId: Long? = null,
+    workoutId: String? = null,
+    workoutDoneId: String? = null,
+    editWorkoutId: String? = null,
     onContinueClick: () -> Unit,
     viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId, editWorkoutId) }
 ) {

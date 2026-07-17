@@ -107,7 +107,7 @@ private fun ExercisePreviewCardPreview() {
             ExercisePreviewCard(
                 index = 1,
                 item = ExercisePreviewItem(
-                    workoutExerciseId = 1,
+                    workoutExerciseId = "1",
                     name = "Supino Reto",
                     setsCount = 3,
                     weight = 60.0,

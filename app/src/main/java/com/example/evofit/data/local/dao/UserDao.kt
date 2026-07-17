@@ -33,13 +33,13 @@ interface UserDao {
 
     // Workouts
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkout(workout: WorkoutEntity): Long
+    suspend fun insertWorkout(workout: WorkoutEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutExercise(workoutExercise: WorkoutExerciseEntity): Long
+    suspend fun insertWorkoutExercise(workoutExercise: WorkoutExerciseEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExerciseSets(sets: List<ExerciseSetEntity>): List<Long>
+    suspend fun insertExerciseSets(sets: List<ExerciseSetEntity>)
 
     @Transaction
     suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>): Long {
@@ -101,8 +101,8 @@ interface UserDao {
         updateWorkouts(listOf(workout))
         deleteWorkoutExercisesForWorkout(workout.workoutId)
         exercises.forEachIndexed { index, exercise ->
-            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))
-            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+            insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))
+            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exercise.id) })
         }
     }
 
@@ -117,6 +117,12 @@ interface UserDao {
     @Transaction
     @Query("SELECT * FROM active_session LIMIT 1")
     fun getActiveSessionWithSets(): Flow<ActiveSessionWithSets?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActiveSession(session: ActiveSessionEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActiveSessionSets(sets: List<ActiveSessionSetEntity>)
 
     @Query("DELETE FROM active_session")
     suspend fun deleteActiveSession()

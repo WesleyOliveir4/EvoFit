@@ -278,8 +278,8 @@ private fun WorkoutContentPreview() {
         WorkoutContent(
             userName = "User",
             workouts = listOf(
-                WorkoutUIModel(1, "Peito", 3, 7),
-                WorkoutUIModel(2, "Costas", 2, 4)
+                WorkoutUIModel("1", "Peito", 3, 7),
+                WorkoutUIModel("2", "Costas", 2, 4)
             ),
             totalWorkouts = 2,
             workoutsThisWeek = 1,

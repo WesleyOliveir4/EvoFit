@@ -47,6 +47,8 @@ import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
 import com.example.evofit.domain.usecase.GetExercisesByGroupUseCaseImpl
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCaseImpl
+import com.example.evofit.domain.usecase.FilterWorkoutHistoryByPeriodUseCase
+import com.example.evofit.domain.usecase.FilterWorkoutHistoryByPeriodUseCaseImpl
 import com.example.evofit.domain.usecase.GetGoalSuggestionsUseCase
 import com.example.evofit.domain.usecase.GetGoalSuggestionsUseCaseImpl
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase

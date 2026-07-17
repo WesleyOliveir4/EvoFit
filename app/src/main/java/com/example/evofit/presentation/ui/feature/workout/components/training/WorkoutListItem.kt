@@ -146,7 +146,7 @@ private fun WorkoutListItemPreview() {
         Box(modifier = Modifier.padding(16.dp)) {
             WorkoutListItem(
                 workout = WorkoutUIModel(
-                    id = 1,
+                    id = "1",
                     title = "Treino de Peito",
                     exercises = 5,
                     series = 15
