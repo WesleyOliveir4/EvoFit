@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,11 +38,16 @@ fun OnboardHeightScreen(
         userData.height.toIntOrNull() ?: 170
     }
 
+    val isButtonEnabled by remember(userData.height) {
+        derivedStateOf { userData.height.isNotBlank() }
+    }
+
     OnboardHeightContent(
         height = initialHeight,
         heightRange = heightRange,
         currentPage = currentPage,
         totalPages = totalPages,
+        isButtonEnabled = isButtonEnabled,
         onHeightChange = { viewModel.updateProfile(height = it.toString()) },
         onContinue = { viewModel.saveAndNext(onContinue) }
     )
@@ -53,6 +59,7 @@ fun OnboardHeightContent(
     heightRange: List<Int>,
     currentPage: Int,
     totalPages: Int,
+    isButtonEnabled: Boolean,
     onHeightChange: (Int) -> Unit,
     onContinue: () -> Unit
 ) {
@@ -102,6 +109,7 @@ fun OnboardHeightContent(
 
         OnboardingButton(
             text = stringResource(R.string.onboarding_button_continue),
+            enabled = isButtonEnabled,
             onClick = onContinue
         )
 
@@ -118,6 +126,7 @@ fun OnboardHeightScreenPreview() {
             heightRange = (100..250).toList(),
             currentPage = 3,
             totalPages = 6,
+            isButtonEnabled = true,
             onHeightChange = {},
             onContinue = {}
         )

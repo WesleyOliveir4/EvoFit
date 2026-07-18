@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,11 +38,16 @@ fun OnboardWeightScreen(
         userData.weight.toIntOrNull() ?: 70
     }
 
+    val isButtonEnabled by remember(userData.weight) {
+        derivedStateOf { userData.weight.isNotBlank() }
+    }
+
     OnboardWeightContent(
         weight = initialWeight,
         weightRange = weightRange,
         currentPage = currentPage,
         totalPages = totalPages,
+        isButtonEnabled = isButtonEnabled,
         onWeightChange = { viewModel.updateProfile(weight = it.toString()) },
         onContinue = { viewModel.saveAndNext(onContinue) }
     )
@@ -53,6 +59,7 @@ fun OnboardWeightContent(
     weightRange: List<Int>,
     currentPage: Int,
     totalPages: Int,
+    isButtonEnabled: Boolean,
     onWeightChange: (Int) -> Unit,
     onContinue: () -> Unit
 ) {
@@ -102,6 +109,7 @@ fun OnboardWeightContent(
 
         OnboardingButton(
             text = stringResource(R.string.onboarding_button_continue),
+            enabled = isButtonEnabled,
             onClick = onContinue
         )
 
@@ -118,6 +126,7 @@ fun OnboardWeightScreenPreview() {
             weightRange = (30..200).toList(),
             currentPage = 2,
             totalPages = 6,
+            isButtonEnabled = true,
             onWeightChange = {},
             onContinue = {}
         )
