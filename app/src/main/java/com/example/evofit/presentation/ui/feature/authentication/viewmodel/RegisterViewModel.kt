@@ -20,10 +20,6 @@ class RegisterViewModel(
         _uiState.update { it.copy(email = email, error = null) }
     }
 
-    fun onNameChange(name: String) {
-        _uiState.update { it.copy(name = name, error = null) }
-    }
-
     fun onConfirmPasswordChange(password: String) {
         _uiState.update { it.copy(confirmPassword = password, error = null) }
     }
@@ -52,7 +48,6 @@ class RegisterViewModel(
 
         viewModelScope.launch {
             registerUseCase(
-                name = currentState.name,
                 email = currentState.email,
                 password = currentState.password
             ).onSuccess {

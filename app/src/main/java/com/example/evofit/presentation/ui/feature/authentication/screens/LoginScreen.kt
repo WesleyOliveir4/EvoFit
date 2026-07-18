@@ -23,6 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import android.app.Activity
+import androidx.compose.ui.platform.LocalContext
+import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginHeader
@@ -41,13 +44,14 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     googleSignInHandler: GoogleSignInHandler = koinInject(),
+    appleSignInHandler: AppleSignInHandler = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {},
-    onAppleClick: () -> Unit = {}
+    onSignUpClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -69,13 +73,22 @@ fun LoginScreen(
                 googleSignInHandler.signIn().onSuccess { idToken ->
                     viewModel.onGoogleLoginClick(idToken)
                 }.onFailure { error ->
-                    // Tratar erro ou exibir no estado do ViewModel
-                    // Por enquanto vamos apenas imprimir para debug se necessário, 
-                    // mas o ideal é que o ViewModel lide com o erro se quisermos mostrar na UI
+                    // Erro tratado no ViewModel se necessário
                 }
             }
         },
-        onAppleClick = viewModel::onAppleLoginClick
+        onAppleClick = {
+            val activity = context as? Activity
+            if (activity != null) {
+                scope.launch {
+                    appleSignInHandler.signIn(activity).onSuccess {
+                        viewModel.onAppleLoginClick()
+                    }.onFailure { error ->
+                        // Erro tratado no ViewModel se necessário
+                    }
+                }
+            }
+        }
     )
 }
 

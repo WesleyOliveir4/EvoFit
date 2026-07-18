@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -44,8 +43,7 @@ fun RegisterScreen(
     val context = LocalContext.current
 
     val passwordsMismatch = uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password
-    val canSubmit = uiState.name.isNotBlank() &&
-        uiState.email.isNotBlank() &&
+    val canSubmit = uiState.email.isNotBlank() &&
         uiState.password.isNotBlank() &&
         !passwordsMismatch &&
         uiState.termsAccepted &&
@@ -67,7 +65,6 @@ fun RegisterScreen(
 
     RegisterContent(
         uiState = uiState,
-        onNameChange = viewModel::onNameChange,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
@@ -86,7 +83,6 @@ fun RegisterScreen(
 @Composable
 fun RegisterContent(
     uiState: RegisterUiState,
-    onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
@@ -123,22 +119,6 @@ fun RegisterContent(
                     .padding(vertical = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Campo de Nome
-                LoginInputField(
-                    value = uiState.name,
-                    onValueChange = onNameChange,
-                    label = stringResource(id = R.string.register_label_name),
-                    placeholder = stringResource(id = R.string.register_placeholder_name),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
-                    enabled = !uiState.isLoading
-                )
-
                 // Campo de E-mail
                 LoginInputField(
                     value = uiState.email,
@@ -252,7 +232,6 @@ private fun RegisterScreenPreview() {
     EvoFitTheme {
         RegisterContent(
             uiState = RegisterUiState(),
-            onNameChange = {},
             onEmailChange = {},
             onPasswordChange = {},
             onTogglePasswordVisibility = {},

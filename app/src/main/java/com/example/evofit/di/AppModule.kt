@@ -3,6 +3,7 @@ package com.example.evofit.di
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.usecase.*
+import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
@@ -152,6 +153,7 @@ val dataModule = module {
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
     single { GoogleSignInHandler(androidContext()) }
+    single { AppleSignInHandler(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
 
@@ -162,7 +164,7 @@ val domainModule = module {
     factory<GetGoalSuggestionsUseCase> { GetGoalSuggestionsUseCaseImpl(get()) }
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
-    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
+    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
