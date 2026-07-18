@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
@@ -32,18 +33,21 @@ import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiSt
 import com.example.evofit.presentation.ui.theme.*
 
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
+    googleSignInHandler: GoogleSignInHandler = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
-    onGoogleClick: () -> Unit = {},
     onAppleClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -60,8 +64,18 @@ fun LoginScreen(
         onLoginClick = viewModel::onLoginClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onSignUpClick = onSignUpClick,
-        onGoogleClick = onGoogleClick,
-        onAppleClick = onAppleClick
+        onGoogleClick = {
+            scope.launch {
+                googleSignInHandler.signIn().onSuccess { idToken ->
+                    viewModel.onGoogleLoginClick(idToken)
+                }.onFailure { error ->
+                    // Tratar erro ou exibir no estado do ViewModel
+                    // Por enquanto vamos apenas imprimir para debug se necessário, 
+                    // mas o ideal é que o ViewModel lide com o erro se quisermos mostrar na UI
+                }
+            }
+        },
+        onAppleClick = viewModel::onAppleLoginClick
     )
 }
 

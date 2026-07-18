@@ -38,6 +38,7 @@ private const val MIN_PASSWORD_LENGTH = 6
 
 @Composable
 fun NewPasswordScreen(
+    oobCode: String,
     viewModel: NewPasswordViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
     onPasswordResetSuccess: () -> Unit = {}
@@ -73,7 +74,7 @@ fun NewPasswordScreen(
         isPasswordTooShort = isPasswordTooShort,
         canSubmit = canSubmit,
         onBackClick = onBackClick,
-        onSaveClick = viewModel::onSaveClick
+        onSaveClick = { viewModel.onSaveClick(oobCode) }
     )
 }
 

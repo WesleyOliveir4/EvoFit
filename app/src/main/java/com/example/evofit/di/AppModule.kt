@@ -2,10 +2,8 @@ package com.example.evofit.di
 
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
-import com.example.evofit.domain.usecase.RegisterUseCase
-import com.example.evofit.domain.usecase.RegisterUseCaseImpl
-import com.example.evofit.domain.usecase.LoginUseCase
-import com.example.evofit.domain.usecase.LoginUseCaseImpl
+import com.example.evofit.domain.usecase.*
+import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -153,6 +151,7 @@ val dataModule = module {
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
+    single { GoogleSignInHandler(androidContext()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
 
@@ -325,7 +324,7 @@ val authModule = module {
     viewModel { RegisterViewModel(get()) }
     viewModel { LoginViewModel(get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get()) }
-    viewModel { VerifyCodeViewModel(get()) }
+    viewModel { VerifyCodeViewModel(get(), get()) }
     viewModel { NewPasswordViewModel(get()) }
 }
 

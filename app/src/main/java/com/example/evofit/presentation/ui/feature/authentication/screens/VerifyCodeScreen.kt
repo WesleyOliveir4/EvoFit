@@ -50,8 +50,8 @@ fun VerifyCodeScreen(
         uiState = uiState,
         onCodeChange = viewModel::onCodeChange,
         onBackClick = onBackClick,
-        onVerifyClick = viewModel::onVerifyClick,
-        onResendClick = viewModel::onResendClick
+        onVerifyClick = { viewModel.onVerifyClick(email) },
+        onResendClick = { viewModel.onResendClick(email) }
     )
 }
 

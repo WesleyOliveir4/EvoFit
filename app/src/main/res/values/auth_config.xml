@@ -1,0 +1,4 @@
+<resources>
+    <!-- Use o ID do cliente Web configurado no console do Firebase/Google Cloud -->
+    <string name="default_web_client_id" translatable="false">435010206240-m7f5b4h9q8p9q8p9q8p9q8p9q8p9q8p9.apps.googleusercontent.com</string>
+</resources>
