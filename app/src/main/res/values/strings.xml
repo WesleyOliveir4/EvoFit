@@ -284,6 +284,67 @@
     <string name="register_login">Entrar</string>
     <string name="register_error_generic">Ocorreu um erro ao realizar o cadastro.</string>
     <string name="register_success">Conta criada com sucesso!</string>
+    <string name="register_label_name">NOME</string>
+    <string name="register_placeholder_name">Seu nome</string>
+    <string name="register_label_confirm_password">CONFIRMAR SENHA</string>
+    <string name="register_placeholder_confirm_password">Confirme sua senha</string>
+    <string name="register_terms_agree_prefix">Eu concordo com os</string>
+    <string name="register_terms_of_use">Termos de Uso</string>
+    <string name="register_terms_and">e</string>
+    <string name="register_privacy_policy">Política de Privacidade</string>
+    <string name="register_error_passwords_dont_match">As senhas não coincidem.</string>
+    <string name="register_error_terms_required">É necessário aceitar os Termos de Uso e a Política de Privacidade.</string>
+
+    <!-- Pre-Login (Welcome) Screen -->
+    <string name="pre_login_title">Bem-vindo(a) ao\nseu novo melhor.</string>
+    <string name="pre_login_subtitle">Treinos personalizados, evolução real e resultados de verdade.</string>
+    <string name="pre_login_button_start">Começar</string>
+    <string name="pre_login_content_desc_logo">Logo EvoFit</string>
+
+    <!-- Social Login -->
+    <string name="login_or_continue_with">ou continue com</string>
+    <string name="login_google">Google</string>
+    <string name="login_apple">Apple</string>
+    <string name="login_content_desc_google">Entrar com Google</string>
+    <string name="login_content_desc_apple">Entrar com Apple</string>
+
+    <!-- Forgot Password (intro) Screen -->
+    <string name="forgot_password_title">Esqueci minha senha</string>
+    <string name="forgot_password_subtitle">Não se preocupe! Vamos te ajudar\na recuperar sua conta.</string>
+    <string name="forgot_password_button_continue">Continuar</string>
+    <string name="forgot_password_back_desc">Voltar</string>
+    <string name="forgot_password_content_desc_illustration">Ilustração de recuperação de senha</string>
+
+    <!-- Recover Password (insert email) Screen -->
+    <string name="recover_password_title">Recuperar senha</string>
+    <string name="recover_password_subtitle">Digite seu email para receber\no código de verificação.</string>
+    <string name="recover_password_button_send">Enviar código</string>
+    <string name="recover_password_back_desc">Voltar</string>
+    <string name="recover_password_error_invalid_email">Informe um e-mail válido.</string>
+
+    <!-- Verify Code Screen -->
+    <string name="verify_code_title">Verifique seu email</string>
+    <string name="verify_code_subtitle_format">Enviamos um código de 6 dígitos para\n%1$s</string>
+    <string name="verify_code_button_verify">Verificar código</string>
+    <string name="verify_code_back_desc">Voltar</string>
+    <string name="verify_code_not_received">Não recebeu o código?</string>
+    <string name="verify_code_resend_format">Reenviar código (%1$s)</string>
+    <string name="verify_code_resend">Reenviar código</string>
+    <string name="verify_code_error_incomplete">Informe os 6 dígitos do código.</string>
+    <string name="verify_code_error_invalid">Código inválido. Verifique e tente novamente.</string>
+
+    <!-- New Password Screen -->
+    <string name="new_password_title">Criar nova senha</string>
+    <string name="new_password_subtitle">Sua nova senha deve ser diferente\ndas senhas usadas anteriormente.</string>
+    <string name="new_password_label_password">NOVA SENHA</string>
+    <string name="new_password_placeholder_password">Crie uma nova senha</string>
+    <string name="new_password_label_confirm">CONFIRMAR NOVA SENHA</string>
+    <string name="new_password_placeholder_confirm">Confirme sua nova senha</string>
+    <string name="new_password_button_save">Salvar senha</string>
+    <string name="new_password_back_desc">Voltar</string>
+    <string name="new_password_error_too_short">A senha deve ter pelo menos 6 caracteres.</string>
+    <string name="new_password_error_mismatch">As senhas não coincidem.</string>
+    <string name="new_password_success">Senha redefinida com sucesso!</string>
 
     <!-- User Data Screen -->
     <string name="user_data_edit_desc">Editar campos</string>

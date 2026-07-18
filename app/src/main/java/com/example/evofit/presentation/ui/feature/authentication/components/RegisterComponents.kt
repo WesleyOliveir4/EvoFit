@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
@@ -40,12 +41,73 @@ fun RegisterHeader(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * "Eu concordo com os Termos de Uso e a Política de Privacidade" checkbox row
+ * shown at the bottom of the registration form (mock screen 3).
+ */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+fun TermsCheckboxRow(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onTermsOfUseClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled,
+            colors = CheckboxDefaults.colors(
+                checkedColor = AppGreen,
+                uncheckedColor = TextSecondary,
+                checkmarkColor = Color.Black
+            )
+        )
+        FlowRow(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.register_terms_agree_prefix),
+                color = TextSecondary,
+                fontSize = 13.sp
+            )
+            Text(
+                text = stringResource(id = R.string.register_terms_of_use),
+                color = AppGreen,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable(enabled = enabled) { onTermsOfUseClick() }
+            )
+            Text(
+                text = stringResource(id = R.string.register_terms_and),
+                color = TextSecondary,
+                fontSize = 13.sp
+            )
+            Text(
+                text = stringResource(id = R.string.register_privacy_policy),
+                color = AppGreen,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable(enabled = enabled) { onPrivacyPolicyClick() }
+            )
+        }
+    }
+}
+
 @Composable
 fun RegisterFooter(
     isLoading: Boolean,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -59,7 +121,7 @@ fun RegisterFooter(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            enabled = !isLoading,
+            enabled = enabled && !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = AppGreen,
                 contentColor = Color.Black,
@@ -100,5 +162,18 @@ fun RegisterFooter(
                 modifier = Modifier.clickable { onLoginClick() }
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Composable
+private fun TermsCheckboxRowPreview() {
+    EvoFitTheme {
+        TermsCheckboxRow(
+            checked = false,
+            onCheckedChange = {},
+            onTermsOfUseClick = {},
+            onPrivacyPolicyClick = {}
+        )
     }
 }

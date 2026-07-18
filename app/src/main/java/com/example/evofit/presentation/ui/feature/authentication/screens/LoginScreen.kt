@@ -26,6 +26,8 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
+import com.example.evofit.presentation.ui.feature.authentication.components.LoginSocialDivider
+import com.example.evofit.presentation.ui.feature.authentication.components.SocialLoginButtons
 import com.example.evofit.presentation.ui.theme.*
 
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
@@ -36,7 +38,9 @@ fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {}
+    onSignUpClick: () -> Unit = {},
+    onGoogleClick: () -> Unit = {},
+    onAppleClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -57,6 +61,8 @@ fun LoginScreen(
         onLoginClick = viewModel::onLoginClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onSignUpClick = onSignUpClick,
+        onGoogleClick = onGoogleClick,
+        onAppleClick = onAppleClick,
         isLoading = uiState.isLoading,
         errorMessage = uiState.error
     )
@@ -73,6 +79,8 @@ fun LoginContent(
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    onGoogleClick: () -> Unit = {},
+    onAppleClick: () -> Unit = {},
     isLoading: Boolean = false,
     errorMessage: String? = null,
     modifier: Modifier = Modifier
@@ -183,7 +191,15 @@ fun LoginContent(
             LoginFooter(
                 onLoginClick = onLoginClick,
                 onSignUpClick = onSignUpClick,
-                enabled = !isLoading
+                enabled = !isLoading,
+                extraContent = {
+                    LoginSocialDivider()
+                    SocialLoginButtons(
+                        onGoogleClick = onGoogleClick,
+                        onAppleClick = onAppleClick,
+                        enabled = !isLoading
+                    )
+                }
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.authentication.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -102,7 +104,8 @@ fun LoginFooter(
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    extraContent: @Composable (ColumnScope.() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -132,6 +135,8 @@ fun LoginFooter(
             )
         }
 
+        extraContent?.invoke(this)
+
         Row(
             modifier = Modifier.padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -148,6 +153,97 @@ fun LoginFooter(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable(enabled = enabled) { onSignUpClick() }
+            )
+        }
+    }
+}
+
+/**
+ * "ou continue com" divider shown between the primary form and the social
+ * login buttons (mock screen 2).
+ */
+@Composable
+fun LoginSocialDivider(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        HorizontalDivider(modifier = Modifier.weight(1f), color = InputBorder)
+        Text(
+            text = stringResource(id = R.string.login_or_continue_with),
+            color = TextSecondary,
+            fontSize = 12.sp
+        )
+        HorizontalDivider(modifier = Modifier.weight(1f), color = InputBorder)
+    }
+}
+
+/**
+ * Google and Apple social sign-in buttons. Both are backed by Firebase
+ * Authentication (Google via Credential Manager + GoogleAuthProvider, Apple
+ * via Firebase OAuthProvider) — wiring happens in the ViewModel layer.
+ */
+@Composable
+fun SocialLoginButtons(
+    onGoogleClick: () -> Unit,
+    onAppleClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedButton(
+            onClick = onGoogleClick,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = TextPrimary
+            ),
+            border = BorderStroke(1.dp, InputBorder)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_google),
+                contentDescription = stringResource(id = R.string.login_content_desc_google),
+                tint = Color.Unspecified,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = stringResource(id = R.string.login_google),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        OutlinedButton(
+            onClick = onAppleClick,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = TextPrimary
+            ),
+            border = BorderStroke(1.dp, InputBorder)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_apple),
+                contentDescription = stringResource(id = R.string.login_content_desc_apple),
+                tint = TextPrimary,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = stringResource(id = R.string.login_apple),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }
