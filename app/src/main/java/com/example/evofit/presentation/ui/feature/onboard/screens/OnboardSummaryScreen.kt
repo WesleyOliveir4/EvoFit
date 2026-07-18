@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ fun OnboardSummaryScreen(
     currentPage: Int,
     totalPages: Int,
     onStartTraining: () -> Unit,
+    onBack: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,117 +46,143 @@ fun OnboardSummaryScreen(
             { 
                 viewModel.finishOnboarding(onStartTraining) 
             }
-        }
+        },
+        onBack = onBack
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardSummaryContent(
     userData: OnboardingUiState,
     currentPage: Int,
     totalPages: Int,
-    onStartTraining: () -> Unit
+    onStartTraining: () -> Unit,
+    onBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.onboarding_back),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_summary_title),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.onboarding_summary_description),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp
-            )
-        }
-
-        Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = stringResource(R.string.onboarding_summary_label_summary),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
-
-                SummaryRow(
-                    icon = Icons.Default.AccountCircle,
-                    label = stringResource(R.string.onboarding_summary_label_name),
-                    value = userData.name
-                )
-
-                SummaryRow(
-                    icon = Icons.Default.DateRange,
-                    label = stringResource(R.string.onboarding_summary_label_age),
-                    value = stringResource(R.string.onboarding_summary_value_age, userData.age)
-                )
-
-                SummaryRow(
-                    icon = Icons.Default.Favorite,
-                    label = stringResource(R.string.onboarding_summary_label_weight),
-                    value = stringResource(R.string.onboarding_summary_value_weight, userData.weight)
-                )
-
-                SummaryRow(
-                    icon = Icons.Default.Straighten,
-                    label = stringResource(R.string.onboarding_summary_label_height),
-                    value = stringResource(R.string.onboarding_summary_value_height, userData.height)
-                )
-
-                if (userData.goals.isNotEmpty()) {
-                    SummaryRow(
-                        icon = Icons.Default.Star,
-                        label = stringResource(R.string.onboarding_summary_label_goals),
-                        value = "${userData.goals.size}"
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.onboarding_summary_title),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.onboarding_summary_description),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp
                     )
                 }
             }
-        }
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.onboarding_summary_label_summary),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
 
-            PageIndicators(
-                pageCount = totalPages,
-                selectedPage = currentPage,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+                    SummaryRow(
+                        icon = Icons.Default.AccountCircle,
+                        label = stringResource(R.string.onboarding_summary_label_name),
+                        value = userData.name
+                    )
 
-            OnboardingButton(
-                text = stringResource(R.string.onboarding_summary_button_start_training),
-                onClick = onStartTraining
-            )
+                    SummaryRow(
+                        icon = Icons.Default.DateRange,
+                        label = stringResource(R.string.onboarding_summary_label_age),
+                        value = stringResource(R.string.onboarding_summary_value_age, userData.age)
+                    )
 
+                    SummaryRow(
+                        icon = Icons.Default.Favorite,
+                        label = stringResource(R.string.onboarding_summary_label_weight),
+                        value = stringResource(R.string.onboarding_summary_value_weight, userData.weight)
+                    )
+
+                    SummaryRow(
+                        icon = Icons.Default.Straighten,
+                        label = stringResource(R.string.onboarding_summary_label_height),
+                        value = stringResource(R.string.onboarding_summary_value_height, userData.height)
+                    )
+
+                    if (userData.goals.isNotEmpty()) {
+                        SummaryRow(
+                            icon = Icons.Default.Star,
+                            label = stringResource(R.string.onboarding_summary_label_goals),
+                            value = "${userData.goals.size}"
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                PageIndicators(
+                    pageCount = totalPages,
+                    selectedPage = currentPage,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                OnboardingButton(
+                    text = stringResource(R.string.onboarding_summary_button_start_training),
+                    onClick = onStartTraining
+                )
+
+            }
         }
     }
 }
@@ -214,7 +242,8 @@ fun OnboardSummaryScreenPreview() {
             ),
             currentPage = 5,
             totalPages = 6,
-            onStartTraining = {}
+            onStartTraining = {},
+            onBack = {}
         )
     }
 }

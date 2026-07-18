@@ -217,7 +217,8 @@ val onboardingModule = module {
             get(),
             get(),
             get(),
-            androidContext()
+            androidContext(),
+            get()
         )
     }
 }

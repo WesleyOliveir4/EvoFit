@@ -112,6 +112,9 @@ fun NavNavigation() {
                     totalPages = totalSteps,
                     onContinue = {
                         navController.navigate(NavRoutes.Height.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -124,6 +127,9 @@ fun NavNavigation() {
                     totalPages = totalSteps,
                     onContinue = {
                         navController.navigate(NavRoutes.Goals.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -139,6 +145,9 @@ fun NavNavigation() {
                     },
                     onSkip = {
                         navController.navigate(NavRoutes.Summary.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -153,6 +162,9 @@ fun NavNavigation() {
                         navController.navigate(NavRoutes.Home.route) {
                             popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
                         }
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }

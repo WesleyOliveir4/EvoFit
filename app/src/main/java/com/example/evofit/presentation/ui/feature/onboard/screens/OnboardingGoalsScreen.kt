@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
@@ -39,6 +39,7 @@ fun OnboardingGoalsScreen(
     totalPages: Int,
     onContinue: () -> Unit,
     onSkip: () -> Unit,
+    onBack: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,10 +54,12 @@ fun OnboardingGoalsScreen(
         onAddGoal = remember { { goal -> viewModel.addGoal(goal) } },
         onRemoveGoal = remember { { goalId -> viewModel.removeGoal(goalId) } },
         onSkip = remember { { viewModel.saveAndNext(onSkip) } },
-        onFinish = remember { { viewModel.saveAndNext(onContinue) } }
+        onFinish = remember { { viewModel.saveAndNext(onContinue) } },
+        onBack = onBack
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingGoalsContent(
     activeGoals: List<GoalUIModel>,
@@ -68,7 +71,8 @@ fun OnboardingGoalsContent(
     onAddGoal: (UserGoal) -> Unit,
     onRemoveGoal: (String) -> Unit,
     onSkip: () -> Unit,
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    onBack: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
@@ -88,32 +92,50 @@ fun OnboardingGoalsContent(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.onboarding_back),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.onboarding_goals_title),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.onboarding_goals_description),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 18.sp
-            )
-        }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_goals_title),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_goals_description),
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 18.sp
+                )
+            }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -186,6 +208,7 @@ fun OnboardingGoalsContent(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+        }
     }
 }
 
@@ -222,7 +245,8 @@ fun OnboardingGoalsScreenPreview() {
             onAddGoal = {},
             onRemoveGoal = {},
             onSkip = {},
-            onFinish = {}
+            onFinish = {},
+            onBack = {}
         )
     }
 }

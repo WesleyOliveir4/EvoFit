@@ -2,8 +2,16 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -45,6 +53,7 @@ fun OnboardUserDataScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardUserDataContent(
     userData: OnboardingUiState,
@@ -59,65 +68,76 @@ fun OnboardUserDataContent(
             userData.name.isNotBlank() && userData.age.isNotBlank()
         }
     }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
-            .padding(horizontal = 24.dp),
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.onboarding_user_data_title),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(R.string.onboarding_user_data_description),
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = 18.sp
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        UserInputField(
-            label = stringResource(R.string.onboarding_user_data_label_name),
-            value = userData.name,
-            onValueChange = onNameChange
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        UserInputField(
-            label = stringResource(R.string.onboarding_user_data_label_age),
-            value = userData.age,
-            keyboardType = KeyboardType.Number,
-            onValueChange = onAgeChange
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        PageIndicators(
-            pageCount = totalPages,
-            selectedPage = currentPage,
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp)
-        )
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 24.dp),
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        OnboardingButton(
-            text = stringResource(R.string.onboarding_button_continue),
-            enabled = isFormValid,
-            onClick = onContinue
-        )
+            Text(
+                text = stringResource(R.string.onboarding_user_data_title),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.onboarding_user_data_description),
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            UserInputField(
+                label = stringResource(R.string.onboarding_user_data_label_name),
+                value = userData.name,
+                onValueChange = onNameChange
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            UserInputField(
+                label = stringResource(R.string.onboarding_user_data_label_age),
+                value = userData.age,
+                keyboardType = KeyboardType.Number,
+                onValueChange = onAgeChange
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            PageIndicators(
+                pageCount = totalPages,
+                selectedPage = currentPage,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
+
+            OnboardingButton(
+                text = stringResource(R.string.onboarding_button_continue),
+                enabled = isFormValid,
+                onClick = onContinue
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
     }
 }
 
