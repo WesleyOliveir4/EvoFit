@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
 import com.example.evofit.domain.usecase.LoginUseCase
+import com.example.evofit.domain.usecase.LoginWithGoogleUseCase
+import com.example.evofit.domain.usecase.LoginWithAppleUseCase
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +15,8 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
+    private val loginWithAppleUseCase: LoginWithAppleUseCase,
     private val isOnboardingCompletedUseCase: IsOnboardingCompletedUseCase
 ) : ViewModel() {
 
@@ -39,19 +43,47 @@ class LoginViewModel(
 
         viewModelScope.launch {
             loginUseCase(currentState.email, currentState.password)
-                .onSuccess {
-                    val onboardingCompleted = isOnboardingCompletedUseCase().first()
-                    _uiState.update { 
-                        it.copy(
-                            isLoading = false, 
-                            isSuccess = true,
-                            isOnboardingCompleted = onboardingCompleted
-                        ) 
-                    }
-                }
+                .onSuccess { handleLoginSuccess() }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false, error = error.message) }
                 }
+        }
+    }
+
+    fun onGoogleLoginClick(idToken: String) {
+        if (_uiState.value.isLoading) return
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        viewModelScope.launch {
+            loginWithGoogleUseCase(idToken)
+                .onSuccess { handleLoginSuccess() }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                }
+        }
+    }
+
+    fun onAppleLoginClick() {
+        if (_uiState.value.isLoading) return
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        viewModelScope.launch {
+            loginWithAppleUseCase()
+                .onSuccess { handleLoginSuccess() }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                }
+        }
+    }
+
+    private suspend fun handleLoginSuccess() {
+        val onboardingCompleted = isOnboardingCompletedUseCase().first()
+        _uiState.update { 
+            it.copy(
+                isLoading = false, 
+                isSuccess = true,
+                isOnboardingCompleted = onboardingCompleted
+            )
         }
     }
 

@@ -51,15 +51,15 @@ class RegisterViewModel(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            // Note: RegisterUseCase will be expanded in Step 3 to include 'name'.
-            // For now, we keep the existing call signature or prepare for the new one.
-            registerUseCase(currentState.email, currentState.password)
-                .onSuccess {
-                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-                }
-                .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
-                }
+            registerUseCase(
+                name = currentState.name,
+                email = currentState.email,
+                password = currentState.password
+            ).onSuccess {
+                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            }.onFailure { error ->
+                _uiState.update { it.copy(isLoading = false, error = error.message) }
+            }
         }
     }
 

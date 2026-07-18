@@ -19,8 +19,7 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseS
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
-import com.example.evofit.presentation.ui.feature.authentication.screens.LoginScreen
-import com.example.evofit.presentation.ui.feature.authentication.screens.RegisterScreen
+import com.example.evofit.presentation.ui.feature.authentication.screens.*
 import com.example.evofit.presentation.ui.feature.onboard.screens.*
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
@@ -69,7 +68,57 @@ fun NavNavigation() {
                     navController.navigate(NavRoutes.Register.route)
                 },
                 onForgotPasswordClick = {
-                    // Navegar para recuperar senha
+                    navController.navigate(NavRoutes.RecoverPassword.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.RecoverPassword.route) {
+            RecoverPasswordScreen(
+                onCodeSent = { email ->
+                    navController.navigate(NavRoutes.VerifyCode.createRoute(email))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.VerifyCode.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            VerifyCodeScreen(
+                email = email,
+                onCodeVerified = { code ->
+                    navController.navigate(NavRoutes.NewPassword.createRoute(email, code))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.NewPassword.route,
+            arguments = listOf(
+                navArgument("email") { type = NavType.StringType },
+                navArgument("code") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val code = backStackEntry.arguments?.getString("code") ?: ""
+            NewPasswordScreen(
+                email = email,
+                code = code,
+                onPasswordResetSuccess = {
+                    navController.navigate(NavRoutes.Login.route) {
+                        popUpTo(NavRoutes.RecoverPassword.route) { inclusive = true }
+                    }
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -201,6 +201,11 @@ val domainModule = module {
     factory<CalculateGoalProgressUseCase> { CalculateGoalProgressUseCaseImpl(get(), get()) }
     factory<RegisterUseCase> { RegisterUseCaseImpl(get()) }
     factory<LoginUseCase> { LoginUseCaseImpl(get()) }
+    factory<LoginWithGoogleUseCase> { LoginWithGoogleUseCaseImpl(get()) }
+    factory<LoginWithAppleUseCase> { LoginWithAppleUseCaseImpl(get()) }
+    factory<SendPasswordResetCodeUseCase> { SendPasswordResetCodeUseCaseImpl(get()) }
+    factory<VerifyPasswordResetCodeUseCase> { VerifyPasswordResetCodeUseCaseImpl(get()) }
+    factory<ConfirmPasswordResetUseCase> { ConfirmPasswordResetUseCaseImpl(get()) }
 }
 
 val splashModule = module {
@@ -318,10 +323,10 @@ val profileModule = module {
 
 val authModule = module {
     viewModel { RegisterViewModel(get()) }
-    viewModel { LoginViewModel(get(), get()) }
-    viewModel { RecoverPasswordViewModel() }
-    viewModel { VerifyCodeViewModel() }
-    viewModel { NewPasswordViewModel() }
+    viewModel { LoginViewModel(get(), get(), get(), get()) }
+    viewModel { RecoverPasswordViewModel(get()) }
+    viewModel { VerifyCodeViewModel(get()) }
+    viewModel { NewPasswordViewModel(get()) }
 }
 
 val appModule = listOf(
