@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,66 +27,69 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Auth
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.NewPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.NewPasswordHeader
+import com.example.evofit.presentation.ui.feature.authentication.state.NewPasswordUiState
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.NewPasswordViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextSecondary
+import org.koin.androidx.compose.koinViewModel
 
 private const val MIN_PASSWORD_LENGTH = 6
 
-/**
- * "Criar nova senha" screen (mock screen 7 — not present in the reference
- * images, designed following the same visual language as the other screens
- * of the flow). Confirms the [oobCode]/code validated on [VerifyCodeScreen]
- * and lets the user define a new password.
- */
 @Composable
 fun NewPasswordScreen(
+    viewModel: NewPasswordViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onSaveClick: (newPassword: String) -> Unit = {}
+    onPasswordResetSuccess: () -> Unit = {}
 ) {
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var isPasswordVisible by remember { mutableStateOf(false) }
-    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-    val passwordsMismatch = confirmPassword.isNotEmpty() && confirmPassword != password
-    val isPasswordTooShort = password.isNotEmpty() && password.length < MIN_PASSWORD_LENGTH
-    val canSubmit = password.length >= MIN_PASSWORD_LENGTH && !passwordsMismatch
+    val passwordsMismatch = uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password
+    val isPasswordTooShort = uiState.password.isNotEmpty() && uiState.password.length < MIN_PASSWORD_LENGTH
+    val canSubmit = uiState.password.length >= MIN_PASSWORD_LENGTH && !passwordsMismatch && !uiState.isLoading
+
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            Toast.makeText(context, context.getString(R.string.new_password_success), Toast.LENGTH_SHORT).show()
+            onPasswordResetSuccess()
+            viewModel.resetSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
 
     NewPasswordContent(
-        password = password,
-        onPasswordChange = { password = it },
-        isPasswordVisible = isPasswordVisible,
-        onTogglePasswordVisibility = { isPasswordVisible = !isPasswordVisible },
-        confirmPassword = confirmPassword,
-        onConfirmPasswordChange = { confirmPassword = it },
-        isConfirmPasswordVisible = isConfirmPasswordVisible,
-        onToggleConfirmPasswordVisibility = { isConfirmPasswordVisible = !isConfirmPasswordVisible },
+        uiState = uiState,
+        onPasswordChange = viewModel::onPasswordChange,
+        onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onToggleConfirmPasswordVisibility = viewModel::onToggleConfirmPasswordVisibility,
         passwordsMismatch = passwordsMismatch,
         isPasswordTooShort = isPasswordTooShort,
         canSubmit = canSubmit,
         onBackClick = onBackClick,
-        onSaveClick = { onSaveClick(password) }
+        onSaveClick = viewModel::onSaveClick
     )
 }
 
 @Composable
 fun NewPasswordContent(
-    password: String,
+    uiState: NewPasswordUiState,
     onPasswordChange: (String) -> Unit,
-    isPasswordVisible: Boolean,
     onTogglePasswordVisibility: () -> Unit,
-    confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    isConfirmPasswordVisible: Boolean,
     onToggleConfirmPasswordVisibility: () -> Unit,
     passwordsMismatch: Boolean,
     isPasswordTooShort: Boolean,
     canSubmit: Boolean,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
@@ -110,7 +115,7 @@ fun NewPasswordContent(
 
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     LoginInputField(
-                        value = password,
+                        value = uiState.password,
                         onValueChange = onPasswordChange,
                         label = stringResource(id = R.string.new_password_label_password),
                         placeholder = stringResource(id = R.string.new_password_placeholder_password),
@@ -120,8 +125,8 @@ fun NewPasswordContent(
                         trailingIcon = {
                             IconButton(onClick = onTogglePasswordVisibility) {
                                 Icon(
-                                    imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    contentDescription = if (isPasswordVisible) {
+                                    imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = if (uiState.isPasswordVisible) {
                                         stringResource(id = R.string.login_content_desc_hide_password)
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
@@ -130,9 +135,9 @@ fun NewPasswordContent(
                                 )
                             }
                         },
-                        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        enabled = !isLoading
+                        enabled = !uiState.isLoading
                     )
 
                     if (isPasswordTooShort) {
@@ -144,7 +149,7 @@ fun NewPasswordContent(
                     }
 
                     LoginInputField(
-                        value = confirmPassword,
+                        value = uiState.confirmPassword,
                         onValueChange = onConfirmPasswordChange,
                         label = stringResource(id = R.string.new_password_label_confirm),
                         placeholder = stringResource(id = R.string.new_password_placeholder_confirm),
@@ -154,8 +159,8 @@ fun NewPasswordContent(
                         trailingIcon = {
                             IconButton(onClick = onToggleConfirmPasswordVisibility) {
                                 Icon(
-                                    imageVector = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    contentDescription = if (isConfirmPasswordVisible) {
+                                    imageVector = if (uiState.isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = if (uiState.isConfirmPasswordVisible) {
                                         stringResource(id = R.string.login_content_desc_hide_password)
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
@@ -164,9 +169,9 @@ fun NewPasswordContent(
                                 )
                             }
                         },
-                        visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        visualTransformation = if (uiState.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        enabled = !isLoading
+                        enabled = !uiState.isLoading
                     )
 
                     if (passwordsMismatch) {
@@ -182,7 +187,7 @@ fun NewPasswordContent(
             NewPasswordFooter(
                 onSaveClick = onSaveClick,
                 enabled = canSubmit,
-                isLoading = isLoading,
+                isLoading = uiState.isLoading,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
         }
@@ -194,13 +199,10 @@ fun NewPasswordContent(
 private fun NewPasswordScreenPreview() {
     EvoFitTheme {
         NewPasswordContent(
-            password = "",
+            uiState = NewPasswordUiState(),
             onPasswordChange = {},
-            isPasswordVisible = false,
             onTogglePasswordVisibility = {},
-            confirmPassword = "",
             onConfirmPasswordChange = {},
-            isConfirmPasswordVisible = false,
             onToggleConfirmPasswordVisibility = {},
             passwordsMismatch = false,
             isPasswordTooShort = false,

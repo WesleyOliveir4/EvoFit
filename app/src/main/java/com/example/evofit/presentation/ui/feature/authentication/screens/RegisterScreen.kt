@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -21,13 +22,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.Person
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.TermsCheckboxRow
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterUiState
+import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -43,22 +43,12 @@ fun RegisterScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    // NOTE (Passo 1 - somente UI): "nome", "confirmar senha" e "termos" ainda
-    // não existem no RegisterViewModel/RegisterUiState atuais. Mantemos esses
-    // campos como estado local por enquanto; a persistência do nome e as
-    // regras de validação server-side serão movidas para o RegisterViewModel
-    // no Passo 2 do plano (ver PLANO_FLUXO_AUTENTICACAO.md, seção 5).
-    var name by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
-    var termsAccepted by remember { mutableStateOf(false) }
-
-    val passwordsMismatch = confirmPassword.isNotEmpty() && confirmPassword != uiState.password
-    val canSubmit = name.isNotBlank() &&
+    val passwordsMismatch = uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password
+    val canSubmit = uiState.name.isNotBlank() &&
         uiState.email.isNotBlank() &&
         uiState.password.isNotBlank() &&
         !passwordsMismatch &&
-        termsAccepted &&
+        uiState.termsAccepted &&
         !uiState.isLoading
 
     LaunchedEffect(uiState.isSuccess) {
@@ -77,18 +67,14 @@ fun RegisterScreen(
 
     RegisterContent(
         uiState = uiState,
-        name = name,
-        onNameChange = { name = it },
+        onNameChange = viewModel::onNameChange,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
-        confirmPassword = confirmPassword,
-        onConfirmPasswordChange = { confirmPassword = it },
-        isConfirmPasswordVisible = isConfirmPasswordVisible,
-        onToggleConfirmPasswordVisibility = { isConfirmPasswordVisible = !isConfirmPasswordVisible },
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onToggleConfirmPasswordVisibility = viewModel::onToggleConfirmPasswordVisibility,
         passwordsMismatch = passwordsMismatch,
-        termsAccepted = termsAccepted,
-        onTermsAcceptedChange = { termsAccepted = it },
+        onTermsAcceptedChange = viewModel::onTermsAcceptedChange,
         onTermsOfUseClick = onTermsOfUseClick,
         onPrivacyPolicyClick = onPrivacyPolicyClick,
         canSubmit = canSubmit,
@@ -100,17 +86,13 @@ fun RegisterScreen(
 @Composable
 fun RegisterContent(
     uiState: RegisterUiState,
-    name: String,
     onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
-    confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    isConfirmPasswordVisible: Boolean,
     onToggleConfirmPasswordVisibility: () -> Unit,
     passwordsMismatch: Boolean,
-    termsAccepted: Boolean,
     onTermsAcceptedChange: (Boolean) -> Unit,
     onTermsOfUseClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
@@ -143,7 +125,7 @@ fun RegisterContent(
             ) {
                 // Campo de Nome
                 LoginInputField(
-                    value = name,
+                    value = uiState.name,
                     onValueChange = onNameChange,
                     label = stringResource(id = R.string.register_label_name),
                     placeholder = stringResource(id = R.string.register_placeholder_name),
@@ -207,7 +189,7 @@ fun RegisterContent(
 
                 // Campo de Confirmar Senha
                 LoginInputField(
-                    value = confirmPassword,
+                    value = uiState.confirmPassword,
                     onValueChange = onConfirmPasswordChange,
                     label = stringResource(id = R.string.register_label_confirm_password),
                     placeholder = stringResource(id = R.string.register_placeholder_confirm_password),
@@ -221,8 +203,8 @@ fun RegisterContent(
                     trailingIcon = {
                         IconButton(onClick = onToggleConfirmPasswordVisibility) {
                             Icon(
-                                imageVector = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (isConfirmPasswordVisible) {
+                                imageVector = if (uiState.isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (uiState.isConfirmPasswordVisible) {
                                     stringResource(id = R.string.login_content_desc_hide_password)
                                 } else {
                                     stringResource(id = R.string.login_content_desc_show_password)
@@ -231,7 +213,7 @@ fun RegisterContent(
                             )
                         }
                     },
-                    visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (uiState.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     enabled = !uiState.isLoading
                 )
@@ -245,7 +227,7 @@ fun RegisterContent(
                 }
 
                 TermsCheckboxRow(
-                    checked = termsAccepted,
+                    checked = uiState.termsAccepted,
                     onCheckedChange = onTermsAcceptedChange,
                     onTermsOfUseClick = onTermsOfUseClick,
                     onPrivacyPolicyClick = onPrivacyPolicyClick,
@@ -270,17 +252,13 @@ private fun RegisterScreenPreview() {
     EvoFitTheme {
         RegisterContent(
             uiState = RegisterUiState(),
-            name = "",
             onNameChange = {},
             onEmailChange = {},
             onPasswordChange = {},
             onTogglePasswordVisibility = {},
-            confirmPassword = "",
             onConfirmPasswordChange = {},
-            isConfirmPasswordVisible = false,
             onToggleConfirmPasswordVisibility = {},
             passwordsMismatch = false,
-            termsAccepted = false,
             onTermsAcceptedChange = {},
             onTermsOfUseClick = {},
             onPrivacyPolicyClick = {},

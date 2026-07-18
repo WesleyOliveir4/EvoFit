@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -7,11 +8,11 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,42 +22,54 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Auth
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordHeader
+import com.example.evofit.presentation.ui.feature.authentication.state.RecoverPasswordUiState
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextSecondary
+import org.koin.androidx.compose.koinViewModel
 
-/**
- * "Recuperar senha" screen (mock screen 5). Collects the e-mail that will
- * receive the verification code. Business logic (SendPasswordResetCodeUseCase
- * + Firebase) will be wired to this screen's ViewModel in a later step of the
- * plan — for now the e-mail is kept as local UI state.
- */
 @Composable
 fun RecoverPasswordScreen(
+    viewModel: RecoverPasswordViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onSendCodeClick: (email: String) -> Unit = {}
+    onCodeSent: (email: String) -> Unit = {}
 ) {
-    var email by remember { mutableStateOf("") }
-    val isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    val isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(uiState.email).matches()
+
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onCodeSent(uiState.email)
+            viewModel.resetSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
 
     RecoverPasswordContent(
-        email = email,
-        onEmailChange = { email = it },
+        uiState = uiState,
+        onEmailChange = viewModel::onEmailChange,
         canSubmit = isEmailValid,
         onBackClick = onBackClick,
-        onSendCodeClick = { onSendCodeClick(email) }
+        onSendCodeClick = viewModel::onSendCodeClick
     )
 }
 
 @Composable
 fun RecoverPasswordContent(
-    email: String,
+    uiState: RecoverPasswordUiState,
     onEmailChange: (String) -> Unit,
     canSubmit: Boolean,
     onBackClick: () -> Unit,
     onSendCodeClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
@@ -81,7 +94,7 @@ fun RecoverPasswordContent(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 LoginInputField(
-                    value = email,
+                    value = uiState.email,
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
@@ -93,14 +106,14 @@ fun RecoverPasswordContent(
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 )
             }
 
             RecoverPasswordFooter(
                 onSendCodeClick = onSendCodeClick,
                 enabled = canSubmit,
-                isLoading = isLoading,
+                isLoading = uiState.isLoading,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
         }
@@ -112,7 +125,7 @@ fun RecoverPasswordContent(
 private fun RecoverPasswordScreenPreview() {
     EvoFitTheme {
         RecoverPasswordContent(
-            email = "",
+            uiState = RecoverPasswordUiState(),
             onEmailChange = {},
             canSubmit = false,
             onBackClick = {},

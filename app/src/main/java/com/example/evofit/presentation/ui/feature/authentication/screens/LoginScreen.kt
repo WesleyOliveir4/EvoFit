@@ -28,6 +28,7 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Logi
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginSocialDivider
 import com.example.evofit.presentation.ui.feature.authentication.components.SocialLoginButtons
+import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.example.evofit.presentation.ui.theme.*
 
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
@@ -52,37 +53,29 @@ fun LoginScreen(
     }
 
     LoginContent(
-        email = uiState.email,
+        uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
-        password = uiState.password,
         onPasswordChange = viewModel::onPasswordChange,
-        isPasswordVisible = uiState.isPasswordVisible,
         onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
         onLoginClick = viewModel::onLoginClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onSignUpClick = onSignUpClick,
         onGoogleClick = onGoogleClick,
-        onAppleClick = onAppleClick,
-        isLoading = uiState.isLoading,
-        errorMessage = uiState.error
+        onAppleClick = onAppleClick
     )
 }
 
 @Composable
 fun LoginContent(
-    email: String,
+    uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
-    password: String,
     onPasswordChange: (String) -> Unit,
-    isPasswordVisible: Boolean,
     onTogglePasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
     onGoogleClick: () -> Unit = {},
     onAppleClick: () -> Unit = {},
-    isLoading: Boolean = false,
-    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -107,9 +100,9 @@ fun LoginContent(
                     .padding(vertical = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (errorMessage != null) {
+                if (uiState.error != null) {
                     Text(
-                        text = errorMessage,
+                        text = uiState.error,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -117,7 +110,7 @@ fun LoginContent(
 
                 // Campo de E-mail
                 LoginInputField(
-                    value = email,
+                    value = uiState.email,
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
@@ -129,12 +122,12 @@ fun LoginContent(
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 )
 
                 // Campo de Senha
                 LoginInputField(
-                    value = password,
+                    value = uiState.password,
                     onValueChange = onPasswordChange,
                     label = stringResource(id = R.string.login_label_password),
                     placeholder = stringResource(id = R.string.login_placeholder_password),
@@ -148,8 +141,8 @@ fun LoginContent(
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
-                                imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (isPasswordVisible) {
+                                imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (uiState.isPasswordVisible) {
                                     stringResource(id = R.string.login_content_desc_hide_password)
                                 } else {
                                     stringResource(id = R.string.login_content_desc_show_password)
@@ -158,9 +151,9 @@ fun LoginContent(
                             )
                         }
                     },
-                    visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 )
 
                 // Esqueci a Senha (Alinhado à Direita)
@@ -174,13 +167,13 @@ fun LoginContent(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .clickable(enabled = !isLoading) { onForgotPasswordClick() }
+                            .clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
                             .padding(vertical = 4.dp)
                     )
                 }
             }
 
-            if (isLoading) {
+            if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     color = AppGreen
@@ -191,13 +184,13 @@ fun LoginContent(
             LoginFooter(
                 onLoginClick = onLoginClick,
                 onSignUpClick = onSignUpClick,
-                enabled = !isLoading,
+                enabled = !uiState.isLoading,
                 extraContent = {
                     LoginSocialDivider()
                     SocialLoginButtons(
                         onGoogleClick = onGoogleClick,
                         onAppleClick = onAppleClick,
-                        enabled = !isLoading
+                        enabled = !uiState.isLoading
                     )
                 }
             )
@@ -210,11 +203,9 @@ fun LoginContent(
 private fun LoginScreenPreview() {
     EvoFitTheme {
         LoginContent(
-            email = "",
+            uiState = LoginUiState(),
             onEmailChange = {},
-            password = "",
             onPasswordChange = {},
-            isPasswordVisible = false,
             onTogglePasswordVisibility = {},
             onLoginClick = {},
             onForgotPasswordClick = {},

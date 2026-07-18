@@ -6,8 +6,7 @@ import com.example.evofit.domain.usecase.RegisterUseCase
 import com.example.evofit.domain.usecase.RegisterUseCaseImpl
 import com.example.evofit.domain.usecase.LoginUseCase
 import com.example.evofit.domain.usecase.LoginUseCaseImpl
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
@@ -320,6 +319,9 @@ val profileModule = module {
 val authModule = module {
     viewModel { RegisterViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
+    viewModel { RecoverPasswordViewModel() }
+    viewModel { VerifyCodeViewModel() }
+    viewModel { NewPasswordViewModel() }
 }
 
 val appModule = listOf(
