@@ -6,7 +6,7 @@ import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
@@ -20,9 +20,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WorkoutPreviewViewModel(
-    private val workoutId: Int,
+    private val workoutId: String,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getExerciseDataUseCase: GetExerciseDataUseCase,
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
@@ -37,11 +37,11 @@ class WorkoutPreviewViewModel(
 
     private fun loadWorkoutPreview() {
         viewModelScope.launch {
-            getWorkoutByIdUseCase(workoutId.toLong())
+            getWorkoutByIdUseCase(workoutId)
                 .map { workout ->
                     workout?.let { workoutSelected ->
                         val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
-                        val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                        val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                             .associateBy { it.id }
 
                         val exercises = workoutSelected.exercises.map { workoutExercise ->
@@ -110,7 +110,7 @@ class WorkoutPreviewViewModel(
     fun onDeleteClicked() {
         viewModelScope.launch {
             val activeSession = getActiveWorkoutSessionUseCase().first()
-            if (activeSession != null && activeSession.workout.id == workoutId.toLong()) {
+            if (activeSession != null && activeSession.workout.id == workoutId) {
                 _uiState.update { it.copy(showDeleteBlockedDialog = true) }
             } else {
                 _uiState.update { it.copy(showDeleteDialog = true) }
@@ -128,7 +128,7 @@ class WorkoutPreviewViewModel(
 
     fun onConfirmDelete() {
         viewModelScope.launch {
-            deleteWorkoutUseCase(workoutId.toLong())
+            deleteWorkoutUseCase(workoutId)
             _uiState.update { it.copy(showDeleteDialog = false, isDeleted = true) }
         }
     }
@@ -136,7 +136,7 @@ class WorkoutPreviewViewModel(
     fun onEditClicked(onProceed: () -> Unit) {
         viewModelScope.launch {
             val activeSession = getActiveWorkoutSessionUseCase().first()
-            if (activeSession != null && activeSession.workout.id == workoutId.toLong()) {
+            if (activeSession != null && activeSession.workout.id == workoutId) {
                 _uiState.update { it.copy(showEditBlockedDialog = true) }
             } else {
                 onProceed()

@@ -21,8 +21,8 @@ import kotlinx.serialization.Serializable
     indices = [Index(value = ["workoutExerciseId"])]
 )
 data class ExerciseSetEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val workoutExerciseId: Long,
+    @PrimaryKey val id: String,
+    val workoutExerciseId: String,
     val setNumber: Int,
     val reps: Int,
     val load: Double,

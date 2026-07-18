@@ -49,7 +49,7 @@ fun ExerciseTrackingCard(
     index: Int,
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
-    onToggleSetDone: (Long, Int) -> Unit,
+    onToggleSetDone: (String, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(

@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
@@ -34,7 +34,7 @@ fun OnboardSummaryScreen(
     onStartTraining: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val userData by viewModel.uiState.collectAsStateWithLifecycle()
 
     OnboardSummaryContent(
         userData = userData,
@@ -50,7 +50,7 @@ fun OnboardSummaryScreen(
 
 @Composable
 fun OnboardSummaryContent(
-    userData: UserOnboardingData,
+    userData: OnboardingUiState,
     currentPage: Int,
     totalPages: Int,
     onStartTraining: () -> Unit
@@ -205,7 +205,7 @@ fun SummaryRow(
 fun OnboardSummaryScreenPreview() {
     EvoFitTheme {
         OnboardSummaryContent(
-            userData = UserOnboardingData(
+            userData = OnboardingUiState(
                 name = "Wesley",
                 age = "28",
                 weight = "78",

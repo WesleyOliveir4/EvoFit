@@ -1,11 +1,8 @@
 package com.example.evofit.presentation.model
 
-import androidx.compose.ui.graphics.vector.ImageVector
-
 data class WorkoutUIModel(
-    val id: Int,
+    val id: String,
     val title: String,
     val exercises: Int,
-    val series: Int,
-    val icon: ImageVector
+    val series: Int
 )

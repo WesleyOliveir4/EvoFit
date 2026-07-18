@@ -2,8 +2,12 @@ package com.example.evofit.domain.usecase
 
 import java.util.Calendar
 
-class GetCurrentWeekRangeUseCase {
-    operator fun invoke(): Long {
+interface GetCurrentWeekRangeUseCase {
+    operator fun invoke(): Long
+}
+
+class GetCurrentWeekRangeUseCaseImpl : GetCurrentWeekRangeUseCase {
+    override fun invoke(): Long {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
         calendar.set(Calendar.HOUR_OF_DAY, 0)

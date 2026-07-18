@@ -3,7 +3,8 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmod
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SelectExercisesUiState
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SelectExercisesViewModel(
-    private val getExerciseDataUseCase: GetExerciseDataUseCase,
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
+    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase
 ) : ViewModel() {
 
@@ -24,15 +26,15 @@ class SelectExercisesViewModel(
     private val _selectedExerciseIds = mutableStateListOf<String>()
     val selectedExerciseIds: List<String> get() = _selectedExerciseIds
 
-    fun loadExercises(muscleGroupId: String, editWorkoutId: Long? = null) {
+    fun loadExercises(muscleGroupId: String, editWorkoutId: String? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
 
-            val muscleGroups = getExerciseDataUseCase.getMuscleGroups()
+            val muscleGroups = getMuscleGroupsUseCase()
             val group = muscleGroups.find { it.id.lowercase() == muscleGroupId.lowercase() }
             val groupName = group?.name ?: muscleGroupId.replaceFirstChar { it.uppercase() }
 
-            val exercises = getExerciseDataUseCase.getExercisesByGroup(muscleGroupId)
+            val exercises = getExercisesByGroupUseCase(muscleGroupId)
             val uiExercises = exercises.map {
                 ExerciseSelectionUIModel(it.id, it.name)
             }

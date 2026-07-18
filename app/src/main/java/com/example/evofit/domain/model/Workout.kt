@@ -1,7 +1,7 @@
 package com.example.evofit.domain.model
 
 data class Workout(
-    val id: Long = 0,
+    val id: String = "",
     val userId: String,
     val name: String,
     val muscleGroupId: String,

@@ -3,7 +3,7 @@ package com.example.evofit.presentation.model
 import com.example.evofit.domain.model.MeasurementUnit
 
 data class ExercisePreviewItem(
-    val workoutExerciseId: Long,
+    val workoutExerciseId: String,
     val name: String,
     val setsCount: Int,
     val weight: Double,

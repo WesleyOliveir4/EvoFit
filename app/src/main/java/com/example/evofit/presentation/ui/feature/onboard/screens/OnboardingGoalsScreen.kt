@@ -22,9 +22,8 @@ import com.example.evofit.domain.model.Exercise
 import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
-import com.example.evofit.presentation.mapper.getDisplayText
+import com.example.evofit.presentation.model.GoalUIModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
-import androidx.compose.ui.platform.LocalContext
 import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
@@ -42,17 +41,17 @@ fun OnboardingGoalsScreen(
     onSkip: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     OnboardingGoalsContent(
-        activeGoals = userData.goals,
+        activeGoals = uiState.goals,
         suggestions = remember { viewModel.getSuggestions() },
         muscleGroups = remember { viewModel.getMuscleGroups() },
         getExercises = remember { { viewModel.getExercisesByGroup(it) } },
         currentPage = currentPage,
         totalPages = totalPages,
         onAddGoal = remember { { goal -> viewModel.addGoal(goal) } },
-        onRemoveGoal = remember { { goal -> viewModel.removeGoal(goal) } },
+        onRemoveGoal = remember { { goalId -> viewModel.removeGoal(goalId) } },
         onSkip = remember { { viewModel.saveAndNext(onSkip) } },
         onFinish = remember { { viewModel.saveAndNext(onContinue) } }
     )
@@ -60,14 +59,14 @@ fun OnboardingGoalsScreen(
 
 @Composable
 fun OnboardingGoalsContent(
-    activeGoals: List<UserGoal>,
+    activeGoals: List<GoalUIModel>,
     suggestions: List<GoalSuggestion>,
     muscleGroups: List<MuscleGroup>,
     getExercises: (String) -> List<Exercise>,
     currentPage: Int,
     totalPages: Int,
     onAddGoal: (UserGoal) -> Unit,
-    onRemoveGoal: (UserGoal) -> Unit,
+    onRemoveGoal: (String) -> Unit,
     onSkip: () -> Unit,
     onFinish: () -> Unit
 ) {
@@ -136,7 +135,6 @@ fun OnboardingGoalsContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        val context = LocalContext.current
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -148,9 +146,9 @@ fun OnboardingGoalsContent(
                 key = { it.id }
             ) { goal ->
                 ActiveGoalItem(
-                    text = goal.getDisplayText(context),
+                    text = goal.displayText,
                     onRemoveClick = {
-                        onRemoveGoal(goal)
+                        onRemoveGoal(goal.id)
                     }
                 )
             }

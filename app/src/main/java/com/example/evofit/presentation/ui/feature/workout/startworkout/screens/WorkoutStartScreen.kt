@@ -62,9 +62,9 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun WorkoutStartScreen(
-    workoutId: Int,
+    workoutId: String,
     viewModel: WorkoutStartViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
-    onFinishWorkoutClick: (Long?) -> Unit = {},
+    onFinishWorkoutClick: (String?) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -113,13 +113,13 @@ fun WorkoutStartScreen(
 @Composable
 fun WorkoutStartContent(
     uiState: WorkoutStartUiState,
-    onToggleSetDone: (Long, Int) -> Unit,
+    onToggleSetDone: (String, Int) -> Unit,
     onFinishWorkoutClick: () -> Unit,
     onBackClick: () -> Unit = {}
 ) {
     val totalSets = uiState.exercises.sumOf { it.sets.size }
     val doneSets = uiState.exercises.sumOf { it.sets.count { set -> set.isDone } }
-    var expandedWorkoutExerciseIds by remember { mutableStateOf(setOf<Long>()) }
+    var expandedWorkoutExerciseIds by remember { mutableStateOf(setOf<String>()) }
 
     LaunchedEffect(uiState.exercises) {
         if (expandedWorkoutExerciseIds.isEmpty() && uiState.exercises.isNotEmpty()) {
@@ -231,7 +231,10 @@ fun WorkoutStartContent(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(uiState.exercises) { index, exercise ->
+            itemsIndexed(
+                items = uiState.exercises,
+                key = { _, exercise -> exercise.workoutExerciseId }
+            ) { index, exercise ->
                 ExerciseTrackingCard(
                     exercise = exercise,
                     index = index,
@@ -259,7 +262,7 @@ private fun WorkoutStartScreenPreview() {
                 workoutTitle = "Peito",
                 exercises = listOf(
                     ExerciseProgressState(
-                        workoutExerciseId = 1L,
+                        workoutExerciseId = "1",
                         exerciseId = "1",
                         name = "Supino reto",
                         sets = listOf(

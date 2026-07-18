@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
-import com.example.evofit.presentation.mapper.toIcon
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroup
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
@@ -116,12 +115,12 @@ fun MuscleGroupSelectionContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(uiState.trainedGroups) { domainGroup ->
-                        val isSelected = domainGroup.id == selectedGroupId
-                        val uiGroup = remember(domainGroup) {
+                    items(uiState.trainedGroups, key = { it.id }) { groupItem ->
+                        val isSelected = groupItem.id == selectedGroupId
+                        val uiGroup = remember(groupItem) {
                             MuscleGroup(
-                                name = domainGroup.name,
-                                icon = domainGroup.type.toIcon()
+                                name = groupItem.name,
+                                icon = groupItem.temporaryIcon
                             )
                         }
 
@@ -129,8 +128,8 @@ fun MuscleGroupSelectionContent(
                             group = uiGroup,
                             isSelected = isSelected,
                             onClick = {
-                                selectedGroupId = domainGroup.id
-                                onGroupSelected(domainGroup.id, domainGroup.name)
+                                selectedGroupId = groupItem.id
+                                onGroupSelected(groupItem.id, groupItem.name)
                             }
                         )
                     }

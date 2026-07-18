@@ -4,6 +4,24 @@ import android.content.Context
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
+import com.example.evofit.presentation.model.GoalUIModel
+
+/**
+ * Único ponto de tradução UserGoal (domínio) -> GoalUIModel (apresentação).
+ * A partir daqui, telas/composables nunca mais precisam conhecer UserGoal.
+ */
+fun UserGoal.toUiModel(context: Context): GoalUIModel {
+    val categoryLabel = when (this) {
+        is UserGoal.Strength -> context.getString(R.string.goal_category_label_strength)
+        is UserGoal.Cardio -> context.getString(R.string.goal_category_label_cardio)
+        is UserGoal.Weight -> context.getString(R.string.goal_category_label_weight)
+    }
+    return GoalUIModel(
+        id = id,
+        categoryLabel = categoryLabel,
+        displayText = getDisplayText(context)
+    )
+}
 
 fun UserGoal.getDisplayText(context: Context): String {
     return when (this) {

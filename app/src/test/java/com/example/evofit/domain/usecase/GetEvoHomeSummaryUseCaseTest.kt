@@ -14,7 +14,19 @@ import java.util.*
 class GetEvoHomeSummaryUseCaseTest {
 
     private val repository: WorkoutRepository = mockk()
-    private val useCase = GetEvoHomeSummaryUseCaseImpl(repository)
+    private val getWorkoutDoneHistoryUseCase = GetWorkoutDoneHistoryUseCaseImpl(repository)
+    private val filterWorkoutHistoryByPeriodUseCase: FilterWorkoutHistoryByPeriodUseCase =
+        FilterWorkoutHistoryByPeriodUseCaseImpl()
+    private val useCase = GetEvoHomeSummaryUseCaseImpl(
+        getWorkoutDoneHistoryUseCase,
+        filterWorkoutHistoryByPeriodUseCase,
+        GetStrengthGainsUseCaseImpl(),
+        GetMostEvolvedMuscleUseCaseImpl(),
+        GetWorkoutsCountUseCaseImpl(),
+        GetLeastTrainedGroupUseCaseImpl(),
+        GetKmPerWeekUseCaseImpl(),
+        GetAverageWorkoutTimeUseCaseImpl()
+    )
 
     @Test
     fun `when data is sufficient, should calculate all metrics correctly`() = runBlocking {
@@ -29,7 +41,7 @@ class GetEvoHomeSummaryUseCaseTest {
             createWorkoutDone(userId, index.toLong(), "Supino", "ex1", load, muscleGroup)
         }
 
-        coEvery { repository.getWorkoutDoneHistory(userId, period) } returns history
+        coEvery { repository.getWorkoutDoneHistory(userId) } returns history
 
         // Act
         val result = useCase(userId, period)
@@ -46,7 +58,7 @@ class GetEvoHomeSummaryUseCaseTest {
     fun `when insufficient data, metrics should be null`() = runBlocking {
         // Arrange
         val userId = "user123"
-        val period = EvoPeriod.LAST_7_DAYS
+        val period = EvoPeriod.ALL_TIME
         val muscleGroup = MuscleGroup("mg1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH)
         
         // Only 5 records
@@ -54,7 +66,7 @@ class GetEvoHomeSummaryUseCaseTest {
             createWorkoutDone(userId, index.toLong(), "Supino", "ex1", index * 10.0, muscleGroup)
         }
 
-        coEvery { repository.getWorkoutDoneHistory(userId, period) } returns history
+        coEvery { repository.getWorkoutDoneHistory(userId) } returns history
 
         // Act
         val result = useCase(userId, period)

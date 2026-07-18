@@ -15,12 +15,12 @@ class WorkoutDraggableListState(
     private val onMoveState: State<(Int, Int) -> Unit>,
     private val density: Density
 ) {
-    var draggedItemId by mutableStateOf<Int?>(null)
+    var draggedItemId by mutableStateOf<String?>(null)
         private set
     var dragOffset by mutableFloatStateOf(0f)
         private set
 
-    fun onDragStart(id: Int) {
+    fun onDragStart(id: String) {
         draggedItemId = id
         dragOffset = 0f
     }

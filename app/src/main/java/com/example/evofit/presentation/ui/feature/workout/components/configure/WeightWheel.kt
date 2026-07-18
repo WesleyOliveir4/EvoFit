@@ -82,7 +82,10 @@ fun WeightWheel(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(weights.size) { index ->
+                items(
+                    count = weights.size,
+                    key = { index -> weights[index] }
+                ) { index ->
                     val weight = weights[index]
                     val isWhole = weight % 1 == 0.0
                     Text(
@@ -103,7 +106,10 @@ fun WeightWheel(
                 modifier = Modifier.fillMaxSize(),
                 userScrollEnabled = false
             ) {
-                items(weights.size) { index ->
+                items(
+                    count = weights.size,
+                    key = { index -> weights[index] }
+                ) { index ->
                     val weight = weights[index]
                     val isWhole = weight % 1 == 0.0
                     Text(

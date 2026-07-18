@@ -2,6 +2,7 @@ package com.example.evofit.data.local.dao
 
 import androidx.room.*
 import com.example.evofit.data.local.entities.*
+import com.example.evofit.data.local.relations.ActiveSessionWithSets
 import com.example.evofit.data.local.relations.FullWorkout
 import kotlinx.coroutines.flow.Flow
 
@@ -32,13 +33,13 @@ interface UserDao {
 
     // Workouts
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkout(workout: WorkoutEntity): Long
+    suspend fun insertWorkout(workout: WorkoutEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutExercise(workoutExercise: WorkoutExerciseEntity): Long
+    suspend fun insertWorkoutExercise(workoutExercise: WorkoutExerciseEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExerciseSets(sets: List<ExerciseSetEntity>): List<Long>
+    suspend fun insertExerciseSets(sets: List<ExerciseSetEntity>)
 
     @Transaction
     suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>): Long {
@@ -65,27 +66,27 @@ interface UserDao {
 
     @Transaction
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
-    fun getFullWorkoutById(workoutId: Long): Flow<FullWorkout?>
+    fun getFullWorkoutById(workoutId: String): Flow<FullWorkout?>
 
     @Transaction
     suspend fun insertFullWorkoutReturnId(
         workout: WorkoutEntity,
         exercises: List<WorkoutExerciseEntity>,
         sets: List<List<ExerciseSetEntity>>
-    ): Long {
-        val workoutId = insertWorkout(workout)
+    ): String {
+        insertWorkout(workout)
         exercises.forEachIndexed { index, exercise ->
-            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workoutId))
-            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+            insertWorkoutExercise(exercise)
+            insertExerciseSets(sets[index])
         }
-        return workoutId
+        return workout.workoutId
     }
 
     @Query("DELETE FROM workout_exercises WHERE workoutId = :workoutId")
-    suspend fun deleteWorkoutExercisesForWorkout(workoutId: Long)
+    suspend fun deleteWorkoutExercisesForWorkout(workoutId: String)
 
     @Query("DELETE FROM workouts WHERE workoutId = :workoutId")
-    suspend fun deleteWorkoutById(workoutId: Long)
+    suspend fun deleteWorkoutById(workoutId: String)
 
     /**
      * Atualiza um treino existente substituindo por completo seus exercícios/séries.
@@ -100,8 +101,8 @@ interface UserDao {
         updateWorkouts(listOf(workout))
         deleteWorkoutExercisesForWorkout(workout.workoutId)
         exercises.forEachIndexed { index, exercise ->
-            val exerciseId = insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))
-            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exerciseId) })
+            insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))
+            insertExerciseSets(sets[index].map { it.copy(workoutExerciseId = exercise.id) })
         }
     }
 
@@ -111,4 +112,18 @@ interface UserDao {
 
     @Query("SELECT * FROM workout_done_history WHERE userId = :userId")
     suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
+
+    // Active Session
+    @Transaction
+    @Query("SELECT * FROM active_session LIMIT 1")
+    fun getActiveSessionWithSets(): Flow<ActiveSessionWithSets?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActiveSession(session: ActiveSessionEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActiveSessionSets(sets: List<ActiveSessionSetEntity>)
+
+    @Query("DELETE FROM active_session")
+    suspend fun deleteActiveSession()
 }

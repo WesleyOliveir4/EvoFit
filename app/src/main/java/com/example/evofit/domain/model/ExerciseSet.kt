@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ExerciseSet(
-    val id: Long = 0,
+    val id: String = "",
     val exerciseName: String,
-    val workoutExerciseId: Long = 0,
+    val workoutExerciseId: String = "",
     val setNumber: Int,
     val reps: Int,
     val load: Double,

@@ -14,7 +14,8 @@ fun UserOnboardingData.toEntity(userId: String = UUID.randomUUID().toString()): 
         age = age,
         weight = weight,
         height = height,
-        isOnboardingCompleted = false
+        isOnboardingCompleted = false,
+        updatedAt = System.currentTimeMillis()
     )
 }
 

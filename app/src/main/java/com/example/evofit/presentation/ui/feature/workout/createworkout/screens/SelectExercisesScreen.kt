@@ -36,8 +36,8 @@ fun SelectExercisesScreen(
     muscleGroupId: String,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
-    onConfigureExercisesClick: (List<String>, String, Long?) -> Unit,
-    editWorkoutId: Long? = null,
+    onConfigureExercisesClick: (List<String>, String, String?) -> Unit,
+    editWorkoutId: String? = null,
     viewModel: SelectExercisesViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()

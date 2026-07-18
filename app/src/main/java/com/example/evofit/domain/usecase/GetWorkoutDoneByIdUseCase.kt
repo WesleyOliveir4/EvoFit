@@ -1,14 +1,17 @@
 package com.example.evofit.domain.usecase
 
 import com.example.evofit.domain.model.WorkoutDone
-import com.example.evofit.domain.repository.WorkoutRepository
 
-class GetWorkoutDoneByIdUseCase(
-    private val repository: WorkoutRepository,
+interface GetWorkoutDoneByIdUseCase {
+    suspend operator fun invoke(workoutDoneId: String): WorkoutDone?
+}
+
+class GetWorkoutDoneByIdUseCaseImpl(
+    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getUserIdUseCase: GetUserIdUseCase
-) {
-    suspend operator fun invoke(workoutDoneId: Long): WorkoutDone? {
+) : GetWorkoutDoneByIdUseCase {
+    override suspend fun invoke(workoutDoneId: String): WorkoutDone? {
         val userId = getUserIdUseCase() ?: return null
-        return repository.getWorkoutDoneHistory(userId).find { it.id == workoutDoneId }
+        return getWorkoutDoneHistoryUseCase(userId).find { it.id == workoutDoneId }
     }
 }

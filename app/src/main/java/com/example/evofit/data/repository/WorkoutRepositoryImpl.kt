@@ -1,23 +1,30 @@
 package com.example.evofit.data.repository
 
 import com.example.evofit.data.datasource.LocalExerciseDataSource
-import com.example.evofit.data.local.dao.UserDao
-import com.example.evofit.data.mapper.toData
+import com.example.evofit.data.datasource.WorkoutLocalDataSource
+import com.example.evofit.data.datasource.WorkoutRemoteDataSource
 import com.example.evofit.data.mapper.toDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.WorkoutRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class WorkoutRepositoryImpl(
-    private val userDao: UserDao,
-    private val exerciseDataSource: LocalExerciseDataSource
+    private val workoutDataSource: WorkoutLocalDataSource,
+    private val exerciseDataSource: LocalExerciseDataSource,
+    private val workoutRemoteDataSource: WorkoutRemoteDataSource
 ) : WorkoutRepository {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
     override fun getWorkouts(userId: String): Flow<List<Workout>> {
-        return userDao.getFullWorkouts(userId).map { fullWorkouts ->
+        return workoutDataSource.getFullWorkouts(userId).map { fullWorkouts ->
             val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
             fullWorkouts.map { fullWorkout ->
                 val group = muscleGroups.find { it.id == fullWorkout.workout.muscleGroupId }
@@ -27,8 +34,8 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override fun getWorkoutById(workoutId: Long): Flow<Workout?> {
-        return userDao.getFullWorkoutById(workoutId).map { fullWorkout ->
+    override fun getWorkoutById(workoutId: String): Flow<Workout?> {
+        return workoutDataSource.getFullWorkoutById(workoutId).map { fullWorkout ->
             fullWorkout?.let {
                 val group = exerciseDataSource.getAllMuscleGroups()
                     .find { it.id == fullWorkout.workout.muscleGroupId }
@@ -39,55 +46,113 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    /**
-     * Constrói um resolver de id -> nome de exercício a partir do catálogo local,
-     * usado para preencher ExerciseSet.exerciseName ao montar o domínio a partir das entidades.
-     */
     private fun buildExerciseNameResolver(exerciseIds: List<String>): (String) -> String {
         val namesById = exerciseDataSource.getExercisesByIds(exerciseIds).associate { it.id to it.name }
         return { exerciseId -> namesById[exerciseId] ?: "" }
     }
 
-    override suspend fun saveWorkout(workout: Workout): Long {
-        val nextOrderIndex = (userDao.getMaxOrderIndex(workout.userId) ?: -1) + 1
-        val workoutEntity = workout.toEntity().copy(orderIndex = nextOrderIndex)
+    override suspend fun saveWorkout(workout: Workout): String {
+        val nextOrderIndex = (workoutDataSource.getMaxOrderIndex(workout.userId) ?: -1) + 1
         
-        val exercises = workout.exercises.map { it.toEntity(0) }
-        val sets = workout.exercises.map { exercise ->
-            exercise.sets.map { it.toEntity(0) }
+        val workoutId = java.util.UUID.randomUUID().toString()
+        val workoutEntity = workout.toEntity().copy(
+            workoutId = workoutId,
+            orderIndex = nextOrderIndex
+        )
+        
+        val exercises = workout.exercises.map { exercise ->
+            val exerciseId = java.util.UUID.randomUUID().toString()
+            val exerciseEntity = exercise.toEntity(workoutId).copy(id = exerciseId)
+            val sets = exercise.sets.map { set ->
+                set.toEntity(exerciseId).copy(id = java.util.UUID.randomUUID().toString())
+            }
+            exerciseEntity to sets
         }
 
-        return userDao.insertFullWorkoutReturnId(workoutEntity, exercises, sets)
+        val exerciseEntities = exercises.map { it.first }
+        val setsEntities = exercises.map { it.second }
+
+        val insertedId = workoutDataSource.insertFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
+
+        return insertedId
     }
 
-    override suspend fun updateWorkout(workout: Workout): Long {
+    override suspend fun updateWorkout(workout: Workout): String {
         val workoutEntity = workout.toEntity()
 
-        val exercises = workout.exercises.map { it.toEntity(0) }
-        val sets = workout.exercises.map { exercise ->
-            exercise.sets.map { it.toEntity(0) }
+        val exercises = workout.exercises.map { exercise ->
+            val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
+            val exerciseEntity = exercise.toEntity(workout.id).copy(id = exerciseId)
+            val sets = exercise.sets.map { set ->
+                val setId = if (set.id.isEmpty()) java.util.UUID.randomUUID().toString() else set.id
+                set.toEntity(exerciseId).copy(id = setId)
+            }
+            exerciseEntity to sets
         }
 
-        userDao.updateFullWorkout(workoutEntity, exercises, sets)
+        val exerciseEntities = exercises.map { it.first }
+        val setsEntities = exercises.map { it.second }
+
+        workoutDataSource.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
+
         return workout.id
     }
 
-    override suspend fun deleteWorkout(workoutId: Long) {
-        userDao.deleteWorkoutById(workoutId)
+    override suspend fun deleteWorkout(workoutId: String) {
+        val workout = workoutDataSource.getFullWorkoutById(workoutId).firstOrNull()?.workout
+        workoutDataSource.deleteWorkoutById(workoutId)
+
+        workout?.let {
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.deleteWorkout(it.userId, workoutId)
+                } catch (e: Exception) {
+                    // Log error
+                }
+            }
+        }
     }
 
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
-        userDao.updateWorkoutsOrder(workouts.map { it.toEntity() })
+        val entities = workouts.map { it.toEntity() }
+        workoutDataSource.updateWorkoutsOrder(entities)
+
+        if (entities.isNotEmpty()) {
+            val userId = entities.first().userId
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.updateWorkoutsOrder(userId, entities)
+                } catch (e: Exception) {
+                    // Log error
+                }
+            }
+        }
     }
 
     override suspend fun getMaxOrderIndex(userId: String): Int {
-        return userDao.getMaxOrderIndex(userId) ?: -1
+        return workoutDataSource.getMaxOrderIndex(userId) ?: -1
     }
 
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
-        val existingHistory = userDao.getWorkoutDoneHistory(userId)
+        val existingHistory = workoutDataSource.getWorkoutDoneHistory(userId)
         
-        val nextId = (existingHistory?.history?.maxOfOrNull { it.id } ?: 0L) + 1
+        val nextId = java.util.UUID.randomUUID().toString()
         val workoutWithId = workoutDone.copy(id = nextId)
         
         val updatedList = if (existingHistory != null) {
@@ -96,48 +161,23 @@ class WorkoutRepositoryImpl(
             listOf(workoutWithId)
         }
         
-        userDao.insertWorkoutDoneHistory(
-            WorkoutDoneHistoryEntity(
-                userId = userId,
-                history = updatedList
-            )
+        val historyEntity = WorkoutDoneHistoryEntity(
+            userId = userId,
+            history = updatedList
         )
+
+        workoutDataSource.insertWorkoutDoneHistory(historyEntity)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveWorkoutDoneHistory(historyEntity)
+            } catch (e: Exception) {
+                // Log error
+            }
+        }
     }
 
     override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
-        return userDao.getWorkoutDoneHistory(userId)?.history ?: emptyList()
-    }
-
-    override suspend fun getWorkoutDoneHistory(userId: String, period: com.example.evofit.domain.model.EvoPeriod): List<WorkoutDone> {
-        val allHistory = getWorkoutDoneHistory(userId)
-        val startDate = getStartDateForPeriod(period) ?: return allHistory
-
-        return allHistory.filter { workout ->
-            val workoutDate = com.example.evofit.presentation.mapper.DateMapper.parseDate(workout.date)
-            workoutDate != null && workoutDate.after(startDate)
-        }
-    }
-
-    private fun getStartDateForPeriod(period: com.example.evofit.domain.model.EvoPeriod): java.util.Date? {
-        val calendar = java.util.Calendar.getInstance()
-        return when (period) {
-            com.example.evofit.domain.model.EvoPeriod.LAST_7_DAYS -> {
-                calendar.add(java.util.Calendar.DAY_OF_YEAR, -7)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_30_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -1)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_90_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -3)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.LAST_180_DAYS -> {
-                calendar.add(java.util.Calendar.MONTH, -6)
-                calendar.time
-            }
-            com.example.evofit.domain.model.EvoPeriod.ALL_TIME -> null
-        }
+        return workoutDataSource.getWorkoutDoneHistory(userId)?.history ?: emptyList()
     }
 }

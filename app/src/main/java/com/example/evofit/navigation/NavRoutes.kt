@@ -26,21 +26,21 @@ sealed class NavRoutes(val route: String) {
 
     object NewWorkout : NavRoutes("new_workout")
     object SelectExercises : NavRoutes("select_exercises/{muscleGroupId}?editWorkoutId={editWorkoutId}") {
-        fun createRoute(muscleGroupId: String, editWorkoutId: Long? = null) =
+        fun createRoute(muscleGroupId: String, editWorkoutId: String? = null) =
             "select_exercises/$muscleGroupId?editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
     }
     object ConfigureWorkout : NavRoutes("configure_workout/{exerciseIds}/{workoutName}?editWorkoutId={editWorkoutId}") {
-        fun createRoute(exerciseIds: String, workoutName: String, editWorkoutId: Long? = null) =
+        fun createRoute(exerciseIds: String, workoutName: String, editWorkoutId: String? = null) =
             "configure_workout/$exerciseIds/$workoutName?editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
     }
     object WorkoutPreview : NavRoutes("workout_preview/{workoutId}") {
-        fun createRoute(workoutId: Int) = "workout_preview/$workoutId"
+        fun createRoute(workoutId: String) = "workout_preview/$workoutId"
     }
     object WorkoutStart : NavRoutes("workout_start/{workoutId}") {
-        fun createRoute(workoutId: Int) = "workout_start/$workoutId"
+        fun createRoute(workoutId: String) = "workout_start/$workoutId"
     }
     object WorkoutResume : NavRoutes("workout_resume?workoutId={workoutId}&workoutDoneId={workoutDoneId}&editWorkoutId={editWorkoutId}") {
-        fun createRoute(workoutId: Long? = null, workoutDoneId: Long? = null, editWorkoutId: Long? = null) =
+        fun createRoute(workoutId: String? = null, workoutDoneId: String? = null, editWorkoutId: String? = null) =
             "workout_resume?workoutId=${workoutId ?: AppConstants.INVALID_ID}&workoutDoneId=${workoutDoneId ?: AppConstants.INVALID_ID}&editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
     }
 }

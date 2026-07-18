@@ -1,10 +1,7 @@
 package com.example.evofit.presentation.ui.feature.workout.home.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.domain.model.ActiveWorkoutSession
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
@@ -12,7 +9,10 @@ import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
-import com.example.evofit.presentation.mapper.DateMapper
+import com.example.evofit.core.common.DateMapper
+import com.example.evofit.presentation.model.ActiveSessionUIModel
+import com.example.evofit.presentation.model.ExercisePreviewItem
+import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,7 +59,7 @@ class WorkoutViewModel(
         val currentWorkouts = getWorkoutsUseCase(userId).first()
 
         val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
-            currentWorkouts.find { it.id.toInt() == uiModel.id }
+            currentWorkouts.find { it.id == uiModel.id }
         }
 
         updateWorkoutsOrderUseCase(reorderedWorkouts)
@@ -80,11 +80,10 @@ class WorkoutViewModel(
                         userName = userData.name,
                         workouts = workouts.map { workout ->
                             WorkoutUIModel(
-                                id = workout.id.toInt(),
+                                id = workout.id,
                                 title = workout.name.ifEmpty { workout.muscleGroupId },
                                 exercises = workout.exercises.size,
-                                series = workout.exercises.sumOf { it.sets.size },
-                                icon = Icons.Default.FitnessCenter
+                                series = workout.exercises.sumOf { it.sets.size }
                             )
                         },
                         totalWorkouts = workouts.size,
@@ -92,7 +91,28 @@ class WorkoutViewModel(
                             val date = DateMapper.parseDate(it.date)
                             date != null && date.time >= startOfWeek
                         },
-                        history = history
+                        history = history.map { workoutDone ->
+                            WorkoutHistoryUIModel(
+                                id = workoutDone.id,
+                                name = workoutDone.name,
+                                date = workoutDone.date,
+                                time = workoutDone.time,
+                                exercises = workoutDone.exercises.map { workoutExercise ->
+                                    val sets = workoutExercise.sets
+                                    val firstSet = sets.firstOrNull()
+                                    ExercisePreviewItem(
+                                        workoutExerciseId = workoutExercise.id,
+                                        name = firstSet?.exerciseName ?: "",
+                                        setsCount = sets.size,
+                                        weight = sets.maxOfOrNull { it.load } ?: 0.0,
+                                        reps = sets.maxOfOrNull { it.reps } ?: 0,
+                                        unit = firstSet?.unit ?: com.example.evofit.domain.model.MeasurementUnit.WEIGHT,
+                                        time = sets.maxOfOrNull { it.time ?: 0 } ?: 0,
+                                        distance = sets.maxOfOrNull { it.distance ?: 0.0 } ?: 0.0
+                                    )
+                                }
+                            )
+                        }
                     )
                 }
             }
@@ -102,7 +122,14 @@ class WorkoutViewModel(
         baseState,
         getActiveWorkoutSessionUseCase()
     ) { state, activeSession ->
-        state.copy(activeSession = activeSession)
+        state.copy(
+            activeSession = activeSession?.let {
+                ActiveSessionUIModel(
+                    workoutId = it.workout.id,
+                    workoutName = it.workout.name.ifEmpty { it.workout.muscleGroupId }
+                )
+            }
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Companion.WhileSubscribed(5000),

@@ -11,14 +11,14 @@ import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
-import com.example.evofit.presentation.mapper.DateMapper
+import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
@@ -33,9 +33,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WorkoutStartViewModel(
-    private val workoutId: Int,
+    private val workoutId: String,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getExerciseDataUseCase: GetExerciseDataUseCase,
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
@@ -59,7 +59,7 @@ class WorkoutStartViewModel(
     private fun loadWorkout() {
         viewModelScope.launch {
             combine(
-                getWorkoutByIdUseCase(workoutId.toLong()),
+                getWorkoutByIdUseCase(workoutId),
                 getActiveWorkoutSessionUseCase()
             ) { workout, activeSession ->
                 workoutDomain = workout
@@ -67,10 +67,10 @@ class WorkoutStartViewModel(
                     val groupName = w.muscleGroup?.name ?: ""
 
                     val exerciseIds = w.exercises.map { it.exerciseId }
-                    val exerciseDataMap = getExerciseDataUseCase.getExercisesByIds(exerciseIds)
+                    val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                         .associateBy { it.id }
 
-                    val completedSets = if (activeSession?.workout?.id == workoutId.toLong()) {
+                    val completedSets = if (activeSession?.workout?.id == workoutId) {
                         activeSession.completedSets
                     } else {
                         emptyList()
@@ -116,10 +116,10 @@ class WorkoutStartViewModel(
         viewModelScope.launch {
             val now = System.currentTimeMillis()
             val activeSession = getActiveWorkoutSessionUseCase().first()
-            val startTime = if (activeSession?.workout?.id == workoutId.toLong()) {
+            val startTime = if (activeSession?.workout?.id == workoutId) {
                 activeSession.startTime
             } else {
-                startWorkoutSessionUseCase(workoutId.toLong(), now)
+                startWorkoutSessionUseCase(workoutId, now)
                 now
             }
 
@@ -141,7 +141,7 @@ class WorkoutStartViewModel(
         return "%02d:%02d:%02d".format(hours, minutes, seconds)
     }
 
-    fun toggleSetDone(workoutExerciseId: Long, setNumber: Int) {
+    fun toggleSetDone(workoutExerciseId: String, setNumber: Int) {
         _uiState.update { currentState ->
             val updatedExercises = currentState.exercises.map { exercise ->
                 if (exercise.workoutExerciseId == workoutExerciseId) {

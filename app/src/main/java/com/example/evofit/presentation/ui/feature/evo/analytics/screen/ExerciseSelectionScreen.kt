@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
-import com.example.evofit.domain.usecase.ExerciseWithRecords
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -109,16 +108,16 @@ fun ExerciseSelectionContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
-                    items(uiState.exercisesForSelection, key = { it.exercise.id }) { item ->
-                        val isSelected = item.exercise.id == selectedExerciseId
+                    items(uiState.exercisesForSelection, key = { it.id }) { item ->
+                        val isSelected = item.id == selectedExerciseId
 
                         ExerciseItemCard(
-                            name = item.exercise.name,
+                            name = item.name,
                             recordsCount = item.recordsCount,
                             isSelected = isSelected,
                             onClick = {
-                                selectedExerciseId = item.exercise.id
-                                onExerciseClick(item.exercise.id, item.exercise.name)
+                                selectedExerciseId = item.id
+                                onExerciseClick(item.id, item.name)
                             }
                         )
                     }

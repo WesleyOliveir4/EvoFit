@@ -1,10 +1,12 @@
 package com.example.evofit.presentation.ui.feature.evo.analytics.state
 
+import androidx.compose.runtime.Immutable
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.WorkoutDone
-import com.example.evofit.domain.usecase.ExerciseWithRecords
+import com.example.evofit.presentation.model.ExerciseWithRecordsUIModel
+import com.example.evofit.presentation.model.MuscleGroupItem
 
+@Immutable
 data class AnalyticsChartPoint(
     val label: String,
     val value: Float,
@@ -12,13 +14,16 @@ data class AnalyticsChartPoint(
     val y: Float = 0f
 )
 
+@Immutable
 data class EvoAnalyticsState(
     val isLoading: Boolean = false,
+    // Cache interno usado só pelo ViewModel para recalcular seleção de grupo/exercício.
+    // Nunca deve ser lido diretamente por Composables.
     val historyRawData: List<WorkoutDone> = emptyList(),
-    val trainedGroups: List<MuscleGroup> = emptyList(),
+    val trainedGroups: List<MuscleGroupItem> = emptyList(),
     val selectedMuscleGroupId: String? = null,
     val muscleGroupName: String = "",
-    val exercisesForSelection: List<ExerciseWithRecords> = emptyList(),
+    val exercisesForSelection: List<ExerciseWithRecordsUIModel> = emptyList(),
     val selectedExerciseId: String? = null,
     val selectedExerciseName: String = "",
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,

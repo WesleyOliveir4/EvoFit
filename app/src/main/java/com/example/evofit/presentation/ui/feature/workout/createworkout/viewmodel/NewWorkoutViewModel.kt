@@ -2,7 +2,8 @@ package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmod
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.domain.usecase.GetExerciseDataUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
+import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.NewWorkoutUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewWorkoutViewModel(
-    private val getExerciseDataUseCase: GetExerciseDataUseCase
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewWorkoutUiState())
@@ -23,10 +24,10 @@ class NewWorkoutViewModel(
     private fun loadMuscleGroups() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val groups = getExerciseDataUseCase.getMuscleGroups()
+            val groups = getMuscleGroupsUseCase()
             _uiState.update {
                 it.copy(
-                    muscleGroups = groups,
+                    muscleGroups = groups.map { group -> group.toItem() },
                     isLoading = false
                 )
             }

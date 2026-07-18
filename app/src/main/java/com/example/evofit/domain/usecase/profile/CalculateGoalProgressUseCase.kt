@@ -6,13 +6,25 @@ import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.firstOrNull
 
-class CalculateGoalProgressUseCase(
+data class GoalProgress(
+    val currentValue: Double,
+    val targetValue: Double,
+    val percentage: Int,
+    val unit: String = ""
+)
+
+interface CalculateGoalProgressUseCase {
+    suspend operator fun invoke(goal: UserGoal, userId: String): GoalProgress
+}
+
+class CalculateGoalProgressUseCaseImpl(
     private val workoutRepository: WorkoutRepository,
     private val onboardingRepository: OnboardingRepository
-) {
-    suspend operator fun invoke(goal: UserGoal, userId: String): GoalProgress {
+) : CalculateGoalProgressUseCase {
+
+    override suspend fun invoke(goal: UserGoal, userId: String): GoalProgress {
         val history = workoutRepository.getWorkoutDoneHistory(userId)
-        
+
         return when (goal) {
             is UserGoal.Strength -> calculateStrengthProgress(goal, history)
             is UserGoal.Cardio -> calculateCardioProgress(goal, history)
@@ -27,8 +39,6 @@ class CalculateGoalProgressUseCase(
         var bestValue = 0.0
         history.forEach { workout ->
             workout.exercises.forEach { exercise ->
-                // Check if name matches (assuming exerciseName is used for matching here)
-                // In a real app, we'd prefer IDs, but based on UserGoal.Strength, we have exerciseName
                 exercise.sets.forEach { set ->
                     if (set.exerciseName.equals(goal.exerciseName, ignoreCase = true)) {
                         val value = if (goal.unit.name == "REPS") set.reps.toDouble() else set.load
@@ -43,10 +53,9 @@ class CalculateGoalProgressUseCase(
     }
 
     private fun calculateCardioProgress(goal: UserGoal.Cardio, history: List<WorkoutDone>): GoalProgress {
-        // Simple implementation: find max distance or time for the cardio type
         val targetDistance = goal.distance?.toDoubleOrNull() ?: 0.0
         val targetTime = goal.time.toDoubleOrNull() ?: 0.0
-        
+
         var bestDistance = 0.0
         var bestTime = 0.0
 
@@ -77,25 +86,11 @@ class CalculateGoalProgressUseCase(
 
         if (targetWeight <= 0 || currentWeight <= 0) return GoalProgress(currentWeight, targetWeight, 0)
 
-        // Progress for weight loss or gain
-        // If target < current (loss), progress is how much we lost vs how much we need to lose
-        // This is complex to define a single percentage, let's use a simpler logic for now:
-        // Percentage based on closeness to target if we don't have starting weight.
-        // For simplicity, let's just return the values.
-        
         val diff = Math.abs(currentWeight - targetWeight)
         val percentage = if (currentWeight != 0.0) {
-             // Just a placeholder logic
             (100 - (diff / currentWeight * 100)).toInt().coerceIn(0, 100)
         } else 0
 
         return GoalProgress(currentWeight, targetWeight, percentage, "kg")
     }
-
-    data class GoalProgress(
-        val currentValue: Double,
-        val targetValue: Double,
-        val percentage: Int,
-        val unit: String = ""
-    )
 }

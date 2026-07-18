@@ -7,6 +7,8 @@ import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.ProcessExerciseAnalyticsUseCase
+import com.example.evofit.presentation.mapper.toItem
+import com.example.evofit.presentation.model.ExerciseWithRecordsUIModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,7 @@ class EvoAnalyticsViewModel(
                         it.copy(
                             isLoading = false,
                             historyRawData = history,
-                            trainedGroups = groups
+                            trainedGroups = groups.map { group -> group.toItem() }
                         )
                     }
                 } else {
@@ -65,7 +67,13 @@ class EvoAnalyticsViewModel(
             it.copy(
                 selectedMuscleGroupId = groupId,
                 muscleGroupName = groupName,
-                exercisesForSelection = exercises
+                exercisesForSelection = exercises.map { item ->
+                    ExerciseWithRecordsUIModel(
+                        id = item.exercise.id,
+                        name = item.exercise.name,
+                        recordsCount = item.recordsCount
+                    )
+                }
             )
         }
     }

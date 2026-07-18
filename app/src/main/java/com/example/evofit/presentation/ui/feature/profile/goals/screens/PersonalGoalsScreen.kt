@@ -34,8 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalCard
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.GoalUiModel
@@ -174,22 +172,20 @@ private fun PersonalGoalsScreenPreview() {
         PersonalGoalsContent(
             goals = listOf(
                 GoalUiModel(
-                    "1", 
-                    "Peso alvo", 
-                    "Peso", 
-                    "82kg", 
-                    "75kg", 
-                    90, 
-                    UserGoal.Weight("1", "75")
+                    "1",
+                    "Peso alvo",
+                    "Peso",
+                    "82kg",
+                    "75kg",
+                    90
                 ),
                 GoalUiModel(
-                    "2", 
-                    "Supino reto 100kg", 
-                    "Força", 
-                    "90kg", 
-                    "100kg", 
-                    90, 
-                    UserGoal.Strength("2", "Supino Reto", "100", MeasurementUnit.WEIGHT)
+                    "2",
+                    "Supino reto 100kg",
+                    "Força",
+                    "90kg",
+                    "100kg",
+                    90
                 )
             ),
             onBackClick = {},

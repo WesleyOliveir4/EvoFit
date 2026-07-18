@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WorkoutResumeViewModel(
-    private val workoutId: Long? = null,
-    private val workoutDoneId: Long? = null,
-    private val editWorkoutId: Long? = null,
+    private val workoutId: String? = null,
+    private val workoutDoneId: String? = null,
+    private val editWorkoutId: String? = null,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getWorkoutDoneByIdUseCase: GetWorkoutDoneByIdUseCase
 ) : ViewModel() {
