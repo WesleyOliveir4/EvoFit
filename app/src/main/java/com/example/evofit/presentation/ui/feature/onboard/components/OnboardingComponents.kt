@@ -1,12 +1,15 @@
 package com.example.evofit.presentation.ui.feature.onboard.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,8 +36,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -42,13 +53,99 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.AppSurface
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import com.example.evofit.presentation.ui.theme.TextPrimary
+import com.example.evofit.presentation.ui.theme.TextSecondary
 
 data class OnboardingPage(
     val title: String,
     val highlightText: String,
     val description: String
 )
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun EvoWheelPicker(
+    range: List<Int>,
+    unit: String,
+    initialValue: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val itemHeight = 60.dp
+    val visibleItemsCount = 5
+    val listState = rememberLazyListState()
+    val snapBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+
+    val initialIndex = remember {
+        val idx = range.indexOf(initialValue)
+        if (idx != -1) idx else 0
+    }
+
+    LaunchedEffect(Unit) {
+        listState.scrollToItem(initialIndex)
+    }
+
+    val selectedIndex by remember {
+        derivedStateOf { listState.firstVisibleItemIndex }
+    }
+
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex < range.size) {
+            onValueChange(range[selectedIndex])
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(itemHeight * visibleItemsCount),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(itemHeight - 8.dp)
+                .background(AppSurface, RoundedCornerShape(16.dp))
+        )
+
+        LazyColumn(
+            state = listState,
+            flingBehavior = snapBehavior,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = itemHeight * 2)
+        ) {
+            items(range.size) { index ->
+                val isSelected = index == selectedIndex
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(itemHeight),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${range[index]}",
+                        color = TextPrimary,
+                        fontSize = if (isSelected) 28.sp else 20.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = unit,
+                        color = if (isSelected) TextPrimary else TextSecondary,
+                        fontSize = if (isSelected) 18.sp else 16.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun PageIndicators(

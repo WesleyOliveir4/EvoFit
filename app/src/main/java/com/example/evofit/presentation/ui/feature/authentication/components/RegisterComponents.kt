@@ -1,0 +1,104 @@
+package com.example.evofit.presentation.ui.feature.authentication.components
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.*
+
+@Composable
+fun RegisterHeader(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 64.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.register_title),
+            color = AppGreen,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Black,
+            letterSpacing = 0.5.sp
+        )
+        Text(
+            text = stringResource(id = R.string.register_subtitle),
+            color = TextSecondary,
+            fontSize = 16.sp,
+            lineHeight = 22.sp
+        )
+    }
+}
+
+@Composable
+fun RegisterFooter(
+    isLoading: Boolean,
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Button(
+            onClick = onRegisterClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            enabled = !isLoading,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AppGreen,
+                contentColor = Color.Black,
+                disabledContainerColor = AppGreen.copy(alpha = 0.5f)
+            ),
+            shape = RoundedCornerShape(28.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = Color.Black,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.register_button_confirm),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.register_already_have_account),
+                color = TextSecondary,
+                fontSize = 14.sp
+            )
+            Text(
+                text = stringResource(id = R.string.register_login),
+                color = AppGreen,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable { onLoginClick() }
+            )
+        }
+    }
+}

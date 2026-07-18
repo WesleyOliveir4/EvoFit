@@ -1,5 +1,12 @@
 package com.example.evofit.di
 
+import com.example.evofit.data.repository.AuthRepositoryImpl
+import com.example.evofit.domain.repository.AuthRepository
+import com.example.evofit.domain.usecase.RegisterUseCase
+import com.example.evofit.domain.usecase.LoginUseCase
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.google.firebase.auth.FirebaseAuth
 import androidx.room.Room
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.local.AppDatabase
@@ -113,6 +120,8 @@ val dataModule = module {
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
+    single { FirebaseAuth.getInstance() }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
 
 val domainModule = module {
@@ -153,6 +162,8 @@ val domainModule = module {
     factory<ProcessExerciseAnalyticsUseCase> { ProcessExerciseAnalyticsUseCaseImpl(get(), get(), get(), get()) }
     factory { GetActiveUserGoalsUseCase(get()) }
     factory { CalculateGoalProgressUseCase(get(), get()) }
+    factory { RegisterUseCase(get()) }
+    factory { LoginUseCase(get()) }
 }
 
 val splashModule = module {
@@ -261,6 +272,11 @@ val profileModule = module {
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get()) }
 }
 
+val authModule = module {
+    viewModel { RegisterViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
@@ -269,5 +285,6 @@ val appModule = listOf(
     homeModule,
     workoutModule,
     evoModule,
-    profileModule
+    profileModule,
+    authModule
 )

@@ -5,61 +5,57 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.domain.model.UserOnboardingData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.onboard.components.EvoWheelPicker
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
-import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun OnboardUserDataScreen(
+fun OnboardHeightScreen(
     currentPage: Int,
     totalPages: Int,
     onContinue: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.userData.collectAsStateWithLifecycle()
+    
+    val heightRange = remember { (100..250).toList() }
+    val initialHeight = remember(userData.height) {
+        userData.height.toIntOrNull() ?: 170
+    }
 
-    OnboardUserDataContent(
-        userData = userData,
+    OnboardHeightContent(
+        height = initialHeight,
+        heightRange = heightRange,
         currentPage = currentPage,
         totalPages = totalPages,
-        onNameChange = { viewModel.updateProfile(name = it) },
-        onAgeChange = { viewModel.updateProfile(age = it) },
+        onHeightChange = { viewModel.updateProfile(height = it.toString()) },
         onContinue = { viewModel.saveAndNext(onContinue) }
     )
 }
 
 @Composable
-fun OnboardUserDataContent(
-    userData: UserOnboardingData,
+fun OnboardHeightContent(
+    height: Int,
+    heightRange: List<Int>,
     currentPage: Int,
     totalPages: Int,
-    onNameChange: (String) -> Unit,
-    onAgeChange: (String) -> Unit,
+    onHeightChange: (Int) -> Unit,
     onContinue: () -> Unit
 ) {
-    val isFormValid by remember(userData.name, userData.age) {
-        derivedStateOf {
-            userData.name.isNotBlank() && userData.age.isNotBlank()
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +66,7 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.onboarding_user_data_title),
+            text = stringResource(R.string.onboarding_height_title),
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
@@ -79,26 +75,19 @@ fun OnboardUserDataContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(R.string.onboarding_user_data_description),
+            text = stringResource(R.string.onboarding_height_description),
             color = MaterialTheme.colorScheme.secondary,
             fontSize = 18.sp
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(0.5f))
 
-        UserInputField(
-            label = stringResource(R.string.onboarding_user_data_label_name),
-            value = userData.name,
-            onValueChange = onNameChange
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        UserInputField(
-            label = stringResource(R.string.onboarding_user_data_label_age),
-            value = userData.age,
-            keyboardType = KeyboardType.Number,
-            onValueChange = onAgeChange
+        EvoWheelPicker(
+            range = heightRange,
+            unit = "cm",
+            initialValue = height,
+            onValueChange = onHeightChange,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -113,7 +102,6 @@ fun OnboardUserDataContent(
 
         OnboardingButton(
             text = stringResource(R.string.onboarding_button_continue),
-            enabled = isFormValid,
             onClick = onContinue
         )
 
@@ -123,18 +111,14 @@ fun OnboardUserDataContent(
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardUserDataScreenPreview() {
+fun OnboardHeightScreenPreview() {
     EvoFitTheme {
-        OnboardUserDataContent(
-            userData = UserOnboardingData(
-                name = "João",
-                age = "25",
-                goals = emptyList()
-            ),
-            currentPage = 1,
+        OnboardHeightContent(
+            height = 175,
+            heightRange = (100..250).toList(),
+            currentPage = 3,
             totalPages = 6,
-            onNameChange = {},
-            onAgeChange = {},
+            onHeightChange = {},
             onContinue = {}
         )
     }

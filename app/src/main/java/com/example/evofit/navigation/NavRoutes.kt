@@ -4,8 +4,12 @@ import com.example.evofit.core.common.AppConstants
 
 sealed class NavRoutes(val route: String) {
     object Splash : NavRoutes("splash")
+    object Login : NavRoutes("login")
+    object Register : NavRoutes("register")
     object Onboarding : NavRoutes("onboarding")
     object UserData : NavRoutes("user_data")
+    object Weight : NavRoutes("weight")
+    object Height : NavRoutes("height")
     object Goals : NavRoutes("goals")
     object Summary : NavRoutes("summary")
     object Home : NavRoutes("home")

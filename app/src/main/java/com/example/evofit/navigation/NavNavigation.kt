@@ -19,15 +19,17 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseS
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.authentication.screens.LoginScreen
+import com.example.evofit.presentation.ui.feature.authentication.screens.RegisterScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardHeightScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardSummaryScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardUserDataScreen
+import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardWeightScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingGoalsScreen
 import com.example.evofit.presentation.ui.feature.onboard.screens.OnboardingScreen
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
-import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
-import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -42,18 +44,50 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NavNavigation() {
     val navController = rememberNavController()
-    val totalSteps = 4
+    val totalSteps = 6
 
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Splash.route
     ) {
+        // ... (Splash, Login, Register screens)
         composable(NavRoutes.Splash.route) {
             SplashScreen(
                 onNavigate = { destination ->
                     navController.navigate(destination) {
                         popUpTo(NavRoutes.Splash.route) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable(NavRoutes.Login.route) {
+            LoginScreen(
+                onLoginSuccess = { isOnboardingCompleted ->
+                    val destination = if (isOnboardingCompleted) NavRoutes.Home.route else NavRoutes.Onboarding.route
+                    navController.navigate(destination) {
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onSignUpClick = {
+                    navController.navigate(NavRoutes.Register.route)
+                },
+                onForgotPasswordClick = {
+                    // Navegar para recuperar senha
+                }
+            )
+        }
+
+        composable(NavRoutes.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(NavRoutes.Onboarding.route) {
+                        popUpTo(NavRoutes.Register.route) { inclusive = true }
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -73,6 +107,26 @@ fun NavNavigation() {
                 currentPage = 1,
                 totalPages = totalSteps,
                 onContinue = {
+                    navController.navigate(NavRoutes.Weight.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Weight.route) {
+            OnboardWeightScreen(
+                currentPage = 2,
+                totalPages = totalSteps,
+                onContinue = {
+                    navController.navigate(NavRoutes.Height.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Height.route) {
+            OnboardHeightScreen(
+                currentPage = 3,
+                totalPages = totalSteps,
+                onContinue = {
                     navController.navigate(NavRoutes.Goals.route)
                 }
             )
@@ -80,7 +134,7 @@ fun NavNavigation() {
 
         composable(NavRoutes.Goals.route) {
             OnboardingGoalsScreen(
-                currentPage = 2,
+                currentPage = 4,
                 totalPages = totalSteps,
                 onContinue = {
                     navController.navigate(NavRoutes.Summary.route)
@@ -93,7 +147,7 @@ fun NavNavigation() {
 
         composable(NavRoutes.Summary.route) {
             OnboardSummaryScreen(
-                currentPage = 3,
+                currentPage = 5,
                 totalPages = totalSteps,
                 onStartTraining = {
                     navController.navigate(NavRoutes.Home.route) {

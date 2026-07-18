@@ -27,7 +27,7 @@ class SplashViewModel(
             _startDestination.value = if (completed) {
                 NavRoutes.Home.route
             } else {
-                NavRoutes.Onboarding.route
+                NavRoutes.Login.route
             }
         }
     }
