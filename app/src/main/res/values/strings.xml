@@ -3,6 +3,7 @@
 
     <!-- Onboarding General -->
     <string name="onboarding_button_continue">Continuar</string>
+    <string name="onboarding_back">Voltar</string>
 
     <!-- Onboarding Welcome Screen -->
     <string name="onboarding_welcome_title">Bem-vindo ao</string>

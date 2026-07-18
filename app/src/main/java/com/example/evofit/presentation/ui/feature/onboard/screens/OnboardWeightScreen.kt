@@ -2,8 +2,9 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ fun OnboardWeightScreen(
     currentPage: Int,
     totalPages: Int,
     onContinue: () -> Unit,
+    onBack: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,10 +51,12 @@ fun OnboardWeightScreen(
         totalPages = totalPages,
         isButtonEnabled = isButtonEnabled,
         onWeightChange = { viewModel.updateProfile(weight = it.toString()) },
-        onContinue = { viewModel.saveAndNext(onContinue) }
+        onContinue = { viewModel.saveAndNext(onContinue) },
+        onBack = onBack
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardWeightContent(
     weight: Int,
@@ -61,59 +65,78 @@ fun OnboardWeightContent(
     totalPages: Int,
     isButtonEnabled: Boolean,
     onWeightChange: (Int) -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    onBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
-            .padding(horizontal = 24.dp),
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.onboarding_weight_title),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(R.string.onboarding_weight_description),
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = 18.sp
-        )
-
-        Spacer(modifier = Modifier.weight(0.5f))
-
-        EvoWheelPicker(
-            range = weightRange,
-            unit = "kg",
-            initialValue = weight,
-            onValueChange = onWeightChange,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        PageIndicators(
-            pageCount = totalPages,
-            selectedPage = currentPage,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.onboarding_back),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp)
-        )
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 24.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.onboarding_weight_title),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-        OnboardingButton(
-            text = stringResource(R.string.onboarding_button_continue),
-            enabled = isButtonEnabled,
-            onClick = onContinue
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(R.string.onboarding_weight_description),
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.weight(0.5f))
+
+            EvoWheelPicker(
+                range = weightRange,
+                unit = "kg",
+                initialValue = weight,
+                onValueChange = onWeightChange,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            PageIndicators(
+                pageCount = totalPages,
+                selectedPage = currentPage,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
+
+            OnboardingButton(
+                text = stringResource(R.string.onboarding_button_continue),
+                enabled = isButtonEnabled,
+                onClick = onContinue
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
     }
 }
 
@@ -128,7 +151,8 @@ fun OnboardWeightScreenPreview() {
             totalPages = 6,
             isButtonEnabled = true,
             onWeightChange = {},
-            onContinue = {}
+            onContinue = {},
+            onBack = {}
         )
     }
 }
