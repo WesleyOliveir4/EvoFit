@@ -48,7 +48,7 @@
 
     <!-- Onboarding Components -->
     <string name="onboarding_component_remove_goal">Remover Meta</string>
-    <string name="onboarding_component_add_new_goal">Adicionar nova</string>
+    <string name="onboarding_component_add_new_goal">Adicionar meta</string>
 
     <!-- New Goal Dialog -->
     <string name="goal_dialog_title_new">Nova Meta</string>
