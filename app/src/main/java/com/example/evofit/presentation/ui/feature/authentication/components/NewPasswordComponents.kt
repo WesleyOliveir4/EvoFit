@@ -82,3 +82,11 @@ private fun NewPasswordHeaderPreview() {
         NewPasswordHeader()
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun NewPasswordFooterPreview() {
+    EvoFitTheme {
+        NewPasswordFooter(onSaveClick = {})
+    }
+}

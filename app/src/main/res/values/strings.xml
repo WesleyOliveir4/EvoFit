@@ -277,7 +277,7 @@
     <string name="login_content_desc_show_password">Mostrar senha</string>
 
     <!-- Register Screen -->
-    <string name="register_title">Cadastre-se ⚡</string>
+    <string name="register_title">Cadastre-se</string>
     <string name="register_subtitle">Crie sua conta para começar sua jornada no EvoFit.</string>
     <string name="register_button_confirm">Criar Conta</string>
     <string name="register_already_have_account">Já possui uma conta?</string>
@@ -286,7 +286,7 @@
     <string name="register_success">Conta criada com sucesso!</string>
     <string name="register_label_name">NOME</string>
     <string name="register_placeholder_name">Seu nome</string>
-    <string name="register_label_confirm_password">CONFIRMAR SENHA</string>
+    <string name="register_label_confirm_password">Confirmar Senha</string>
     <string name="register_placeholder_confirm_password">Confirme sua senha</string>
     <string name="register_terms_agree_prefix">Eu concordo com os</string>
     <string name="register_terms_of_use">Termos de Uso</string>

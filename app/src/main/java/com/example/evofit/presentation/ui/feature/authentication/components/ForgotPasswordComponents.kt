@@ -122,7 +122,7 @@ fun ForgotPasswordFooter(
             containerColor = AppGreen,
             contentColor = Color.Black
         ),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         Text(
             text = stringResource(id = R.string.forgot_password_button_continue),
