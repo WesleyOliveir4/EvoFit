@@ -56,6 +56,14 @@ fun NavNavigation() {
             )
         }
 
+        composable(NavRoutes.PreLogin.route) {
+            PreLoginScreen(
+                onStartClick = {
+                    navController.navigate(NavRoutes.Login.route)
+                }
+            )
+        }
+
         composable(NavRoutes.Login.route) {
             LoginScreen(
                 onLoginSuccess = { isOnboardingCompleted ->
@@ -69,6 +77,9 @@ fun NavNavigation() {
                 },
                 onForgotPasswordClick = {
                     navController.navigate(NavRoutes.RecoverPassword.route)
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

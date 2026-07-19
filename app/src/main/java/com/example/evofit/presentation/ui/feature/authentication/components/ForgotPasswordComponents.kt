@@ -1,14 +1,22 @@
 package com.example.evofit.presentation.ui.feature.authentication.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,26 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
-
-/**
- * Simple back navigation icon button, reused by every screen of the
- * "esqueci minha senha" sub-flow (mock screens 4, 5 and 6).
- */
-@Composable
-fun AuthBackButton(
-    onBackClick: () -> Unit,
-    contentDescription: String,
-    modifier: Modifier = Modifier
-) {
-    IconButton(onClick = onBackClick, modifier = modifier) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = contentDescription,
-            tint = TextPrimary
-        )
-    }
-}
+import com.example.evofit.presentation.ui.theme.AppGreen
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import com.example.evofit.presentation.ui.theme.TextPrimary
+import com.example.evofit.presentation.ui.theme.TextSecondary
+import com.example.evofit.presentation.ui.theme.WelcomeBoxBg
 
 /**
  * Envelope illustration with a small "edit" badge, matching the artwork on

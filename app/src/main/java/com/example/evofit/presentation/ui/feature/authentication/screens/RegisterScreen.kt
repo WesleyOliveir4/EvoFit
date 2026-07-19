@@ -29,6 +29,7 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Logi
 import com.example.evofit.presentation.ui.feature.authentication.components.TermsCheckboxRow
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -101,7 +102,12 @@ fun RegisterContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg
+        containerColor = AppDarkBg,
+        topBar = {
+            TopBarReturn(
+                onBackClick = onLoginClick
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier

@@ -23,6 +23,16 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        determineSocialLoginAvailability()
+    }
+
+    private fun determineSocialLoginAvailability() {
+        // Regra: Android exibe apenas Google. Outros (ex: KMP) exibem ambos.
+        val isAndroid = true 
+        _uiState.update { it.copy(showAppleLogin = !isAndroid) }
+    }
+
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email, error = null) }
     }

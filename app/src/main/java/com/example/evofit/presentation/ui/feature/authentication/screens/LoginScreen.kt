@@ -29,6 +29,7 @@ import com.example.evofit.presentation.ui.feature.authentication.components.*
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -41,7 +42,8 @@ fun LoginScreen(
     appleSignInHandler: AppleSignInHandler = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {}
+    onSignUpClick: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
@@ -62,6 +64,7 @@ fun LoginScreen(
         onLoginClick = viewModel::onLoginClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onSignUpClick = onSignUpClick,
+        onBackClick = onBackClick,
         onGoogleClick = {
             scope.launch {
                 googleSignInHandler.signIn().onSuccess { idToken ->
@@ -95,12 +98,18 @@ fun LoginContent(
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    onBackClick: () -> Unit,
     onGoogleClick: () -> Unit = {},
     onAppleClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        containerColor = AppDarkBg
+        containerColor = AppDarkBg,
+        topBar = {
+            TopBarReturn(
+                onBackClick = onBackClick
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -198,13 +207,15 @@ fun LoginContent(
                     modifier = Modifier.weight(1f),
                     enabled = !uiState.isLoading
                 )
-                SocialLoginButton(
-                    text = "Apple",
-                    icon = painterResource(id = R.drawable.ic_apple),
-                    onClick = onAppleClick,
-                    modifier = Modifier.weight(1f),
-                    enabled = !uiState.isLoading
-                )
+                if (uiState.showAppleLogin) {
+                    SocialLoginButton(
+                        text = "Apple",
+                        icon = painterResource(id = R.drawable.ic_apple),
+                        onClick = onAppleClick,
+                        modifier = Modifier.weight(1f),
+                        enabled = !uiState.isLoading
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -229,7 +240,8 @@ private fun LoginScreenPreview() {
             onTogglePasswordVisibility = {},
             onLoginClick = {},
             onForgotPasswordClick = {},
-            onSignUpClick = {}
+            onSignUpClick = {},
+            onBackClick = {}
         )
     }
 }

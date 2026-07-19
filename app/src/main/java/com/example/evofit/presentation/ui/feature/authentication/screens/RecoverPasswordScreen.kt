@@ -18,12 +18,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.authentication.components.AuthBackButton
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordHeader
 import com.example.evofit.presentation.ui.feature.authentication.state.RecoverPasswordUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextSecondary
@@ -73,7 +73,12 @@ fun RecoverPasswordContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg
+        containerColor = AppDarkBg,
+        topBar = {
+            TopBarReturn(
+                onBackClick = onBackClick
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -83,12 +88,6 @@ fun RecoverPasswordContent(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                AuthBackButton(
-                    onBackClick = onBackClick,
-                    contentDescription = stringResource(id = R.string.recover_password_back_desc),
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-
                 RecoverPasswordHeader()
 
                 Spacer(modifier = Modifier.height(32.dp))

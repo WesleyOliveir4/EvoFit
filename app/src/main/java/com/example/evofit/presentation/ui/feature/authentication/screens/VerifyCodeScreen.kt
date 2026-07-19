@@ -10,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.authentication.components.AuthBackButton
 import com.example.evofit.presentation.ui.feature.authentication.components.OtpCodeInput
 import com.example.evofit.presentation.ui.feature.authentication.components.VERIFY_CODE_LENGTH
 import com.example.evofit.presentation.ui.feature.authentication.components.VerifyCodeFooter
@@ -18,6 +17,7 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Veri
 import com.example.evofit.presentation.ui.feature.authentication.components.VerifyCodeResendRow
 import com.example.evofit.presentation.ui.feature.authentication.state.VerifyCodeUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.VerifyCodeViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -67,7 +67,12 @@ fun VerifyCodeContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg
+        containerColor = AppDarkBg,
+        topBar = {
+            TopBarReturn(
+                onBackClick = onBackClick
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -77,12 +82,6 @@ fun VerifyCodeContent(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                AuthBackButton(
-                    onBackClick = onBackClick,
-                    contentDescription = stringResource(id = R.string.verify_code_back_desc),
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-
                 VerifyCodeHeader(email = email)
 
                 Spacer(modifier = Modifier.height(32.dp))
