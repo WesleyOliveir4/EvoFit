@@ -119,6 +119,33 @@ fun AppBottomNavigation(
 }
 
 @Composable
+fun EvoFitButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = text,
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
+    }
+}
+@Composable
 fun EvoFitAlertDialog(
     title: String,
     description: String,
@@ -621,5 +648,16 @@ private fun EvoFitDropdownFilterExpandedPreview() {
                 initialExpanded = true
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+fun EvoFitButtonPreview() {
+    EvoFitTheme {
+        EvoFitButton(
+            text = "Continuar",
+            onClick = {}
+        )
     }
 }

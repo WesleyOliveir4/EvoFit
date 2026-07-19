@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.onboard.components.EvoWheelPicker
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -130,7 +130,7 @@ fun OnboardHeightContent(
                     .padding(bottom = 16.dp)
             )
 
-            OnboardingButton(
+            EvoFitButton(
                 text = stringResource(R.string.onboarding_button_continue),
                 enabled = isButtonEnabled,
                 onClick = onContinue

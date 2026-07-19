@@ -23,12 +23,12 @@ import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.model.GoalUIModel
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
 import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -201,7 +201,7 @@ fun OnboardingGoalsContent(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        OnboardingButton(
+            EvoFitButton(
             text = stringResource(R.string.onboarding_button_continue),
             enabled = activeGoals.isNotEmpty(),
             onClick = onFinish

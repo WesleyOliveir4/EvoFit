@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingPage
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -72,7 +72,7 @@ fun OnboardingContent(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        OnboardingButton(
+        EvoFitButton(
             text = stringResource(R.string.onboarding_welcome_button_start),
             onClick = onFinish
         )

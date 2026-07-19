@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -177,7 +177,7 @@ fun OnboardSummaryContent(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                OnboardingButton(
+                EvoFitButton(
                     text = stringResource(R.string.onboarding_summary_button_start_training),
                     onClick = onStartTraining
                 )
