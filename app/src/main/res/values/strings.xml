@@ -263,12 +263,12 @@
     <string name="profile_user_summary_format">%1$s anos   •   %2$s kg</string>
 
     <!-- Login Screen -->
-    <string name="login_title">EvoFit ⚡</string>
+    <string name="login_title">EvoFit</string>
     <string name="login_subtitle">Entre para continuar acompanhando sua evolução diária.</string>
-    <string name="login_label_email">E-MAIL</string>
+    <string name="login_label_email">E-mail</string>
     <string name="login_placeholder_email">Seu e-mail cadastrado</string>
-    <string name="login_label_password">SENHA</string>
-    <string name="login_placeholder_password">Sua senha secreta</string>
+    <string name="login_label_password">Senha</string>
+    <string name="login_placeholder_password">Digite sua senha cadastrada</string>
     <string name="login_forgot_password">Esqueci minha senha</string>
     <string name="login_button_enter">Entrar</string>
     <string name="login_no_account">Não possui uma conta?</string>
@@ -336,9 +336,9 @@
     <!-- New Password Screen -->
     <string name="new_password_title">Criar nova senha</string>
     <string name="new_password_subtitle">Sua nova senha deve ser diferente\ndas senhas usadas anteriormente.</string>
-    <string name="new_password_label_password">NOVA SENHA</string>
-    <string name="new_password_placeholder_password">Crie uma nova senha</string>
-    <string name="new_password_label_confirm">CONFIRMAR NOVA SENHA</string>
+    <string name="new_password_label_password">Nova senha</string>
+    <string name="new_password_placeholder_password">Digite uma nova senha</string>
+    <string name="new_password_label_confirm">Confirme sua nova senha</string>
     <string name="new_password_placeholder_confirm">Confirme sua nova senha</string>
     <string name="new_password_button_save">Salvar senha</string>
     <string name="new_password_back_desc">Voltar</string>

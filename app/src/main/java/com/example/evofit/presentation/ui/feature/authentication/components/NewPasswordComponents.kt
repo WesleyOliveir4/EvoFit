@@ -57,7 +57,7 @@ fun NewPasswordFooter(
             contentColor = Color.Black,
             disabledContainerColor = AppGreen.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         if (isLoading) {
             CircularProgressIndicator(

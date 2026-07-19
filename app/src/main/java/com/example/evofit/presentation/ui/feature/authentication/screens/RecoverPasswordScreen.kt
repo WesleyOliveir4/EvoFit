@@ -98,13 +98,6 @@ fun RecoverPasswordContent(
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     enabled = !uiState.isLoading
                 )

@@ -1,19 +1,20 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,22 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import android.app.Activity
-import androidx.compose.ui.platform.LocalContext
 import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
+import com.example.evofit.presentation.ui.feature.authentication.components.*
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
-import com.example.evofit.presentation.ui.feature.authentication.components.LoginFooter
-import com.example.evofit.presentation.ui.feature.authentication.components.LoginHeader
-import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
-import com.example.evofit.presentation.ui.feature.authentication.components.LoginSocialDivider
-import com.example.evofit.presentation.ui.feature.authentication.components.SocialLoginButtons
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
-import com.example.evofit.presentation.ui.theme.*
-
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.example.evofit.presentation.ui.theme.*
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun LoginScreen(
@@ -106,26 +100,26 @@ fun LoginContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier,
         containerColor = AppDarkBg
     ) { paddingValues ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- BLOCO SUPERIOR: Boas-vindas ---
+            
+            // --- HEADER: Logo e Mensagem de Boas-Vindas ---
             LoginHeader()
 
-            // --- BLOCO CENTRAL: Formulário ---
+            // --- INPUTS: Formulário de Credenciais ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (uiState.error != null) {
                     Text(
@@ -135,46 +129,28 @@ fun LoginContent(
                     )
                 }
 
-                // Campo de E-mail
+                // E-mail
                 LoginInputField(
-                    value = uiState.email,
-                    onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
+                    value = uiState.email,
+                    onValueChange = onEmailChange,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     enabled = !uiState.isLoading
                 )
 
-                // Campo de Senha
+                // Senha
                 LoginInputField(
-                    value = uiState.password,
-                    onValueChange = onPasswordChange,
                     label = stringResource(id = R.string.login_label_password),
                     placeholder = stringResource(id = R.string.login_placeholder_password),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
+                    value = uiState.password,
+                    onValueChange = onPasswordChange,
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
                                 imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (uiState.isPasswordVisible) {
-                                    stringResource(id = R.string.login_content_desc_hide_password)
-                                } else {
-                                    stringResource(id = R.string.login_content_desc_show_password)
-                                },
-                                tint = TextSecondary
+                                contentDescription = null,
+                                tint = TextSecondary.copy(alpha = 0.7f)
                             )
                         }
                     },
@@ -182,50 +158,67 @@ fun LoginContent(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     enabled = !uiState.isLoading
                 )
-
-                // Esqueci a Senha (Alinhado à Direita)
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.login_forgot_password),
-                        color = AppGreen,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
-                            .padding(vertical = 4.dp)
-                    )
-                }
             }
 
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = AppGreen
+            // Esqueci minha senha
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 24.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login_forgot_password),
+                    color = AppGreen,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
                 )
             }
 
-            // --- BLOCO INFERIOR: Ações e Cadastro ---
-            LoginFooter(
-                onLoginClick = onLoginClick,
+            // Botão Entrar
+            LoginButton(
+                onClick = onLoginClick,
+                isLoading = uiState.isLoading,
+                enabled = !uiState.isLoading
+            )
+
+            // --- DIVISOR: Ou continue com ---
+            LoginSocialDivider()
+
+            // --- BOTÕES SOCIAIS: Google & Apple ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                SocialLoginButton(
+                    text = "Google",
+                    icon = painterResource(id = R.drawable.ic_google),
+                    onClick = onGoogleClick,
+                    modifier = Modifier.weight(1f),
+                    enabled = !uiState.isLoading
+                )
+                SocialLoginButton(
+                    text = "Apple",
+                    icon = painterResource(id = R.drawable.ic_apple),
+                    onClick = onAppleClick,
+                    modifier = Modifier.weight(1f),
+                    enabled = !uiState.isLoading
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // --- FOOTER: Link para Cadastro ---
+            LoginRegistrationFooter(
                 onSignUpClick = onSignUpClick,
-                enabled = !uiState.isLoading,
-                extraContent = {
-                    LoginSocialDivider()
-                    SocialLoginButtons(
-                        onGoogleClick = onGoogleClick,
-                        onAppleClick = onAppleClick,
-                        enabled = !uiState.isLoading
-                    )
-                }
+                enabled = !uiState.isLoading
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
 @Composable
 private fun LoginScreenPreview() {
     EvoFitTheme {

@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +32,7 @@ import com.example.evofit.presentation.ui.feature.authentication.viewmodel.Regis
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = koinViewModel(),
@@ -125,13 +127,6 @@ fun RegisterContent(
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     enabled = !uiState.isLoading
                 )
@@ -142,13 +137,6 @@ fun RegisterContent(
                     onValueChange = onPasswordChange,
                     label = stringResource(id = R.string.login_label_password),
                     placeholder = stringResource(id = R.string.login_placeholder_password),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
@@ -173,13 +161,6 @@ fun RegisterContent(
                     onValueChange = onConfirmPasswordChange,
                     label = stringResource(id = R.string.register_label_confirm_password),
                     placeholder = stringResource(id = R.string.register_placeholder_confirm_password),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
                     trailingIcon = {
                         IconButton(onClick = onToggleConfirmPasswordVisibility) {
                             Icon(

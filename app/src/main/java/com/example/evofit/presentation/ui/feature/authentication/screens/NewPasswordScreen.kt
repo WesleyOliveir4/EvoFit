@@ -1,10 +1,15 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -12,7 +17,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,6 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 
 private const val MIN_PASSWORD_LENGTH = 6
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun NewPasswordScreen(
     oobCode: String,
@@ -120,9 +129,6 @@ fun NewPasswordContent(
                         onValueChange = onPasswordChange,
                         label = stringResource(id = R.string.new_password_label_password),
                         placeholder = stringResource(id = R.string.new_password_placeholder_password),
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = null, tint = TextSecondary)
-                        },
                         trailingIcon = {
                             IconButton(onClick = onTogglePasswordVisibility) {
                                 Icon(
@@ -154,9 +160,6 @@ fun NewPasswordContent(
                         onValueChange = onConfirmPasswordChange,
                         label = stringResource(id = R.string.new_password_label_confirm),
                         placeholder = stringResource(id = R.string.new_password_placeholder_confirm),
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = null, tint = TextSecondary)
-                        },
                         trailingIcon = {
                             IconButton(onClick = onToggleConfirmPasswordVisibility) {
                                 Icon(
