@@ -92,4 +92,13 @@ class AuthRepositoryImpl(
     override fun isLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
+
+    override suspend fun logout(): Result<Unit> {
+        return try {
+            firebaseAuth.signOut()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

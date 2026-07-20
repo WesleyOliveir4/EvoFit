@@ -464,6 +464,11 @@ fun NavNavigation() {
                 },
                 onGoalsClick = {
                     navController.navigate(NavRoutes.ProfilePersonalGoals.route)
+                },
+                onLogoutSuccess = {
+                    navController.navigate(NavRoutes.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }

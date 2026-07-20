@@ -6,6 +6,7 @@ import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsCountUseCase
+import com.example.evofit.domain.usecase.LogoutUseCase
 import com.example.evofit.presentation.ui.feature.profile.home.state.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ class ProfileViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
-    private val getWorkoutsCountUseCase: GetWorkoutsCountUseCase
+    private val getWorkoutsCountUseCase: GetWorkoutsCountUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -56,6 +58,14 @@ class ProfileViewModel(
                     )
                 }
             }.collect({})
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase().onSuccess {
+                _uiState.update { it.copy(isLoggedOut = true) }
+            }
         }
     }
 }
