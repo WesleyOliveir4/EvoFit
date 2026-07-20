@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,6 +38,12 @@ import com.example.evofit.presentation.ui.theme.TextSecondary
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
@@ -47,9 +54,17 @@ fun ProfileHomeScreen(
     viewModel: ProfileViewModel = koinViewModel(),
     onNavigate: (String) -> Unit = {},
     onUserDataClick: () -> Unit = {},
-    onGoalsClick: () -> Unit = {}
+    onGoalsClick: () -> Unit = {},
+    onLogoutSuccess: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.isLoggedOut) {
+        if (uiState.isLoggedOut) {
+            onLogoutSuccess()
+        }
+    }
 
     ProfileHomeScreenContent(
         userName = uiState.name,
@@ -60,8 +75,24 @@ fun ProfileHomeScreen(
         goals = uiState.goals,
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
-        onGoalsClick = onGoalsClick
+        onGoalsClick = onGoalsClick,
+        onLogoutClick = { showLogoutDialog = true }
     )
+
+    if (showLogoutDialog) {
+        EvoFitActionDialog(
+            title = stringResource(id = R.string.logout_dialog_title),
+            description = stringResource(id = R.string.logout_dialog_message),
+            confirmButtonText = stringResource(id = R.string.logout_dialog_confirm),
+            dismissButtonText = stringResource(id = R.string.logout_dialog_cancel),
+            icon = ImageVector.vectorResource(id = R.drawable.ic_logout),
+            onConfirm = {
+                showLogoutDialog = false
+                viewModel.logout()
+            },
+            onDismiss = { showLogoutDialog = false }
+        )
+    }
 }
 
 @Composable
@@ -75,7 +106,8 @@ fun ProfileHomeScreenContent(
     goals: String = "0",
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
-    onGoalsClick: () -> Unit
+    onGoalsClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -160,6 +192,12 @@ fun ProfileHomeScreenContent(
                     icon = Icons.Default.Star,
                     onClick = onGoalsClick
                 )
+
+                ProfileMenuItem(
+                    title = stringResource(id = R.string.profile_logout),
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_logout),
+                    onClick = onLogoutClick
+                )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -193,7 +231,8 @@ private fun ProfileHomeScreenPreview() {
             userWeight = "78",
             onNavigate = {},
             onUserDataClick = {},
-            onGoalsClick = {}
+            onGoalsClick = {},
+            onLogoutClick = {}
         )
     }
 }

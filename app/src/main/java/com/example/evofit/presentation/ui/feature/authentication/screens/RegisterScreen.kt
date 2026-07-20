@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,23 +21,36 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterUiState
+import com.example.evofit.presentation.ui.feature.authentication.components.TermsCheckboxRow
+import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onRegisterSuccess: () -> Unit = {}
+    onRegisterSuccess: () -> Unit = {},
+    onTermsOfUseClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    val passwordsMismatch = uiState.confirmPassword.isNotEmpty() && uiState.confirmPassword != uiState.password
+    val canSubmit = uiState.email.isNotBlank() &&
+        uiState.password.isNotBlank() &&
+        !passwordsMismatch &&
+        uiState.termsAccepted &&
+        !uiState.isLoading
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -57,6 +71,13 @@ fun RegisterScreen(
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onToggleConfirmPasswordVisibility = viewModel::onToggleConfirmPasswordVisibility,
+        passwordsMismatch = passwordsMismatch,
+        onTermsAcceptedChange = viewModel::onTermsAcceptedChange,
+        onTermsOfUseClick = onTermsOfUseClick,
+        onPrivacyPolicyClick = onPrivacyPolicyClick,
+        canSubmit = canSubmit,
         onRegisterClick = viewModel::onRegisterClick,
         onLoginClick = onBackClick
     )
@@ -68,19 +89,30 @@ fun RegisterContent(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onToggleConfirmPasswordVisibility: () -> Unit,
+    passwordsMismatch: Boolean,
+    onTermsAcceptedChange: (Boolean) -> Unit,
+    onTermsOfUseClick: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit,
+    canSubmit: Boolean,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg
+        containerColor = AppDarkBg,
+        topBar = {
+            TopBarReturn(
+                onBackClick = onLoginClick
+            )
+        }
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize().systemBarsPadding()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 18.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -100,14 +132,8 @@ fun RegisterContent(
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_label_email),
                     placeholder = stringResource(id = R.string.login_placeholder_email),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    enabled = !uiState.isLoading
                 )
 
                 // Campo de Senha
@@ -116,13 +142,6 @@ fun RegisterContent(
                     onValueChange = onPasswordChange,
                     label = stringResource(id = R.string.login_label_password),
                     placeholder = stringResource(id = R.string.login_placeholder_password),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = TextSecondary
-                        )
-                    },
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
@@ -137,13 +156,55 @@ fun RegisterContent(
                         }
                     },
                     visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    enabled = !uiState.isLoading
+                )
+
+                // Campo de Confirmar Senha
+                LoginInputField(
+                    value = uiState.confirmPassword,
+                    onValueChange = onConfirmPasswordChange,
+                    label = stringResource(id = R.string.register_label_confirm_password),
+                    placeholder = stringResource(id = R.string.register_placeholder_confirm_password),
+                    trailingIcon = {
+                        IconButton(onClick = onToggleConfirmPasswordVisibility) {
+                            Icon(
+                                imageVector = if (uiState.isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (uiState.isConfirmPasswordVisible) {
+                                    stringResource(id = R.string.login_content_desc_hide_password)
+                                } else {
+                                    stringResource(id = R.string.login_content_desc_show_password)
+                                },
+                                tint = TextSecondary
+                            )
+                        }
+                    },
+                    visualTransformation = if (uiState.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    enabled = !uiState.isLoading
+                )
+
+                if (passwordsMismatch) {
+                    Text(
+                        text = stringResource(id = R.string.register_error_passwords_dont_match),
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 13.sp
+                    )
+                }
+
+                TermsCheckboxRow(
+                    checked = uiState.termsAccepted,
+                    onCheckedChange = onTermsAcceptedChange,
+                    onTermsOfUseClick = onTermsOfUseClick,
+                    onPrivacyPolicyClick = onPrivacyPolicyClick,
+                    enabled = !uiState.isLoading
                 )
             }
 
             // --- BLOCO INFERIOR: Ações e Login ---
             RegisterFooter(
                 isLoading = uiState.isLoading,
+                enabled = canSubmit,
                 onRegisterClick = onRegisterClick,
                 onLoginClick = onLoginClick
             )
@@ -160,6 +221,13 @@ private fun RegisterScreenPreview() {
             onEmailChange = {},
             onPasswordChange = {},
             onTogglePasswordVisibility = {},
+            onConfirmPasswordChange = {},
+            onToggleConfirmPasswordVisibility = {},
+            passwordsMismatch = false,
+            onTermsAcceptedChange = {},
+            onTermsOfUseClick = {},
+            onPrivacyPolicyClick = {},
+            canSubmit = false,
             onRegisterClick = {},
             onLoginClick = {}
         )

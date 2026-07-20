@@ -2,12 +2,10 @@ package com.example.evofit.di
 
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
-import com.example.evofit.domain.usecase.RegisterUseCase
-import com.example.evofit.domain.usecase.RegisterUseCaseImpl
-import com.example.evofit.domain.usecase.LoginUseCase
-import com.example.evofit.domain.usecase.LoginUseCaseImpl
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
-import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.example.evofit.domain.usecase.*
+import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
+import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
+import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
@@ -154,6 +152,8 @@ val dataModule = module {
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
+    single { GoogleSignInHandler(androidContext()) }
+    single { AppleSignInHandler(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
 
@@ -164,7 +164,7 @@ val domainModule = module {
     factory<GetGoalSuggestionsUseCase> { GetGoalSuggestionsUseCaseImpl(get()) }
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
-    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get()) }
+    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
@@ -202,6 +202,12 @@ val domainModule = module {
     factory<CalculateGoalProgressUseCase> { CalculateGoalProgressUseCaseImpl(get(), get()) }
     factory<RegisterUseCase> { RegisterUseCaseImpl(get()) }
     factory<LoginUseCase> { LoginUseCaseImpl(get()) }
+    factory<LoginWithGoogleUseCase> { LoginWithGoogleUseCaseImpl(get()) }
+    factory<LoginWithAppleUseCase> { LoginWithAppleUseCaseImpl(get()) }
+    factory<SendPasswordResetCodeUseCase> { SendPasswordResetCodeUseCaseImpl(get()) }
+    factory<VerifyPasswordResetCodeUseCase> { VerifyPasswordResetCodeUseCaseImpl(get()) }
+    factory<ConfirmPasswordResetUseCase> { ConfirmPasswordResetUseCaseImpl(get()) }
+    factory<LogoutUseCase> { LogoutUseCase(get()) }
 }
 
 val splashModule = module {
@@ -312,14 +318,17 @@ val evoModule = module {
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
     viewModel { UserDataViewModel(get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {
     viewModel { RegisterViewModel(get()) }
-    viewModel { LoginViewModel(get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get()) }
+    viewModel { RecoverPasswordViewModel(get()) }
+    viewModel { VerifyCodeViewModel(get(), get()) }
+    viewModel { NewPasswordViewModel(get()) }
 }
 
 val appModule = listOf(

@@ -26,10 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.EvoFitInputField
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
-import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -39,6 +41,7 @@ fun OnboardUserDataScreen(
     currentPage: Int,
     totalPages: Int,
     onContinue: () -> Unit,
+    onBack: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,7 +52,8 @@ fun OnboardUserDataScreen(
         totalPages = totalPages,
         onNameChange = { viewModel.updateProfile(name = it) },
         onAgeChange = { viewModel.updateProfile(age = it) },
-        onContinue = { viewModel.saveAndNext(onContinue) }
+        onContinue = { viewModel.saveAndNext(onContinue) },
+        onBack = onBack
     )
 }
 
@@ -61,7 +65,8 @@ fun OnboardUserDataContent(
     totalPages: Int,
     onNameChange: (String) -> Unit,
     onAgeChange: (String) -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    onBack: () -> Unit
 ) {
     val isFormValid by remember(userData.name, userData.age) {
         derivedStateOf {
@@ -70,11 +75,8 @@ fun OnboardUserDataContent(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                onBackClick = onBack
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -84,14 +86,13 @@ fun OnboardUserDataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = stringResource(R.string.onboarding_user_data_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 34.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
 
@@ -100,23 +101,27 @@ fun OnboardUserDataContent(
             Text(
                 text = stringResource(R.string.onboarding_user_data_description),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            UserInputField(
+            EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_name),
+                placeholder = stringResource(R.string.onboarding_user_data_label_name_example),
                 value = userData.name,
                 onValueChange = onNameChange
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            UserInputField(
+            EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_age),
+                placeholder =stringResource(
+                    R.string.onboarding_user_data_label_age_example
+                ),
                 value = userData.age,
-                keyboardType = KeyboardType.Number,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 onValueChange = onAgeChange
             )
 
@@ -130,7 +135,7 @@ fun OnboardUserDataContent(
                     .padding(bottom = 16.dp)
             )
 
-            OnboardingButton(
+            EvoFitButton(
                 text = stringResource(R.string.onboarding_button_continue),
                 enabled = isFormValid,
                 onClick = onContinue
@@ -155,7 +160,8 @@ fun OnboardUserDataScreenPreview() {
             totalPages = 6,
             onNameChange = {},
             onAgeChange = {},
-            onContinue = {}
+            onContinue = {},
+            onBack = {}
         )
     }
 }

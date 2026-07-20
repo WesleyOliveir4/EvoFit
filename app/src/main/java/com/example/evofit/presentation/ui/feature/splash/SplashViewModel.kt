@@ -28,7 +28,7 @@ class SplashViewModel(
             val isLoggedIn = isUserLoggedInUseCase()
             
             if (!isLoggedIn) {
-                _startDestination.value = NavRoutes.Login.route
+                _startDestination.value = NavRoutes.PreLogin.route
                 return@launch
             }
 

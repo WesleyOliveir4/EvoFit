@@ -129,7 +129,7 @@ fun EvoWheelPicker(
                     Text(
                         text = "${range[index]}",
                         color = TextPrimary,
-                        fontSize = if (isSelected) 28.sp else 20.sp,
+                        fontSize = if (isSelected) 24.sp else 16.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )
@@ -137,7 +137,7 @@ fun EvoWheelPicker(
                     Text(
                         text = unit,
                         color = if (isSelected) TextPrimary else TextSecondary,
-                        fontSize = if (isSelected) 18.sp else 16.sp,
+                        fontSize = if (isSelected) 16.sp else 14.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )
@@ -215,33 +215,7 @@ fun UserInputField(
     }
 }
 
-@Composable
-fun OnboardingButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-        ),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Text(
-            text = text,
-            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp
-        )
-    }
-}
+
 
 @Composable
 fun GoalTag(
@@ -409,13 +383,4 @@ fun UserInputFieldPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF090909)
-@Composable
-fun OnboardingButtonPreview() {
-    EvoFitTheme {
-        OnboardingButton(
-            text = "Continuar",
-            onClick = {}
-        )
-    }
-}
+

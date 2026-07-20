@@ -18,8 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.components.EvoWheelPicker
-import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingButton
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -70,20 +71,8 @@ fun OnboardHeightContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.onboarding_back),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                onBackClick = onBack
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -92,13 +81,13 @@ fun OnboardHeightContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
         ) {
 
             Text(
                 text = stringResource(R.string.onboarding_height_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 34.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
 
@@ -107,7 +96,7 @@ fun OnboardHeightContent(
             Text(
                 text = stringResource(R.string.onboarding_height_description),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
 
             Spacer(modifier = Modifier.weight(0.5f))
@@ -130,7 +119,7 @@ fun OnboardHeightContent(
                     .padding(bottom = 16.dp)
             )
 
-            OnboardingButton(
+            EvoFitButton(
                 text = stringResource(R.string.onboarding_button_continue),
                 enabled = isButtonEnabled,
                 onClick = onContinue
