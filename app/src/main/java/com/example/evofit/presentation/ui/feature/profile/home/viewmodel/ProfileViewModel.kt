@@ -48,7 +48,7 @@ class ProfileViewModel(
 
                 _uiState.update {
                     it.copy(
-                        name = userData.name,
+                        name = getFirstName(userData.name),
                         age = userData.age,
                         weight = userData.weight,
                         totalWorkouts = totalWorkouts,
@@ -59,6 +59,10 @@ class ProfileViewModel(
                 }
             }.collect({})
         }
+    }
+
+    private fun getFirstName(fullName: String): String {
+        return fullName.trim().split("\\s+".toRegex()).firstOrNull() ?: fullName
     }
 
     fun logout() {

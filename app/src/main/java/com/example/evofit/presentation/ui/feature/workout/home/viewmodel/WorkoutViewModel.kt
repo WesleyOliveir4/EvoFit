@@ -69,15 +69,16 @@ class WorkoutViewModel(
     private val baseState: Flow<WorkoutState> = getOnboardingDataUseCase()
         .flatMapLatest { userData ->
             val userId = getUserIdUseCase() ?: ""
+            val firstName = getFirstName(userData.name)
             if (userId.isEmpty()) {
-                flowOf(WorkoutState(userName = userData.name))
+                flowOf(WorkoutState(userName = firstName))
             } else {
                 val history = getWorkoutDoneHistoryUseCase(userId)
                 getWorkoutsUseCase(userId).map { workouts ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
 
                     WorkoutState(
-                        userName = userData.name,
+                        userName = firstName,
                         workouts = workouts.map { workout ->
                             WorkoutUIModel(
                                 id = workout.id,
@@ -140,5 +141,9 @@ class WorkoutViewModel(
         viewModelScope.launch {
             _updateOrderFlow.emit(orderedList)
         }
+    }
+
+    private fun getFirstName(fullName: String): String {
+        return fullName.trim().split("\\s+".toRegex()).firstOrNull() ?: fullName
     }
 }
