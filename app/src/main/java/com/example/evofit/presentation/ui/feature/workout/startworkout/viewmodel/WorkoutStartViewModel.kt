@@ -22,16 +22,21 @@ import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
 
+@OptIn(FlowPreview::class)
 class WorkoutStartViewModel(
     private val workoutId: String,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
@@ -48,88 +53,88 @@ class WorkoutStartViewModel(
     private val _uiState = MutableStateFlow(WorkoutStartUiState())
     val uiState: StateFlow<WorkoutStartUiState> = _uiState.asStateFlow()
 
-    private var timerJob: Job? = null
     private var workoutDomain: Workout? = null
+    
+    // SharedFlow para gerenciar a persistência de forma reativa
+    // Usamos replay = 0 e extraBufferCapacity = 1 para agir como um trigger puro
+    private val persistenceTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {
         loadWorkout()
         startOrResumeTimer()
+        setupPersistence()
+    }
+
+    private fun setupPersistence() {
+        persistenceTrigger
+            .debounce(500)
+            .onEach { persistCompletedSets() }
+            .launchIn(viewModelScope)
     }
 
     private fun loadWorkout() {
         viewModelScope.launch {
-            combine(
-                getWorkoutByIdUseCase(workoutId),
-                getActiveWorkoutSessionUseCase()
-            ) { workout, activeSession ->
-                workoutDomain = workout
-                workout?.let { w ->
-                    val groupName = w.muscleGroup?.name ?: ""
+            // .first() garante que pegamos o estado atual e paramos de observar,
+            // permitindo que a ViewModel seja a única fonte de verdade (Single Source of Truth)
+            val workout = getWorkoutByIdUseCase(workoutId).first()
+            val activeSession = getActiveWorkoutSessionUseCase().first()
+            
+            workoutDomain = workout
+            workout?.let { w ->
+                val groupName = w.muscleGroup?.name ?: ""
+                val exerciseIds = w.exercises.map { it.exerciseId }
+                val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds).associateBy { it.id }
 
-                    val exerciseIds = w.exercises.map { it.exerciseId }
-                    val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
-                        .associateBy { it.id }
-
-                    val completedSets = if (activeSession?.workout?.id == workoutId) {
-                        activeSession.completedSets
-                    } else {
-                        emptyList()
-                    }
-
-                    val exercises = w.exercises.map { workoutExercise ->
-                        val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
-
-                        ExerciseProgressState(
-                            workoutExerciseId = workoutExercise.id,
-                            exerciseId = workoutExercise.exerciseId,
-                            name = exerciseInfo?.name ?: "",
-                            unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
-                            sets = workoutExercise.sets.mapIndexed { index, set ->
-                                val setNumber = index + 1
-                                SetProgressState(
-                                    setNumber = setNumber,
-                                    weight = set.load,
-                                    reps = set.reps,
-                                    time = set.time,
-                                    distance = set.distance,
-                                    isDone = completedSets.any {
-                                        it.workoutExerciseId == workoutExercise.id && it.setNumber == setNumber
-                                    }
-                                )
-                            }
-                        )
-                    }
-
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            workoutTitle = w.name.ifEmpty { groupName },
-                            exercises = exercises,
-                            isLoading = false
-                        )
-                    }
+                val completedSets = if (activeSession?.workout?.id == workoutId) {
+                    activeSession.completedSets
+                } else {
+                    emptyList()
                 }
-            }.collect { }
+
+                val exercises = w.exercises.map { workoutExercise ->
+                    val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
+                    ExerciseProgressState(
+                        workoutExerciseId = workoutExercise.id,
+                        exerciseId = workoutExercise.exerciseId,
+                        name = exerciseInfo?.name ?: "",
+                        unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
+                        sets = workoutExercise.sets.mapIndexed { index, set ->
+                            val setNumber = index + 1
+                            SetProgressState(
+                                setNumber = setNumber,
+                                weight = set.load,
+                                reps = set.reps,
+                                time = set.time,
+                                distance = set.distance,
+                                isDone = completedSets.any {
+                                    it.workoutExerciseId == workoutExercise.id && it.setNumber == setNumber
+                                }
+                            )
+                        }
+                    )
+                }
+
+                _uiState.update { it.copy(workoutTitle = w.name.ifEmpty { groupName }, exercises = exercises, isLoading = false) }
+            }
         }
     }
 
     private fun startOrResumeTimer() {
         viewModelScope.launch {
-            val now = System.currentTimeMillis()
             val activeSession = getActiveWorkoutSessionUseCase().first()
             val startTime = if (activeSession?.workout?.id == workoutId) {
                 activeSession.startTime
             } else {
+                val now = System.currentTimeMillis()
                 startWorkoutSessionUseCase(workoutId, now)
                 now
             }
 
-            timerJob?.cancel()
-            timerJob = launch {
-                while (true) {
-                    val elapsed = System.currentTimeMillis() - startTime
-                    _uiState.update { it.copy(elapsedTime = formatElapsedTime(elapsed)) }
-                    delay(1000)
-                }
+            // Loop infinito que dura enquanto o viewModelScope estiver ativo
+            while (true) {
+                val elapsed = System.currentTimeMillis() - startTime
+                _uiState.update { it.copy(elapsedTime = formatElapsedTime(elapsed)) }
+                delay(1000)
             }
         }
     }
@@ -142,6 +147,7 @@ class WorkoutStartViewModel(
     }
 
     fun toggleSetDone(workoutExerciseId: String, setNumber: Int) {
+        // 1. Atualização Otimista da UI (Imediata e sem flicker)
         _uiState.update { currentState ->
             val updatedExercises = currentState.exercises.map { exercise ->
                 if (exercise.workoutExerciseId == workoutExerciseId) {
@@ -159,9 +165,9 @@ class WorkoutStartViewModel(
             }
             currentState.copy(exercises = updatedExercises)
         }
-        viewModelScope.launch {
-            persistCompletedSets()
-        }
+        
+        // 2. Notifica o fluxo de persistência para salvar após o debounce
+        persistenceTrigger.tryEmit(Unit)
     }
 
     private suspend fun persistCompletedSets() {
@@ -201,7 +207,6 @@ class WorkoutStartViewModel(
                 if (doneSets.isEmpty()) {
                     null
                 } else {
-                    // Obtendo o total de séries a partir do workout original (template)
                     val totalSetsPlanned = workout.exercises.find { it.id == exercise.workoutExerciseId }?.sets?.size ?: 0
 
                     WorkoutExercise(
