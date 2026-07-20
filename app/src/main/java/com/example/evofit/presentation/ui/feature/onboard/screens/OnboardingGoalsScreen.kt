@@ -24,6 +24,7 @@ import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.model.GoalUIModel
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
@@ -94,20 +95,8 @@ fun OnboardingGoalsContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.onboarding_back),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                onBackClick = onBack
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -116,7 +105,7 @@ fun OnboardingGoalsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
@@ -126,14 +115,14 @@ fun OnboardingGoalsContent(
                 Text(
                     text = stringResource(R.string.onboarding_goals_title),
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 34.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.onboarding_goals_description),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 18.sp
+                    fontSize = 16.sp
                 )
             }
 

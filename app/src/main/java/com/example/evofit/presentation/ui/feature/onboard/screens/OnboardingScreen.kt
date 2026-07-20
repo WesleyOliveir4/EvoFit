@@ -56,7 +56,7 @@ fun OnboardingContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
@@ -112,14 +112,14 @@ fun OnboardingPageContent(
         Text(
             text = page.title,
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 34.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
             text = page.highlightText,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 34.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
 
@@ -128,7 +128,7 @@ fun OnboardingPageContent(
         Text(
             text = page.description,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             textAlign = TextAlign.Center
         )
     }

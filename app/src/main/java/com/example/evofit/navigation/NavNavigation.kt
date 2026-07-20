@@ -157,6 +157,9 @@ fun NavNavigation() {
                     totalPages = totalSteps,
                     onContinue = {
                         navController.navigate(NavRoutes.Weight.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }

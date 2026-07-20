@@ -13,7 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,17 +32,34 @@ import com.example.evofit.presentation.ui.theme.*
 fun PreLoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo_evofit),
             contentDescription = stringResource(id = R.string.pre_login_content_desc_logo),
-            modifier = Modifier.size(56.dp)
+            modifier = Modifier.size(156.dp)
         )
 
+        Spacer(modifier = Modifier.height(40.dp))
+
+        val fullTitle = stringResource(id = R.string.pre_login_title)
+        val highlightPart = "melhor"
+        val annotatedTitle = buildAnnotatedString {
+            val startIndex = fullTitle.indexOf(highlightPart)
+            if (startIndex >= 0) {
+                append(fullTitle.substring(0, startIndex))
+                withStyle(style = SpanStyle(color = AppGreen)) {
+                    append(highlightPart)
+                }
+                append(fullTitle.substring(startIndex + highlightPart.length))
+            } else {
+                append(fullTitle)
+            }
+        }
+
         Text(
-            text = stringResource(id = R.string.pre_login_title),
+            text = annotatedTitle,
             color = TextPrimary,
             fontSize = 32.sp,
             fontWeight = FontWeight.Black,
@@ -49,7 +70,8 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.pre_login_subtitle),
             color = TextSecondary,
             fontSize = 16.sp,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
+            textAlign = TextAlign.Center
         )
     }
 }

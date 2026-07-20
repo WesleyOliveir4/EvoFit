@@ -46,6 +46,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -155,14 +156,15 @@ fun EvoFitButton(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarReturn(
-    title: String? = null,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String? = null
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
         ),
-        modifier = Modifier.shadow(elevation = 2.dp, ambientColor = Color.Black),
+        modifier = modifier.shadow(elevation = 2.dp, ambientColor = Color.Black),
         title = {
             Text(
                 text = title ?: "",
@@ -170,7 +172,10 @@ fun TopBarReturn(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.offset(x = (0).dp) // Alinha a seta com a margem de 24dp do conteúdo
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Voltar",

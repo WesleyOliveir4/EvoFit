@@ -113,7 +113,7 @@ fun RegisterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 18.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {

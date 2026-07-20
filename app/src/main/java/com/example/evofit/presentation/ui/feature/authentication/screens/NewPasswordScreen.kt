@@ -114,7 +114,7 @@ fun NewPasswordContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {

@@ -129,7 +129,7 @@ fun EvoWheelPicker(
                     Text(
                         text = "${range[index]}",
                         color = TextPrimary,
-                        fontSize = if (isSelected) 28.sp else 20.sp,
+                        fontSize = if (isSelected) 24.sp else 16.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )
@@ -137,7 +137,7 @@ fun EvoWheelPicker(
                     Text(
                         text = unit,
                         color = if (isSelected) TextPrimary else TextSecondary,
-                        fontSize = if (isSelected) 18.sp else 16.sp,
+                        fontSize = if (isSelected) 16.sp else 14.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )

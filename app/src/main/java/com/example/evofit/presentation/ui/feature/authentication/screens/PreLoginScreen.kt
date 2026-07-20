@@ -41,7 +41,7 @@ fun PreLoginContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Spacer(modifier = Modifier.height(64.dp))

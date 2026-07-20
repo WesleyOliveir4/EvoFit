@@ -27,6 +27,7 @@ import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
@@ -39,6 +40,7 @@ fun OnboardUserDataScreen(
     currentPage: Int,
     totalPages: Int,
     onContinue: () -> Unit,
+    onBack: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val userData by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,7 +51,8 @@ fun OnboardUserDataScreen(
         totalPages = totalPages,
         onNameChange = { viewModel.updateProfile(name = it) },
         onAgeChange = { viewModel.updateProfile(age = it) },
-        onContinue = { viewModel.saveAndNext(onContinue) }
+        onContinue = { viewModel.saveAndNext(onContinue) },
+        onBack = onBack
     )
 }
 
@@ -61,7 +64,8 @@ fun OnboardUserDataContent(
     totalPages: Int,
     onNameChange: (String) -> Unit,
     onAgeChange: (String) -> Unit,
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    onBack: () -> Unit
 ) {
     val isFormValid by remember(userData.name, userData.age) {
         derivedStateOf {
@@ -70,11 +74,8 @@ fun OnboardUserDataContent(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                onBackClick = onBack
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -84,14 +85,13 @@ fun OnboardUserDataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 18.dp),
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = stringResource(R.string.onboarding_user_data_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 34.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
 
@@ -100,7 +100,7 @@ fun OnboardUserDataContent(
             Text(
                 text = stringResource(R.string.onboarding_user_data_description),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -155,7 +155,8 @@ fun OnboardUserDataScreenPreview() {
             totalPages = 6,
             onNameChange = {},
             onAgeChange = {},
-            onContinue = {}
+            onContinue = {},
+            onBack = {}
         )
     }
 }

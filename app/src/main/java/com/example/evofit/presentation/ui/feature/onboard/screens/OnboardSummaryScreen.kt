@@ -22,6 +22,7 @@ import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
@@ -62,20 +63,8 @@ fun OnboardSummaryContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.onboarding_back),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                onBackClick = onBack
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -84,22 +73,23 @@ fun OnboardSummaryContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp, vertical = 24.dp),
+                .padding(horizontal = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Start,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = stringResource(R.string.onboarding_summary_title),
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 32.sp,
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
