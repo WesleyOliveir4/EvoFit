@@ -103,13 +103,13 @@ fun LoginInputField(
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = AppSurface,
             unfocusedContainerColor = AppSurface,
-            focusedBorderColor = AppGreen,
+            focusedBorderColor = TextPrimary,
             unfocusedBorderColor = AppSurfaceVariant,
-            cursorColor = AppGreen,
+            cursorColor = TextPrimary,
             disabledContainerColor = AppSurface,
             disabledBorderColor = AppSurfaceVariant,
             disabledTextColor = TextSecondary,
-            focusedLabelColor = AppGreen,
+            focusedLabelColor = TextPrimary,
             unfocusedLabelColor = TextSecondary,
             focusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f),
             unfocusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f)

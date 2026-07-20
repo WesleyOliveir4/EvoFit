@@ -26,11 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
+import com.example.evofit.presentation.ui.feature.components.EvoFitInputField
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
-import com.example.evofit.presentation.ui.feature.onboard.components.UserInputField
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -105,18 +106,22 @@ fun OnboardUserDataContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            UserInputField(
+            EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_name),
+                placeholder = stringResource(R.string.onboarding_user_data_label_name_example),
                 value = userData.name,
                 onValueChange = onNameChange
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            UserInputField(
+            EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_age),
+                placeholder =stringResource(
+                    R.string.onboarding_user_data_label_age_example
+                ),
                 value = userData.age,
-                keyboardType = KeyboardType.Number,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 onValueChange = onAgeChange
             )
 

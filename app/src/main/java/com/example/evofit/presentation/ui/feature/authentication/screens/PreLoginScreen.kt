@@ -34,7 +34,7 @@ fun PreLoginContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
         containerColor = AppDarkBg
     ) { paddingValues ->
         Column(

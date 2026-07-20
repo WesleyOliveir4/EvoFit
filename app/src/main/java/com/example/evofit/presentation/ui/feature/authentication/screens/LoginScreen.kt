@@ -104,6 +104,7 @@ fun LoginContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
         containerColor = AppDarkBg,
         topBar = {
             TopBarReturn(
@@ -125,7 +126,7 @@ fun LoginContent(
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 18.dp)

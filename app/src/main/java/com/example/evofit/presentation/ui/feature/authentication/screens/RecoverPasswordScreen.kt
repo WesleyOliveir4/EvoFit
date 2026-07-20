@@ -81,8 +81,7 @@ fun RecoverPasswordContent(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize().systemBarsPadding()
                 .padding(paddingValues)
                 .padding(horizontal = 18.dp),
             verticalArrangement = Arrangement.SpaceBetween

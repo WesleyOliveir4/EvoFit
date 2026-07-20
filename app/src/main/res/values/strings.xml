@@ -13,7 +13,9 @@
     <string name="onboarding_user_data_title">Seus dados</string>
     <string name="onboarding_user_data_description">Precisamos de algumas informações para personalizar sua experiência.</string>
     <string name="onboarding_user_data_label_name">Nome</string>
+    <string name="onboarding_user_data_label_name_example">Ex: João Silva</string>
     <string name="onboarding_user_data_label_age">Idade</string>
+    <string name="onboarding_user_data_label_age_example">Ex: 25</string>
     <string name="onboarding_user_data_label_weight">Peso (kg)</string>
     <string name="onboarding_user_data_label_height">Altura (cm)</string>
 
