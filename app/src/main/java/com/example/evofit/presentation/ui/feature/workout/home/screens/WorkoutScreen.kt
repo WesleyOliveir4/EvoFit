@@ -14,7 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -141,13 +143,13 @@ fun WorkoutContent(
                         modifier = Modifier.weight(1f),
                         value = totalWorkouts.toString(),
                         label = stringResource(R.string.main_workout_stats_total_label),
-                        icon = Icons.Default.SettingsInputComponent
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_dumbbell)
                     )
                     StatCard(
                         modifier = Modifier.weight(1f),
                         value = workoutsThisWeek.toString(),
                         label = stringResource(R.string.main_workout_stats_week_label),
-                        icon = Icons.Default.Whatshot
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_fire)
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))

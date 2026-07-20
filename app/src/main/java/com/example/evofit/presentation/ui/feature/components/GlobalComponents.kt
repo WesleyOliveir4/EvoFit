@@ -63,6 +63,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import com.example.evofit.navigation.NavRoutes
@@ -86,7 +87,7 @@ fun AppBottomNavigation(
         NavigationBarItem(
             selected = currentRoute == NavRoutes.Home.route,
             onClick = { onNavigate(NavRoutes.Home.route) },
-            icon = { Icon(Icons.Default.SettingsInputComponent, contentDescription = stringResource(R.string.nav_training)) },
+            icon = { Icon(ImageVector.vectorResource(id = R.drawable.ic_dumbbell), contentDescription = stringResource(R.string.nav_training)) },
             label = { Text(stringResource(R.string.nav_training)) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.primary,

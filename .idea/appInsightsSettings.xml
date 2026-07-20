@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.evofit" />
-                  <option name="mobileSdkAppId" value="1:382133495786:android:4ba425d58a1642f429f493" />
-                  <option name="projectId" value="evofit-production" />
-                  <option name="projectNumber" value="382133495786" />
+                  <option name="appId" value="com.example.evofit.staging" />
+                  <option name="mobileSdkAppId" value="1:1061635064350:android:f9bdf455350a2d7b95a40f" />
+                  <option name="projectId" value="evofit-staging" />
+                  <option name="projectNumber" value="1061635064350" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -83,7 +83,7 @@ fun OnboardSummaryContent(
                 horizontalAlignment = Alignment.Start
             ) {
                 Column(
-                    horizontalAlignment = Alignment.Start,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
