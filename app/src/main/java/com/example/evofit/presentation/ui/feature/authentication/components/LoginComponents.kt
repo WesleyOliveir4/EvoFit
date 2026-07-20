@@ -29,7 +29,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 40.dp),
+            .padding(top = 28.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
         // Brand Logo and Name

@@ -109,6 +109,19 @@ fun LoginContent(
             TopBarReturn(
                 onBackClick = onBackClick
             )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                LoginRegistrationFooter(
+                    onSignUpClick = onSignUpClick,
+                    enabled = !uiState.isLoading
+                )
+            }
         }
     ) { paddingValues ->
         Column(
@@ -197,7 +210,8 @@ fun LoginContent(
 
             // --- BOTÕES SOCIAIS: Google & Apple ---
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 SocialLoginButton(
@@ -217,14 +231,6 @@ fun LoginContent(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // --- FOOTER: Link para Cadastro ---
-            LoginRegistrationFooter(
-                onSignUpClick = onSignUpClick,
-                enabled = !uiState.isLoading
-            )
         }
     }
 }

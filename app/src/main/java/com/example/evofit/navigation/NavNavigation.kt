@@ -146,9 +146,19 @@ fun NavNavigation() {
         }
 
         navigation(
-            startDestination = NavRoutes.UserData.route,
+            startDestination = NavRoutes.Welcome.route,
             route = NavRoutes.Onboarding.route
         ) {
+            composable(NavRoutes.Welcome.route) {
+                OnboardingScreen(
+                    onFinish = {
+                        navController.navigate(NavRoutes.UserData.route)
+                    },
+                    currentPage = 0,
+                    totalPages = totalSteps
+                )
+            }
+
             composable(NavRoutes.UserData.route) { backStackEntry ->
                 val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
                 OnboardUserDataScreen(

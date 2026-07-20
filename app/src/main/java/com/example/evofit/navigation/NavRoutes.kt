@@ -15,6 +15,7 @@ sealed class NavRoutes(val route: String) {
         fun createRoute(code: String) = "new_password/$code"
     }
     object Onboarding : NavRoutes("onboarding")
+    object Welcome : NavRoutes("welcome")
     object UserData : NavRoutes("user_data")
     object Weight : NavRoutes("weight")
     object Height : NavRoutes("height")
