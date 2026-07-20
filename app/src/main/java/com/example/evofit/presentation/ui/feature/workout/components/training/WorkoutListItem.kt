@@ -72,14 +72,14 @@ fun WorkoutListItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(40.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -97,7 +97,7 @@ fun WorkoutListItem(
                 Text(
                     text = workout.title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 val exercisesStr = stringResource(R.string.main_workout_exercise_count, workout.exercises)
@@ -133,7 +133,7 @@ fun WorkoutListItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

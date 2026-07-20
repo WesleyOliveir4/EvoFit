@@ -140,8 +140,9 @@ fun SelectExercisesContent(
             Column {
                 Box(
                     modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.navigationBars)
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(16.dp)
                 ) {
                     Button(
                         onClick = onConfigureExercisesClick,
@@ -157,17 +158,13 @@ fun SelectExercisesContent(
                     ) {
                         Text(
                             text = stringResource(R.string.select_exercises_button_configure),
-                            color = if (isButtonEnabled) Color.Black else MaterialTheme.colorScheme.secondary,
+                            // Alterado para usar cores do tema ao invés de Color.Black fixo
+                            color = if (isButtonEnabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
-                
-                AppBottomNavigation(
-                    currentRoute = "new_workout",
-                    onNavigate = onNavigate
-                )
             }
         }
     ) { paddingValues ->
@@ -213,7 +210,7 @@ fun SelectExercisesContent(
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = stringResource(R.string.select_exercises_cancel_desc),
-                                    tint = Color.White
+                                    tint = MaterialTheme.colorScheme.onBackground // Alterado de Color.White para onBackground
                                 )
                             }
                         }
@@ -230,6 +227,7 @@ fun SelectExercisesContent(
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = workoutName,
                                     color = MaterialTheme.colorScheme.primary,
@@ -248,8 +246,9 @@ fun SelectExercisesContent(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
+                    // Agora utiliza o muscleGroupName que estava sobrando
                     Text(
-                        text = stringResource(R.string.select_exercises_available_count, exercises.size),
+                        text = "$muscleGroupName: " + stringResource(R.string.select_exercises_available_count, exercises.size),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp
                     )
@@ -264,27 +263,29 @@ fun SelectExercisesContent(
                         onCheckedChange = { onExerciseToggle(exercise.id) }
                     )
                 }
-                
+
                 item { Spacer(modifier = Modifier.height(24.dp)) }
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SelectExercisesScreenPreview() {
     EvoFitTheme {
         SelectExercisesContent(
             muscleGroupName = "Peito",
-            workoutName = "Treino de Peito",
+            workoutName = "Treino A",
             tempWorkoutName = "",
             isEditingName = false,
             exercises = listOf(
                 ExerciseSelectionUIModel("1", "Supino Reto"),
-                ExerciseSelectionUIModel("2", "Crucifixo")
+                ExerciseSelectionUIModel("2", "Crucifixo Inclinado"),
+                ExerciseSelectionUIModel("3", "Crossover"),
+                ExerciseSelectionUIModel("4", "Flexão de Braços")
             ),
-            selectedExerciseIds = listOf("1"),
+            selectedExerciseIds = listOf("1", "2"),
             isLoading = false,
             onBackClick = {},
             onNavigate = {},
@@ -293,7 +294,8 @@ fun SelectExercisesScreenPreview() {
             onStartEditingName = {},
             onCancelEditingName = {},
             onConfirmEditingName = {},
-            onTempNameChange = {}
+            onTempNameChange = {},
+            isEditMode = false
         )
     }
 }

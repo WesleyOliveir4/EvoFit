@@ -92,12 +92,6 @@ fun NewWorkoutContent(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        },
-        bottomBar = { 
-            AppBottomNavigation(
-                currentRoute = "new_workout",
-                onNavigate = onNavigate
-            )
         }
     ) { paddingValues ->
         if (isLoading) {
