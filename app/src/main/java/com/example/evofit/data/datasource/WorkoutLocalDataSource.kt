@@ -68,9 +68,7 @@ class WorkoutLocalDataSourceImpl(
     override fun getActiveSession(): Flow<ActiveSessionWithSets?> = userDao.getActiveSessionWithSets()
 
     override suspend fun insertActiveSession(session: ActiveSessionEntity, sets: List<ActiveSessionSetEntity>) {
-        userDao.deleteActiveSession()
-        userDao.insertActiveSession(session)
-        userDao.insertActiveSessionSets(sets)
+        userDao.updateActiveSession(session, sets)
     }
 
     override suspend fun deleteActiveSession() = userDao.deleteActiveSession()

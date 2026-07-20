@@ -118,6 +118,13 @@ interface UserDao {
     @Query("SELECT * FROM active_session LIMIT 1")
     fun getActiveSessionWithSets(): Flow<ActiveSessionWithSets?>
 
+    @Transaction
+    suspend fun updateActiveSession(session: ActiveSessionEntity, sets: List<ActiveSessionSetEntity>) {
+        deleteActiveSession()
+        insertActiveSession(session)
+        insertActiveSessionSets(sets)
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActiveSession(session: ActiveSessionEntity)
 
