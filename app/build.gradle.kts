@@ -20,6 +20,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions.add("environment")
+    productFlavors {
+        create("staging") {
+            dimension = "environment"
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = "-staging"
+            resValue("string", "app_name", "EvoFit (HML)")
+        }
+        create("production") {
+            dimension = "environment"
+            resValue("string", "app_name", "EvoFit")
+        }
+    }
+
     ksp {
         arg("room.generateKotlin", "true")
     }
@@ -39,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        resValues = true
     }
 }
 

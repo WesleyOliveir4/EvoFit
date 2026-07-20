@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1061635064350",
+    "project_id": "evofit-staging",
+    "storage_bucket": "evofit-staging.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061635064350:android:f9bdf455350a2d7b95a40f",
+        "android_client_info": {
+          "package_name": "com.example.evofit.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDog-wZdW440rx-GKHKed4eqyArZyr3gx4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">EvoFit</string>
-
     <!-- Onboarding General -->
     <string name="onboarding_button_continue">Continuar</string>
     <string name="onboarding_back">Voltar</string>
