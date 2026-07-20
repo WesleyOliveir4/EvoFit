@@ -172,6 +172,7 @@ fun OnboardSummaryContent(
                     onClick = onStartTraining
                 )
 
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
