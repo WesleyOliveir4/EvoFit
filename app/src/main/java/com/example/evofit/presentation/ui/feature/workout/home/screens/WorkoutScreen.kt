@@ -233,7 +233,7 @@ fun WorkoutDoneItem(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -278,13 +278,17 @@ fun WorkoutDoneItem(
 private fun WorkoutContentPreview() {
     EvoFitTheme {
         WorkoutContent(
-            userName = "User",
+            userName = "Augusto",
             workouts = listOf(
-                WorkoutUIModel("1", "Peito", 3, 7),
-                WorkoutUIModel("2", "Costas", 2, 4)
+                WorkoutUIModel("1", "Peito", 6, 18),
+                WorkoutUIModel("2", "Costas", 6, 20),
+                WorkoutUIModel("3", "Pernas", 8, 24),
+                WorkoutUIModel("4", "Ombros", 5, 15),
+                WorkoutUIModel("5", "Braços", 6, 18),
+                WorkoutUIModel("6", "Cardio", 4, 0),
             ),
-            totalWorkouts = 2,
-            workoutsThisWeek = 1,
+            totalWorkouts = 124,
+            workoutsThisWeek = 3,
             history = emptyList(),
             onMove = { _, _ -> },
             onNavigate = {},

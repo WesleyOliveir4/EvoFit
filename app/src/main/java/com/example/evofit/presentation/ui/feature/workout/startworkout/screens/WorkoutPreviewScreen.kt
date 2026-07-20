@@ -154,6 +154,7 @@ fun WorkoutPreviewContent(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(R.string.workout_preview_delete_desc),
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -179,7 +180,6 @@ fun WorkoutPreviewContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("⚡", fontSize = 16.sp)
                         Text(
                             text = stringResource(R.string.workout_preview_start_training),
                             color = Color.Black,

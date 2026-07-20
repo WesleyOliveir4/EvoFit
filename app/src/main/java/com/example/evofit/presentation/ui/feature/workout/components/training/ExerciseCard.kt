@@ -41,7 +41,7 @@ fun ExercisePreviewCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -53,7 +53,7 @@ fun ExercisePreviewCard(
             ) {
                 Text(
                     text = "$index",
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -61,7 +61,6 @@ fun ExercisePreviewCard(
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = item.name,

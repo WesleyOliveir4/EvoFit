@@ -127,7 +127,7 @@ fun ResumeRowItem(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(IconContainerBg, CircleShape),
+                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
