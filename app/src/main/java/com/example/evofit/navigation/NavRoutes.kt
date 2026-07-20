@@ -48,8 +48,12 @@ sealed class NavRoutes(val route: String) {
     object WorkoutStart : NavRoutes("workout_start/{workoutId}") {
         fun createRoute(workoutId: String) = "workout_start/$workoutId"
     }
-    object WorkoutResume : NavRoutes("workout_resume?workoutId={workoutId}&workoutDoneId={workoutDoneId}&editWorkoutId={editWorkoutId}") {
-        fun createRoute(workoutId: String? = null, workoutDoneId: String? = null, editWorkoutId: String? = null) =
-            "workout_resume?workoutId=${workoutId ?: AppConstants.INVALID_ID}&workoutDoneId=${workoutDoneId ?: AppConstants.INVALID_ID}&editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
+    object WorkoutResume : NavRoutes("workout_resume?workoutId={workoutId}&workoutDoneId={workoutDoneId}&editWorkoutId={editWorkoutId}&workoutNotFinishedId={workoutNotFinishedId}") {
+        fun createRoute(
+            workoutId: String? = null,
+            workoutDoneId: String? = null,
+            editWorkoutId: String? = null,
+            workoutNotFinishedId: String? = null
+        ) = "workout_resume?workoutId=${workoutId ?: AppConstants.INVALID_ID}&workoutDoneId=${workoutDoneId ?: AppConstants.INVALID_ID}&editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}&workoutNotFinishedId=${workoutNotFinishedId ?: AppConstants.INVALID_ID}"
     }
 }

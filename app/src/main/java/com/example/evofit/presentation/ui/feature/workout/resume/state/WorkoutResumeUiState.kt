@@ -11,5 +11,6 @@ data class WorkoutResumeUiState(
     val duration: String? = null,
     val formattedDate: String = "",
     val isLoading: Boolean = false,
-    val isWorkoutDone: Boolean = false
+    val isWorkoutDone: Boolean = false,
+    val isWorkoutNotFinished: Boolean = false
 )

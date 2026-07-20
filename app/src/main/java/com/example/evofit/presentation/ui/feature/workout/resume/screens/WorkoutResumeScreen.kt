@@ -55,8 +55,9 @@ fun WorkoutResumeScreen(
     workoutId: String? = null,
     workoutDoneId: String? = null,
     editWorkoutId: String? = null,
+    workoutNotFinishedId: String? = null,
     onContinueClick: () -> Unit,
-    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId, editWorkoutId) }
+    viewModel: WorkoutResumeViewModel = koinViewModel { parametersOf(workoutId, workoutDoneId, editWorkoutId, workoutNotFinishedId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -70,6 +71,7 @@ fun WorkoutResumeScreen(
         onContinueClick = onContinueClick,
         isLoading = uiState.isLoading,
         isWorkoutDone = uiState.isWorkoutDone,
+        isWorkoutNotFinished = uiState.isWorkoutNotFinished,
         isEditMode = editWorkoutId != null
     )
 }
@@ -85,6 +87,7 @@ fun WorkoutResumeContent(
     onContinueClick: () -> Unit,
     isLoading: Boolean = false,
     isWorkoutDone: Boolean = false,
+    isWorkoutNotFinished: Boolean = false,
     isEditMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -152,6 +155,7 @@ fun WorkoutResumeContent(
                 Text(
                     text = when {
                         isWorkoutDone -> stringResource(R.string.workout_resume_done_title)
+                        isWorkoutNotFinished -> "Treino finalizado!"
                         isEditMode -> stringResource(R.string.workout_resume_updated_title)
                         else -> stringResource(R.string.workout_resume_title)
                     },
@@ -166,6 +170,7 @@ fun WorkoutResumeContent(
                 Text(
                     text = when {
                         isWorkoutDone -> stringResource(R.string.workout_done_resume_subtitle, workoutName)
+                        isWorkoutNotFinished -> "Seu treino $workoutName foi finalizado sem ser registrado"
                         isEditMode -> stringResource(R.string.workout_resume_updated_subtitle, workoutName)
                         else -> stringResource(R.string.workout_resume_subtitle, workoutName)
                     },
@@ -174,15 +179,17 @@ fun WorkoutResumeContent(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                if (!isWorkoutNotFinished) {
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                WorkoutSummaryCard(
-                    totalExercises = totalExercises,
-                    totalSets = totalSets,
-                    completedSets = completedSets,
-                    duration = duration,
-                    formattedDate = formattedDate
-                )
+                    WorkoutSummaryCard(
+                        totalExercises = totalExercises,
+                        totalSets = totalSets,
+                        completedSets = completedSets,
+                        duration = duration,
+                        formattedDate = formattedDate
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(56.dp))
             }

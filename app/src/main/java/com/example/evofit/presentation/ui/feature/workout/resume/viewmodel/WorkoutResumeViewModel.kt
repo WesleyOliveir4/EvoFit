@@ -16,6 +16,7 @@ class WorkoutResumeViewModel(
     private val workoutId: String? = null,
     private val workoutDoneId: String? = null,
     private val editWorkoutId: String? = null,
+    private val workoutNotFinishedId: String? = null,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
     private val getWorkoutDoneByIdUseCase: GetWorkoutDoneByIdUseCase
 ) : ViewModel() {
@@ -24,6 +25,7 @@ class WorkoutResumeViewModel(
     val uiState: StateFlow<WorkoutResumeUiState> = _uiState.asStateFlow()
 
     init {
+        _uiState.update { it.copy(isWorkoutNotFinished = workoutNotFinishedId != null && workoutNotFinishedId != AppConstants.INVALID_ID) }
         loadData()
     }
 
@@ -31,7 +33,9 @@ class WorkoutResumeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             
-            val idToLoad = workoutId?.takeIf { it != AppConstants.INVALID_ID } ?: editWorkoutId?.takeIf { it != AppConstants.INVALID_ID }
+            val idToLoad = workoutId?.takeIf { it != AppConstants.INVALID_ID } 
+                ?: editWorkoutId?.takeIf { it != AppConstants.INVALID_ID }
+                ?: workoutNotFinishedId?.takeIf { it != AppConstants.INVALID_ID }
 
             if (workoutDoneId != null && workoutDoneId != AppConstants.INVALID_ID) {
                 val workoutDone = getWorkoutDoneByIdUseCase(workoutDoneId)
@@ -61,7 +65,8 @@ class WorkoutResumeViewModel(
                                 totalSets = workout.exercises.sumOf { ex -> ex.sets.size },
                                 formattedDate = workout.date,
                                 isLoading = false,
-                                isWorkoutDone = false
+                                isWorkoutDone = false,
+                                isWorkoutNotFinished = workoutNotFinishedId != null && workoutNotFinishedId != AppConstants.INVALID_ID
                             )
                         } ?: state.copy(isLoading = false)
                     }
