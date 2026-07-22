@@ -1,7 +1,11 @@
 package com.example.evofit.presentation.ui.feature.workout.home.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -34,6 +39,7 @@ import com.example.evofit.presentation.ui.feature.workout.components.training.Ex
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
 import com.example.evofit.presentation.ui.feature.workout.components.training.StatCard
+import com.example.evofit.presentation.ui.feature.workout.components.training.WorkoutSegmentedControl
 import com.example.evofit.presentation.ui.feature.workout.components.training.draggableWorkoutList
 import com.example.evofit.presentation.ui.feature.workout.components.training.rememberWorkoutDraggableListState
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
@@ -94,6 +100,7 @@ fun WorkoutContent(
 ) {
     val listState = rememberLazyListState()
     val dragState = rememberWorkoutDraggableListState(onMove = onMove)
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         modifier = modifier,
@@ -174,43 +181,64 @@ fun WorkoutContent(
             }
 
             item {
-                Text(
-                    text = stringResource(R.string.main_workout_section_title),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
+                WorkoutSegmentedControl(
+                    options = listOf(
+                        stringResource(R.string.main_workout_tab_my_workouts),
+                        stringResource(R.string.main_workout_tab_history)
+                    ),
+                    selectedIndex = selectedTabIndex,
+                    onOptionSelected = { selectedTabIndex = it }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            draggableWorkoutList(
-                workouts = workouts,
-                dragState = dragState,
-                onWorkoutClick = onWorkoutClick
-            )
-
-            if (history.isNotEmpty()) {
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Text(
-                        text = "Histórico Recente",
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
+            if (selectedTabIndex == 0) {
+                if (workouts.isEmpty()) {
+                    item {
+                        WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_workouts))
+                    }
+                } else {
+                    draggableWorkoutList(
+                        workouts = workouts,
+                        dragState = dragState,
+                        onWorkoutClick = onWorkoutClick
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
-
-                items(history.takeLast(5).reversed(), key = { it.id }) { workoutDone ->
-                    WorkoutDoneItem(workoutDone = workoutDone)
-                    Spacer(modifier = Modifier.height(12.dp))
+            } else {
+                if (history.isEmpty()) {
+                    item {
+                        WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_history))
+                    }
+                } else {
+                    items(history.reversed(), key = { it.id }) { workoutDone ->
+                        WorkoutDoneItem(workoutDone = workoutDone)
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
-            
+
             item { Spacer(modifier = Modifier.height(100.dp)) }
         }
+    }
+}
+
+@Composable
+fun WorkoutEmptyState(
+    message: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message,
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 

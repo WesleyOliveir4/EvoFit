@@ -18,13 +18,13 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["userId"])]
 )
 data class UserGoalEntity(
-    @PrimaryKey val id: String,
-    val userId: String,
-    val type: String,
-    val exerciseName: String?,
-    val value: String?,
-    val unit: String?,
-    val cardioType: String?,
-    val distance: String?,
-    val time: String?
+    @PrimaryKey val id: String = "",
+    val userId: String = "",
+    val type: String = "",
+    val exerciseName: String? = null,
+    val value: String? = null,
+    val unit: String? = null,
+    val cardioType: String? = null,
+    val distance: String? = null,
+    val time: String? = null
 )

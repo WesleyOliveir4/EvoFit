@@ -9,8 +9,8 @@ enum class MuscleGroupType {
 
 @Serializable
 data class MuscleGroup(
-    val id: String,
-    val name: String,
-    val type: MuscleGroupType,
+    val id: String = "",
+    val name: String = "",
+    val type: MuscleGroupType = MuscleGroupType.OTHER,
     val category: ExerciseCategory = ExerciseCategory.STRENGTH
 )

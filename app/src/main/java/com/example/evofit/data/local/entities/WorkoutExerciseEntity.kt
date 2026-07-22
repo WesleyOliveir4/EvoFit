@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["workoutId"])]
 )
 data class WorkoutExerciseEntity(
-    @PrimaryKey val id: String,
-    val workoutId: String,
-    val exerciseId: String
+    @PrimaryKey val id: String = "",
+    val workoutId: String = "",
+    val exerciseId: String = ""
 )
