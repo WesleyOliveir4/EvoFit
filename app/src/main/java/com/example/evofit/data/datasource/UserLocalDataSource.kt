@@ -13,6 +13,7 @@ interface UserLocalDataSource {
     fun getGoalsForUser(userId: String): Flow<List<UserGoalEntity>>
     suspend fun deleteGoalsForUser(userId: String): Int
     suspend fun deleteGoalById(goalId: String): Int
+    suspend fun nukeUserData()
 }
 
 class UserLocalDataSourceImpl(
@@ -32,4 +33,6 @@ class UserLocalDataSourceImpl(
     override suspend fun deleteGoalsForUser(userId: String) = userDao.deleteGoalsForUser(userId)
     
     override suspend fun deleteGoalById(goalId: String) = userDao.deleteGoalById(goalId)
+
+    override suspend fun nukeUserData() = userDao.nukeUserData()
 }

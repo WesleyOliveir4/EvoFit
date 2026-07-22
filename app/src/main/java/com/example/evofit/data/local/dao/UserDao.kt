@@ -25,6 +25,27 @@ interface UserDao {
     @Query("DELETE FROM user_goals WHERE userId = :userId")
     suspend fun deleteGoalsForUser(userId: String): Int
 
+    @Query("DELETE FROM users")
+    suspend fun deleteAllUsers()
+
+    @Query("DELETE FROM user_goals")
+    suspend fun deleteAllGoals()
+
+    @Query("DELETE FROM workouts")
+    suspend fun deleteAllWorkouts()
+
+    @Query("DELETE FROM workout_done_history")
+    suspend fun deleteAllWorkoutHistory()
+
+    @Transaction
+    suspend fun nukeUserData() {
+        deleteAllUsers()
+        deleteAllGoals()
+        deleteAllWorkouts()
+        deleteAllWorkoutHistory()
+        deleteActiveSession()
+    }
+
     @Query("DELETE FROM user_goals WHERE id = :goalId")
     suspend fun deleteGoalById(goalId: String): Int
 

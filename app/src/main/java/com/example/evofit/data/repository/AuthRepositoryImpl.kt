@@ -93,6 +93,10 @@ class AuthRepositoryImpl(
         return firebaseAuth.currentUser != null
     }
 
+    override fun getCurrentUserId(): String? {
+        return firebaseAuth.currentUser?.uid
+    }
+
     override suspend fun logout(): Result<Unit> {
         return try {
             firebaseAuth.signOut()

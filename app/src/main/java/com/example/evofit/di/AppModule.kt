@@ -148,7 +148,7 @@ val dataModule = module {
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
@@ -163,8 +163,8 @@ val domainModule = module {
     factory<GetExercisesByIdsUseCase> { GetExercisesByIdsUseCaseImpl(get()) }
     factory<GetGoalSuggestionsUseCase> { GetGoalSuggestionsUseCaseImpl(get()) }
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
-    factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get()) }
-    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get()) }
+    factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get(), get()) }
+    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
@@ -208,10 +208,11 @@ val domainModule = module {
     factory<VerifyPasswordResetCodeUseCase> { VerifyPasswordResetCodeUseCaseImpl(get()) }
     factory<ConfirmPasswordResetUseCase> { ConfirmPasswordResetUseCaseImpl(get()) }
     factory<LogoutUseCase> { LogoutUseCase(get()) }
+    factory<SyncUserDataUseCase> { SyncUserDataUseCaseImpl(get()) }
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get(), get()) }
+    viewModel { SplashViewModel(get(), get(), get(), get()) }
 }
 
 val onboardingModule = module {
@@ -326,7 +327,7 @@ val profileModule = module {
 
 val authModule = module {
     viewModel { RegisterViewModel(get()) }
-    viewModel { LoginViewModel(get(), get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get()) }
     viewModel { VerifyCodeViewModel(get(), get()) }
     viewModel { NewPasswordViewModel(get()) }

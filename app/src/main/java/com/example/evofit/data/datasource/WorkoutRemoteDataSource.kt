@@ -16,7 +16,15 @@ interface WorkoutRemoteDataSource {
     suspend fun deleteWorkout(userId: String, workoutId: String)
     suspend fun updateWorkoutsOrder(userId: String, workouts: List<WorkoutEntity>)
     suspend fun saveWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
+    suspend fun getAllWorkouts(userId: String): List<FullWorkoutRemoteData>
+    suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
 }
+
+data class FullWorkoutRemoteData(
+    val workout: WorkoutEntity,
+    val exercises: List<WorkoutExerciseEntity>,
+    val sets: List<List<ExerciseSetEntity>>
+)
 
 class WorkoutRemoteDataSourceImpl(
     private val firestore: FirebaseFirestore
@@ -82,5 +90,55 @@ class WorkoutRemoteDataSourceImpl(
             .document("summary") // Keeping it simple for now, as the local entity stores a list
             .set(history)
             .await()
+    }
+
+    override suspend fun getAllWorkouts(userId: String): List<FullWorkoutRemoteData> {
+        return try {
+            val workoutsSnapshot = firestore.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .get()
+                .await()
+
+            val fullWorkouts = mutableListOf<FullWorkoutRemoteData>()
+
+            for (workoutDoc in workoutsSnapshot.documents) {
+                val workout = workoutDoc.toObject(WorkoutEntity::class.java) ?: continue
+                
+                // Fetch Exercises
+                val exercisesSnapshot = workoutDoc.reference.collection("exercises").get().await()
+                val exercises = mutableListOf<WorkoutExerciseEntity>()
+                val setsList = mutableListOf<List<ExerciseSetEntity>>()
+
+                for (exerciseDoc in exercisesSnapshot.documents) {
+                    val exercise = exerciseDoc.toObject(WorkoutExerciseEntity::class.java) ?: continue
+                    exercises.add(exercise)
+
+                    // Fetch Sets for this exercise
+                    val setsSnapshot = exerciseDoc.reference.collection("sets").get().await()
+                    val sets = setsSnapshot.toObjects(ExerciseSetEntity::class.java)
+                    setsList.add(sets)
+                }
+
+                fullWorkouts.add(FullWorkoutRemoteData(workout, exercises, setsList))
+            }
+            fullWorkouts
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity? {
+        return try {
+            firestore.collection("users")
+                .document(userId)
+                .collection("history")
+                .document("summary")
+                .get()
+                .await()
+                .toObject(WorkoutDoneHistoryEntity::class.java)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

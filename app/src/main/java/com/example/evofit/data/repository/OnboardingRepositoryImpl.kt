@@ -2,6 +2,8 @@ package com.example.evofit.data.repository
 
 import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
+import com.example.evofit.data.datasource.WorkoutLocalDataSource
+import com.example.evofit.data.datasource.WorkoutRemoteDataSource
 import com.example.evofit.data.mapper.mapToDomain
 import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.domain.model.UserOnboardingData
@@ -19,7 +21,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingRepositoryImpl(
     private val userDataSource: UserLocalDataSource,
-    private val userRemoteDataSource: UserRemoteDataSource
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val workoutLocalDataSource: WorkoutLocalDataSource,
+    private val workoutRemoteDataSource: WorkoutRemoteDataSource
 ) : OnboardingRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -94,5 +98,37 @@ class OnboardingRepositoryImpl(
 
     override fun isOnboardingCompleted(): Flow<Boolean> {
         return userDataSource.getUser().map { it?.isOnboardingCompleted ?: false }
+    }
+
+    override suspend fun syncUserData(userId: String): Result<Unit> {
+        return try {
+            // Fetch everything from Remote
+            val remoteUser = userRemoteDataSource.getUser(userId)
+            val remoteGoals = userRemoteDataSource.getGoals(userId)
+            val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
+            val remoteHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
+
+            // Nuke Local
+            userDataSource.nukeUserData()
+
+            // Save to Local
+            if (remoteUser != null) {
+                userDataSource.saveUserWithGoals(remoteUser, remoteGoals)
+            }
+
+            if (remoteWorkouts.isNotEmpty()) {
+                remoteWorkouts.forEach { data ->
+                    workoutLocalDataSource.insertFullWorkout(data.workout, data.exercises, data.sets)
+                }
+            }
+
+            if (remoteHistory != null) {
+                workoutLocalDataSource.insertWorkoutDoneHistory(remoteHistory)
+            }
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
