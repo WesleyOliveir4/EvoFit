@@ -14,10 +14,13 @@ interface CompleteOnboardingUseCase {
 
 class CompleteOnboardingUseCaseImpl(
     private val repository: OnboardingRepository,
+    private val authRepository: AuthRepository,
     private val firebaseAuth: FirebaseAuth
 ) : CompleteOnboardingUseCase {
     override suspend fun invoke(data: UserOnboardingData) {
-        val userId = repository.getUserId() ?: UUID.randomUUID().toString()
+        val userId = authRepository.getCurrentUserId()
+            ?: repository.getUserId() 
+            ?: UUID.randomUUID().toString()
         
         // Sincroniza o nome com o perfil do Firebase Auth se o usuário estiver logado
         firebaseAuth.currentUser?.let { user ->

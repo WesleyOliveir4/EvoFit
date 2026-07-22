@@ -9,5 +9,6 @@ interface AuthRepository {
     suspend fun verifyPasswordResetCode(email: String, code: String): Result<String> // returns oobCode
     suspend fun confirmPasswordReset(oobCode: String, newPassword: String): Result<Unit>
     fun isLoggedIn(): Boolean
+    fun getCurrentUserId(): String?
     suspend fun logout(): Result<Unit>
 }

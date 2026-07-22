@@ -9,6 +9,8 @@ interface UserRemoteDataSource {
     suspend fun saveUser(user: UserEntity)
     suspend fun saveGoals(userId: String, goals: List<UserGoalEntity>)
     suspend fun deleteGoal(userId: String, goalId: String)
+    suspend fun getUser(userId: String): UserEntity?
+    suspend fun getGoals(userId: String): List<UserGoalEntity>
 }
 
 class UserRemoteDataSourceImpl(
@@ -41,5 +43,30 @@ class UserRemoteDataSourceImpl(
             .document(goalId)
             .delete()
             .await()
+    }
+
+    override suspend fun getUser(userId: String): UserEntity? {
+        return try {
+            firestore.collection("users")
+                .document(userId)
+                .get()
+                .await()
+                .toObject(UserEntity::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun getGoals(userId: String): List<UserGoalEntity> {
+        return try {
+            firestore.collection("users")
+                .document(userId)
+                .collection("goals")
+                .get()
+                .await()
+                .toObjects(UserGoalEntity::class.java)
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }
