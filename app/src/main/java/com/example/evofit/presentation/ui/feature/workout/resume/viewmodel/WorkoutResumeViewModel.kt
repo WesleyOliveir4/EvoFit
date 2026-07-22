@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.core.common.AppConstants
 import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
+import com.example.evofit.presentation.ui.feature.workout.resume.state.ResumeMode
 import com.example.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,56 +26,64 @@ class WorkoutResumeViewModel(
     val uiState: StateFlow<WorkoutResumeUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState.update { it.copy(isWorkoutNotFinished = workoutNotFinishedId != null && workoutNotFinishedId != AppConstants.INVALID_ID) }
+        val initialMode = when {
+            workoutDoneId != null && workoutDoneId != AppConstants.INVALID_ID -> ResumeMode.COMPLETED
+            workoutNotFinishedId != null && workoutNotFinishedId != AppConstants.INVALID_ID -> ResumeMode.CANCELLED
+            editWorkoutId != null && editWorkoutId != AppConstants.INVALID_ID -> ResumeMode.UPDATED
+            else -> ResumeMode.CREATED
+        }
+        _uiState.update { it.copy(mode = initialMode) }
         loadData()
     }
 
     private fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            
-            val idToLoad = workoutId?.takeIf { it != AppConstants.INVALID_ID } 
-                ?: editWorkoutId?.takeIf { it != AppConstants.INVALID_ID }
-                ?: workoutNotFinishedId?.takeIf { it != AppConstants.INVALID_ID }
 
-            if (workoutDoneId != null && workoutDoneId != AppConstants.INVALID_ID) {
-                val workoutDone = getWorkoutDoneByIdUseCase(workoutDoneId)
-                _uiState.update { state ->
-                    workoutDone?.let { workoutDone ->
-                        val doneSetsCount = workoutDone.exercises.sumOf { it.sets.size }
-                        val totalSetsPlanned = workoutDone.exercises.sumOf { it.totalSets }
-                        state.copy(
-                            workoutName = workoutDone.name,
-                            totalExercises = workoutDone.exercises.size,
-                            totalSets = totalSetsPlanned,
-                            completedSets = doneSetsCount,
-                            duration = workoutDone.time,
-                            formattedDate = workoutDone.date,
-                            isLoading = false,
-                            isWorkoutDone = true
-                        )
-                    } ?: state.copy(isLoading = false)
-                }
-            } else if (idToLoad != null) {
-                getWorkoutByIdUseCase(idToLoad).collect { workout ->
-                    _uiState.update { state ->
-                        workout?.let { workout ->
-                            state.copy(
-                                workoutName = workout.name,
-                                totalExercises = workout.exercises.size,
-                                totalSets = workout.exercises.sumOf { ex -> ex.sets.size },
-                                formattedDate = workout.date,
-                                isLoading = false,
-                                isWorkoutDone = false,
-                                isWorkoutNotFinished = workoutNotFinishedId != null && workoutNotFinishedId != AppConstants.INVALID_ID
-                            )
-                        } ?: state.copy(isLoading = false)
-                    }
-                }
-            } else {
-                _uiState.update { it.copy(isLoading = false) }
+            when (_uiState.value.mode) {
+                ResumeMode.COMPLETED -> loadWorkoutDone(workoutDoneId!!)
+                ResumeMode.CANCELLED -> loadWorkoutBase(workoutNotFinishedId!!)
+                ResumeMode.UPDATED -> loadWorkoutBase(editWorkoutId!!)
+                ResumeMode.CREATED -> loadWorkoutBase(workoutId ?: AppConstants.INVALID_ID)
             }
         }
     }
-    
+
+    private suspend fun loadWorkoutDone(id: String) {
+        val workoutDone = getWorkoutDoneByIdUseCase(id)
+        _uiState.update { state ->
+            workoutDone?.let { done ->
+                state.copy(
+                    workoutName = done.name,
+                    totalExercises = done.exercises.size,
+                    totalSets = done.exercises.sumOf { it.totalSets },
+                    completedSets = done.exercises.sumOf { it.sets.size },
+                    duration = done.time,
+                    formattedDate = done.date,
+                    isLoading = false
+                )
+            } ?: state.copy(isLoading = false)
+        }
+    }
+
+    private suspend fun loadWorkoutBase(id: String) {
+        if (id == AppConstants.INVALID_ID) {
+            _uiState.update { it.copy(isLoading = false) }
+            return
+        }
+
+        getWorkoutByIdUseCase(id).collect { workout ->
+            _uiState.update { state ->
+                workout?.let { w ->
+                    state.copy(
+                        workoutName = w.name,
+                        totalExercises = w.exercises.size,
+                        totalSets = w.exercises.sumOf { it.sets.size },
+                        formattedDate = w.date,
+                        isLoading = false
+                    )
+                } ?: state.copy(isLoading = false)
+            }
+        }
+    }
 }

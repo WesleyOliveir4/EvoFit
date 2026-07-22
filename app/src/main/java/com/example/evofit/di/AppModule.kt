@@ -278,11 +278,12 @@ val workoutModule = module {
             get()
         )
     }
-    viewModel { (workoutId: String?, workoutDoneId: String?, editWorkoutId: String?) ->
+    viewModel { (workoutId: String?, workoutDoneId: String?, editWorkoutId: String?, workoutNotFinishedId: String?) ->
         WorkoutResumeViewModel(
             workoutId = workoutId,
             workoutDoneId = workoutDoneId,
             editWorkoutId = editWorkoutId,
+            workoutNotFinishedId = workoutNotFinishedId,
             getWorkoutByIdUseCase = get(),
             getWorkoutDoneByIdUseCase = get()
         )
