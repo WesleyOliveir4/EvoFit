@@ -187,6 +187,21 @@ class WorkoutStartViewModel(
         _uiState.update { it.copy(showFinishDialog = false) }
     }
 
+    fun onCancelWorkoutClick() {
+        _uiState.update { it.copy(showCancelDialog = true) }
+    }
+
+    fun onDismissCancelDialog() {
+        _uiState.update { it.copy(showCancelDialog = false) }
+    }
+
+    fun onConfirmCancelWorkout() {
+        viewModelScope.launch {
+            clearWorkoutSessionUseCase()
+            _uiState.update { it.copy(showCancelDialog = false, workoutNotFinished = true) }
+        }
+    }
+
     fun onConfirmFinish() {
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch

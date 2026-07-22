@@ -2,6 +2,13 @@ package com.example.evofit.presentation.ui.feature.workout.resume.state
 
 import androidx.compose.runtime.Immutable
 
+enum class ResumeMode {
+    CREATED,
+    UPDATED,
+    COMPLETED,
+    CANCELLED
+}
+
 @Immutable
 data class WorkoutResumeUiState(
     val workoutName: String = "",
@@ -11,5 +18,5 @@ data class WorkoutResumeUiState(
     val duration: String? = null,
     val formattedDate: String = "",
     val isLoading: Boolean = false,
-    val isWorkoutDone: Boolean = false
+    val mode: ResumeMode = ResumeMode.CREATED
 )

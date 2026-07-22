@@ -407,6 +407,11 @@ fun NavNavigation() {
                     navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutDoneId = workoutDoneId)) {
                         popUpTo(NavRoutes.Home.route) { inclusive = false }
                     }
+                },
+                onCancelWorkoutClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutNotFinishedId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
                 }
             )
         }
@@ -416,20 +421,23 @@ fun NavNavigation() {
             arguments = listOf(
                 navArgument("workoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
                 navArgument("workoutDoneId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
-                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("workoutNotFinishedId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
             val workoutId = backStackEntry.arguments?.getString("workoutId")?.takeIf { it != AppConstants.INVALID_ID }
             val workoutDoneId = backStackEntry.arguments?.getString("workoutDoneId")?.takeIf { it != AppConstants.INVALID_ID }
             val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutNotFinishedId = backStackEntry.arguments?.getString("workoutNotFinishedId")?.takeIf { it != AppConstants.INVALID_ID }
             
             WorkoutResumeScreen(
                 workoutId = workoutId,
                 workoutDoneId = workoutDoneId,
                 editWorkoutId = editWorkoutId,
+                workoutNotFinishedId = workoutNotFinishedId,
                 onContinueClick = {
                     when {
-                        workoutDoneId != null -> {
+                        workoutDoneId != null || workoutNotFinishedId != null -> {
                             navController.navigate(NavRoutes.Home.route) {
                                 popUpTo(NavRoutes.Home.route) { inclusive = true }
                             }

@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,20 +41,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
+import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 import com.example.evofit.presentation.ui.feature.workout.startworkout.components.ExerciseTrackingCard
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
-
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -65,6 +64,7 @@ fun WorkoutStartScreen(
     workoutId: String,
     viewModel: WorkoutStartViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
     onFinishWorkoutClick: (String?) -> Unit = {},
+    onCancelWorkoutClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -82,6 +82,7 @@ fun WorkoutStartScreen(
                 viewModel.toggleSetDone(workoutExerciseId, setNumber)
             },
             onFinishWorkoutClick = { viewModel.onFinishClick() },
+            onCancelWorkoutClick = { viewModel.onCancelWorkoutClick() },
             onBackClick = onBackClick
         )
 
@@ -102,9 +103,22 @@ fun WorkoutStartScreen(
             )
         }
 
-        LaunchedEffect(uiState.workoutCompleted) {
+        if (uiState.showCancelDialog) {
+            EvoFitCautionDialog(
+                title = "Sair sem salvar?",
+                description = "Seu progresso atual na ficha de treino não será registrado. Deseja realmente sair?",
+                confirmButtonText = "Sair",
+                dismissButtonText = "Continuar treinando",
+                onDismiss = { viewModel.onDismissCancelDialog() },
+                onConfirm = { viewModel.onConfirmCancelWorkout() }
+            )
+        }
+
+        LaunchedEffect(uiState.workoutCompleted, uiState.workoutNotFinished) {
             if (uiState.workoutCompleted) {
                 onFinishWorkoutClick(uiState.workoutDoneId)
+            } else if (uiState.workoutNotFinished) {
+                onCancelWorkoutClick(workoutId)
             }
         }
     }
@@ -115,6 +129,7 @@ fun WorkoutStartContent(
     uiState: WorkoutStartUiState,
     onToggleSetDone: (String, Int) -> Unit,
     onFinishWorkoutClick: () -> Unit,
+    onCancelWorkoutClick: () -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val totalSets = uiState.exercises.sumOf { it.sets.size }
@@ -145,6 +160,16 @@ fun WorkoutStartContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.workout_start_back_desc),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    IconButton(onClick = onCancelWorkoutClick, modifier = Modifier.size(40.dp)) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_clipboard_off),
+                            contentDescription = "Cancelar treino",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
