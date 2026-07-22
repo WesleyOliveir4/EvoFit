@@ -209,6 +209,7 @@ val domainModule = module {
     factory<ConfirmPasswordResetUseCase> { ConfirmPasswordResetUseCaseImpl(get()) }
     factory<LogoutUseCase> { LogoutUseCase(get()) }
     factory<SyncUserDataUseCase> { SyncUserDataUseCaseImpl(get()) }
+    factory<NukeUserDataUseCase> { NukeUserDataUseCaseImpl(get()) }
 }
 
 val splashModule = module {
@@ -320,13 +321,13 @@ val evoModule = module {
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { UserDataViewModel(get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {
-    viewModel { RegisterViewModel(get()) }
+    viewModel { RegisterViewModel(get(), get()) }
     viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get()) }
     viewModel { VerifyCodeViewModel(get(), get()) }

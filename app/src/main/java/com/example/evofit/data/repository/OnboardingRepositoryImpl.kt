@@ -131,4 +131,8 @@ class OnboardingRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun nukeUserData() {
+        userDataSource.nukeUserData()
+    }
 }

@@ -108,8 +108,17 @@ class OnboardingViewModel(
     fun finishOnboarding(onFinish: () -> Unit) {
         viewModelScope.launch {
             completeOnboardingUseCase(_userData.value)
+            clearCache()
             onFinish()
         }
+    }
+
+    private fun clearCache() {
+        savedStateHandle.remove<String>(KEY_NAME)
+        savedStateHandle.remove<String>(KEY_AGE)
+        savedStateHandle.remove<String>(KEY_WEIGHT)
+        savedStateHandle.remove<String>(KEY_HEIGHT)
+        _userData.value = UserOnboardingData()
     }
 
     fun getMuscleGroups() = getMuscleGroupsUseCase()
