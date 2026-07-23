@@ -46,7 +46,7 @@ class OnboardingRepositoryImpl(
 
     override suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean) {
         val userEntity = data.toEntity(userId).copy(
-            isOnboardingCompleted = isCompleted,
+            onboardingCompleted = isCompleted,
             updatedAt = System.currentTimeMillis()
         )
         val goalEntities = data.goals.map { it.toEntity(userId) }
@@ -68,7 +68,7 @@ class OnboardingRepositoryImpl(
     override suspend fun completeOnboarding() {
         userDataSource.getUser().firstOrNull()?.let { user ->
             val updatedUser = user.copy(
-                isOnboardingCompleted = true,
+                onboardingCompleted = true,
                 updatedAt = System.currentTimeMillis()
             )
             userDataSource.updateUser(updatedUser)
@@ -97,7 +97,7 @@ class OnboardingRepositoryImpl(
     }
 
     override fun isOnboardingCompleted(): Flow<Boolean> {
-        return userDataSource.getUser().map { it?.isOnboardingCompleted ?: false }
+        return userDataSource.getUser().map { it?.onboardingCompleted ?: false }
     }
 
     override suspend fun syncUserData(userId: String): Result<Unit> {
@@ -130,5 +130,9 @@ class OnboardingRepositoryImpl(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun nukeUserData() {
+        userDataSource.nukeUserData()
     }
 }

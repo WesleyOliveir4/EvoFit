@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.authentication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.domain.usecase.NukeUserDataUseCase
 import com.example.evofit.domain.usecase.RegisterUseCase
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val nukeUserDataUseCase: NukeUserDataUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
@@ -51,6 +53,7 @@ class RegisterViewModel(
                 email = currentState.email,
                 password = currentState.password
             ).onSuccess {
+                nukeUserDataUseCase()
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
             }.onFailure { error ->
                 _uiState.update { it.copy(isLoading = false, error = error.message) }

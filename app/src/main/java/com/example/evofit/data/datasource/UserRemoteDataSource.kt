@@ -1,8 +1,10 @@
 package com.example.evofit.data.datasource
 
+import android.util.Log
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
 interface UserRemoteDataSource {
@@ -16,6 +18,10 @@ interface UserRemoteDataSource {
 class UserRemoteDataSourceImpl(
     private val firestore: FirebaseFirestore
 ) : UserRemoteDataSource {
+
+    companion object {
+        private const val TAG = "EvoFit_Debug"
+    }
 
     override suspend fun saveUser(user: UserEntity) {
         firestore.collection("users")
@@ -47,12 +53,18 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun getUser(userId: String): UserEntity? {
         return try {
-            firestore.collection("users")
+            val document = firestore.collection("users")
                 .document(userId)
                 .get()
                 .await()
-                .toObject(UserEntity::class.java)
+            
+            if (document.exists()) {
+                document.toObject<UserEntity>()
+            } else {
+                null
+            }
         } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar usuario: $userId", e)
             null
         }
     }
@@ -66,6 +78,7 @@ class UserRemoteDataSourceImpl(
                 .await()
                 .toObjects(UserGoalEntity::class.java)
         } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar metas: $userId", e)
             emptyList()
         }
     }

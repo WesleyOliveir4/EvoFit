@@ -98,6 +98,10 @@
     <string name="main_workout_subtitle">Bora treinar?</string>
     <string name="main_workout_stats_total_label">Treinos</string>
     <string name="main_workout_stats_week_label">Esta semana</string>
+    <string name="main_workout_tab_my_workouts">Meus treinos</string>
+    <string name="main_workout_tab_history">Histórico</string>
+    <string name="main_workout_empty_workouts">Você não tem treinos criados</string>
+    <string name="main_workout_empty_history">Você não tem treinos recentes</string>
     <string name="main_workout_section_title">MEUS TREINOS</string>
     <string name="main_workout_active_session_title">TREINO EM ANDAMENTO</string>
     <string name="main_workout_active_session_resume">Toque para continuar</string>

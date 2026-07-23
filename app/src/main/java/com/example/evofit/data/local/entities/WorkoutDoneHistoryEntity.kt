@@ -6,6 +6,6 @@ import com.example.evofit.domain.model.WorkoutDone
 
 @Entity(tableName = "workout_done_history")
 data class WorkoutDoneHistoryEntity(
-    @PrimaryKey val userId: String,
-    val history: List<WorkoutDone>
+    @PrimaryKey val userId: String = "",
+    val history: List<WorkoutDone> = emptyList()
 )

@@ -1,10 +1,12 @@
 package com.example.evofit.data.datasource
 
+import android.util.Log
 import com.example.evofit.data.local.entities.ExerciseSetEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
 interface WorkoutRemoteDataSource {
@@ -29,6 +31,10 @@ data class FullWorkoutRemoteData(
 class WorkoutRemoteDataSourceImpl(
     private val firestore: FirebaseFirestore
 ) : WorkoutRemoteDataSource {
+
+    companion object {
+        private const val TAG = "EvoFit_Debug"
+    }
 
     override suspend fun saveFullWorkout(
         workout: WorkoutEntity,
@@ -59,10 +65,6 @@ class WorkoutRemoteDataSourceImpl(
     }
 
     override suspend fun deleteWorkout(userId: String, workoutId: String) {
-        // Note: Firestore doesn't automatically delete subcollections. 
-        // For a full implementation, we'd need to delete subcollections too, 
-        // but for a "dual-write" MVP, deleting the main doc is a start.
-        // A better approach is often a 'deleted' flag or a Cloud Function.
         firestore.collection("users")
             .document(userId)
             .collection("workouts")
@@ -87,7 +89,7 @@ class WorkoutRemoteDataSourceImpl(
         firestore.collection("users")
             .document(history.userId)
             .collection("history")
-            .document("summary") // Keeping it simple for now, as the local entity stores a list
+            .document("summary")
             .set(history)
             .await()
     }
@@ -103,7 +105,7 @@ class WorkoutRemoteDataSourceImpl(
             val fullWorkouts = mutableListOf<FullWorkoutRemoteData>()
 
             for (workoutDoc in workoutsSnapshot.documents) {
-                val workout = workoutDoc.toObject(WorkoutEntity::class.java) ?: continue
+                val workout = workoutDoc.toObject<WorkoutEntity>() ?: continue
                 
                 // Fetch Exercises
                 val exercisesSnapshot = workoutDoc.reference.collection("exercises").get().await()
@@ -111,7 +113,7 @@ class WorkoutRemoteDataSourceImpl(
                 val setsList = mutableListOf<List<ExerciseSetEntity>>()
 
                 for (exerciseDoc in exercisesSnapshot.documents) {
-                    val exercise = exerciseDoc.toObject(WorkoutExerciseEntity::class.java) ?: continue
+                    val exercise = exerciseDoc.toObject<WorkoutExerciseEntity>() ?: continue
                     exercises.add(exercise)
 
                     // Fetch Sets for this exercise
@@ -124,20 +126,27 @@ class WorkoutRemoteDataSourceImpl(
             }
             fullWorkouts
         } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar todos os treinos: $userId", e)
             emptyList()
         }
     }
 
     override suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity? {
         return try {
-            firestore.collection("users")
+            val document = firestore.collection("users")
                 .document(userId)
                 .collection("history")
                 .document("summary")
                 .get()
                 .await()
-                .toObject(WorkoutDoneHistoryEntity::class.java)
+            
+            if (document.exists()) {
+                document.toObject<WorkoutDoneHistoryEntity>()
+            } else {
+                null
+            }
         } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar historico: $userId", e)
             null
         }
     }
