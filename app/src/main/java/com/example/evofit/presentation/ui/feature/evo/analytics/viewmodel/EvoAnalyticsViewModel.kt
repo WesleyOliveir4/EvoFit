@@ -38,14 +38,15 @@ class EvoAnalyticsViewModel(
             try {
                 val userId = getUserIdUseCase()
                 if (userId != null) {
-                    val history = getWorkoutDoneHistoryUseCase(userId)
-                    val groups = getTrainedMuscleGroupsUseCase(history)
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            historyRawData = history,
-                            trainedGroups = groups.map { group -> group.toItem() }
-                        )
+                    getWorkoutDoneHistoryUseCase(userId).collect { history ->
+                        val groups = getTrainedMuscleGroupsUseCase(history)
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                historyRawData = history,
+                                trainedGroups = groups.map { group -> group.toItem() }
+                            )
+                        }
                     }
                 } else {
                     _uiState.update { it.copy(isLoading = false, error = "User not found") }

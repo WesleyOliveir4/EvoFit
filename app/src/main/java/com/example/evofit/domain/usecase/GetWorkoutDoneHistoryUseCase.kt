@@ -2,15 +2,16 @@ package com.example.evofit.domain.usecase
 
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.WorkoutRepository
+import kotlinx.coroutines.flow.Flow
 
 interface GetWorkoutDoneHistoryUseCase {
-    suspend operator fun invoke(userId: String): List<WorkoutDone>
+    operator fun invoke(userId: String): Flow<List<WorkoutDone>>
 }
 
 class GetWorkoutDoneHistoryUseCaseImpl(
     private val repository: WorkoutRepository
 ) : GetWorkoutDoneHistoryUseCase {
-    override suspend fun invoke(userId: String): List<WorkoutDone> {
+    override fun invoke(userId: String): Flow<List<WorkoutDone>> {
         return repository.getWorkoutDoneHistory(userId)
     }
 }

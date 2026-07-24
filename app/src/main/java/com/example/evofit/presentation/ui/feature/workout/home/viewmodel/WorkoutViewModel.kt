@@ -101,8 +101,10 @@ class WorkoutViewModel(
             if (userId.isEmpty()) {
                 flowOf(WorkoutState(userName = firstName))
             } else {
-                val history = getWorkoutDoneHistoryUseCase(userId)
-                getWorkoutsUseCase(userId).map { workouts ->
+                combine(
+                    getWorkoutsUseCase(userId),
+                    getWorkoutDoneHistoryUseCase(userId)
+                ) { workouts, history ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
 
                     WorkoutState(

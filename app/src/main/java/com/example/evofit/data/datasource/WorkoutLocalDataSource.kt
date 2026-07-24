@@ -27,7 +27,7 @@ interface WorkoutLocalDataSource {
     )
     suspend fun deleteWorkoutById(workoutId: String)
     suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>)
-    suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
+    fun getWorkoutDoneHistory(userId: String): Flow<WorkoutDoneHistoryEntity?>
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
 
     // Active Session
@@ -61,7 +61,7 @@ class WorkoutLocalDataSourceImpl(
     
     override suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>) = userDao.updateWorkoutsOrder(workouts)
     
-    override suspend fun getWorkoutDoneHistory(userId: String) = userDao.getWorkoutDoneHistory(userId)
+    override fun getWorkoutDoneHistory(userId: String) = userDao.getWorkoutDoneHistory(userId)
     
     override suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity) = userDao.insertWorkoutDoneHistory(history)
 

@@ -39,7 +39,7 @@ class ProfileViewModel(
             
             combine(
                 getOnboardingDataUseCase(),
-                kotlinx.coroutines.flow.flow { emit(getWorkoutDoneHistoryUseCase(userId)) }
+                getWorkoutDoneHistoryUseCase(userId)
             ) { userData, history ->
                 val totalWorkouts = getWorkoutsCountUseCase(history).toString()
                 

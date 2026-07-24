@@ -37,25 +37,25 @@ class EvoHomeViewModel(
             
             val userId = getUserIdUseCase() ?: return@launch
             
-            val summary = getEvoHomeSummaryUseCase(userId, period)
-
-            _uiState.update { 
-                it.copy(
-                    isLoading = false,
-                    strengthGains = summary.strengthGains?.map {
-                        StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
-                    },
-                    mostEvolvedMuscle = summary.mostEvolvedMuscle?.let {
-                        MuscleEvolutionUIModel(
-                            muscleGroupName = it.muscleGroupName,
-                            evolutionPercentage = it.evolutionPercentage
-                        )
-                    },
-                    workoutsCount = summary.workoutsCount,
-                    leastTrainedGroup = summary.leastTrainedGroup,
-                    kmPerWeek = summary.kmPerWeek,
-                    averageWorkoutTime = summary.averageWorkoutTime
-                )
+            getEvoHomeSummaryUseCase(userId, period).collect { summary ->
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false,
+                        strengthGains = summary.strengthGains?.map {
+                            StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
+                        },
+                        mostEvolvedMuscle = summary.mostEvolvedMuscle?.let {
+                            MuscleEvolutionUIModel(
+                                muscleGroupName = it.muscleGroupName,
+                                evolutionPercentage = it.evolutionPercentage
+                            )
+                        },
+                        workoutsCount = summary.workoutsCount,
+                        leastTrainedGroup = summary.leastTrainedGroup,
+                        kmPerWeek = summary.kmPerWeek,
+                        averageWorkoutTime = summary.averageWorkoutTime
+                    )
+                }
             }
         }
     }

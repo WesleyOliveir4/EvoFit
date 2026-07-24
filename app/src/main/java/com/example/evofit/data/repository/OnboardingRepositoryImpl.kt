@@ -152,7 +152,7 @@ class OnboardingRepositoryImpl(
             }
 
             // Push History
-            val localHistory = workoutLocalDataSource.getWorkoutDoneHistory(userId)
+            val localHistory = workoutLocalDataSource.getWorkoutDoneHistory(userId).firstOrNull()
             if (localHistory != null) {
                 workoutRemoteDataSource.saveWorkoutDoneHistory(localHistory)
             }
