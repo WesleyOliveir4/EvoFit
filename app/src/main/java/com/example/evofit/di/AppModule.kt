@@ -1,5 +1,8 @@
 package com.example.evofit.di
 
+import com.example.evofit.core.network.ConnectivityObserver
+import com.example.evofit.core.network.NetworkConnectivityObserver
+import com.example.evofit.data.local.session.SessionManager
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.usecase.*
@@ -142,6 +145,8 @@ val dataModule = module {
 
     single { get<AppDatabase>().userDao() }
     single { LocalExerciseDataSource() }
+    single { SessionManager(androidContext()) }
+    single<ConnectivityObserver> { NetworkConnectivityObserver(androidContext()) }
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get()) }
     single { FirebaseFirestore.getInstance() }
@@ -154,7 +159,7 @@ val dataModule = module {
     single { FirebaseAuth.getInstance() }
     single { GoogleSignInHandler(androidContext()) }
     single { AppleSignInHandler(get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 }
 
 val domainModule = module {
@@ -249,6 +254,9 @@ val homeModule = module {
 val workoutModule = module {
     viewModel {
         WorkoutViewModel(
+            get(),
+            get(),
+            get(),
             get(),
             get(),
             get(),

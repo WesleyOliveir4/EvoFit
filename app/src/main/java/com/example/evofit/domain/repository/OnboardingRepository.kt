@@ -10,6 +10,6 @@ interface OnboardingRepository {
     suspend fun completeOnboarding()
     suspend fun deleteGoal(goalId: String)
     fun isOnboardingCompleted(): Flow<Boolean>
-    suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean): Result<Unit>
+    suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean, isOnline: Boolean): Result<Unit>
     suspend fun nukeUserData()
 }

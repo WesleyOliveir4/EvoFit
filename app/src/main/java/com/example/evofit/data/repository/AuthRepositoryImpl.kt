@@ -1,5 +1,6 @@
 package com.example.evofit.data.repository
 
+import com.example.evofit.data.local.session.SessionManager
 import com.example.evofit.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -8,11 +9,13 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val sessionManager: SessionManager
 ) : AuthRepository {
     override suspend fun register(email: String, password: String): Result<Unit> {
         return try {
-            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            result.user?.uid?.let { sessionManager.saveSession(it) }
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -21,7 +24,8 @@ class AuthRepositoryImpl(
 
     override suspend fun login(email: String, password: String): Result<Unit> {
         return try {
-            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            result.user?.uid?.let { sessionManager.saveSession(it) }
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -31,7 +35,8 @@ class AuthRepositoryImpl(
     override suspend fun loginWithGoogle(idToken: String): Result<Unit> {
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
-            firebaseAuth.signInWithCredential(credential).await()
+            val result = firebaseAuth.signInWithCredential(credential).await()
+            result.user?.uid?.let { sessionManager.saveSession(it) }
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -100,6 +105,7 @@ class AuthRepositoryImpl(
     override suspend fun logout(): Result<Unit> {
         return try {
             firebaseAuth.signOut()
+            sessionManager.clearSession()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

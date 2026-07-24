@@ -52,6 +52,7 @@ fun WorkoutScreen(
     onNavigate: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
 
     var localWorkouts by remember { mutableStateOf<List<WorkoutUIModel>>(emptyList()) }
     
@@ -66,6 +67,7 @@ fun WorkoutScreen(
         workoutsThisWeek = uiState.workoutsThisWeek,
         history = uiState.history,
         activeSession = uiState.activeSession,
+        isOnline = isOnline,
         onMove = { from, to ->
             val mutableList = localWorkouts.toMutableList()
             mutableList.add(to, mutableList.removeAt(from))
@@ -96,6 +98,7 @@ fun WorkoutContent(
     onAddWorkoutClick: () -> Unit,
     activeSession: ActiveSessionUIModel? = null,
     onActiveSessionClick: (ActiveSessionUIModel) -> Unit = {},
+    isOnline: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -135,6 +138,37 @@ fun WorkoutContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            if (!isOnline) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WifiOff,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "Você está offline. As alterações serão sincronizadas quando houver conexão.",
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+
             item {
                 Spacer(modifier = Modifier.height(24.dp))
                 HeaderSection(userName = userName)
@@ -321,7 +355,8 @@ private fun WorkoutContentPreview() {
             onMove = { _, _ -> },
             onNavigate = {},
             onWorkoutClick = {},
-            onAddWorkoutClick = {}
+            onAddWorkoutClick = {},
+            isOnline = false
         )
     }
 }
