@@ -12,6 +12,7 @@ import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
@@ -47,7 +48,8 @@ class WorkoutStartViewModel(
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val startWorkoutSessionUseCase: StartWorkoutSessionUseCase,
     private val updateCompletedSetsUseCase: UpdateCompletedSetsUseCase,
-    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
+    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase,
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutStartUiState())
@@ -80,6 +82,8 @@ class WorkoutStartViewModel(
                 val groupName = w.muscleGroup?.name ?: ""
                 val exerciseIds = w.exercises.map { it.exerciseId }
                 val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds).associateBy { it.id }
+                val muscleGroups = getMuscleGroupsUseCase()
+                val muscleGroupsMap = muscleGroups.associateBy { it.id }
 
                 val completedSets = if (activeSession?.workout?.id == workoutId) {
                     activeSession.completedSets
@@ -89,10 +93,14 @@ class WorkoutStartViewModel(
 
                 val exercises = w.exercises.map { workoutExercise ->
                     val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
+                    val mGroupId = exerciseInfo?.muscleGroupId ?: ""
+                    val mGroupName = muscleGroupsMap[mGroupId]?.name ?: ""
+
                     ExerciseProgressState(
                         workoutExerciseId = workoutExercise.id,
                         exerciseId = workoutExercise.exerciseId,
                         name = exerciseInfo?.name ?: "",
+                        muscleGroupName = mGroupName,
                         unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
                         sets = workoutExercise.sets.mapIndexed { index, set ->
                             val setNumber = index + 1

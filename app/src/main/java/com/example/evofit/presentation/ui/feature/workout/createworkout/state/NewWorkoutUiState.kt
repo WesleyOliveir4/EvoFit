@@ -6,5 +6,6 @@ import com.example.evofit.presentation.model.MuscleGroupItem
 @Immutable
 data class NewWorkoutUiState(
     val muscleGroups: List<MuscleGroupItem> = emptyList(),
+    val selectedMuscleGroupIds: Set<String> = emptySet(),
     val isLoading: Boolean = false
 )

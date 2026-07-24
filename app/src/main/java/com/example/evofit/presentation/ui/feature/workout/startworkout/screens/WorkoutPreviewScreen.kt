@@ -219,11 +219,23 @@ fun WorkoutPreviewContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            itemsIndexed(
-                items = preview.exercises,
-                key = { _, exercise -> exercise.workoutExerciseId }
-            ) { index, exercise ->
-                ExercisePreviewCard(index = index + 1, item = exercise)
+            preview.groupedExercises.forEach { (groupName, exercises) ->
+                item {
+                    Text(
+                        text = groupName.uppercase(),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+
+                itemsIndexed(
+                    items = exercises,
+                    key = { _, exercise -> exercise.workoutExerciseId }
+                ) { index, exercise ->
+                    ExercisePreviewCard(index = index + 1, item = exercise)
+                }
             }
             
             item {

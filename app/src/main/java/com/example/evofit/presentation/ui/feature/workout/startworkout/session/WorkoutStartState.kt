@@ -21,6 +21,7 @@ data class ExerciseProgressState(
     val workoutExerciseId: String,
     val exerciseId: String,
     val name: String,
+    val muscleGroupName: String = "",
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val sets: List<SetProgressState>
 )
