@@ -233,9 +233,9 @@ private fun ConfigureWorkoutScreenPreview() {
                 muscleGroupId = "2",
                 unit = MeasurementUnit.WEIGHT,
                 sets = listOf(
-                    SetState(1, 30.0, 12),
-                    SetState(2, 30.0, 12),
-                    SetState(3, 25.0, 15)
+                    SetState(setNumber = 1, weight = 30.0, reps = 12),
+                    SetState(setNumber = 2, weight = 30.0, reps = 12),
+                    SetState(setNumber = 3, weight = 25.0, reps = 15)
                 )
             )
         }

@@ -327,8 +327,8 @@ private fun ExerciseConfigContentDistancePreview() {
                 muscleGroupId = "7",
                 unit = MeasurementUnit.DISTANCE,
                 sets = listOf(
-                    SetState(1, 5.0, 30),
-                    SetState(2, 5.0, 25)
+                    SetState(setNumber = 1, weight = 5.0, reps = 30),
+                    SetState(setNumber = 2, weight = 5.0, reps = 25)
                 )
             )
         }
@@ -353,9 +353,9 @@ private fun ExerciseConfigContentTimePreview() {
                 muscleGroupId = "6",
                 unit = MeasurementUnit.TIME,
                 sets = listOf(
-                    SetState(1, 0.0, 60),
-                    SetState(2, 0.0, 45),
-                    SetState(3, 0.0, 30)
+                    SetState(setNumber = 1, weight = 0.0, reps = 60),
+                    SetState(setNumber = 2, weight = 0.0, reps = 45),
+                    SetState(setNumber = 3, weight = 0.0, reps = 30)
                 )
             )
         }
@@ -380,9 +380,9 @@ private fun ExerciseConfigContentRepsPreview() {
                 muscleGroupId = "2",
                 unit = MeasurementUnit.REPS,
                 sets = listOf(
-                    SetState(1, 0.0, 20),
-                    SetState(2, 0.0, 15),
-                    SetState(3, 0.0, 12)
+                    SetState(setNumber = 1, weight = 0.0, reps = 20),
+                    SetState(setNumber = 2, weight = 0.0, reps = 15),
+                    SetState(setNumber = 3, weight = 0.0, reps = 12)
                 )
             )
         }

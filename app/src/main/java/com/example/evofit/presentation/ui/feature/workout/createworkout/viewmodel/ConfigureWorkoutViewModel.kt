@@ -58,11 +58,14 @@ class ConfigureWorkoutViewModel(
                 val existing = existingExercisesById[exercise.id]
                 if (existing != null) {
                     ExerciseConfigState(
+                        workoutExerciseId = existing.id,
                         exerciseId = exercise.id,
                         name = exercise.name,
                         muscleGroupId = exercise.muscleGroupId,
                         unit = exercise.unit,
-                        sets = existing.sets.mapIndexed { index, set -> set.toSetState(index + 1) }
+                        sets = existing.sets.mapIndexed { index, set -> 
+                            set.toSetState(index + 1).copy(id = set.id) 
+                        }
                     )
                 } else {
                     val defaultWeight = when (exercise.unit) {
@@ -75,11 +78,19 @@ class ConfigureWorkoutViewModel(
                         else -> 10
                     }
                     ExerciseConfigState(
+                        workoutExerciseId = "",
                         exerciseId = exercise.id,
                         name = exercise.name,
                         muscleGroupId = exercise.muscleGroupId,
                         unit = exercise.unit,
-                        sets = listOf(SetState(1, defaultWeight, defaultReps))
+                        sets = listOf(
+                            SetState(
+                                id = "",
+                                setNumber = 1,
+                                weight = defaultWeight,
+                                reps = defaultReps
+                            )
+                        )
                     )
                 }
             }
@@ -96,10 +107,30 @@ class ConfigureWorkoutViewModel(
 
     private fun ExerciseSet.toSetState(setNumber: Int): SetState {
         return when (unit) {
-            MeasurementUnit.DISTANCE -> SetState(setNumber, weight = distance ?: 0.0, reps = time ?: 0)
-            MeasurementUnit.TIME -> SetState(setNumber, weight = 0.0, reps = time ?: 0)
-            MeasurementUnit.REPS -> SetState(setNumber, weight = 0.0, reps = reps)
-            MeasurementUnit.WEIGHT -> SetState(setNumber, weight = load, reps = reps)
+            MeasurementUnit.DISTANCE -> SetState(
+                id = id,
+                setNumber = setNumber,
+                weight = distance ?: 0.0,
+                reps = time ?: 0
+            )
+            MeasurementUnit.TIME -> SetState(
+                id = id,
+                setNumber = setNumber,
+                weight = 0.0,
+                reps = time ?: 0
+            )
+            MeasurementUnit.REPS -> SetState(
+                id = id,
+                setNumber = setNumber,
+                weight = 0.0,
+                reps = reps
+            )
+            MeasurementUnit.WEIGHT -> SetState(
+                id = id,
+                setNumber = setNumber,
+                weight = load,
+                reps = reps
+            )
         }
     }
 
@@ -120,6 +151,7 @@ class ConfigureWorkoutViewModel(
                     }
                     config.copy(
                         sets = config.sets + SetState(
+                            id = "",
                             setNumber = nextNumber,
                             weight = lastSet?.weight ?: defaultWeight,
                             reps = lastSet?.reps ?: defaultReps
@@ -229,11 +261,13 @@ class ConfigureWorkoutViewModel(
 
         val workoutExercises = currentState.exerciseConfigs.map { config ->
             WorkoutExercise(
+                id = config.workoutExerciseId,
                 exerciseId = config.exerciseId,
                 sets = config.sets.map { set ->
                     when (config.unit) {
                         MeasurementUnit.DISTANCE -> {
                             ExerciseSet(
+                                id = set.id,
                                 exerciseName = config.name,
                                 setNumber = set.setNumber,
                                 reps = 0,
@@ -245,6 +279,7 @@ class ConfigureWorkoutViewModel(
                         }
                         MeasurementUnit.TIME -> {
                             ExerciseSet(
+                                id = set.id,
                                 exerciseName = config.name,
                                 setNumber = set.setNumber,
                                 reps = 0,
@@ -255,6 +290,7 @@ class ConfigureWorkoutViewModel(
                         }
                         MeasurementUnit.REPS -> {
                             ExerciseSet(
+                                id = set.id,
                                 exerciseName = config.name,
                                 setNumber = set.setNumber,
                                 reps = set.reps,
@@ -264,6 +300,7 @@ class ConfigureWorkoutViewModel(
                         }
                         MeasurementUnit.WEIGHT -> {
                             ExerciseSet(
+                                id = set.id,
                                 exerciseName = config.name,
                                 setNumber = set.setNumber,
                                 reps = set.reps,

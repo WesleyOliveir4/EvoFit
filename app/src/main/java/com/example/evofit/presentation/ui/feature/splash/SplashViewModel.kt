@@ -38,7 +38,7 @@ class SplashViewModel(
 
             val userId = authRepository.getCurrentUserId()
             if (userId != null) {
-                syncUserDataUseCase(userId)
+                syncUserDataUseCase(userId, shouldClearActiveSession = false)
             }
 
             val onboardingCompleted = isOnboardingCompletedUseCase().first()

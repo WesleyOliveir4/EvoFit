@@ -100,7 +100,7 @@ class OnboardingRepositoryImpl(
         return userDataSource.getUser().map { it?.onboardingCompleted ?: false }
     }
 
-    override suspend fun syncUserData(userId: String): Result<Unit> {
+    override suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean): Result<Unit> {
         return try {
             // Fetch everything from Remote
             val remoteUser = userRemoteDataSource.getUser(userId)
@@ -108,8 +108,12 @@ class OnboardingRepositoryImpl(
             val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
             val remoteHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
 
-            // Nuke Local
-            userDataSource.nukeUserData()
+            // Nuke or Clear syncable data
+            if (shouldClearActiveSession) {
+                userDataSource.nukeUserData()
+            } else {
+                userDataSource.clearSyncableUserData()
+            }
 
             // Save to Local
             if (remoteUser != null) {
