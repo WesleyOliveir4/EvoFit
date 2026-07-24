@@ -55,9 +55,7 @@ class WorkoutStartViewModel(
 
     private var workoutDomain: Workout? = null
     
-    // SharedFlow para gerenciar a persistência de forma reativa
-    // Usamos replay = 0 e extraBufferCapacity = 1 para agir como um trigger puro
-    private val persistenceTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+     private val persistenceTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {
         loadWorkout()
@@ -74,8 +72,6 @@ class WorkoutStartViewModel(
 
     private fun loadWorkout() {
         viewModelScope.launch {
-            // .first() garante que pegamos o estado atual e paramos de observar,
-            // permitindo que a ViewModel seja a única fonte de verdade (Single Source of Truth)
             val workout = getWorkoutByIdUseCase(workoutId).first()
             val activeSession = getActiveWorkoutSessionUseCase().first()
             
@@ -130,7 +126,6 @@ class WorkoutStartViewModel(
                 now
             }
 
-            // Loop infinito que dura enquanto o viewModelScope estiver ativo
             while (true) {
                 val elapsed = System.currentTimeMillis() - startTime
                 _uiState.update { it.copy(elapsedTime = formatElapsedTime(elapsed)) }
@@ -147,7 +142,6 @@ class WorkoutStartViewModel(
     }
 
     fun toggleSetDone(workoutExerciseId: String, setNumber: Int) {
-        // 1. Atualização Otimista da UI (Imediata e sem flicker)
         _uiState.update { currentState ->
             val updatedExercises = currentState.exercises.map { exercise ->
                 if (exercise.workoutExerciseId == workoutExerciseId) {

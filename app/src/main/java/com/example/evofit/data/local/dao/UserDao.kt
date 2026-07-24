@@ -46,6 +46,14 @@ interface UserDao {
         deleteActiveSession()
     }
 
+    @Transaction
+    suspend fun clearSyncableUserData() {
+        deleteAllUsers()
+        deleteAllGoals()
+        deleteAllWorkouts()
+        deleteAllWorkoutHistory()
+    }
+
     @Query("DELETE FROM user_goals WHERE id = :goalId")
     suspend fun deleteGoalById(goalId: String): Int
 

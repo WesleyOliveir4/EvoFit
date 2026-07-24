@@ -14,6 +14,7 @@ interface UserLocalDataSource {
     suspend fun deleteGoalsForUser(userId: String): Int
     suspend fun deleteGoalById(goalId: String): Int
     suspend fun nukeUserData()
+    suspend fun clearSyncableUserData()
 }
 
 class UserLocalDataSourceImpl(
@@ -35,4 +36,6 @@ class UserLocalDataSourceImpl(
     override suspend fun deleteGoalById(goalId: String) = userDao.deleteGoalById(goalId)
 
     override suspend fun nukeUserData() = userDao.nukeUserData()
+
+    override suspend fun clearSyncableUserData() = userDao.clearSyncableUserData()
 }
