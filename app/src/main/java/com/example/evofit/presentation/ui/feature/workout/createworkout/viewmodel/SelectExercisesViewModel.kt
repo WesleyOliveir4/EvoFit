@@ -38,6 +38,7 @@ class SelectExercisesViewModel(
                     
                     val groupedSelected = exercisesData.groupBy { it.muscleGroupId }
                         .mapValues { entry -> entry.value.map { it.id }.toSet() }
+                        .filter { entry -> muscleGroupIds.contains(entry.key) } // Active Filtering
 
                     _uiState.update { 
                         it.copy(
@@ -46,6 +47,14 @@ class SelectExercisesViewModel(
                         )
                     }
                 }
+            } else if (muscleGroupIds.isNotEmpty()) {
+                // Set default workout name from the first selected muscle group
+                val muscleGroups = getMuscleGroupsUseCase()
+                val firstGroupId = muscleGroupIds.first()
+                val firstGroupName = muscleGroups.find { it.id.lowercase() == firstGroupId.lowercase() }?.name 
+                    ?: firstGroupId.replaceFirstChar { it.uppercase() }
+                
+                _uiState.update { it.copy(workoutName = firstGroupName) }
             }
 
             loadCurrentGroupExercises()
@@ -134,19 +143,8 @@ class SelectExercisesViewModel(
         if (state.currentGroupIndex > 0) {
             _uiState.update { it.copy(currentGroupIndex = it.currentGroupIndex - 1, isLoading = true) }
             viewModelScope.launch { loadCurrentGroupExercises() }
-        } else if (state.editWorkoutId != null) {
-            _uiState.update { it.copy(showCancelEditDialog = true) }
         } else {
             onBackToGroupSelection()
         }
-    }
-
-    fun onConfirmCancelEdit(onProceed: () -> Unit) {
-        _uiState.update { it.copy(showCancelEditDialog = false) }
-        onProceed()
-    }
-
-    fun onDismissCancelEditDialog() {
-        _uiState.update { it.copy(showCancelEditDialog = false) }
     }
 }

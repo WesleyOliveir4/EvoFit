@@ -15,6 +15,5 @@ data class SelectExercisesUiState(
     val allSelectedExerciseIds: Map<String, Set<String>> = emptyMap(), // groupId -> selectedIds
     val isLoading: Boolean = false,
     val editWorkoutId: String? = null,
-    val showCancelEditDialog: Boolean = false,
     val isLastGroup: Boolean = false
 )
