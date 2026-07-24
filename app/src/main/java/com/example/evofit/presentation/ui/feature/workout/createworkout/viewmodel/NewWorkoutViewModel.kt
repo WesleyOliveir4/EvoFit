@@ -24,7 +24,7 @@ class NewWorkoutViewModel(
 
     fun loadMuscleGroups(editWorkoutId: String? = null) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
             val groups = getMuscleGroupsUseCase()
             
             var initialSelected = emptySet<String>()
@@ -56,5 +56,22 @@ class NewWorkoutViewModel(
             }
             state.copy(selectedMuscleGroupIds = newSelection)
         }
+    }
+
+    fun onBackPressed(onProceed: () -> Unit) {
+        if (_uiState.value.editWorkoutId != null) {
+            _uiState.update { it.copy(showCancelEditDialog = true) }
+        } else {
+            onProceed()
+        }
+    }
+
+    fun onConfirmCancelEdit(onProceed: () -> Unit) {
+        _uiState.update { it.copy(showCancelEditDialog = false) }
+        onProceed()
+    }
+
+    fun onDismissCancelEditDialog() {
+        _uiState.update { it.copy(showCancelEditDialog = false) }
     }
 }

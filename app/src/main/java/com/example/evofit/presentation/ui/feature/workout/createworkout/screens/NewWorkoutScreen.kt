@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,12 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.MuscleGroupItem
+import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -63,11 +67,17 @@ fun NewWorkoutScreen(
         viewModel.loadMuscleGroups(editWorkoutId)
     }
 
+    BackHandler {
+        viewModel.onBackPressed(onProceed = onBackClick)
+    }
+
     NewWorkoutContent(
         muscleGroups = uiState.muscleGroups,
         selectedMuscleGroupIds = uiState.selectedMuscleGroupIds,
         isLoading = uiState.isLoading,
-        onBackClick = onBackClick,
+        onBackClick = {
+            viewModel.onBackPressed(onProceed = onBackClick)
+        },
         onMuscleGroupClick = { groupId ->
             viewModel.toggleMuscleGroupSelection(groupId)
         },
@@ -75,6 +85,18 @@ fun NewWorkoutScreen(
             onSelectExercisesClick(uiState.selectedMuscleGroupIds.toList(), editWorkoutId)
         }
     )
+
+    if (uiState.showCancelEditDialog) {
+        EvoFitActionDialog(
+            title = stringResource(R.string.select_exercises_cancel_edit_dialog_title),
+            description = stringResource(R.string.select_exercises_cancel_edit_dialog_message),
+            icon = Icons.Default.EditOff,
+            confirmButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_confirm),
+            dismissButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_cancel),
+            onConfirm = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) },
+            onDismiss = { viewModel.onDismissCancelEditDialog() }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
