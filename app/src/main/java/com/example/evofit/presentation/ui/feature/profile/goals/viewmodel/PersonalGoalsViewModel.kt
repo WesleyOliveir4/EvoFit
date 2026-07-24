@@ -10,11 +10,8 @@ import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class PersonalGoalsUiState(
@@ -47,40 +44,47 @@ class PersonalGoalsViewModel(
         loadGoals()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadGoals() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val userId = getUserIdUseCase() ?: return@launch
             
-            getActiveUserGoalsUseCase().collect { goals ->
-                val uiGoals = goals.map { goal ->
-                    val progress = calculateGoalProgressUseCase(goal, userId)
-                    
-                    val title = when (goal) {
-                        is UserGoal.Strength -> goal.exerciseName
-                        is UserGoal.Cardio -> goal.type
-                        is UserGoal.Weight -> "Peso Corporal"
-                    }
-                    
-                    val category = when (goal) {
-                        is UserGoal.Strength -> "Força"
-                        is UserGoal.Cardio -> "Cardio"
-                        is UserGoal.Weight -> "Peso"
-                    }
+            getActiveUserGoalsUseCase()
+                .flatMapLatest { goals ->
+                    if (goals.isEmpty()) {
+                        flowOf(emptyList<GoalUiModel>())
+                    } else {
+                        val goalFlows = goals.map { goal ->
+                            calculateGoalProgressUseCase(goal, userId).map { progress ->
+                                val title = when (goal) {
+                                    is UserGoal.Strength -> goal.exerciseName
+                                    is UserGoal.Cardio -> goal.type
+                                    is UserGoal.Weight -> "Peso Corporal"
+                                }
+                                
+                                val category = when (goal) {
+                                    is UserGoal.Strength -> "Força"
+                                    is UserGoal.Cardio -> "Cardio"
+                                    is UserGoal.Weight -> "Peso"
+                                }
 
-                    val unit = progress.unit
-                    
-                    GoalUiModel(
-                        id = goal.id,
-                        title = title,
-                        category = category,
-                        currentValue = "${progress.currentValue}$unit",
-                        targetValue = "${progress.targetValue}$unit",
-                        percentage = progress.percentage
-                    )
+                                GoalUiModel(
+                                    id = goal.id,
+                                    title = title,
+                                    category = category,
+                                    currentValue = "${progress.currentValue}${progress.unit}",
+                                    targetValue = "${progress.targetValue}${progress.unit}",
+                                    percentage = progress.percentage
+                                )
+                            }
+                        }
+                        combine(goalFlows) { it.toList() }
+                    }
                 }
-                _uiState.update { it.copy(goals = uiGoals, isLoading = false) }
-            }
+                .collect { uiGoals ->
+                    _uiState.update { it.copy(goals = uiGoals, isLoading = false) }
+                }
         }
     }
 

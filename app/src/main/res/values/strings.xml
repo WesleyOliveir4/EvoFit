@@ -110,6 +110,7 @@
     <string name="main_workout_exercise_series_format">%1$s · %2$s</string>
     <string name="main_workout_new_workout_desc">Novo Treino</string>
     <string name="main_workout_drag_handle_desc">Arrastar</string>
+    <string name="main_workout_offline_sync_warning">Sem conexão para o backup remoto</string>
 
     <!-- Configure Workout Screen -->
     <string name="configure_workout_title">Configurar (%1$d/%2$d)</string>

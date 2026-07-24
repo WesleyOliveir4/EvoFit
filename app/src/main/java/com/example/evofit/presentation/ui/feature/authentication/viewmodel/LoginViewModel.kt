@@ -93,7 +93,7 @@ class LoginViewModel(
     private suspend fun handleLoginSuccess() {
         val userId = authRepository.getCurrentUserId()
         if (userId != null) {
-            syncUserDataUseCase(userId, shouldClearActiveSession = true)
+            syncUserDataUseCase(userId, shouldClearActiveSession = true, isOnline = true)
         }
         val onboardingCompleted = isOnboardingCompletedUseCase().first()
         _uiState.update { 

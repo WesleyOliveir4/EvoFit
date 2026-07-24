@@ -2,16 +2,28 @@ package com.example.evofit.domain.usecase
 
 import com.example.evofit.domain.model.WorkoutDone
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+
 interface GetWorkoutDoneByIdUseCase {
-    suspend operator fun invoke(workoutDoneId: String): WorkoutDone?
+    operator fun invoke(workoutDoneId: String): Flow<WorkoutDone?>
 }
 
 class GetWorkoutDoneByIdUseCaseImpl(
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getUserIdUseCase: GetUserIdUseCase
 ) : GetWorkoutDoneByIdUseCase {
-    override suspend fun invoke(workoutDoneId: String): WorkoutDone? {
-        val userId = getUserIdUseCase() ?: return null
-        return getWorkoutDoneHistoryUseCase(userId).find { it.id == workoutDoneId }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun invoke(workoutDoneId: String): Flow<WorkoutDone?> {
+        return flow {
+            emit(getUserIdUseCase() ?: "")
+        }.flatMapLatest { userId ->
+            getWorkoutDoneHistoryUseCase(userId).map { history ->
+                history.find { it.id == workoutDoneId }
+            }
+        }
     }
 }

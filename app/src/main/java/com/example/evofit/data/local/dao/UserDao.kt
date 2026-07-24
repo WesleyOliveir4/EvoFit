@@ -140,7 +140,7 @@ interface UserDao {
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
 
     @Query("SELECT * FROM workout_done_history WHERE userId = :userId")
-    suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
+    fun getWorkoutDoneHistory(userId: String): Flow<WorkoutDoneHistoryEntity?>
 
     // Active Session
     @Transaction

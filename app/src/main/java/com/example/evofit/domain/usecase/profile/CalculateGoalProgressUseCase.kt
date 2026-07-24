@@ -4,7 +4,10 @@ import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.repository.WorkoutRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 data class GoalProgress(
     val currentValue: Double,
@@ -14,7 +17,7 @@ data class GoalProgress(
 )
 
 interface CalculateGoalProgressUseCase {
-    suspend operator fun invoke(goal: UserGoal, userId: String): GoalProgress
+    operator fun invoke(goal: UserGoal, userId: String): Flow<GoalProgress>
 }
 
 class CalculateGoalProgressUseCaseImpl(
@@ -22,13 +25,15 @@ class CalculateGoalProgressUseCaseImpl(
     private val onboardingRepository: OnboardingRepository
 ) : CalculateGoalProgressUseCase {
 
-    override suspend fun invoke(goal: UserGoal, userId: String): GoalProgress {
-        val history = workoutRepository.getWorkoutDoneHistory(userId)
+    override fun invoke(goal: UserGoal, userId: String): Flow<GoalProgress> {
+        val historyFlow = workoutRepository.getWorkoutDoneHistory(userId)
 
         return when (goal) {
-            is UserGoal.Strength -> calculateStrengthProgress(goal, history)
-            is UserGoal.Cardio -> calculateCardioProgress(goal, history)
-            is UserGoal.Weight -> calculateWeightProgress(goal)
+            is UserGoal.Strength -> historyFlow.map { calculateStrengthProgress(goal, it) }
+            is UserGoal.Cardio -> historyFlow.map { calculateCardioProgress(goal, it) }
+            is UserGoal.Weight -> combine(historyFlow, onboardingRepository.getUserData()) { _, userData ->
+                calculateWeightProgress(goal, userData)
+            }
         }
     }
 
@@ -79,8 +84,7 @@ class CalculateGoalProgressUseCaseImpl(
         }
     }
 
-    private suspend fun calculateWeightProgress(goal: UserGoal.Weight): GoalProgress {
-        val userData = onboardingRepository.getUserData().firstOrNull()
+    private fun calculateWeightProgress(goal: UserGoal.Weight, userData: com.example.evofit.domain.model.UserOnboardingData?): GoalProgress {
         val currentWeight = userData?.weight?.toDoubleOrNull() ?: 0.0
         val targetWeight = goal.targetWeight.toDoubleOrNull() ?: 0.0
 

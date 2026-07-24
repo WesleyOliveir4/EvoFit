@@ -10,6 +10,9 @@ import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
 import com.example.evofit.core.common.DateMapper
+import com.example.evofit.core.network.ConnectivityObserver
+import com.example.evofit.data.local.session.SessionManager
+import com.example.evofit.domain.usecase.SyncUserDataUseCase
 import com.example.evofit.presentation.model.ActiveSessionUIModel
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
@@ -22,14 +25,17 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(FlowPreview::class)
 class WorkoutViewModel(
@@ -39,18 +45,40 @@ class WorkoutViewModel(
     private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase,
-    private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase
+    private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
+    private val connectivityObserver: ConnectivityObserver,
+    private val sessionManager: SessionManager,
+    private val syncUserDataUseCase: SyncUserDataUseCase
 ) : ViewModel() {
 
     private val _updateOrderFlow = MutableSharedFlow<List<WorkoutUIModel>>()
+    
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
     init {
+        observeConnectivity()
         viewModelScope.launch {
             _updateOrderFlow
                 .debounce(1000L)
                 .collect { orderedList ->
                     performUpdateOrder(orderedList)
                 }
+        }
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            connectivityObserver.observe().collect { status ->
+                val online = status == ConnectivityObserver.Status.Available
+                _isOnline.value = online
+                if (online) {
+                    val userId = sessionManager.userId.firstOrNull()
+                    if (userId != null) {
+                        syncUserDataUseCase(userId, shouldClearActiveSession = false, isOnline = true)
+                    }
+                }
+            }
         }
     }
 
@@ -73,8 +101,10 @@ class WorkoutViewModel(
             if (userId.isEmpty()) {
                 flowOf(WorkoutState(userName = firstName))
             } else {
-                val history = getWorkoutDoneHistoryUseCase(userId)
-                getWorkoutsUseCase(userId).map { workouts ->
+                combine(
+                    getWorkoutsUseCase(userId),
+                    getWorkoutDoneHistoryUseCase(userId)
+                ) { workouts, history ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
 
                     WorkoutState(

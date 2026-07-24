@@ -248,7 +248,7 @@ class WorkoutStartViewModel(
             saveWorkoutDoneUseCase(userId, workoutDone)
             clearWorkoutSessionUseCase()
 
-            val history = getWorkoutDoneHistoryUseCase(userId)
+            val history = getWorkoutDoneHistoryUseCase(userId).first()
             val lastWorkoutDone = history.lastOrNull()
 
             _uiState.update { it.copy(

@@ -150,7 +150,7 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
-        val existingHistory = workoutDataSource.getWorkoutDoneHistory(userId)
+        val existingHistory = workoutDataSource.getWorkoutDoneHistory(userId).firstOrNull()
         
         val nextId = java.util.UUID.randomUUID().toString()
         val workoutWithId = workoutDone.copy(id = nextId)
@@ -177,7 +177,9 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override suspend fun getWorkoutDoneHistory(userId: String): List<WorkoutDone> {
-        return workoutDataSource.getWorkoutDoneHistory(userId)?.history ?: emptyList()
+    override fun getWorkoutDoneHistory(userId: String): Flow<List<WorkoutDone>> {
+        return workoutDataSource.getWorkoutDoneHistory(userId).map { 
+            it?.history ?: emptyList() 
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.example.evofit.presentation.ui.feature.workout.home.screens
 
-import androidx.compose.animation.animateColorAsState
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,8 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.ActiveSessionUIModel
@@ -36,14 +37,15 @@ import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.training.ActiveWorkoutCard
 import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
-import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
+import com.example.evofit.presentation.ui.feature.workout.components.training.OfflineToast
 import com.example.evofit.presentation.ui.feature.workout.components.training.StatCard
 import com.example.evofit.presentation.ui.feature.workout.components.training.WorkoutSegmentedControl
 import com.example.evofit.presentation.ui.feature.workout.components.training.draggableWorkoutList
 import com.example.evofit.presentation.ui.feature.workout.components.training.rememberWorkoutDraggableListState
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -52,6 +54,20 @@ fun WorkoutScreen(
     onNavigate: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
+    var showOfflineToast by remember { mutableStateOf(false) }
+
+    BackHandler { /* Do nothing to prevent back navigation from home screen */ }
+
+    LaunchedEffect(isOnline) {
+        if (!isOnline) {
+            showOfflineToast = true
+            delay(3000)
+            showOfflineToast = false
+        } else {
+            showOfflineToast = false
+        }
+    }
 
     var localWorkouts by remember { mutableStateOf<List<WorkoutUIModel>>(emptyList()) }
     
@@ -66,6 +82,8 @@ fun WorkoutScreen(
         workoutsThisWeek = uiState.workoutsThisWeek,
         history = uiState.history,
         activeSession = uiState.activeSession,
+        isOnline = isOnline,
+        showOfflineToast = showOfflineToast,
         onMove = { from, to ->
             val mutableList = localWorkouts.toMutableList()
             mutableList.add(to, mutableList.removeAt(from))
@@ -96,6 +114,8 @@ fun WorkoutContent(
     onAddWorkoutClick: () -> Unit,
     activeSession: ActiveSessionUIModel? = null,
     onActiveSessionClick: (ActiveSessionUIModel) -> Unit = {},
+    isOnline: Boolean = true,
+    showOfflineToast: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -127,97 +147,107 @@ fun WorkoutContent(
             ) 
         }
     ) { paddingValues ->
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                HeaderSection(userName = userName)
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        value = totalWorkouts.toString(),
-                        label = stringResource(R.string.main_workout_stats_total_label),
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_dumbbell)
-                    )
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        value = workoutsThisWeek.toString(),
-                        label = stringResource(R.string.main_workout_stats_week_label),
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_fire)
-                    )
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-
-            if (activeSession != null) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 item {
-                    Text(
-                        text = stringResource(R.string.main_workout_active_session_title),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ActiveWorkoutCard(
-                        workoutName = activeSession.workoutName,
-                        onClick = { onActiveSessionClick(activeSession) }
-                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    HeaderSection(userName = userName)
                     Spacer(modifier = Modifier.height(24.dp))
                 }
-            }
 
-            item {
-                WorkoutSegmentedControl(
-                    options = listOf(
-                        stringResource(R.string.main_workout_tab_my_workouts),
-                        stringResource(R.string.main_workout_tab_history)
-                    ),
-                    selectedIndex = selectedTabIndex,
-                    onOptionSelected = { selectedTabIndex = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            if (selectedTabIndex == 0) {
-                if (workouts.isEmpty()) {
-                    item {
-                        WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_workouts))
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            value = totalWorkouts.toString(),
+                            label = stringResource(R.string.main_workout_stats_total_label),
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_dumbbell)
+                        )
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            value = workoutsThisWeek.toString(),
+                            label = stringResource(R.string.main_workout_stats_week_label),
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_fire)
+                        )
                     }
-                } else {
-                    draggableWorkoutList(
-                        workouts = workouts,
-                        dragState = dragState,
-                        onWorkoutClick = onWorkoutClick
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+
+                if (activeSession != null) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.main_workout_active_session_title),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ActiveWorkoutCard(
+                            workoutName = activeSession.workoutName,
+                            onClick = { onActiveSessionClick(activeSession) }
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                }
+
+                item {
+                    WorkoutSegmentedControl(
+                        options = listOf(
+                            stringResource(R.string.main_workout_tab_my_workouts),
+                            stringResource(R.string.main_workout_tab_history)
+                        ),
+                        selectedIndex = selectedTabIndex,
+                        onOptionSelected = { selectedTabIndex = it }
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-            } else {
-                if (history.isEmpty()) {
-                    item {
-                        WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_history))
+
+                if (selectedTabIndex == 0) {
+                    if (workouts.isEmpty()) {
+                        item {
+                            WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_workouts))
+                        }
+                    } else {
+                        draggableWorkoutList(
+                            workouts = workouts,
+                            dragState = dragState,
+                            onWorkoutClick = onWorkoutClick
+                        )
                     }
                 } else {
-                    items(history.reversed(), key = { it.id }) { workoutDone ->
-                        WorkoutDoneItem(workoutDone = workoutDone)
-                        Spacer(modifier = Modifier.height(12.dp))
+                    if (history.isEmpty()) {
+                        item {
+                            WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_history))
+                        }
+                    } else {
+                        items(history.reversed(), key = { it.id }) { workoutDone ->
+                            WorkoutDoneItem(workoutDone = workoutDone)
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
                     }
                 }
+
+                item { Spacer(modifier = Modifier.height(100.dp)) }
             }
 
-            item { Spacer(modifier = Modifier.height(100.dp)) }
+            AnimatedVisibility(
+                visible = showOfflineToast,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.align(Alignment.TopCenter)
+            ) {
+                OfflineToast()
+            }
         }
     }
 }
@@ -321,7 +351,8 @@ private fun WorkoutContentPreview() {
             onMove = { _, _ -> },
             onNavigate = {},
             onWorkoutClick = {},
-            onAddWorkoutClick = {}
+            onAddWorkoutClick = {},
+            isOnline = false
         )
     }
 }

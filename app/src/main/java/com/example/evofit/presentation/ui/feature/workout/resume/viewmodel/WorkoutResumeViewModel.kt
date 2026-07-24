@@ -49,20 +49,23 @@ class WorkoutResumeViewModel(
         }
     }
 
-    private suspend fun loadWorkoutDone(id: String) {
-        val workoutDone = getWorkoutDoneByIdUseCase(id)
-        _uiState.update { state ->
-            workoutDone?.let { done ->
-                state.copy(
-                    workoutName = done.name,
-                    totalExercises = done.exercises.size,
-                    totalSets = done.exercises.sumOf { it.totalSets },
-                    completedSets = done.exercises.sumOf { it.sets.size },
-                    duration = done.time,
-                    formattedDate = done.date,
-                    isLoading = false
-                )
-            } ?: state.copy(isLoading = false)
+    private fun loadWorkoutDone(id: String) {
+        viewModelScope.launch {
+            getWorkoutDoneByIdUseCase(id).collect { workoutDone ->
+                _uiState.update { state ->
+                    workoutDone?.let { done ->
+                        state.copy(
+                            workoutName = done.name,
+                            totalExercises = done.exercises.size,
+                            totalSets = done.exercises.sumOf { it.totalSets },
+                            completedSets = done.exercises.sumOf { it.sets.size },
+                            duration = done.time,
+                            formattedDate = done.date,
+                            isLoading = false
+                        )
+                    } ?: state.copy(isLoading = false)
+                }
+            }
         }
     }
 

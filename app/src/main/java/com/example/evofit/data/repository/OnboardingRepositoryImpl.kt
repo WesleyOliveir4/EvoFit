@@ -100,15 +100,20 @@ class OnboardingRepositoryImpl(
         return userDataSource.getUser().map { it?.onboardingCompleted ?: false }
     }
 
-    override suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean): Result<Unit> {
+    override suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean, isOnline: Boolean): Result<Unit> {
+        if (!isOnline) return Result.success(Unit) // Skip if offline
+
         return try {
-            // Fetch everything from Remote
+            // 1. PUSH: Upload local data created/modified offline
+            pushLocalDataToRemote(userId)
+
+            // 2. PULL: Fetch everything from Remote
             val remoteUser = userRemoteDataSource.getUser(userId)
             val remoteGoals = userRemoteDataSource.getGoals(userId)
             val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
             val remoteHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
 
-            // Nuke or Clear syncable data
+            // 3. UPDATE LOCAL: Nuke or Clear syncable data
             if (shouldClearActiveSession) {
                 userDataSource.nukeUserData()
             } else {
@@ -133,6 +138,26 @@ class OnboardingRepositoryImpl(
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    private suspend fun pushLocalDataToRemote(userId: String) {
+        try {
+            // Push Workouts
+            val localWorkouts = workoutLocalDataSource.getFullWorkouts(userId).firstOrNull() ?: emptyList()
+            localWorkouts.forEach { fullWorkout ->
+                val exercises = fullWorkout.exercises.map { it.workoutExercise }
+                val sets = fullWorkout.exercises.map { it.sets }
+                workoutRemoteDataSource.saveFullWorkout(fullWorkout.workout, exercises, sets)
+            }
+
+            // Push History
+            val localHistory = workoutLocalDataSource.getWorkoutDoneHistory(userId).firstOrNull()
+            if (localHistory != null) {
+                workoutRemoteDataSource.saveWorkoutDoneHistory(localHistory)
+            }
+        } catch (e: Exception) {
+            // Log error, push might fail but we continue to pull
         }
     }
 

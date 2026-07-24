@@ -3,8 +3,11 @@ package com.example.evofit.domain.usecase
 import com.example.evofit.domain.model.EvoHomeSummary
 import com.example.evofit.domain.model.EvoPeriod
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 interface GetEvoHomeSummaryUseCase {
-    suspend operator fun invoke(userId: String, period: EvoPeriod): EvoHomeSummary
+    operator fun invoke(userId: String, period: EvoPeriod): Flow<EvoHomeSummary>
 }
 
 class GetEvoHomeSummaryUseCaseImpl(
@@ -18,17 +21,18 @@ class GetEvoHomeSummaryUseCaseImpl(
     private val getAverageWorkoutTimeUseCase: GetAverageWorkoutTimeUseCase
 ) : GetEvoHomeSummaryUseCase {
 
-    override suspend fun invoke(userId: String, period: EvoPeriod): EvoHomeSummary {
-        val fullHistory = getWorkoutDoneHistoryUseCase(userId)
-        val history = filterWorkoutHistoryByPeriodUseCase(fullHistory, period)
+    override fun invoke(userId: String, period: EvoPeriod): Flow<EvoHomeSummary> {
+        return getWorkoutDoneHistoryUseCase(userId).map { fullHistory ->
+            val history = filterWorkoutHistoryByPeriodUseCase(fullHistory, period)
 
-        return EvoHomeSummary(
-            strengthGains = getStrengthGainsUseCase(history),
-            mostEvolvedMuscle = getMostEvolvedMuscleUseCase(history),
-            workoutsCount = getWorkoutsCountUseCase(history),
-            leastTrainedGroup = getLeastTrainedGroupUseCase(history),
-            kmPerWeek = getKmPerWeekUseCase(history),
-            averageWorkoutTime = getAverageWorkoutTimeUseCase(history)
-        )
+            EvoHomeSummary(
+                strengthGains = getStrengthGainsUseCase(history),
+                mostEvolvedMuscle = getMostEvolvedMuscleUseCase(history),
+                workoutsCount = getWorkoutsCountUseCase(history),
+                leastTrainedGroup = getLeastTrainedGroupUseCase(history),
+                kmPerWeek = getKmPerWeekUseCase(history),
+                averageWorkoutTime = getAverageWorkoutTimeUseCase(history)
+            )
+        }
     }
 }
