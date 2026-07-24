@@ -217,6 +217,7 @@
     <string name="workout_delete_blocked_dialog_title">Treino em andamento</string>
     <string name="workout_delete_blocked_dialog_message">Este treino está em andamento e não pode ser excluído agora. Finalize ou cancele o treino em andamento antes de excluí-lo.</string>
     <string name="workout_delete_blocked_dialog_confirm">Entendi</string>
+    <string name="workout_preview_exercises_count">%1$d exercícios</string>
     <string name="workout_preview_start_training">Iniciar Treino</string>
     <string name="workout_preview_unknown_exercise">Exercício</string>
     <!-- Workout Start Screen -->

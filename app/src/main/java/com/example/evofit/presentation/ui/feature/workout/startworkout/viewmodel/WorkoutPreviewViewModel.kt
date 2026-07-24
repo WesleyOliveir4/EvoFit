@@ -7,6 +7,7 @@ import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.DeleteWorkoutUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
@@ -25,7 +26,8 @@ class WorkoutPreviewViewModel(
     private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
-    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase
+    private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase,
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutPreviewUiState())
@@ -44,9 +46,14 @@ class WorkoutPreviewViewModel(
                         val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                             .associateBy { it.id }
 
+                        val muscleGroups = getMuscleGroupsUseCase()
+                        val muscleGroupsMap = muscleGroups.associateBy { it.id }
+
                         val exercises = workoutSelected.exercises.map { workoutExercise ->
                             val exercise = exerciseDataMap[workoutExercise.exerciseId]
                             val unit = exercise?.unit ?: MeasurementUnit.WEIGHT
+                            val mGroupId = exercise?.muscleGroupId ?: ""
+                            val mGroupName = muscleGroupsMap[mGroupId]?.name ?: ""
 
                             val setsCount = workoutExercise.sets.size
 
@@ -60,6 +67,8 @@ class WorkoutPreviewViewModel(
                             ExercisePreviewItem(
                                 workoutExerciseId = workoutExercise.id,
                                 name = exercise?.name ?: "",
+                                muscleGroupId = mGroupId,
+                                muscleGroupName = mGroupName,
                                 setsCount = setsCount,
                                 weight = bestSet?.load ?: 0.0,
                                 reps = bestSet?.reps ?: 0,
@@ -74,7 +83,8 @@ class WorkoutPreviewViewModel(
                             muscleGroupId = workoutSelected.muscleGroupId,
                             totalExercises = workoutSelected.exercises.size,
                             totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
-                            exercises = exercises
+                            exercises = exercises,
+                            groupedExercises = exercises.groupBy { it.muscleGroupName }
                         )
                     }
                 }

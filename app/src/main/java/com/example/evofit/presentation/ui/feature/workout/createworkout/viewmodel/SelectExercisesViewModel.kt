@@ -1,9 +1,9 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
+import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
@@ -17,42 +17,72 @@ import kotlinx.coroutines.launch
 class SelectExercisesViewModel(
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
-    private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase
+    private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SelectExercisesUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _selectedExerciseIds = mutableStateListOf<String>()
-    val selectedExerciseIds: List<String> get() = _selectedExerciseIds
+    fun loadInitialData(muscleGroupIds: List<String>, editWorkoutId: String? = null) {
+        if (_uiState.value.muscleGroupIds.isNotEmpty()) return
 
-    fun loadExercises(muscleGroupId: String, editWorkoutId: String? = null) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
+            _uiState.update { it.copy(isLoading = true, muscleGroupIds = muscleGroupIds, editWorkoutId = editWorkoutId) }
 
-            val muscleGroups = getMuscleGroupsUseCase()
-            val group = muscleGroups.find { it.id.lowercase() == muscleGroupId.lowercase() }
-            val groupName = group?.name ?: muscleGroupId.replaceFirstChar { it.uppercase() }
+            if (editWorkoutId != null) {
+                val existingWorkout = getWorkoutByIdUseCase(editWorkoutId).first()
+                existingWorkout?.let { workout ->
+                    val exerciseIds = workout.exercises.map { it.exerciseId }
+                    val exercisesData = getExercisesByIdsUseCase(exerciseIds)
+                    
+                    val groupedSelected = exercisesData.groupBy { it.muscleGroupId }
+                        .mapValues { entry -> entry.value.map { it.id }.toSet() }
+                        .filter { entry -> muscleGroupIds.contains(entry.key) } // Active Filtering
 
-            val exercises = getExercisesByGroupUseCase(muscleGroupId)
-            val uiExercises = exercises.map {
-                ExerciseSelectionUIModel(it.id, it.name)
+                    _uiState.update { 
+                        it.copy(
+                            workoutName = workout.name,
+                            allSelectedExerciseIds = groupedSelected
+                        )
+                    }
+                }
+            } else if (muscleGroupIds.isNotEmpty()) {
+                // Set default workout name from the first selected muscle group
+                val muscleGroups = getMuscleGroupsUseCase()
+                val firstGroupId = muscleGroupIds.first()
+                val firstGroupName = muscleGroups.find { it.id.lowercase() == firstGroupId.lowercase() }?.name 
+                    ?: firstGroupId.replaceFirstChar { it.uppercase() }
+                
+                _uiState.update { it.copy(workoutName = firstGroupName) }
             }
 
-            val existingWorkout = editWorkoutId?.let { getWorkoutByIdUseCase(it).first() }
-            _selectedExerciseIds.clear()
-            existingWorkout?.let { workout ->
-                _selectedExerciseIds.addAll(workout.exercises.map { it.exerciseId })
-            }
+            loadCurrentGroupExercises()
+        }
+    }
 
-            _uiState.update {
-                it.copy(
-                    muscleGroupName = groupName,
-                    workoutName = existingWorkout?.name ?: groupName,
-                    exercises = uiExercises,
-                    isLoading = false
-                )
-            }
+    private suspend fun loadCurrentGroupExercises() {
+        val state = _uiState.value
+        val currentIndex = state.currentGroupIndex
+        if (currentIndex !in state.muscleGroupIds.indices) return
+
+        val muscleGroupId = state.muscleGroupIds[currentIndex]
+        val muscleGroups = getMuscleGroupsUseCase()
+        val group = muscleGroups.find { it.id.lowercase() == muscleGroupId.lowercase() }
+        val groupName = group?.name ?: muscleGroupId.replaceFirstChar { it.uppercase() }
+
+        val exercises = getExercisesByGroupUseCase(muscleGroupId)
+        val uiExercises = exercises.map {
+            ExerciseSelectionUIModel(it.id, it.name)
+        }
+
+        _uiState.update {
+            it.copy(
+                muscleGroupName = groupName,
+                exercises = uiExercises,
+                isLastGroup = currentIndex == state.muscleGroupIds.size - 1,
+                isLoading = false
+            )
         }
     }
 
@@ -79,27 +109,42 @@ class SelectExercisesViewModel(
     }
 
     fun toggleExerciseSelection(exerciseId: String) {
-        if (_selectedExerciseIds.contains(exerciseId)) {
-            _selectedExerciseIds.remove(exerciseId)
-        } else {
-            _selectedExerciseIds.add(exerciseId)
+        _uiState.update { state ->
+            val currentGroupId = state.muscleGroupIds[state.currentGroupIndex]
+            val currentSelected = state.allSelectedExerciseIds[currentGroupId] ?: emptySet()
+            
+            val newSelected = if (currentSelected.contains(exerciseId)) {
+                currentSelected - exerciseId
+            } else {
+                currentSelected + exerciseId
+            }
+            
+            val newAllSelected = state.allSelectedExerciseIds.toMutableMap().apply {
+                put(currentGroupId, newSelected)
+            }
+            
+            state.copy(allSelectedExerciseIds = newAllSelected)
         }
     }
 
-    fun onBackPressed(onProceed: () -> Unit) {
-        if (_uiState.value.editWorkoutId != null) {
-            _uiState.update { it.copy(showCancelEditDialog = true) }
+    fun onContinueClick(onFinished: (List<String>, String, String?) -> Unit) {
+        val state = _uiState.value
+        if (state.isLastGroup) {
+            val allIds = state.allSelectedExerciseIds.values.flatten().distinct()
+            onFinished(allIds, state.workoutName, state.editWorkoutId)
         } else {
-            onProceed()
+            _uiState.update { it.copy(currentGroupIndex = it.currentGroupIndex + 1, isLoading = true) }
+            viewModelScope.launch { loadCurrentGroupExercises() }
         }
     }
 
-    fun onConfirmCancelEdit(onProceed: () -> Unit) {
-        _uiState.update { it.copy(showCancelEditDialog = false) }
-        onProceed()
-    }
-
-    fun onDismissCancelEditDialog() {
-        _uiState.update { it.copy(showCancelEditDialog = false) }
+    fun onBackPressed(onBackToGroupSelection: () -> Unit) {
+        val state = _uiState.value
+        if (state.currentGroupIndex > 0) {
+            _uiState.update { it.copy(currentGroupIndex = it.currentGroupIndex - 1, isLoading = true) }
+            viewModelScope.launch { loadCurrentGroupExercises() }
+        } else {
+            onBackToGroupSelection()
+        }
     }
 }

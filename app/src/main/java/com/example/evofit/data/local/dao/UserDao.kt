@@ -127,7 +127,7 @@ interface UserDao {
         exercises: List<WorkoutExerciseEntity>,
         sets: List<List<ExerciseSetEntity>>
     ) {
-        updateWorkouts(listOf(workout))
+        insertWorkout(workout)
         deleteWorkoutExercisesForWorkout(workout.workoutId)
         exercises.forEachIndexed { index, exercise ->
             insertWorkoutExercise(exercise.copy(workoutId = workout.workoutId))

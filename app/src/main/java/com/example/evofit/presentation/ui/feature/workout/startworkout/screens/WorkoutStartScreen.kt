@@ -256,23 +256,37 @@ fun WorkoutStartContent(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(
-                items = uiState.exercises,
-                key = { _, exercise -> exercise.workoutExerciseId }
-            ) { index, exercise ->
-                ExerciseTrackingCard(
-                    exercise = exercise,
-                    index = index,
-                    isExpanded = expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId),
-                    onExpandClick = {
-                        expandedWorkoutExerciseIds = if (expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId)) {
-                            expandedWorkoutExerciseIds - exercise.workoutExerciseId
-                        } else {
-                            expandedWorkoutExerciseIds + exercise.workoutExerciseId
-                        }
-                    },
-                    onToggleSetDone = onToggleSetDone
-                )
+            val groupedExercises = uiState.exercises.groupBy { it.muscleGroupName }
+            
+            groupedExercises.forEach { (groupName, exercises) ->
+                item {
+                    Text(
+                        text = groupName.uppercase(),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+                    )
+                }
+
+                itemsIndexed(
+                    items = exercises,
+                    key = { _, exercise -> exercise.workoutExerciseId }
+                ) { index, exercise ->
+                    ExerciseTrackingCard(
+                        exercise = exercise,
+                        index = index, // Group-relative index
+                        isExpanded = expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId),
+                        onExpandClick = {
+                            expandedWorkoutExerciseIds = if (expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId)) {
+                                expandedWorkoutExerciseIds - exercise.workoutExerciseId
+                            } else {
+                                expandedWorkoutExerciseIds + exercise.workoutExerciseId
+                            }
+                        },
+                        onToggleSetDone = onToggleSetDone
+                    )
+                }
             }
         }
     }

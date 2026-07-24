@@ -34,8 +34,12 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
+import com.example.evofit.presentation.ui.feature.workout.components.training.MuscleGroupPreviewCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +125,14 @@ fun WorkoutPreviewContent(
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {}
 ) {
+    var expandedGroups by remember { mutableStateOf(setOf<String>()) }
+
+    LaunchedEffect(preview.groupedExercises) {
+        if (expandedGroups.isEmpty() && preview.groupedExercises.isNotEmpty()) {
+            expandedGroups = setOf(preview.groupedExercises.keys.first())
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -219,11 +231,21 @@ fun WorkoutPreviewContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            itemsIndexed(
-                items = preview.exercises,
-                key = { _, exercise -> exercise.workoutExerciseId }
-            ) { index, exercise ->
-                ExercisePreviewCard(index = index + 1, item = exercise)
+            preview.groupedExercises.forEach { (groupName, exercises) ->
+                item {
+                    MuscleGroupPreviewCard(
+                        groupName = groupName,
+                        exercises = exercises,
+                        isExpanded = expandedGroups.contains(groupName),
+                        onExpandClick = {
+                            expandedGroups = if (expandedGroups.contains(groupName)) {
+                                expandedGroups - groupName
+                            } else {
+                                expandedGroups + groupName
+                            }
+                        }
+                    )
+                }
             }
             
             item {

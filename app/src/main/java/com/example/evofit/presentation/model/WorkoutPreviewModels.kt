@@ -5,6 +5,8 @@ import com.example.evofit.domain.model.MeasurementUnit
 data class ExercisePreviewItem(
     val workoutExerciseId: String,
     val name: String,
+    val muscleGroupId: String = "",
+    val muscleGroupName: String = "",
     val setsCount: Int,
     val weight: Double,
     val reps: Int,
@@ -18,5 +20,6 @@ data class WorkoutDetailPreview(
     val muscleGroupId: String,
     val totalExercises: Int,
     val totalSets: Int,
-    val exercises: List<ExercisePreviewItem>
+    val exercises: List<ExercisePreviewItem>,
+    val groupedExercises: Map<String, List<ExercisePreviewItem>> = emptyMap()
 )

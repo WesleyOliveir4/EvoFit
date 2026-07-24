@@ -11,7 +11,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
-import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.ExerciseRowItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
@@ -33,7 +31,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SelectExercisesScreen(
-    muscleGroupId: String,
+    muscleGroupIds: List<String>,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onConfigureExercisesClick: (List<String>, String, String?) -> Unit,
@@ -41,13 +39,14 @@ fun SelectExercisesScreen(
     viewModel: SelectExercisesViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val selectedIds = viewModel.selectedExerciseIds
+    val currentGroupId = uiState.muscleGroupIds.getOrNull(uiState.currentGroupIndex) ?: ""
+    val selectedIdsForCurrentGroup = uiState.allSelectedExerciseIds[currentGroupId] ?: emptySet()
 
-    LaunchedEffect(muscleGroupId, editWorkoutId) {
-        viewModel.loadExercises(muscleGroupId, editWorkoutId)
+    LaunchedEffect(muscleGroupIds, editWorkoutId) {
+        viewModel.loadInitialData(muscleGroupIds, editWorkoutId)
     }
 
-    BackHandler { viewModel.onBackPressed(onProceed = onBackClick) }
+    BackHandler { viewModel.onBackPressed(onBackToGroupSelection = onBackClick) }
 
     SelectExercisesContent(
         muscleGroupName = uiState.muscleGroupName,
@@ -55,33 +54,21 @@ fun SelectExercisesScreen(
         tempWorkoutName = uiState.tempWorkoutName,
         isEditingName = uiState.isEditingName,
         isEditMode = uiState.editWorkoutId != null,
+        isLastGroup = uiState.isLastGroup,
         exercises = uiState.exercises,
-        selectedExerciseIds = selectedIds,
+        selectedExerciseIds = selectedIdsForCurrentGroup,
         isLoading = uiState.isLoading,
-        onBackClick = { viewModel.onBackPressed(onProceed = onBackClick) },
+        onBackClick = { viewModel.onBackPressed(onBackToGroupSelection = onBackClick) },
         onNavigate = onNavigate,
         onExerciseToggle = { viewModel.toggleExerciseSelection(it) },
-        onConfigureExercisesClick = {
-            onConfigureExercisesClick(selectedIds, uiState.workoutName, uiState.editWorkoutId)
+        onContinueClick = {
+            viewModel.onContinueClick(onFinished = onConfigureExercisesClick)
         },
         onStartEditingName = { viewModel.startEditingName() },
         onCancelEditingName = { viewModel.cancelEditingName() },
         onConfirmEditingName = { viewModel.confirmEditingName() },
         onTempNameChange = { viewModel.updateTempName(it) }
     )
-
-    if (uiState.showCancelEditDialog) {
-
-        EvoFitActionDialog(
-            title = stringResource(R.string.select_exercises_cancel_edit_dialog_title),
-            description = stringResource(R.string.select_exercises_cancel_edit_dialog_message),
-            icon = Icons.Default.EditOff,
-            confirmButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_confirm),
-            dismissButtonText = stringResource(R.string.select_exercises_cancel_edit_dialog_cancel),
-            onConfirm = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) },
-            onDismiss = { viewModel.onDismissCancelEditDialog() }
-        )
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,18 +79,22 @@ fun SelectExercisesContent(
     tempWorkoutName: String,
     isEditingName: Boolean,
     exercises: List<ExerciseSelectionUIModel>,
-    selectedExerciseIds: List<String>,
+    selectedExerciseIds: Set<String>,
     isLoading: Boolean,
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onExerciseToggle: (String) -> Unit,
-    onConfigureExercisesClick: () -> Unit,
+    onContinueClick: () -> Unit,
     onStartEditingName: () -> Unit,
     onCancelEditingName: () -> Unit,
     onConfirmEditingName: () -> Unit,
     onTempNameChange: (String) -> Unit,
-    isEditMode: Boolean = false
+    isEditMode: Boolean = false,
+    isLastGroup: Boolean = false
 ) {
+    // Enable button only if there's at least one exercise selected in TOTAL if it's the last group,
+    // or just enable it to allow moving forward? The user said "Só habilita se tiver selecionado no mínimo 1 grupo muscular" for the first screen.
+    // For this screen, let's keep it consistent: need at least one exercise to continue to next group or finish.
     val isButtonEnabled = selectedExerciseIds.isNotEmpty()
 
     Scaffold(
@@ -145,7 +136,7 @@ fun SelectExercisesContent(
                         .padding(16.dp)
                 ) {
                     Button(
-                        onClick = onConfigureExercisesClick,
+                        onClick = onContinueClick,
                         enabled = isButtonEnabled && !isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -157,9 +148,8 @@ fun SelectExercisesContent(
                         )
                     ) {
                         Text(
-                            text = stringResource(R.string.select_exercises_button_configure),
-                            // Alterado para usar cores do tema ao invés de Color.Black fixo
-                            color = if (isButtonEnabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
+                            text = if (isLastGroup) "Configurar exercícios" else "Próximo grupo muscular",
+                            color = if (isButtonEnabled) Color.Black else MaterialTheme.colorScheme.secondary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -210,7 +200,7 @@ fun SelectExercisesContent(
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = stringResource(R.string.select_exercises_cancel_desc),
-                                    tint = MaterialTheme.colorScheme.onBackground // Alterado de Color.White para onBackground
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -246,7 +236,6 @@ fun SelectExercisesContent(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    // Agora utiliza o muscleGroupName que estava sobrando
                     Text(
                         text = "$muscleGroupName: " + stringResource(R.string.select_exercises_available_count, exercises.size),
                         color = MaterialTheme.colorScheme.secondary,
@@ -285,17 +274,18 @@ fun SelectExercisesScreenPreview() {
                 ExerciseSelectionUIModel("3", "Crossover"),
                 ExerciseSelectionUIModel("4", "Flexão de Braços")
             ),
-            selectedExerciseIds = listOf("1", "2"),
+            selectedExerciseIds = setOf("1", "2"),
             isLoading = false,
             onBackClick = {},
             onNavigate = {},
             onExerciseToggle = {},
-            onConfigureExercisesClick = {},
+            onContinueClick = {},
             onStartEditingName = {},
             onCancelEditingName = {},
             onConfirmEditingName = {},
             onTempNameChange = {},
-            isEditMode = false
+            isEditMode = false,
+            isLastGroup = false
         )
     }
 }

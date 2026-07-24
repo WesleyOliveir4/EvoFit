@@ -261,10 +261,13 @@ val workoutModule = module {
     viewModel {
         NewWorkoutViewModel(
             get(),
+            get(),
+            get()
         )
     }
     viewModel {
         SelectExercisesViewModel(
+            get(),
             get(),
             get(),
             get()
@@ -297,7 +300,8 @@ val workoutModule = module {
             getExercisesByIdsUseCase = get(),
             deleteWorkoutUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
-            clearWorkoutSessionUseCase = get()
+            clearWorkoutSessionUseCase = get(),
+            getMuscleGroupsUseCase = get()
         )
     }
     viewModel { (workoutId: String) ->
@@ -311,7 +315,8 @@ val workoutModule = module {
             getActiveWorkoutSessionUseCase = get(),
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),
-            clearWorkoutSessionUseCase = get()
+            clearWorkoutSessionUseCase = get(),
+            getMuscleGroupsUseCase = get()
         )
     }
 }

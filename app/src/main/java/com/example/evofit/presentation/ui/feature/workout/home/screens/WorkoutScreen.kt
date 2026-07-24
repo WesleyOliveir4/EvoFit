@@ -79,7 +79,7 @@ fun WorkoutScreen(
         onActiveSessionClick = { activeSession ->
             onNavigate(NavRoutes.WorkoutStart.createRoute(activeSession.workoutId))
         },
-        onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.route) }
+        onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.createRoute()) }
     )
 }
 

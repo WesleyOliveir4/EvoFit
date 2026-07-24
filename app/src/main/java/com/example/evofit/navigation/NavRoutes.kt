@@ -33,10 +33,13 @@ sealed class NavRoutes(val route: String) {
     object ExerciseSelection : NavRoutes("exercise_selection")
     object ExerciseDetailAnalytics : NavRoutes("exercise_detail_analytics")
 
-    object NewWorkout : NavRoutes("new_workout")
-    object SelectExercises : NavRoutes("select_exercises/{muscleGroupId}?editWorkoutId={editWorkoutId}") {
-        fun createRoute(muscleGroupId: String, editWorkoutId: String? = null) =
-            "select_exercises/$muscleGroupId?editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
+    object NewWorkout : NavRoutes("new_workout?editWorkoutId={editWorkoutId}") {
+        fun createRoute(editWorkoutId: String? = null) =
+            "new_workout?editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
+    }
+    object SelectExercises : NavRoutes("select_exercises/{muscleGroupIds}?editWorkoutId={editWorkoutId}") {
+        fun createRoute(muscleGroupIds: String, editWorkoutId: String? = null) =
+            "select_exercises/$muscleGroupIds?editWorkoutId=${editWorkoutId ?: AppConstants.INVALID_ID}"
     }
     object ConfigureWorkout : NavRoutes("configure_workout/{exerciseIds}/{workoutName}?editWorkoutId={editWorkoutId}") {
         fun createRoute(exerciseIds: String, workoutName: String, editWorkoutId: String? = null) =

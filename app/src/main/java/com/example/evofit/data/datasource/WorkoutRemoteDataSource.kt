@@ -65,12 +65,40 @@ class WorkoutRemoteDataSourceImpl(
     }
 
     override suspend fun deleteWorkout(userId: String, workoutId: String) {
-        firestore.collection("users")
-            .document(userId)
-            .collection("workouts")
-            .document(workoutId)
-            .delete()
-            .await()
+        try {
+            val workoutRef = firestore.collection("users")
+                .document(userId)
+                .collection("workouts")
+                .document(workoutId)
+
+            val batch = firestore.batch()
+
+            // 1. Fetch Exercises
+            val exercisesSnapshot = workoutRef.collection("exercises").get().await()
+
+            for (exerciseDoc in exercisesSnapshot.documents) {
+                // 2. Fetch Sets for each Exercise
+                val setsSnapshot = exerciseDoc.reference.collection("sets").get().await()
+                
+                // 3. Add all Sets to batch deletion
+                for (setDoc in setsSnapshot.documents) {
+                    batch.delete(setDoc.reference)
+                }
+
+                // 4. Add Exercise to batch deletion
+                batch.delete(exerciseDoc.reference)
+            }
+
+            // 5. Add Workout to batch deletion
+            batch.delete(workoutRef)
+
+            // 6. Commit everything atomically
+            batch.commit().await()
+            
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao deletar treino completo: $workoutId", e)
+            throw e
+        }
     }
 
     override suspend fun updateWorkoutsOrder(userId: String, workouts: List<WorkoutEntity>) {

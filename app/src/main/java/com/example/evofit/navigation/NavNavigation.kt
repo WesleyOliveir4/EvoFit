@@ -301,16 +301,24 @@ fun NavNavigation() {
             }
         }
 
-        composable(NavRoutes.NewWorkout.route) {
+        composable(
+            route = NavRoutes.NewWorkout.route,
+            arguments = listOf(
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+            )
+        ) { backStackEntry ->
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             NewWorkoutScreen(
+                editWorkoutId = editWorkoutId,
                 onBackClick = {
                     navController.popBackStack()
                 },
                 onNavigate = { route ->
                     navController.navigate(route)
                 },
-                onGroupSelected = { groupId ->
-                    navController.navigate(NavRoutes.SelectExercises.createRoute(groupId))
+                onSelectExercisesClick = { groupIds, editId ->
+                    val idsParam = groupIds.joinToString(",")
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(idsParam, editId))
                 }
             )
         }
@@ -318,14 +326,14 @@ fun NavNavigation() {
         composable(
             route = NavRoutes.SelectExercises.route,
             arguments = listOf(
-                navArgument("muscleGroupId") { type = NavType.StringType },
+                navArgument("muscleGroupIds") { type = NavType.StringType },
                 navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
             )
         ) { backStackEntry ->
-            val muscleGroupId = backStackEntry.arguments?.getString("muscleGroupId") ?: ""
+            val muscleGroupIds = backStackEntry.arguments?.getString("muscleGroupIds")?.split(",") ?: emptyList()
             val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
             SelectExercisesScreen(
-                muscleGroupId = muscleGroupId,
+                muscleGroupIds = muscleGroupIds,
                 editWorkoutId = editWorkoutId,
                 onBackClick = {
                     navController.popBackStack()
@@ -384,8 +392,8 @@ fun NavNavigation() {
                 onStartWorkoutClick = {
                     navController.navigate(NavRoutes.WorkoutStart.createRoute(workoutId))
                 },
-                onEditClick = { muscleGroupId, editWorkoutId ->
-                    navController.navigate(NavRoutes.SelectExercises.createRoute(muscleGroupId, editWorkoutId))
+                onEditClick = { _, editWorkoutId ->
+                    navController.navigate(NavRoutes.NewWorkout.createRoute(editWorkoutId))
                 }
             )
         }
