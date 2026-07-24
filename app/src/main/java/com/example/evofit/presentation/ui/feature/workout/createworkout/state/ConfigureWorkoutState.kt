@@ -16,15 +16,17 @@ data class ConfigureWorkoutUiState(
 
 @Immutable
 data class ExerciseConfigState(
+    val workoutExerciseId: String = "",
     val exerciseId: String,
     val name: String,
     val muscleGroupId: String,
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
-    val sets: List<SetState> = listOf(SetState(1, 20.0, 10))
+    val sets: List<SetState> = emptyList()
 )
 
 @Immutable
 data class SetState(
+    val id: String = "",
     val setNumber: Int,
     val weight: Double,
     val reps: Int
