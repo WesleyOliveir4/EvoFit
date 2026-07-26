@@ -29,7 +29,7 @@ import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingVi
 import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
-import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
+import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -79,13 +79,15 @@ fun OnboardingGoalsContent(
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
 
     if (showDialog) {
-        NewGoalDialog(
-            onDismissRequest = {
+        GoalWizardBottomSheet(
+            onDismiss = {
                 showDialog = false
                 selectedSuggestion = null
             },
             onGoalConfirmed = { newGoal ->
                 onAddGoal(newGoal)
+                showDialog = false
+                selectedSuggestion = null
             },
             muscleGroups = muscleGroups,
             getExercises = getExercises,

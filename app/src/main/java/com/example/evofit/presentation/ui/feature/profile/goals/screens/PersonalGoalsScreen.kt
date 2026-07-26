@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
+import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalCard
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.GoalUiModel
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
@@ -60,8 +60,8 @@ fun PersonalGoalsScreen(
     )
 
     if (showAddGoalDialog) {
-        NewGoalDialog(
-            onDismissRequest = { showAddGoalDialog = false },
+        GoalWizardBottomSheet(
+            onDismiss = { showAddGoalDialog = false },
             onGoalConfirmed = { goal ->
                 viewModel.addGoal(goal)
                 showAddGoalDialog = false
