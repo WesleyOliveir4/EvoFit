@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.profile.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
@@ -41,25 +42,23 @@ class ProfileViewModel(
                 getOnboardingDataUseCase(),
                 getWorkoutDoneHistoryUseCase(userId)
             ) { userData, history ->
+                Log.d("ProfileViewModel", "Dados combinados: birthDate=${userData.birthDate}, historySize=${history.size}")
                 val totalWorkouts = getWorkoutsCountUseCase(history).toString()
-                
-                // For records, we can count unique exercises performed as a simple metric for now
-                // or specific records if available. Here we use unique exercise count.
                 val uniqueExercises = history.flatMap { it.exercises }.map { it.exerciseId }.distinct().size.toString()
                 val goalsCount = userData.goals.size.toString()
 
-                _uiState.update {
-                    it.copy(
-                        name = getFirstName(userData.name),
-                        age = userData.age,
-                        weight = userData.weight,
-                        totalWorkouts = totalWorkouts,
-                        records = uniqueExercises,
-                        goals = goalsCount,
-                        isLoading = false
-                    )
-                }
-            }.collect({})
+                ProfileUiState(
+                    name = getFirstName(userData.name),
+                    birthDate = userData.birthDate,
+                    weight = userData.weight,
+                    totalWorkouts = totalWorkouts,
+                    records = uniqueExercises,
+                    goals = goalsCount,
+                    isLoading = false
+                )
+            }.collect { newState ->
+                _uiState.value = newState
+            }
         }
     }
 

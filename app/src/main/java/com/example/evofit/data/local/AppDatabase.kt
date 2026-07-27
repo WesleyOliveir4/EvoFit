@@ -19,7 +19,7 @@ import com.example.evofit.data.local.entities.*
         ActiveSessionEntity::class,
         ActiveSessionSetEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -27,6 +27,30 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Rename age to birthDate in users table
+                // Safe way for older SQLite versions:
+                database.execSQL("""
+                    CREATE TABLE users_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        birthDate TEXT NOT NULL,
+                        weight TEXT NOT NULL,
+                        height TEXT NOT NULL,
+                        isOnboardingCompleted INTEGER NOT NULL,
+                        updatedAt INTEGER NOT NULL
+                    )
+                """)
+                database.execSQL("""
+                    INSERT INTO users_new (id, name, birthDate, weight, height, isOnboardingCompleted, updatedAt)
+                    SELECT id, name, age, weight, height, isOnboardingCompleted, updatedAt FROM users
+                """)
+                database.execSQL("DROP TABLE users")
+                database.execSQL("ALTER TABLE users_new RENAME TO users")
+            }
+        }
+
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("""

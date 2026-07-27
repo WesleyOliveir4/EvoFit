@@ -7,11 +7,22 @@ import com.google.firebase.firestore.PropertyName
 
 @Entity(tableName = "users")
 data class UserEntity(
-    @PrimaryKey val id: String = "",
-    val name: String = "",
-    val age: String = "",
-    val weight: String = "",
-    val height: String = "",
+    @PrimaryKey 
+    @get:PropertyName("id") @set:PropertyName("id") @PropertyName("id")
+    var id: String = "",
+
+    @get:PropertyName("name") @set:PropertyName("name") @PropertyName("name")
+    var name: String = "",
+
+    @ColumnInfo(name = "birthDate")
+    @get:PropertyName("age") @set:PropertyName("age") @PropertyName("age")
+    var birthDate: String = "",
+
+    @get:PropertyName("weight") @set:PropertyName("weight") @PropertyName("weight")
+    var weight: String = "",
+
+    @get:PropertyName("height") @set:PropertyName("height") @PropertyName("height")
+    var height: String = "",
     
     @get:PropertyName("onboardingCompleted")
     @set:PropertyName("onboardingCompleted")
@@ -19,5 +30,6 @@ data class UserEntity(
     @ColumnInfo(name = "isOnboardingCompleted")
     var onboardingCompleted: Boolean = false,
     
-    val updatedAt: Long = 0L
+    @get:PropertyName("updatedAt") @set:PropertyName("updatedAt") @PropertyName("updatedAt")
+    var updatedAt: Long = 0L
 )

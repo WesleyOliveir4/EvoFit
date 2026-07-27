@@ -1,6 +1,7 @@
 package com.example.evofit.presentation.ui.feature.onboard.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,7 @@ class OnboardingViewModel(
 
     companion object {
         private const val KEY_NAME = "onboard_name"
-        private const val KEY_AGE = "onboard_age"
+        private const val KEY_BIRTH_DATE = "onboard_birth_date"
         private const val KEY_WEIGHT = "onboard_weight"
         private const val KEY_HEIGHT = "onboard_height"
     }
@@ -33,7 +34,7 @@ class OnboardingViewModel(
     private val _userData = MutableStateFlow(
         UserOnboardingData(
             name = savedStateHandle[KEY_NAME] ?: "",
-            age = savedStateHandle[KEY_AGE] ?: "",
+            birthDate = savedStateHandle[KEY_BIRTH_DATE] ?: "",
             weight = savedStateHandle[KEY_WEIGHT] ?: "",
             height = savedStateHandle[KEY_HEIGHT] ?: "",
             goals = emptyList()
@@ -44,7 +45,7 @@ class OnboardingViewModel(
         .map { data ->
             OnboardingUiState(
                 name = data.name,
-                age = data.age,
+                birthDate = data.birthDate,
                 weight = data.weight,
                 height = data.height,
                 goals = data.goals.map { it.toUiModel(appContext) }
@@ -66,7 +67,7 @@ class OnboardingViewModel(
                 _userData.update { current ->
                     current.copy(
                         name = current.name.ifBlank { data.name },
-                        age = current.age.ifBlank { data.age },
+                        birthDate = current.birthDate.ifBlank { data.birthDate },
                         weight = current.weight.ifBlank { data.weight },
                         height = current.height.ifBlank { data.height },
                         goals = data.goals
@@ -78,16 +79,22 @@ class OnboardingViewModel(
 
     fun updateProfile(
         name: String = _userData.value.name,
-        age: String = _userData.value.age,
+        birthDate: String = _userData.value.birthDate,
         weight: String = _userData.value.weight,
         height: String = _userData.value.height
     ) {
+        // Log para depuração
+        Log.d("OnboardingVM", "updateProfile: birthDate=$birthDate")
+        
+        // Removemos o return precoce para não travar outros campos se a data estiver temporariamente inválida
+        // A validação final deve ocorrer no isFormValid da UI ou antes do save
+
         savedStateHandle[KEY_NAME] = name
-        savedStateHandle[KEY_AGE] = age
+        savedStateHandle[KEY_BIRTH_DATE] = birthDate
         savedStateHandle[KEY_WEIGHT] = weight
         savedStateHandle[KEY_HEIGHT] = height
 
-        _userData.update { it.copy(name = name, age = age, weight = weight, height = height) }
+        _userData.update { it.copy(name = name, birthDate = birthDate, weight = weight, height = height) }
     }
 
     fun addGoal(goal: UserGoal) {
@@ -100,6 +107,7 @@ class OnboardingViewModel(
 
     fun saveAndNext(onContinue: () -> Unit) {
         viewModelScope.launch {
+            Log.d("OnboardingVM", "Salvando dados: birthDate=${_userData.value.birthDate}")
             saveOnboardingDataUseCase(_userData.value)
             onContinue()
         }
@@ -115,7 +123,7 @@ class OnboardingViewModel(
 
     private fun clearCache() {
         savedStateHandle.remove<String>(KEY_NAME)
-        savedStateHandle.remove<String>(KEY_AGE)
+        savedStateHandle.remove<String>(KEY_BIRTH_DATE)
         savedStateHandle.remove<String>(KEY_WEIGHT)
         savedStateHandle.remove<String>(KEY_HEIGHT)
         _userData.value = UserOnboardingData()

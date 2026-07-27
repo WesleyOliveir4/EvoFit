@@ -130,8 +130,8 @@ fun OnboardSummaryContent(
 
                     SummaryRow(
                         icon = Icons.Default.DateRange,
-                        label = stringResource(R.string.onboarding_summary_label_age),
-                        value = stringResource(R.string.onboarding_summary_value_age, userData.age)
+                        label = stringResource(R.string.onboarding_summary_label_birth_date),
+                        value = userData.birthDate
                     )
 
                     SummaryRow(
@@ -226,7 +226,7 @@ fun OnboardSummaryScreenPreview() {
         OnboardSummaryContent(
             userData = OnboardingUiState(
                 name = "Wesley",
-                age = "28",
+                birthDate = "27/07/1995",
                 weight = "78",
                 height = "175",
                 goals = emptyList()

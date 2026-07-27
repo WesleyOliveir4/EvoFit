@@ -1,5 +1,6 @@
 package com.example.evofit.data.repository
 
+import android.util.Log
 import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,13 +33,15 @@ class OnboardingRepositoryImpl(
     override fun getUserData(): Flow<UserOnboardingData?> {
         return userDataSource.getUser().flatMapLatest { userEntity ->
             if (userEntity == null) {
+                Log.d("OnboardingRepo", "UserEntity é null no local")
                 flowOf(null)
             } else {
+                Log.d("OnboardingRepo", "UserEntity local: birthDate=${userEntity.birthDate}")
                 userDataSource.getGoalsForUser(userEntity.id).map { goals ->
                     mapToDomain(userEntity, goals)
                 }
             }
-        }
+        }.onEach { Log.d("OnboardingRepo", "UserOnboardingData emitido: birthDate=${it?.birthDate}") }
     }
 
     override suspend fun getUserId(): String? {
