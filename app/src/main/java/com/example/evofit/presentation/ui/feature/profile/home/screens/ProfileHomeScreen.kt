@@ -36,7 +36,7 @@ import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
 
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +58,7 @@ fun ProfileHomeScreen(
     onGoalsClick: () -> Unit = {},
     onLogoutSuccess: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.isLoggedOut) {
