@@ -7,9 +7,6 @@ data class ProfileUiState(
     val name: String = "",
     val birthDate: String = "",
     val weight: String = "",
-    val totalWorkouts: String = "0",
-    val records: String = "0",
-    val goals: String = "0",
     val isLoading: Boolean = false,
     val isLoggedOut: Boolean = false
 )
