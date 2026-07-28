@@ -143,7 +143,8 @@ val dataModule = module {
             AppDatabase.MIGRATION_4_5,
             AppDatabase.MIGRATION_5_6,
             AppDatabase.MIGRATION_6_7,
-            AppDatabase.MIGRATION_7_8
+            AppDatabase.MIGRATION_7_8,
+            AppDatabase.MIGRATION_8_9
         ).fallbackToDestructiveMigration()
             .build()
     }
@@ -339,7 +340,7 @@ val evoModule = module {
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { UserDataViewModel(get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }

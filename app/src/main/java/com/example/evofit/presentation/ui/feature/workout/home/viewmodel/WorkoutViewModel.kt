@@ -103,7 +103,7 @@ class WorkoutViewModel(
             } else {
                 combine(
                     getWorkoutsUseCase(userId),
-                    getWorkoutDoneHistoryUseCase(userId)
+                    getWorkoutDoneHistoryUseCase(userId, 7)
                 ) { workouts, history ->
                     val startOfWeek = getCurrentWeekRangeUseCase()
 
@@ -163,7 +163,7 @@ class WorkoutViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Companion.WhileSubscribed(5000),
+        started = SharingStarted.Lazily,
         initialValue = WorkoutState()
     )
 

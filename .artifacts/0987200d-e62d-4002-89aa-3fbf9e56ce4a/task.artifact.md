@@ -1,0 +1,17 @@
+- [x] Modificar o modelo de domínio `WorkoutDone`
+- [x] Configurar Room para a nova estrutura
+    - [x] Criar `WorkoutDoneEntity`
+    - [x] Atualizar `UserDao` com novas queries e métodos
+    - [x] Adicionar migração no `AppDatabase`
+- [x] Atualizar Firestore (Remote Data Source)
+    - [x] Mudar estrutura de salvamento para subcoleção
+    - [x] Implementar busca com limite e ordenação
+- [x] Implementar Lógica de Migração no Repositório
+    - [x] Adaptar `WorkoutRepositoryImpl`
+- [x] Atualizar UseCase e ViewModel
+    - [x] Adicionar parâmetro de limite no UseCase
+    - [x] Atualizar chamada na `WorkoutViewModel`
+- [x] Verificação e Testes
+    - [x] Validar migração local
+    - [x] Validar migração remota
+    - [x] Verificar performance na Home

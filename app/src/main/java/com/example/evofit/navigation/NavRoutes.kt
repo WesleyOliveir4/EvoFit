@@ -21,6 +21,7 @@ sealed class NavRoutes(val route: String) {
     object Height : NavRoutes("height")
     object Goals : NavRoutes("goals")
     object Summary : NavRoutes("summary")
+    object Main : NavRoutes("main")
     object Home : NavRoutes("home")
     object Evo : NavRoutes("evo")
     object Profile : NavRoutes("profile")

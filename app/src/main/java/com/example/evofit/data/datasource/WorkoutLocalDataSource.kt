@@ -4,6 +4,7 @@ import com.example.evofit.data.local.dao.UserDao
 import com.example.evofit.data.local.entities.ActiveSessionEntity
 import com.example.evofit.data.local.entities.ActiveSessionSetEntity
 import com.example.evofit.data.local.entities.ExerciseSetEntity
+import com.example.evofit.data.local.entities.WorkoutDoneEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
@@ -29,6 +30,13 @@ interface WorkoutLocalDataSource {
     suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>)
     fun getWorkoutDoneHistory(userId: String): Flow<WorkoutDoneHistoryEntity?>
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
+    suspend fun deleteWorkoutHistorySummary(userId: String)
+
+    // New Workout History
+    fun getLatestWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDoneEntity>>
+    fun getAllWorkoutDoneHistory(userId: String): Flow<List<WorkoutDoneEntity>>
+    suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity)
+    suspend fun deleteAllWorkoutDone(userId: String)
 
     // Active Session
     fun getActiveSession(): Flow<ActiveSessionWithSets?>
@@ -64,6 +72,22 @@ class WorkoutLocalDataSourceImpl(
     override fun getWorkoutDoneHistory(userId: String) = userDao.getWorkoutDoneHistory(userId)
     
     override suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity) = userDao.insertWorkoutDoneHistory(history)
+
+    override suspend fun deleteWorkoutHistorySummary(userId: String) {
+        userDao.deleteWorkoutHistorySummary(userId)
+    }
+
+    override fun getLatestWorkoutDoneHistory(userId: String, limit: Int) = 
+        userDao.getLatestWorkoutDoneHistory(userId, limit)
+
+    override fun getAllWorkoutDoneHistory(userId: String) = 
+        userDao.getAllWorkoutDoneHistory(userId)
+
+    override suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity) = 
+        userDao.insertWorkoutDone(workoutDone)
+
+    override suspend fun deleteAllWorkoutDone(userId: String) = 
+        userDao.deleteAllWorkoutDone(userId)
 
     override fun getActiveSession(): Flow<ActiveSessionWithSets?> = userDao.getActiveSessionWithSets()
 

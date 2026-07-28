@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,10 +20,12 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseS
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
 import com.example.evofit.presentation.ui.feature.authentication.screens.*
 import com.example.evofit.presentation.ui.feature.onboard.screens.*
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
@@ -30,6 +33,7 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
 import com.example.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
+import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.feature.workout.resume.screens.WorkoutResumeScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
 import com.example.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
@@ -67,7 +71,7 @@ fun NavNavigation() {
         composable(NavRoutes.Login.route) {
             LoginScreen(
                 onLoginSuccess = { isOnboardingCompleted ->
-                    val destination = if (isOnboardingCompleted) NavRoutes.Home.route else NavRoutes.Onboarding.route
+                    val destination = if (isOnboardingCompleted) NavRoutes.Main.route else NavRoutes.Onboarding.route
                     navController.navigate(destination) {
                         popUpTo(NavRoutes.Login.route) { inclusive = true }
                     }
@@ -229,7 +233,7 @@ fun NavNavigation() {
                     currentPage = 5,
                     totalPages = totalSteps,
                     onStartTraining = {
-                        navController.navigate(NavRoutes.Home.route) {
+                        navController.navigate(NavRoutes.Main.route) {
                             popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
                         }
                     },
@@ -240,24 +244,54 @@ fun NavNavigation() {
             }
         }
 
-        composable(NavRoutes.Home.route) {
-            WorkoutScreen(
-                onNavigate = { route ->
-                    navController.navigate(route)
-                }
-            )
-        }
-
-        composable(NavRoutes.Evo.route) {
-            EvoHomeScreen(
-                onNavigate = { route ->
-                    if (route == NavRoutes.MuscleGroupSelection.route) {
-                        navController.navigate(NavRoutes.AnalyticsGraph.route)
-                    } else {
-                        navController.navigate(route)
+        navigation(
+            startDestination = NavRoutes.Home.route,
+            route = NavRoutes.Main.route
+        ) {
+            composable(NavRoutes.Home.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<WorkoutViewModel>(navController)
+                WorkoutScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        navController.navigateWithPopUp(route)
                     }
-                }
-            )
+                )
+            }
+
+            composable(NavRoutes.Evo.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoHomeViewModel>(navController)
+                EvoHomeScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        if (route == NavRoutes.MuscleGroupSelection.route) {
+                            navController.navigate(NavRoutes.AnalyticsGraph.route)
+                        } else {
+                            navController.navigateWithPopUp(route)
+                        }
+                    }
+                )
+            }
+
+            composable(NavRoutes.Profile.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<ProfileViewModel>(navController)
+                ProfileHomeScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        navController.navigateWithPopUp(route)
+                    },
+                    onUserDataClick = {
+                        navController.navigate(NavRoutes.ProfileUserData.route)
+                    },
+                    onGoalsClick = {
+                        navController.navigate(NavRoutes.ProfilePersonalGoals.route)
+                    },
+                    onLogoutSuccess = {
+                        navController.navigate(NavRoutes.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
 
         navigation(
@@ -446,9 +480,7 @@ fun NavNavigation() {
                 onContinueClick = {
                     when {
                         workoutDoneId != null || workoutNotFinishedId != null -> {
-                            navController.navigate(NavRoutes.Home.route) {
-                                popUpTo(NavRoutes.Home.route) { inclusive = true }
-                            }
+                            navController.navigateWithPopUp(NavRoutes.Home.route)
                         }
                         editWorkoutId != null -> {
                             navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId)) {
@@ -461,29 +493,8 @@ fun NavNavigation() {
                             }
                         }
                         else -> {
-                            navController.navigate(NavRoutes.Home.route) {
-                                popUpTo(NavRoutes.Home.route) { inclusive = true }
-                            }
+                            navController.navigateWithPopUp(NavRoutes.Main.route)
                         }
-                    }
-                }
-            )
-        }
-
-        composable(NavRoutes.Profile.route) {
-            ProfileHomeScreen(
-                onNavigate = { route ->
-                    navController.navigate(route)
-                },
-                onUserDataClick = {
-                    navController.navigate(NavRoutes.ProfileUserData.route)
-                },
-                onGoalsClick = {
-                    navController.navigate(NavRoutes.ProfilePersonalGoals.route)
-                },
-                onLogoutSuccess = {
-                    navController.navigate(NavRoutes.Login.route) {
-                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -514,4 +525,14 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
         navController.getBackStackEntry(navGraphRoute)
     }
     return koinViewModel(viewModelStoreOwner = parentEntry)
+}
+
+fun NavController.navigateWithPopUp(route: String) {
+    this.navigate(route) {
+        popUpTo(this@navigateWithPopUp.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
 }

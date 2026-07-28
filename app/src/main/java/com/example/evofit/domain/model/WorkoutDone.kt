@@ -11,7 +11,8 @@ data class WorkoutDone(
     val muscleGroup: MuscleGroup? = null,
     val date: String = "",
     val exercises: List<WorkoutExercise> = emptyList(),
-    val time: String = ""
+    val time: String = "",
+    val createdAt: Long = System.currentTimeMillis()
 )
 
 data class WorkoutDoneHistory(
