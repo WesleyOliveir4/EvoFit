@@ -163,7 +163,7 @@ class WorkoutViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Companion.WhileSubscribed(5000),
+        started = SharingStarted.Lazily,
         initialValue = WorkoutState()
     )
 

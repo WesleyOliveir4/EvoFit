@@ -8,39 +8,27 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.presentation.model.MuscleEvolutionUIModel
 import com.example.evofit.presentation.model.StrengthGainUIModel
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class EvoHomeViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getEvoHomeSummaryUseCase: GetEvoHomeSummaryUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(EvoHomeUiState())
-    val uiState: StateFlow<EvoHomeUiState> = _uiState.asStateFlow()
+    private val _selectedPeriod = MutableStateFlow(EvoPeriod.LAST_30_DAYS)
 
-    init {
-        loadData(_uiState.value.selectedPeriod)
-    }
-
-    fun onPeriodSelected(period: EvoPeriod) {
-        _uiState.update { it.copy(selectedPeriod = period) }
-        loadData(period)
-    }
-
-    private fun loadData(period: EvoPeriod) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            
-            val userId = getUserIdUseCase() ?: return@launch
-            
-            getEvoHomeSummaryUseCase(userId, period).collect { summary ->
-                _uiState.update { 
-                    it.copy(
+    val uiState: StateFlow<EvoHomeUiState> = _selectedPeriod
+        .flatMapLatest { period ->
+            val userId = getUserIdUseCase() ?: ""
+            if (userId.isEmpty()) {
+                flowOf(EvoHomeUiState(selectedPeriod = period))
+            } else {
+                getEvoHomeSummaryUseCase(userId, period).map { summary ->
+                    EvoHomeUiState(
                         isLoading = false,
+                        selectedPeriod = period,
                         strengthGains = summary.strengthGains?.map {
                             StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
                         },
@@ -58,5 +46,13 @@ class EvoHomeViewModel(
                 }
             }
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = EvoHomeUiState(isLoading = true)
+        )
+
+    fun onPeriodSelected(period: EvoPeriod) {
+        _selectedPeriod.value = period
     }
 }
