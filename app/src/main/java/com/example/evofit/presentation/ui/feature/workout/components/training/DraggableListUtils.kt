@@ -82,7 +82,10 @@ fun LazyListScope.draggableWorkoutList(
             dragOffset = { if (isDragging) dragState.dragOffset else 0f },
             modifier = Modifier
                 .zIndex(if (isDragging) 10f else 1f)
-                .then(if (isDragging) Modifier else Modifier.animateItem()),
+                .then(if (isDragging) Modifier else Modifier.animateItem(
+                    fadeInSpec = null,
+                    fadeOutSpec = null
+                )),
             onDragStart = { dragState.onDragStart(workout.id) },
             onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
             onDragEnd = dragState::onDragEnd,
