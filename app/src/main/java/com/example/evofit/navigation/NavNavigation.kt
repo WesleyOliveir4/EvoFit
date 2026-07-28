@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -243,7 +244,7 @@ fun NavNavigation() {
         composable(NavRoutes.Home.route) {
             WorkoutScreen(
                 onNavigate = { route ->
-                    navController.navigate(route)
+                    navController.navigateWithPopUp(route)
                 }
             )
         }
@@ -254,7 +255,7 @@ fun NavNavigation() {
                     if (route == NavRoutes.MuscleGroupSelection.route) {
                         navController.navigate(NavRoutes.AnalyticsGraph.route)
                     } else {
-                        navController.navigate(route)
+                        navController.navigateWithPopUp(route)
                     }
                 }
             )
@@ -446,9 +447,7 @@ fun NavNavigation() {
                 onContinueClick = {
                     when {
                         workoutDoneId != null || workoutNotFinishedId != null -> {
-                            navController.navigate(NavRoutes.Home.route) {
-                                popUpTo(NavRoutes.Home.route) { inclusive = true }
-                            }
+                            navController.navigateWithPopUp(NavRoutes.Home.route)
                         }
                         editWorkoutId != null -> {
                             navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId)) {
@@ -461,9 +460,7 @@ fun NavNavigation() {
                             }
                         }
                         else -> {
-                            navController.navigate(NavRoutes.Home.route) {
-                                popUpTo(NavRoutes.Home.route) { inclusive = true }
-                            }
+                            navController.navigateWithPopUp(NavRoutes.Home.route)
                         }
                     }
                 }
@@ -473,7 +470,7 @@ fun NavNavigation() {
         composable(NavRoutes.Profile.route) {
             ProfileHomeScreen(
                 onNavigate = { route ->
-                    navController.navigate(route)
+                    navController.navigateWithPopUp(route)
                 },
                 onUserDataClick = {
                     navController.navigate(NavRoutes.ProfileUserData.route)
@@ -514,4 +511,14 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControll
         navController.getBackStackEntry(navGraphRoute)
     }
     return koinViewModel(viewModelStoreOwner = parentEntry)
+}
+
+fun NavController.navigateWithPopUp(route: String) {
+    this.navigate(route) {
+        popUpTo(this@navigateWithPopUp.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
 }

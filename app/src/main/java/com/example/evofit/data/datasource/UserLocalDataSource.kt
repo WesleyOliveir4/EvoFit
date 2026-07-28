@@ -1,8 +1,10 @@
 package com.example.evofit.data.datasource
 
 import com.example.evofit.data.local.dao.UserDao
+import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
+import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import kotlinx.coroutines.flow.Flow
 
 interface UserLocalDataSource {
@@ -10,6 +12,13 @@ interface UserLocalDataSource {
     suspend fun insertUser(user: UserEntity): Long
     suspend fun updateUser(user: UserEntity): Int
     suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>): Long
+    suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        history: WorkoutDoneHistoryEntity?,
+        shouldClearActiveSession: Boolean
+    )
     fun getGoalsForUser(userId: String): Flow<List<UserGoalEntity>>
     suspend fun deleteGoalsForUser(userId: String): Int
     suspend fun deleteGoalById(goalId: String): Int
@@ -28,6 +37,14 @@ class UserLocalDataSourceImpl(
     
     override suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>) = 
         userDao.saveUserWithGoals(user, goals)
+
+    override suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        history: WorkoutDoneHistoryEntity?,
+        shouldClearActiveSession: Boolean
+    ) = userDao.syncAllData(user, goals, workouts, history, shouldClearActiveSession)
     
     override fun getGoalsForUser(userId: String) = userDao.getGoalsForUser(userId)
     

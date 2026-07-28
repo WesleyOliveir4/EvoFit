@@ -117,27 +117,14 @@ class OnboardingRepositoryImpl(
             val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
             val remoteHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
 
-            // 3. UPDATE LOCAL: Nuke or Clear syncable data
-            if (shouldClearActiveSession) {
-                userDataSource.nukeUserData()
-            } else {
-                userDataSource.clearSyncableUserData()
-            }
-
-            // Save to Local
-            if (remoteUser != null) {
-                userDataSource.saveUserWithGoals(remoteUser, remoteGoals)
-            }
-
-            if (remoteWorkouts.isNotEmpty()) {
-                remoteWorkouts.forEach { data ->
-                    workoutLocalDataSource.insertFullWorkout(data.workout, data.exercises, data.sets)
-                }
-            }
-
-            if (remoteHistory != null) {
-                workoutLocalDataSource.insertWorkoutDoneHistory(remoteHistory)
-            }
+            // 3. UPDATE LOCAL ATOMICALLY: Nuke/Clear + Save
+            userDataSource.syncAllData(
+                user = remoteUser,
+                goals = remoteGoals,
+                workouts = remoteWorkouts,
+                history = remoteHistory,
+                shouldClearActiveSession = shouldClearActiveSession
+            )
 
             Result.success(Unit)
         } catch (e: Exception) {

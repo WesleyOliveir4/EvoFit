@@ -2,6 +2,7 @@ package com.example.evofit.data.datasource
 
 import android.util.Log
 import com.example.evofit.data.local.entities.ExerciseSetEntity
+import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
@@ -21,12 +22,6 @@ interface WorkoutRemoteDataSource {
     suspend fun getAllWorkouts(userId: String): List<FullWorkoutRemoteData>
     suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
 }
-
-data class FullWorkoutRemoteData(
-    val workout: WorkoutEntity,
-    val exercises: List<WorkoutExerciseEntity>,
-    val sets: List<List<ExerciseSetEntity>>
-)
 
 class WorkoutRemoteDataSourceImpl(
     private val firestore: FirebaseFirestore

@@ -54,6 +54,38 @@ interface UserDao {
         deleteAllWorkoutHistory()
     }
 
+    @Transaction
+    suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        history: WorkoutDoneHistoryEntity?,
+        shouldClearActiveSession: Boolean
+    ) {
+        if (shouldClearActiveSession) {
+            nukeUserData()
+        } else {
+            clearSyncableUserData()
+        }
+
+        user?.let {
+            insertUser(it)
+        }
+        if (goals.isNotEmpty()) {
+            insertGoals(goals)
+        }
+        for (fullWorkout in workouts) {
+            insertFullWorkoutReturnId(
+                fullWorkout.workout,
+                fullWorkout.exercises,
+                fullWorkout.sets
+            )
+        }
+        history?.let {
+            insertWorkoutDoneHistory(it)
+        }
+    }
+
     @Query("DELETE FROM user_goals WHERE id = :goalId")
     suspend fun deleteGoalById(goalId: String): Int
 
