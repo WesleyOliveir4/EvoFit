@@ -5,8 +5,7 @@ import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
-import com.example.evofit.data.mapper.mapToDomain
-import com.example.evofit.data.mapper.toEntity
+import com.example.evofit.data.mapper.*
 import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.CoroutineScope
@@ -115,14 +114,16 @@ class OnboardingRepositoryImpl(
             val remoteUser = userRemoteDataSource.getUser(userId)
             val remoteGoals = userRemoteDataSource.getGoals(userId)
             val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
-            val remoteHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
+            val remoteLegacyHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
+            val remoteNewHistory = workoutRemoteDataSource.getAllWorkoutDoneHistory(userId)
 
             // 3. UPDATE LOCAL ATOMICALLY: Nuke/Clear + Save
             userDataSource.syncAllData(
                 user = remoteUser,
                 goals = remoteGoals,
                 workouts = remoteWorkouts,
-                history = remoteHistory,
+                legacyHistory = remoteLegacyHistory,
+                newHistory = remoteNewHistory.map { it.toEntity() },
                 shouldClearActiveSession = shouldClearActiveSession
             )
 
@@ -142,10 +143,16 @@ class OnboardingRepositoryImpl(
                 workoutRemoteDataSource.saveFullWorkout(fullWorkout.workout, exercises, sets)
             }
 
-            // Push History
-            val localHistory = workoutLocalDataSource.getWorkoutDoneHistory(userId).firstOrNull()
-            if (localHistory != null) {
-                workoutRemoteDataSource.saveWorkoutDoneHistory(localHistory)
+            // Push Legacy History
+            val localLegacyHistory = workoutLocalDataSource.getWorkoutDoneHistory(userId).firstOrNull()
+            if (localLegacyHistory != null) {
+                workoutRemoteDataSource.saveWorkoutDoneHistory(localLegacyHistory)
+            }
+
+            // Push New History
+            val localNewHistory = workoutLocalDataSource.getAllWorkoutDoneHistory(userId).firstOrNull() ?: emptyList()
+            localNewHistory.forEach { entity ->
+                workoutRemoteDataSource.saveWorkoutDone(entity.toDomain())
             }
         } catch (e: Exception) {
             // Log error, push might fail but we continue to pull

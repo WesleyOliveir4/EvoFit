@@ -37,6 +37,9 @@ interface UserDao {
     @Query("DELETE FROM workout_done_history")
     suspend fun deleteAllWorkoutHistory()
 
+    @Query("DELETE FROM workout_done_history WHERE userId = :userId")
+    suspend fun deleteWorkoutHistorySummary(userId: String): Int
+
     @Transaction
     suspend fun nukeUserData() {
         deleteAllUsers()
@@ -59,13 +62,15 @@ interface UserDao {
         user: UserEntity?,
         goals: List<UserGoalEntity>,
         workouts: List<FullWorkoutRemoteData>,
-        history: WorkoutDoneHistoryEntity?,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
         shouldClearActiveSession: Boolean
     ) {
         if (shouldClearActiveSession) {
             nukeUserData()
         } else {
             clearSyncableUserData()
+            deleteAllWorkoutDone() // Adicionado para garantir limpeza total do historico novo também
         }
 
         user?.let {
@@ -81,10 +86,16 @@ interface UserDao {
                 fullWorkout.sets
             )
         }
-        history?.let {
+        legacyHistory?.let {
             insertWorkoutDoneHistory(it)
         }
+        for (historyItem in newHistory) {
+            insertWorkoutDone(historyItem)
+        }
     }
+
+    @Query("DELETE FROM workout_done")
+    suspend fun deleteAllWorkoutDone()
 
     @Query("DELETE FROM user_goals WHERE id = :goalId")
     suspend fun deleteGoalById(goalId: String): Int
@@ -167,12 +178,25 @@ interface UserDao {
         }
     }
 
-    // Workout History
+    // Workout History (Legacy)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
 
     @Query("SELECT * FROM workout_done_history WHERE userId = :userId")
     fun getWorkoutDoneHistory(userId: String): Flow<WorkoutDoneHistoryEntity?>
+
+    // Workout History (New - Individual Items)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity)
+
+    @Query("SELECT * FROM workout_done WHERE userId = :userId ORDER BY createdAt DESC LIMIT :limit")
+    fun getLatestWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDoneEntity>>
+
+    @Query("SELECT * FROM workout_done WHERE userId = :userId ORDER BY createdAt DESC")
+    fun getAllWorkoutDoneHistory(userId: String): Flow<List<WorkoutDoneEntity>>
+
+    @Query("DELETE FROM workout_done WHERE userId = :userId")
+    suspend fun deleteAllWorkoutDone(userId: String)
 
     // Active Session
     @Transaction

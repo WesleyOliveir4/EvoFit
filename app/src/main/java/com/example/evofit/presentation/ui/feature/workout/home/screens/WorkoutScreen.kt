@@ -230,7 +230,7 @@ fun WorkoutContent(
                             WorkoutEmptyState(message = stringResource(R.string.main_workout_empty_history))
                         }
                     } else {
-                        items(history.reversed(), key = { it.id }) { workoutDone ->
+                        items(history, key = { it.id }) { workoutDone ->
                             WorkoutDoneItem(workoutDone = workoutDone)
                             Spacer(modifier = Modifier.height(12.dp))
                         }

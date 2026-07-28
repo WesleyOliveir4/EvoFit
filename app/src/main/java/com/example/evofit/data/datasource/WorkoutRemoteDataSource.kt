@@ -6,7 +6,9 @@ import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
+import com.example.evofit.domain.model.WorkoutDone
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
@@ -21,6 +23,12 @@ interface WorkoutRemoteDataSource {
     suspend fun saveWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
     suspend fun getAllWorkouts(userId: String): List<FullWorkoutRemoteData>
     suspend fun getWorkoutDoneHistory(userId: String): WorkoutDoneHistoryEntity?
+
+    // New History structure
+    suspend fun saveWorkoutDone(workoutDone: WorkoutDone)
+    suspend fun getLatestWorkoutDoneHistory(userId: String, limit: Int): List<WorkoutDone>
+    suspend fun getAllWorkoutDoneHistory(userId: String): List<WorkoutDone>
+    suspend fun deleteOldHistorySummary(userId: String)
 }
 
 class WorkoutRemoteDataSourceImpl(
@@ -115,6 +123,64 @@ class WorkoutRemoteDataSourceImpl(
             .document("summary")
             .set(history)
             .await()
+    }
+
+    override suspend fun saveWorkoutDone(workoutDone: WorkoutDone) {
+        firestore.collection("users")
+            .document(workoutDone.userId)
+            .collection("history")
+            .document(workoutDone.id)
+            .set(workoutDone)
+            .await()
+    }
+
+    override suspend fun getLatestWorkoutDoneHistory(userId: String, limit: Int): List<WorkoutDone> {
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .collection("history")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+                .get()
+                .await()
+            
+            snapshot.toObjects(WorkoutDone::class.java)
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar historico recente: $userId", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getAllWorkoutDoneHistory(userId: String): List<WorkoutDone> {
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .collection("history")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            
+            // Filtramos o "summary" se ele ainda existir na lista (toObjects pode tentar mapear se houver campos iguais)
+            snapshot.documents
+                .filter { it.id != "summary" }
+                .mapNotNull { it.toObject<WorkoutDone>() }
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar todo o historico: $userId", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun deleteOldHistorySummary(userId: String) {
+        try {
+            firestore.collection("users")
+                .document(userId)
+                .collection("history")
+                .document("summary")
+                .delete()
+                .await()
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao deletar sumario antigo: $userId", e)
+        }
     }
 
     override suspend fun getAllWorkouts(userId: String): List<FullWorkoutRemoteData> {

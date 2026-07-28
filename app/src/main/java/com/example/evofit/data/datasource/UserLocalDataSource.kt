@@ -4,6 +4,7 @@ import com.example.evofit.data.local.dao.UserDao
 import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
+import com.example.evofit.data.local.entities.WorkoutDoneEntity
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +17,8 @@ interface UserLocalDataSource {
         user: UserEntity?,
         goals: List<UserGoalEntity>,
         workouts: List<FullWorkoutRemoteData>,
-        history: WorkoutDoneHistoryEntity?,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
         shouldClearActiveSession: Boolean
     )
     fun getGoalsForUser(userId: String): Flow<List<UserGoalEntity>>
@@ -42,9 +44,10 @@ class UserLocalDataSourceImpl(
         user: UserEntity?,
         goals: List<UserGoalEntity>,
         workouts: List<FullWorkoutRemoteData>,
-        history: WorkoutDoneHistoryEntity?,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
         shouldClearActiveSession: Boolean
-    ) = userDao.syncAllData(user, goals, workouts, history, shouldClearActiveSession)
+    ) = userDao.syncAllData(user, goals, workouts, legacyHistory, newHistory, shouldClearActiveSession)
     
     override fun getGoalsForUser(userId: String) = userDao.getGoalsForUser(userId)
     
