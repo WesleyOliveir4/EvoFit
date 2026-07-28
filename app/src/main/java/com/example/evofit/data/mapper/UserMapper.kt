@@ -11,7 +11,7 @@ fun UserOnboardingData.toEntity(userId: String = UUID.randomUUID().toString()): 
     return UserEntity(
         id = userId,
         name = name,
-        age = age,
+        birthDate = birthDate,
         weight = weight,
         height = height,
         onboardingCompleted = false,
@@ -60,7 +60,7 @@ fun UserGoal.toEntity(userId: String): UserGoalEntity {
 fun mapToDomain(user: UserEntity, goals: List<UserGoalEntity>): UserOnboardingData {
     return UserOnboardingData(
         name = user.name,
-        age = user.age,
+        birthDate = user.birthDate,
         weight = user.weight,
         height = user.height,
         goals = goals.map { it.toDomain() }

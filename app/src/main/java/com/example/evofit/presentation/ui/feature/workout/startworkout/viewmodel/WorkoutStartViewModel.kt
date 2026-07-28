@@ -102,16 +102,15 @@ class WorkoutStartViewModel(
                         name = exerciseInfo?.name ?: "",
                         muscleGroupName = mGroupName,
                         unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
-                        sets = workoutExercise.sets.mapIndexed { index, set ->
-                            val setNumber = index + 1
+                        sets = workoutExercise.sets.map { set ->
                             SetProgressState(
-                                setNumber = setNumber,
+                                setNumber = set.setNumber,
                                 weight = set.load,
                                 reps = set.reps,
                                 time = set.time,
                                 distance = set.distance,
                                 isDone = completedSets.any {
-                                    it.workoutExerciseId == workoutExercise.id && it.setNumber == setNumber
+                                    it.workoutExerciseId == workoutExercise.id && it.setNumber == set.setNumber
                                 }
                             )
                         }

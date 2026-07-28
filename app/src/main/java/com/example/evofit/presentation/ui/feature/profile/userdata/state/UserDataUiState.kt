@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class UserDataUiState(
     val name: String = "",
-    val age: String = "",
+    val birthDate: String = "",
     val weight: String = "",
     val height: String = "",
     val isLoading: Boolean = false,

@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.UserOnboardingData
@@ -30,11 +31,12 @@ class UserDataViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             getOnboardingDataUseCase().collect { data ->
+                Log.d("UserDataViewModel", "Dados carregados: name=${data.name}, birthDate=${data.birthDate}")
                 currentData = data
                 _uiState.update {
                     it.copy(
                         name = data.name,
-                        age = data.age,
+                        birthDate = data.birthDate,
                         weight = data.weight,
                         height = data.height,
                         isLoading = false
@@ -44,12 +46,18 @@ class UserDataViewModel(
         }
     }
 
-    fun updateUserData(name: String, age: String, weight: String) {
+    fun updateUserData(
+        name: String = currentData.name,
+        birthDate: String = currentData.birthDate,
+        weight: String = currentData.weight
+    ) {
+        Log.d("UserDataVM", "updateUserData: birthDate=$birthDate")
+        
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val updatedData = currentData.copy(
                 name = name,
-                age = age,
+                birthDate = birthDate,
                 weight = weight
             )
             completeOnboardingUseCase(updatedData)

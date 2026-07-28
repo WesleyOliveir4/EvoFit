@@ -59,7 +59,11 @@ class UserRemoteDataSourceImpl(
                 .await()
             
             if (document.exists()) {
-                document.toObject<UserEntity>()
+                val data = document.data
+                Log.d(TAG, "Dados do Firestore: $data")
+                val user = document.toObject<UserEntity>()
+                Log.d(TAG, "UserEntity mapeado: birthDate=${user?.birthDate}")
+                user
             } else {
                 null
             }

@@ -14,6 +14,8 @@
     <string name="onboarding_user_data_description">Precisamos de algumas informações para personalizar sua experiência.</string>
     <string name="onboarding_user_data_label_name">Nome</string>
     <string name="onboarding_user_data_label_name_example">Ex: João Silva</string>
+    <string name="onboarding_user_data_label_birth_date">Data de nascimento</string>
+    <string name="onboarding_user_data_label_birth_date_example">Ex: 01/01/2000</string>
     <string name="onboarding_user_data_label_age">Idade</string>
     <string name="onboarding_user_data_label_age_example">Ex: 25</string>
     <string name="onboarding_user_data_label_weight">Peso (kg)</string>
@@ -37,7 +39,7 @@
     <string name="onboarding_summary_description">Seu perfil está configurado.</string>
     <string name="onboarding_summary_label_summary">RESUMO</string>
     <string name="onboarding_summary_label_name">Nome</string>
-    <string name="onboarding_summary_label_age">Idade</string>
+    <string name="onboarding_summary_label_birth_date">Nascimento</string>
     <string name="onboarding_summary_label_weight">Peso</string>
     <string name="onboarding_summary_label_height">Altura</string>
     <string name="onboarding_summary_label_goals">Metas Definidas</string>
@@ -373,11 +375,14 @@
 
     <!-- Personal Goals Screen -->
     <string name="profile_goals_title">Metas Pessoais</string>
-    <string name="profile_goals_subtitle">Suas metas a serem atingidas 🎯</string>
+    <string name="profile_goals_subtitle">Suas metas a serem atingidas!</string>
     <string name="profile_goals_add_desc">Adicionar Meta</string>
     <string name="profile_goals_label_current">Atual:</string>
     <string name="profile_goals_label_target">Meta:</string>
     <string name="profile_goals_empty">Nenhuma meta definida ainda.</string>
     <string name="profile_goal_delete_description">Excluir meta</string>
 
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="edit">Editar</string>
 </resources>

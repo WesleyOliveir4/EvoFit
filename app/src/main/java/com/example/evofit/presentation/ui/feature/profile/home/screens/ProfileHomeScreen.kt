@@ -36,7 +36,7 @@ import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
 
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +47,7 @@ import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
+import com.example.evofit.core.common.DateMapper
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -57,7 +58,7 @@ fun ProfileHomeScreen(
     onGoalsClick: () -> Unit = {},
     onLogoutSuccess: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.isLoggedOut) {
@@ -68,7 +69,7 @@ fun ProfileHomeScreen(
 
     ProfileHomeScreenContent(
         userName = uiState.name,
-        userAge = uiState.age,
+        userBirthDate = uiState.birthDate,
         userWeight = uiState.weight,
         totalWorkouts = uiState.totalWorkouts,
         records = uiState.records,
@@ -99,7 +100,7 @@ fun ProfileHomeScreen(
 fun ProfileHomeScreenContent(
     modifier: Modifier = Modifier,
     userName: String,
-    userAge: String,
+    userBirthDate: String,
     userWeight: String,
     totalWorkouts: String = "0",
     records: String = "0",
@@ -109,6 +110,8 @@ fun ProfileHomeScreenContent(
     onGoalsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
+    val displayAge = remember(userBirthDate) { DateMapper.calculateAge(userBirthDate) }
+
     Scaffold(
         modifier = modifier,
         containerColor = AppDarkBg,
@@ -163,7 +166,7 @@ fun ProfileHomeScreenContent(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(id = R.string.profile_user_summary_format, userAge, userWeight),
+                        text = stringResource(id = R.string.profile_user_summary_format, displayAge, userWeight),
                         color = TextSecondary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
@@ -227,7 +230,7 @@ private fun ProfileHomeScreenPreview() {
     EvoFitTheme {
         ProfileHomeScreenContent(
             userName = "Wesley",
-            userAge = "28",
+            userBirthDate = "27/07/1995",
             userWeight = "78",
             onNavigate = {},
             onUserDataClick = {},

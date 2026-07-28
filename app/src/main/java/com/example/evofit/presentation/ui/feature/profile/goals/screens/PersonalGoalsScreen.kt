@@ -34,7 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.onboard.components.NewGoalDialog
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalCard
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.GoalUiModel
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
@@ -60,8 +61,8 @@ fun PersonalGoalsScreen(
     )
 
     if (showAddGoalDialog) {
-        NewGoalDialog(
-            onDismissRequest = { showAddGoalDialog = false },
+        GoalWizardBottomSheet(
+            onDismiss = { showAddGoalDialog = false },
             onGoalConfirmed = { goal ->
                 viewModel.addGoal(goal)
                 showAddGoalDialog = false
@@ -83,25 +84,9 @@ fun PersonalGoalsContent(
     Scaffold(
         containerColor = AppDarkBg,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.profile_goals_title),
-                        color = TextPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.new_workout_back_desc),
-                            tint = TextPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = AppDarkBg)
+            TopBarReturn(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.profile_goals_title)
             )
         },
         floatingActionButton = {

@@ -1,0 +1,7 @@
+- [x] Update Domain Model (`WorkoutExercise`)
+- [x] Update Data Entity (`WorkoutExerciseEntity`)
+- [x] Update Data Mapper (`WorkoutMapper`)
+- [x] Implement Database Migration (v7 -> v8) in `AppDatabase`
+- [x] Update `ConfigureWorkoutViewModel` to persist `orderIndex`
+- [x] Update `WorkoutStartViewModel` to use `setNumber` correctly
+- [x] Verify changes

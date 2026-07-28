@@ -7,5 +7,6 @@ data class WorkoutExercise(
     val id: String = "",
     val exerciseId: String = "",
     val sets: List<ExerciseSet> = emptyList(),
-    val totalSets: Int = 0
+    val totalSets: Int = 0,
+    val orderIndex: Int = 0
 )
