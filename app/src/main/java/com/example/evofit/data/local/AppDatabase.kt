@@ -19,7 +19,7 @@ import com.example.evofit.data.local.entities.*
         ActiveSessionEntity::class,
         ActiveSessionSetEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -27,6 +27,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE workout_exercises ADD COLUMN orderIndex INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Rename age to birthDate in users table

@@ -20,5 +20,6 @@ import androidx.room.PrimaryKey
 data class WorkoutExerciseEntity(
     @PrimaryKey val id: String = "",
     val workoutId: String = "",
-    val exerciseId: String = ""
+    val exerciseId: String = "",
+    val orderIndex: Int = 0
 )

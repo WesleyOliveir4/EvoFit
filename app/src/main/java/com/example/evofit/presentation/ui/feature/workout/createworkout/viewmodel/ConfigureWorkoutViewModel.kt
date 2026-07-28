@@ -259,10 +259,11 @@ class ConfigureWorkoutViewModel(
         val firstConfig = currentState.exerciseConfigs.firstOrNull()
         val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
 
-        val workoutExercises = currentState.exerciseConfigs.map { config ->
+        val workoutExercises = currentState.exerciseConfigs.mapIndexed { index, config ->
             WorkoutExercise(
                 id = config.workoutExerciseId,
                 exerciseId = config.exerciseId,
+                orderIndex = index,
                 sets = config.sets.map { set ->
                     when (config.unit) {
                         MeasurementUnit.DISTANCE -> {

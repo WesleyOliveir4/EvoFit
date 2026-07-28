@@ -26,7 +26,9 @@ fun FullWorkout.toDomain(
         muscleGroupId = workout.muscleGroupId,
         muscleGroup = muscleGroup,
         date = workout.date,
-        exercises = exercises.map { it.toDomain(exerciseNameResolver) },
+        exercises = exercises
+            .sortedBy { it.workoutExercise.orderIndex }
+            .map { it.toDomain(exerciseNameResolver) },
         orderIndex = workout.orderIndex
     )
 }
@@ -36,7 +38,8 @@ fun WorkoutExerciseWithSets.toDomain(exerciseNameResolver: (String) -> String = 
     return WorkoutExercise(
         id = workoutExercise.id,
         exerciseId = workoutExercise.exerciseId,
-        sets = sets.map { it.toDomain(exerciseName) }
+        sets = sets.sortedBy { it.setNumber }.map { it.toDomain(exerciseName) },
+        orderIndex = workoutExercise.orderIndex
     )
 }
 
@@ -70,7 +73,8 @@ fun WorkoutExercise.toEntity(workoutId: String): WorkoutExerciseEntity {
     return WorkoutExerciseEntity(
         id = id,
         workoutId = workoutId,
-        exerciseId = exerciseId
+        exerciseId = exerciseId,
+        orderIndex = orderIndex
     )
 }
 
