@@ -1,0 +1,22 @@
+- [x] Create `Dimens.kt` with centralized dimensions
+- [x] Verify file content and structure
+- [x] Create walkthrough artifact
+- [x] Update `Dimens.kt` with missing values (Phase 1)
+- [x] Refactor `LoginComponents.kt` to use `Dimens`
+- [x] Refactor `LoginScreen.kt` to use `Dimens`
+- [x] Refactor `GlobalComponents.kt` (TopBarReturn) to use `Dimens`
+- [x] Update `Dimens.kt` with missing values (Phase 2)
+- [x] Refactor Authentication Components (PreLogin, Register, VerifyCode, etc.)
+- [x] Refactor Authentication Screens (PreLogin, Register, VerifyCode, etc.)
+- [x] Cleanup imports and verify
+- [x] Organize `Dimens.kt` with Authentication and Text Size sections
+- [x] Refactor Text Sizes (SP) in all authentication files
+- [x] Integrate `Dimens` with `Type.kt` (Typography)
+- [x] Refactor components to use `MaterialTheme.typography`
+- [x] Final verification and cleanup
+- [x] Adjust vertical spacing for 3-button navigation compatibility
+- [x] Add commented layout recommendations in `Dimens.kt`
+- [x] Fix scroll and structure in Authentication Screens (Register, Login, etc.)
+    - [x] Move footers to `bottomBar` slot
+    - [x] Remove `verticalScroll` from main `Column` where unnecessary (replaced with structured scroll)
+    - [x] Ensure content starts at the top and only scrolls if overflowed

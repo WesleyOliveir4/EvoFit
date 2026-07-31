@@ -26,10 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.AppGreen
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
@@ -42,13 +42,13 @@ import com.example.evofit.presentation.ui.theme.WelcomeBoxBg
 @Composable
 fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.size(160.dp),
+        modifier = modifier.size(Dimens.AuthIllustrationSizeLarge),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(140.dp)
-                .clip(RoundedCornerShape(32.dp))
+                .size(Dimens.AuthIllustrationSizeMedium)
+                .clip(RoundedCornerShape(Dimens.CornerRadiusExtraLarge))
                 .background(WelcomeBoxBg),
             contentAlignment = Alignment.Center
         ) {
@@ -56,7 +56,7 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
                 imageVector = Icons.Default.MailOutline,
                 contentDescription = stringResource(id = R.string.forgot_password_content_desc_illustration),
                 tint = AppGreen,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier.size(Dimens.SpacingExtraLargePlus)
             )
         }
         Box(
@@ -64,14 +64,14 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
                 .align(Alignment.TopEnd)
                 .clip(CircleShape)
                 .background(AppGreen)
-                .size(36.dp),
+                .size(Dimens.AuthBadgeSizeDefault),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = null,
                 tint = Color.Black,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(Dimens.IconSizeMedium)
             )
         }
     }
@@ -82,20 +82,18 @@ fun ForgotPasswordHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
     ) {
         Text(
             text = stringResource(id = R.string.forgot_password_title),
             color = TextPrimary,
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Black,
+            style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(id = R.string.forgot_password_subtitle),
             color = TextSecondary,
-            fontSize = 15.sp,
-            lineHeight = 21.sp,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
     }
@@ -110,17 +108,16 @@ fun ForgotPasswordFooter(
         onClick = onContinueClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
             containerColor = AppGreen,
             contentColor = Color.Black
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         Text(
             text = stringResource(id = R.string.forgot_password_button_continue),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
 }

@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.*
@@ -33,15 +32,15 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo_evofit),
             contentDescription = stringResource(id = R.string.pre_login_content_desc_logo),
-            modifier = Modifier.size(156.dp)
+            modifier = Modifier.size(Dimens.AuthLogoSizeOnboarding)
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraLarge))
 
         val fullTitle = stringResource(id = R.string.pre_login_title)
         val highlightPart = "melhor"
@@ -61,16 +60,13 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
         Text(
             text = annotatedTitle,
             color = TextPrimary,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Black,
-            lineHeight = 38.sp
+            style = MaterialTheme.typography.displayLarge
         )
 
         Text(
             text = stringResource(id = R.string.pre_login_subtitle),
             color = TextSecondary,
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
     }
@@ -88,7 +84,7 @@ fun PreLoginPageIndicator(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(totalDots) { index ->
@@ -97,7 +93,7 @@ fun PreLoginPageIndicator(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(if (isActive) AppGreen else TextSecondary.copy(alpha = 0.3f))
-                    .size(if (isActive) 8.dp else 6.dp)
+                    .size(if (isActive) Dimens.SpacingSmall else Dimens.SpacingTiny)
             )
         }
     }
@@ -115,17 +111,16 @@ fun PreLoginFooter(
         onClick = onStartClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
             containerColor = AppGreen,
             contentColor = Color.Black
         ),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
     ) {
         Text(
             text = stringResource(id = R.string.pre_login_button_start),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
@@ -144,7 +139,7 @@ private fun PreLoginFooterPreview() {
     EvoFitTheme {
         Column {
             PreLoginPageIndicator()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
             PreLoginFooter(onStartClick = {})
         }
     }

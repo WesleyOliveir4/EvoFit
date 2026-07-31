@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,8 +21,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RegisterHeader
@@ -101,20 +100,36 @@ fun RegisterContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
         containerColor = AppDarkBg,
         topBar = {
             TopBarReturn(
                 onBackClick = onLoginClick
             )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimens.SpacingMedium),
+                contentAlignment = Alignment.Center
+            ) {
+                RegisterFooter(
+                    isLoading = uiState.isLoading,
+                    enabled = canSubmit,
+                    onRegisterClick = onRegisterClick,
+                    onLoginClick = onLoginClick
+                )
+            }
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier.fillMaxSize().systemBarsPadding()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.Start
         ) {
             // --- BLOCO SUPERIOR: Boas-vindas ---
             RegisterHeader()
@@ -123,8 +138,8 @@ fun RegisterContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(vertical = Dimens.SectionSpacing),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 // Campo de E-mail
                 LoginInputField(
@@ -188,7 +203,7 @@ fun RegisterContent(
                     Text(
                         text = stringResource(id = R.string.register_error_passwords_dont_match),
                         color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
 
@@ -200,14 +215,6 @@ fun RegisterContent(
                     enabled = !uiState.isLoading
                 )
             }
-
-            // --- BLOCO INFERIOR: Ações e Login ---
-            RegisterFooter(
-                isLoading = uiState.isLoading,
-                enabled = canSubmit,
-                onRegisterClick = onRegisterClick,
-                onLoginClick = onLoginClick
-            )
         }
     }
 }

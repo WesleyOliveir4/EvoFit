@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.*
@@ -38,21 +37,19 @@ fun VerifyCodeHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 24.dp),
+            .padding(top = Dimens.SpacingLarge),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
             text = stringResource(id = R.string.verify_code_title),
             color = TextPrimary,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Black
+            style = MaterialTheme.typography.headlineLarge
         )
         Text(
             text = stringResource(id = R.string.verify_code_subtitle_format, email),
             color = TextSecondary,
-            fontSize = 16.sp,
-            lineHeight = 22.sp
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
@@ -111,21 +108,20 @@ private fun OtpDigitBox(
 ) {
     Box(
         modifier = modifier
-            .size(48.dp)
-            .clip(RoundedCornerShape(14.dp))
+            .size(Dimens.MinimumTouchTarget)
+            .clip(RoundedCornerShape(Dimens.CornerRadiusMedium))
             .background(AppSurface)
             .border(
-                width = if (isActive) 2.dp else 0.dp,
+                width = if (isActive) Dimens.SpacingExtraExtraSmall else Dimens.SpacingNone,
                 color = if (isActive) AppGreen else Color.Transparent,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
             ),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = digit,
             color = TextPrimary,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.titleLarge
         )
     }
 }
@@ -142,25 +138,24 @@ fun VerifyCodeFooter(
         enabled = enabled && !isLoading,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
             containerColor = AppGreen,
             contentColor = Color.Black,
             disabledContainerColor = AppGreen.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(Dimens.IconSizeDefault),
                 color = Color.Black,
-                strokeWidth = 2.dp
+                strokeWidth = Dimens.SpacingExtraExtraSmall
             )
         } else {
             Text(
                 text = stringResource(id = R.string.verify_code_button_verify),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -180,12 +175,12 @@ fun VerifyCodeResendRow(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall)
     ) {
         Text(
             text = stringResource(id = R.string.verify_code_not_received),
             color = TextSecondary,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
         if (secondsRemaining > 0) {
@@ -197,15 +192,13 @@ fun VerifyCodeResendRow(
                     "%02d:%02d".format(minutes, seconds)
                 ),
                 color = TextSecondary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
             )
         } else {
             Text(
                 text = stringResource(id = R.string.verify_code_resend),
                 color = AppGreen,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable { onResendClick() }
             )
         }

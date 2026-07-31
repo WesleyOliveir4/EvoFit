@@ -19,7 +19,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.*
@@ -29,49 +28,47 @@ fun LoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 28.dp),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+            .padding(top = Dimens.SpacingMedium),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Brand Logo and Name
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(IconContainerBg, RoundedCornerShape(12.dp)),
+                    .size(Dimens.SpacingExtraExtraLarge)
+                    .background(IconContainerBg, RoundedCornerShape(Dimens.CornerRadiusSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_logo_evofit),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(Dimens.IconSizeDefault)
                 )
             }
             Text(
                 text = "EvoFit",
                 color = TextPrimary,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
         // Welcome Message
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Text(
                 text = "Bem-vindo de volta",
                 color = TextPrimary,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge
             )
             Text(
                 text = "Continue de onde parou na sua evolução.",
                 color = TextSecondary,
-                fontSize = 15.sp
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -92,14 +89,14 @@ fun LoginInputField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
-        textStyle = TextStyle(color = TextPrimary, fontSize = 16.sp),
+        modifier = modifier.fillMaxWidth().heightIn(min = Dimens.TextFieldHeight),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
         label = { Text(label) },
         placeholder = { Text(placeholder, color = TextSecondary.copy(alpha = 0.5f)) },
         trailingIcon = trailingIcon,
         enabled = enabled,
         singleLine = true,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = AppSurface,
             unfocusedContainerColor = AppSurface,
@@ -130,27 +127,26 @@ fun LoginButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
             containerColor = AppGreen,
             contentColor = Color.Black,
             disabledContainerColor = AppGreen.copy(alpha = 0.5f),
             disabledContentColor = Color.Black.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
         enabled = enabled && !isLoading
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(Dimens.SpacingLarge),
                 color = Color.Black,
-                strokeWidth = 2.dp
+                strokeWidth = Dimens.SpacingExtraExtraSmall
             )
         } else {
             Text(
                 text = stringResource(id = R.string.login_button_enter),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -166,28 +162,27 @@ fun SocialLoginButton(
 ) {
     Box(
         modifier = modifier
-            .height(52.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, AppSurfaceVariant, RoundedCornerShape(20.dp))
+            .height(Dimens.ButtonHeightSecondary)
+            .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
+            .border(Dimens.BorderWidthThin, AppSurfaceVariant, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
             .background(Color.Transparent)
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Icon(
                 painter = icon,
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
             Text(
                 text = text,
                 color = TextPrimary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -198,15 +193,15 @@ fun LoginSocialDivider(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 32.dp),
+            .padding(vertical = Dimens.SectionSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = AppSurfaceVariant)
         Text(
             text = stringResource(id = R.string.login_or_continue_with),
             color = TextSecondary,
-            fontSize = 13.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = Dimens.SpacingMedium)
         )
         HorizontalDivider(modifier = Modifier.weight(1f), color = AppSurfaceVariant)
     }
@@ -219,20 +214,19 @@ fun LoginRegistrationFooter(
     enabled: Boolean = true
 ) {
     Row(
-        modifier = modifier.padding(top = 40.dp, bottom = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier.padding(top = Dimens.SpacingExtraExtraLarge, bottom = Dimens.SpacingLarge),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = stringResource(id = R.string.login_no_account),
             color = TextSecondary,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodySmall
         )
         Text(
             text = stringResource(id = R.string.login_sign_up),
             color = AppGreen,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.clickable(enabled = enabled) { onSignUpClick() }
         )
     }

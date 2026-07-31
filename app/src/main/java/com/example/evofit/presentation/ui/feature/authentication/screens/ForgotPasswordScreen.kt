@@ -1,23 +1,19 @@
 package com.example.evofit.presentation.ui.feature.authentication.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordIllustration
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.AppDarkBg
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
@@ -49,30 +45,36 @@ fun ForgotPasswordContent(
             TopBarReturn(
                 onBackClick = { onBackClick() }
             )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                contentAlignment = Alignment.Center
+            ) {
+                ForgotPasswordFooter(
+                    onContinueClick = onContinueClick
+                )
+            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                ForgotPasswordIllustration()
-                Spacer(modifier = Modifier.height(32.dp))
-                ForgotPasswordHeader()
-            }
-
-            ForgotPasswordFooter(
-                onContinueClick = onContinueClick,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+            ForgotPasswordIllustration()
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
+            ForgotPasswordHeader()
+            
+            // Add a small spacer to avoid clipping if scroll is active
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }

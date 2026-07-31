@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -67,7 +68,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -75,6 +75,7 @@ import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.theme.AppSurface
 import com.example.evofit.presentation.ui.theme.AppSurfaceVariant
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.EvoIconBgRed
@@ -91,7 +92,7 @@ fun AppBottomNavigation(
 ) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.dp
+        tonalElevation = Dimens.ElevationNone
     ) {
         NavigationBarItem(
             selected = currentRoute == NavRoutes.Home.route,
@@ -146,19 +147,18 @@ fun EvoFitButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         Text(
             text = text,
             color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
         )
     }
 }
@@ -174,7 +174,7 @@ fun TopBarReturn(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
         ),
-        modifier = modifier.shadow(elevation = 2.dp, ambientColor = Color.Black),
+        modifier = modifier.shadow(elevation = Dimens.ElevationLow, ambientColor = Color.Black),
         title = {
             Text(
                 text = title ?: "",
@@ -184,7 +184,7 @@ fun TopBarReturn(
         navigationIcon = {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.offset(x = (0).dp) // Alinha a seta com a margem de 24dp do conteúdo
+                modifier = Modifier.offset(x = Dimens.SpacingNone) // Alinha a seta com a margem de 24dp do conteúdo
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -236,19 +236,19 @@ fun EvoFitAlertDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(28.dp),
+                .padding(horizontal = Dimens.SpacingMedium),
+            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(Dimens.SpacingLarge),
                 horizontalAlignment = Alignment.Start
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(Dimens.MinimumTouchTarget)
                         .background(EvoIconBgRed, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -256,36 +256,34 @@ fun EvoFitAlertDialog(
                         imageVector = icon,
                         contentDescription = null,
                         tint = EvoDestructiveRed,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
 
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                 Text(
                     text = description,
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
                 Button(
                     onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
+                        .height(Dimens.MinimumTouchTarget),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = EvoDestructiveRed
                     )
@@ -293,26 +291,24 @@ fun EvoFitAlertDialog(
                     Text(
                         text = confirmButtonText,
                         color = Color.Black,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
                 if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                     TextButton(
                         onClick = onDismiss,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(12.dp)
+                            .height(Dimens.MinimumTouchTarget),
+                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                     ) {
                         Text(
                             text = dismissButtonText,
                             color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
@@ -340,19 +336,19 @@ fun EvoFitCautionDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(28.dp),
+                .padding(horizontal = Dimens.SpacingMedium),
+            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(Dimens.SpacingLarge),
                 horizontalAlignment = Alignment.Start
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(Dimens.MinimumTouchTarget)
                         .background(EvoIconBgYellow, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -360,36 +356,34 @@ fun EvoFitCautionDialog(
                         imageVector = Icons.Default.Warning,
                         contentDescription = null,
                         tint = EvoWarningYellow,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
 
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                 Text(
                     text = description,
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
                 Button(
                     onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
+                        .height(Dimens.MinimumTouchTarget),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = EvoWarningYellow
                     )
@@ -397,26 +391,24 @@ fun EvoFitCautionDialog(
                     Text(
                         text = confirmButtonText,
                         color = Color.Black,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
                 if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                     TextButton(
                         onClick = onDismiss,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(12.dp)
+                            .height(Dimens.MinimumTouchTarget),
+                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                     ) {
                         Text(
                             text = dismissButtonText,
                             color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
@@ -445,19 +437,19 @@ fun EvoFitActionDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(28.dp),
+                .padding(horizontal = Dimens.SpacingMedium),
+            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(Dimens.SpacingLarge),
                 horizontalAlignment = Alignment.Start
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(Dimens.MinimumTouchTarget)
                         .background(IconContainerBg, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -465,36 +457,34 @@ fun EvoFitActionDialog(
                         imageVector = icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
 
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                 Text(
                     text = description,
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
                 Button(
                     onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
+                        .height(Dimens.MinimumTouchTarget),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
@@ -502,26 +492,24 @@ fun EvoFitActionDialog(
                     Text(
                         text = confirmButtonText,
                         color = Color.Black,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
                 if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                     TextButton(
                         onClick = onDismiss,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(12.dp)
+                            .height(Dimens.MinimumTouchTarget),
+                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                     ) {
                         Text(
                             text = dismissButtonText,
                             color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
@@ -622,26 +610,25 @@ fun EvoFitDropdownFilter(
     ) {
         Row(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(Dimens.CornerRadiusCardSmall))
                 .background(MaterialTheme.colorScheme.surface)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+                .border(Dimens.BorderWidthThin, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
                 .clickable { isExpanded = !isExpanded }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = Dimens.SpacingMedium, vertical = Dimens.SpacingSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
         ) {
             Text(
                 text = selectedOption,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .size(18.dp)
+                    .size(Dimens.IconSizeMedium)
                     .rotate(arrowRotationState)
             )
         }
@@ -650,12 +637,12 @@ fun EvoFitDropdownFilter(
         DropdownMenu(
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
-            offset = DpOffset(x = 0.dp, y = 8.dp),
-            shape = RoundedCornerShape(20.dp),
+            offset = DpOffset(x = Dimens.SpacingNone, y = Dimens.SpacingSmall),
+            shape = RoundedCornerShape(Dimens.CornerRadiusCardSmall),
             modifier = Modifier
-                .width(120.dp)
-                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(20.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+                .width(Dimens.DropdownMenuWidth)
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
+                .border(Dimens.BorderWidthThin, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
         ) {
             options.forEach { option ->
                 val isSelected = option == selectedOption
@@ -665,8 +652,7 @@ fun EvoFitDropdownFilter(
                         Text(
                             text = option,
                             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
@@ -675,7 +661,7 @@ fun EvoFitDropdownFilter(
                         onOptionSelected(option)
                         isExpanded = false
                     },
-                    contentPadding = PaddingValues(vertical = 12.dp)
+                    contentPadding = PaddingValues(vertical = Dimens.SpacingMediumSmall)
                 )
             }
         }
@@ -689,7 +675,7 @@ private fun EvoFitDropdownFilterPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
+                .padding(Dimens.SectionSpacing),
             contentAlignment = Alignment.Center
         ) {
             var selected by remember { mutableStateOf("3 meses") }
@@ -708,8 +694,8 @@ private fun EvoFitDropdownFilterExpandedPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp) // Aumentado para garantir visibilidade do menu
-                .padding(16.dp),
+                .height(Dimens.PreviewHeightLarge) // Aumentado para garantir visibilidade do menu
+                .padding(Dimens.SpacingMedium),
             contentAlignment = Alignment.TopCenter
         ) {
             // No Preview, o DropdownMenu às vezes precisa de um container para ser renderizado corretamente
@@ -737,14 +723,14 @@ fun EvoFitInputField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
-        textStyle = TextStyle(color = TextPrimary, fontSize = 16.sp),
+        modifier = modifier.fillMaxWidth().heightIn(min = Dimens.TextFieldHeight),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
         label = { Text(label) },
         placeholder = { Text(placeholder, color = TextSecondary.copy(alpha = 0.5f)) },
         trailingIcon = trailingIcon,
         enabled = enabled,
         singleLine = true,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = AppSurface,
             unfocusedContainerColor = AppSurface,
@@ -768,14 +754,14 @@ fun EvoFitInputField(
 @Composable
 private fun EvoFitInputFieldPreview() {
     EvoFitTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             EvoFitInputField(
                 label = "Nome",
                 placeholder = "Digite seu nome",
                 value = "",
                 onValueChange = {}
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
             EvoFitInputField(
                 label = "E-mail",
                 placeholder = "exemplo@email.com",

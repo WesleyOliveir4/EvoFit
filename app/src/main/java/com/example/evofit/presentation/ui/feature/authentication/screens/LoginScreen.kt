@@ -21,8 +21,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.components.*
@@ -115,7 +113,7 @@ fun LoginContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = Dimens.SpacingMedium),
                 contentAlignment = Alignment.Center
             ) {
                 LoginRegistrationFooter(
@@ -127,9 +125,9 @@ fun LoginContent(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -141,14 +139,14 @@ fun LoginContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(top = Dimens.SectionSpacing),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
             ) {
                 if (uiState.error != null) {
                     Text(
                         text = uiState.error,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = Dimens.SpacingSmall)
                     )
                 }
 
@@ -187,13 +185,13 @@ fun LoginContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 24.dp),
+                    .padding(top = Dimens.SpacingMediumSmall, bottom = Dimens.SpacingLarge),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
                     text = stringResource(id = R.string.login_forgot_password),
                     color = AppGreen,
-                    fontSize = 14.sp,
+                    fontSize = Dimens.TextSizeSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
                 )
@@ -212,8 +210,8 @@ fun LoginContent(
             // --- BOTÕES SOCIAIS: Google & Apple ---
             Row(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(bottom = Dimens.SpacingMedium),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 SocialLoginButton(
                     text = "Google",
