@@ -15,17 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.painterResource
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.EvoBlue
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.evoColors
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.EvoGreen
-import com.example.evofit.presentation.ui.theme.EvoOrange
-import com.example.evofit.presentation.ui.theme.IconContainerBg
 
 @Composable
 fun StrengthProgressRow(
@@ -40,24 +36,21 @@ fun StrengthProgressRow(
         Text(
             text = position,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.width(36.dp)
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.width(Dimens.EvoRankingPositionWidth)
         )
         
         Text(
             text = exerciseName,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.weight(1f)
         )
         
         Text(
             text = progressValue,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
@@ -71,33 +64,34 @@ fun StrengthGainsCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(Dimens.SpacingLarge)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
             ) {
-                Text(text = "🏋️", fontSize = 14.sp)
+                Text(text = "🏋️", style = TextStyle(fontSize = Dimens.TextSizeSmall))
                 Text(
                     text = stringResource(R.string.evo_home_strength_title),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
+                    )
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
 
             content()
         }
@@ -112,32 +106,33 @@ fun MostEvolvedCard(
 ) {
     Card(
         modifier = modifier
-            .height(120.dp)
+            .height(Dimens.EvoCardHeightMedium)
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(Dimens.SpacingLarge),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
             ) {
-                Text(text = "🏅", fontSize = 14.sp) // Medalha/Selo de evolução
+                Text(text = "🏅", style = TextStyle(fontSize = Dimens.TextSizeSmall)) // Medalha/Selo de evolução
                 Text(
                     text = stringResource(R.string.evo_home_most_evolved_title),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
+                    )
                 )
             }
             
@@ -145,14 +140,12 @@ fun MostEvolvedCard(
                 Text(
                     text = muscleName,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = percentage,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
         }
@@ -166,32 +159,32 @@ fun WorkoutsCompletedCard(
 ) {
     Card(
         modifier = modifier
-            .height(120.dp)
+            .height(Dimens.EvoCardHeightMedium)
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(Dimens.SpacingLarge),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
             ) {
-                Text(text = "🔥", fontSize = 14.sp)
+                Text(text = "🔥", style = TextStyle(fontSize = Dimens.TextSizeSmall))
                 Text(
                     text = stringResource(R.string.evo_home_workouts_title),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                    )
                 )
             }
             
@@ -199,14 +192,12 @@ fun WorkoutsCompletedCard(
                 Text(
                     text = count,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Black,
-                    lineHeight = 30.sp
+                    style = MaterialTheme.typography.headlineLarge
                 )
                 Text(
                     text = stringResource(R.string.evo_home_workouts_completed),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
@@ -223,52 +214,51 @@ fun LeastTrainedCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(horizontal = Dimens.SpacingLarge, vertical = Dimens.SpacingMediumSmall),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = null,
-                        tint = EvoOrange,
-                        modifier = Modifier.size(14.dp)
+                        tint = MaterialTheme.evoColors.orange,
+                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny) // ~14.dp
                     )
                     Text(
                         text = stringResource(R.string.evo_home_least_trained_title),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
+                        )
                     )
                 }
                 Text(
                     text = muscleName,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
 
             Text(
                 text = stringResource(R.string.evo_home_sessions_count, sessionsCount),
-                color = EvoOrange,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.evoColors.orange,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -283,37 +273,38 @@ fun KmPerWeekCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(horizontal = Dimens.SpacingLarge, vertical = Dimens.SpacingMediumSmall),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Place,
                         contentDescription = null,
-                        tint = EvoBlue,
-                        modifier = Modifier.size(14.dp)
+                        tint = MaterialTheme.evoColors.blue,
+                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_km_per_week_title),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
+                        )
                     )
                 }
                 Text(
@@ -322,16 +313,14 @@ fun KmPerWeekCard(
                         String.format("%.1f", kmPerWeek).replace('.', ',')
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
 
             Text(
                 text = stringResource(R.string.evo_home_average_label),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium
+                color = MaterialTheme.evoColors.blue,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
     }
@@ -346,52 +335,51 @@ fun AverageWorkoutTimeCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(horizontal = Dimens.SpacingLarge, vertical = Dimens.SpacingMediumSmall),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = null,
-                        tint = EvoGreen,
-                        modifier = Modifier.size(14.dp)
+                        tint = MaterialTheme.evoColors.green,
+                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_avg_time_title),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
+                        )
                     )
                 }
                 Text(
                     text = stringResource(R.string.evo_home_time_value, averageTimeMinutes),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
 
             Text(
                 text = stringResource(R.string.evo_home_per_session_label),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium
+                color = MaterialTheme.evoColors.green,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
     }
@@ -405,51 +393,50 @@ fun ExerciseAnalyticsCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(Dimens.CornerRadiusCard))
             .clickable { onClick() }
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
             ),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(Dimens.SpacingLarge),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp)),
+                    .size(Dimens.MinimumTouchTarget)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.CornerRadiusSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_tabler_presentation_analytics),
+                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_tabler_presentation_analytics),
                     contentDescription = null,
-                    tint = EvoGreen,
-                    modifier = Modifier.size(24.dp)
+                    tint = MaterialTheme.evoColors.green,
+                    modifier = Modifier.size(Dimens.IconSizeLarge)
                 )
             }
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall)
             ) {
                 Text(
                     text = stringResource(R.string.evo_home_exercise_analysis_card_title),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = stringResource(R.string.evo_home_exercise_analysis_card_desc),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp
+                    style = MaterialTheme.typography.bodySmall,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
                 )
             }
         }
@@ -460,7 +447,7 @@ fun ExerciseAnalyticsCard(
 @Composable
 private fun ExerciseAnalysisCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             ExerciseAnalyticsCard()
         }
     }
@@ -470,10 +457,10 @@ private fun ExerciseAnalysisCardPreview() {
 @Composable
 private fun StrengthGainsCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             StrengthGainsCard {
                 StrengthProgressRow(position = "1º", exerciseName = "Supino Reto", progressValue = "+12kg")
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 12.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = Dimens.BorderWidthThin / 2, modifier = Modifier.padding(vertical = Dimens.SpacingMediumSmall))
                 StrengthProgressRow(position = "2º", exerciseName = "Agachamento", progressValue = "+10kg")
             }
         }
@@ -484,7 +471,7 @@ private fun StrengthGainsCardPreview() {
 @Composable
 private fun MostEvolvedCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             MostEvolvedCard(muscleName = "Peitoral", percentage = "+18%")
         }
     }
@@ -494,7 +481,7 @@ private fun MostEvolvedCardPreview() {
 @Composable
 private fun WorkoutsCompletedCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutsCompletedCard(count = "24")
         }
     }
@@ -504,7 +491,7 @@ private fun WorkoutsCompletedCardPreview() {
 @Composable
 private fun LeastTrainedCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             LeastTrainedCard(muscleName = "Pernas", sessionsCount = 2)
         }
     }
@@ -514,7 +501,7 @@ private fun LeastTrainedCardPreview() {
 @Composable
 private fun KmPerWeekCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             KmPerWeekCard(kmPerWeek = 12.5)
         }
     }
@@ -524,7 +511,7 @@ private fun KmPerWeekCardPreview() {
 @Composable
 private fun AverageWorkoutTimeCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             AverageWorkoutTimeCard(averageTimeMinutes = 45)
         }
     }

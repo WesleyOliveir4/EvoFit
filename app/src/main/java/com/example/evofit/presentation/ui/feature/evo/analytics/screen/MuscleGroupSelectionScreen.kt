@@ -28,14 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroup
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,27 +69,10 @@ fun MuscleGroupSelectionContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.evo_analytics_select_muscle_group),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.evo_analytics_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                title = stringResource(R.string.evo_analytics_select_muscle_group),
+                onBackClick = onBackClick,
+                isCenterAligned = false
             )
         }
     ) { paddingValues ->
@@ -111,9 +94,9 @@ fun MuscleGroupSelectionContent(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     items(uiState.trainedGroups, key = { it.id }) { groupItem ->
                         val isSelected = groupItem.id == selectedGroupId

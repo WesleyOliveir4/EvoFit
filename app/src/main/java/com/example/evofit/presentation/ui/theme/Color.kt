@@ -23,6 +23,7 @@ val EvoIconBgYellow = Color(0xFF3A321A)
 val EvoOrange = Color(0xFFE5984A)
 val EvoBlue = Color(0xFF5A9EED)
 val EvoGreen = Color(0xFF5ED961)
+val EvoPurple = Color(0xFFA855F7)
 val EvoDarkBg = Color(0xFF121212)
 
 // Text Colors

@@ -1,21 +1,20 @@
-# Correção de Erros de Compilação e Finalização do Design System
+# Correção do Filtro de Grupos Musculares Treinados
 
-Este passo final corrigiu referências residuais de `.dp` em arquivos que haviam perdido o import correspondente durante a refatoração, garantindo que o projeto compile com sucesso.
+Corrigimos a lógica do módulo Evo Analytics para garantir que os grupos musculares treinados apareçam corretamente na tela de seleção, resolvendo o problema de "Nenhum histórico encontrado".
 
 ## Mudanças Realizadas
 
-### [WorkoutResumeComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/resume/components/WorkoutResumeComponents.kt)
-- **Correção de Preview:** Substituído o valor fixo `16.dp` por `Dimens.SpacingMedium` na função de preview, eliminando a necessidade do import de `dp` e mantendo a padronização.
+### 1. Camada de Domínio (UseCases)
+- **[FilterTrainedMuscleGroupsUseCase.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/domain/usecase/FilterTrainedMuscleGroupsUseCase.kt):** A lógica foi alterada para não depender mais do objeto `muscleGroup` dentro de `WorkoutDone` (que frequentemente vinha nulo do banco). Agora, o UseCase cruza os `muscleGroupId` do histórico com a lista completa de grupos musculares (`allGroups`) para retornar os objetos corretos com nome e ícone.
+- **[GetTrainedMuscleGroupsUseCase.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/domain/usecase/GetTrainedMuscleGroupsUseCase.kt):** Interface atualizada para suportar a passagem da lista completa de grupos.
 
-### [WorkoutPreviewScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/startworkout/screens/WorkoutPreviewScreen.kt)
-- **Refino de Layout:** Substituídos paddings e espaçadores de `16.dp` e `24.dp` por `Dimens.ScreenPaddingHorizontal` e `Dimens.SpacingLarge`, respectivamente. Isso resolveu os erros de "Unresolved reference 'dp'".
+### 2. Camada de Apresentação (ViewModel & DI)
+- **[EvoAnalyticsViewModel.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/evo/analytics/viewmodel/EvoAnalyticsViewModel.kt):** Integrado o `GetMuscleGroupsUseCase` para obter a lista base necessária para o mapeamento. O método `loadHistory` agora faz esse cruzamento de dados de forma assíncrona e segura.
+- **[AppModule.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/di/AppModule.kt):** Atualizada a injeção de dependência para incluir o novo parâmetro no `EvoAnalyticsViewModel`.
 
-### Limpeza de Imports
-- Removidos imports não utilizados de `androidx.compose.ui.unit.dp` e `sp` em diversas telas de Onboarding e Workout, deixando o código mais limpo e seguindo as melhores práticas.
-
-## Estado Atual do Projeto
-- **Compilação:** O projeto está compilando com sucesso (`Build finished successfully`).
-- **Design System:** 100% dos pacotes de Autenticação, Onboarding e Workout estão agora integrados ao `Dimens.kt`, `Type.kt` e `MaterialTheme.colorScheme`.
+## Benefícios
+- **Precisão dos Dados:** A lista de grupos musculares agora reflete fielmente o que o usuário treinou, utilizando os dados estruturados do sistema em vez de referências voláteis.
+- **Robusteza:** Prevenimos erros de visualização causados por dados parciais vindos do histórico.
 
 > [!CHECK]
-> O guia de estilo [COMPOSE_GUIDE.md](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/guide/COMPOSE_GUIDE.md) foi atualizado e deve ser seguido em todas as novas implementações para manter essa consistência.
+> O fluxo completo (Seleção de Grupo -> Seleção de Exercício -> Gráfico) agora deve carregar os dados reais assim que o usuário concluir seu primeiro treino.

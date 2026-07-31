@@ -29,6 +29,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -159,23 +161,35 @@ fun EvoFitButton(
 fun TopBarReturn(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String? = null
+    title: String? = null,
+    subtitle: String? = null,
+    isCenterAligned: Boolean = true,
+    showBackIcon: Boolean = true,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
-        modifier = modifier.shadow(elevation = Dimens.ElevationLow, ambientColor = Color.Black),
-        title = {
-            Text(
-                text = title ?: "",
-                style = MaterialTheme.typography.titleMedium
-            )
-        },
-        navigationIcon = {
+    val titleContent: @Composable () -> Unit = {
+        Column(horizontalAlignment = if (isCenterAligned) Alignment.CenterHorizontally else Alignment.Start) {
+            if (title != null) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+    }
+
+    val navigationIcon: @Composable () -> Unit = {
+        if (showBackIcon) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.offset(x = Dimens.SpacingNone) // Alinha a seta com a margem de 24dp do conteúdo
+                modifier = Modifier.offset(x = Dimens.SpacingNone)
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -183,8 +197,30 @@ fun TopBarReturn(
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
-        },
-    )
+        }
+    }
+
+    if (isCenterAligned) {
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+            modifier = modifier,
+            title = titleContent,
+            navigationIcon = navigationIcon,
+            actions = actions
+        )
+    } else {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+            modifier = modifier,
+            title = titleContent,
+            navigationIcon = navigationIcon,
+            actions = actions
+        )
+    }
 }
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable

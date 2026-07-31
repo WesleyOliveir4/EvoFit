@@ -3,6 +3,7 @@ package com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
@@ -21,8 +22,9 @@ class EvoAnalyticsViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getTrainedMuscleGroupsUseCase: GetTrainedMuscleGroupsUseCase,
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesWithRecordCountUseCase: GetExercisesWithRecordCountUseCase,
-    private val processExerciseAnalyticsUseCase: ProcessExerciseAnalyticsUseCase
+    private val processExerciseAnalyticsUseCase: ProcessExerciseAnalyticsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EvoAnalyticsState())
@@ -38,8 +40,9 @@ class EvoAnalyticsViewModel(
             try {
                 val userId = getUserIdUseCase()
                 if (userId != null) {
+                    val allGroups = getMuscleGroupsUseCase()
                     getWorkoutDoneHistoryUseCase(userId).collect { history ->
-                        val groups = getTrainedMuscleGroupsUseCase(history)
+                        val groups = getTrainedMuscleGroupsUseCase(history, allGroups)
                         _uiState.update {
                             it.copy(
                                 isLoading = false,

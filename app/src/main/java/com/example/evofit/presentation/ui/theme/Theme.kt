@@ -5,7 +5,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+
+@Immutable
+data class EvoCustomColors(
+    val orange: Color,
+    val blue: Color,
+    val green: Color,
+    val purple: Color
+)
+
+val LocalEvoCustomColors = staticCompositionLocalOf {
+    EvoCustomColors(
+        orange = Color.Unspecified,
+        blue = Color.Unspecified,
+        green = Color.Unspecified,
+        purple = Color.Unspecified
+    )
+}
+
+val MaterialTheme.evoColors: EvoCustomColors
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalEvoCustomColors.current
 
 private val DarkColorScheme = darkColorScheme(
     primary = AppGreen,
@@ -82,12 +108,23 @@ fun EvoFitTheme(
 ) {
     val colorScheme = when {
         darkTheme -> DarkColorScheme
-        else -> DarkColorScheme // Keeping Dark as default for now as requested or common in sports apps
+        else -> DarkColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+    val evoCustomColors = EvoCustomColors(
+        orange = EvoOrange,
+        blue = EvoBlue,
+        green = EvoGreen,
+        purple = EvoPurple
     )
+
+    CompositionLocalProvider(
+        LocalEvoCustomColors provides evoCustomColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

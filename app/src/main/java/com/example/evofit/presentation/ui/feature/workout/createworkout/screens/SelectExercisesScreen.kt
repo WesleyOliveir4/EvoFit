@@ -24,6 +24,7 @@ import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.ExerciseRowItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -99,30 +100,14 @@ fun SelectExercisesContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (isEditMode) {
-                            stringResource(R.string.select_exercises_edit_title)
-                        } else {
-                            stringResource(R.string.select_exercises_title)
-                        },
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+            TopBarReturn(
+                title = if (isEditMode) {
+                    stringResource(R.string.select_exercises_edit_title)
+                } else {
+                    stringResource(R.string.select_exercises_title)
                 },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.select_exercises_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                onBackClick = onBackClick,
+                isCenterAligned = false
             )
         },
         bottomBar = {

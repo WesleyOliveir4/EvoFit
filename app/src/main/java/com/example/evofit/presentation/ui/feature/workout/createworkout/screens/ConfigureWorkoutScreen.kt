@@ -48,6 +48,7 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.componen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.launch
@@ -108,38 +109,22 @@ fun ConfigureWorkoutScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(
-                            R.string.configure_workout_title,
-                            pagerState.currentPage + 1,
-                            uiState.exerciseConfigs.size
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        if (pagerState.currentPage > 0) {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                            }
-                        } else {
-                            onBackClick()
+            TopBarReturn(
+                title = stringResource(
+                    R.string.configure_workout_title,
+                    pagerState.currentPage + 1,
+                    uiState.exerciseConfigs.size
+                ),
+                onBackClick = {
+                    if (pagerState.currentPage > 0) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
                         }
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.new_workout_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                    } else {
+                        onBackClick()
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                isCenterAligned = false
             )
         },
         bottomBar = {

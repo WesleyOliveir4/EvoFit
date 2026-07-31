@@ -21,9 +21,9 @@
 - [x] Update `Theme.kt` with new color mappings
 - [x] Update `COMPOSE_GUIDE.md` with theme-based color recommendation
 - [x] Padronização do Fluxo de Workout
-    - [x] Update `Dimens.kt` with workout specific values
-    - [x] Refactor Workout Home (screens & components)
-    - [x] Refactor Workout Resume (screens & components)
-    - [x] Refactor Workout Start/Preview (screens & components)
-    - [x] Refactor Workout Create/Edit (screens & components)
-    - [x] Global cleanup and verification
+- [x] Padronização do Pacote Evo (Analytics & Home)
+    - [x] Add Evo specific dimensions to `Dimens.kt`
+    - [x] Refactor Evo Home screens and components
+    - [x] Refactor Exercise Analytics screens and components
+    - [x] Refactor Muscle Group & Exercise selection
+    - [x] Final build verification

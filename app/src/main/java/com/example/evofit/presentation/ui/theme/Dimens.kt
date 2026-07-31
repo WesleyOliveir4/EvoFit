@@ -97,6 +97,16 @@ object Dimens {
     val FloatingActionButtonIconSize = 32.dp
     val WorkoutCardCornerRadius = 14.dp
 
+    // Evo & Analytics Specifics
+    val EvoCardHeightLarge = 130.dp
+    val EvoCardHeightMedium = 120.dp
+    val EvoCardHeightSmall = 115.dp
+    val EvoCardHeightExtraSmall = 88.dp
+    val EvoGraphHeight = 220.dp
+    val EvoGraphYAxisWidth = 44.dp
+    val EvoGraphItemWidth = 72.dp
+    val EvoRankingPositionWidth = 36.dp
+
     // Accessibility
     val MinimumTouchTarget = 48.dp
 

@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.evo.analytics.screen
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,16 +15,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.IconContainerBg
 
 @Composable
 fun ExerciseSelectionScreen(
@@ -55,35 +54,11 @@ fun ExerciseSelectionContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = uiState.muscleGroupName,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = stringResource(R.string.evo_analytics_select_exercise),
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.evo_analytics_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                title = uiState.muscleGroupName,
+                subtitle = stringResource(R.string.evo_analytics_select_exercise),
+                onBackClick = onBackClick,
+                isCenterAligned = false
             )
         }
     ) { paddingValues ->
@@ -104,9 +79,9 @@ fun ExerciseSelectionContent(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp)
+                        .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall),
+                    contentPadding = PaddingValues(vertical = Dimens.ScreenPaddingHorizontal)
                 ) {
                     items(uiState.exercisesForSelection, key = { it.id }) { item ->
                         val isSelected = item.id == selectedExerciseId
@@ -135,52 +110,62 @@ fun ExerciseItemCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val containerColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface,
+        label = "containerColor"
+    )
+    val nameColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+        label = "nameColor"
+    )
+    val iconColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        label = "iconColor"
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(88.dp)
+            .height(Dimens.EvoCardHeightExtraSmall)
             .clickable { onClick() }
             .then(
                 if (isSelected) Modifier.border(
-                    width = 1.dp,
+                    width = Dimens.BorderWidthThin,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(24.dp)
+                    shape = RoundedCornerShape(Dimens.CornerRadiusCard)
                 )
                 else Modifier
             ),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) IconContainerBg else MaterialTheme.colorScheme.surface
-        )
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+        colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = Dimens.SpacingLarge),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
             ) {
                 Text(
                     text = name,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    color = nameColor,
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = stringResource(R.string.evo_analytics_records_format, recordsCount),
                     color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(20.dp)
+                tint = iconColor,
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
         }
     }

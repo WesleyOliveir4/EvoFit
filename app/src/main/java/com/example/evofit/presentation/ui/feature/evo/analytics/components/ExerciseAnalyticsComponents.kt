@@ -1,34 +1,24 @@
 package com.example.evofit.presentation.ui.feature.evo.analytics.components
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,19 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-
+import com.example.evofit.presentation.ui.theme.evoColors
 import androidx.compose.ui.platform.LocalConfiguration
 import java.util.Locale
 
-val EvoPurple = Color(0xFFA855F7)
-val EvoGraphSelectedBg = Color(0xFF1C2C1E)
 
 private data class YAxisConfig(val min: Float, val max: Float, val step: Float)
 
 private fun calculateYAxisConfig(points: List<AnalyticsChartPoint>): YAxisConfig {
     val maxVal = points.maxOfOrNull { it.value } ?: 50f
-    // Garante um respiro no topo de 25%
     val targetMax = if (maxVal <= 0) 50f else maxVal * 1.25f
     
     val step = when {
@@ -84,38 +72,38 @@ fun MetricStatCard(
     title: String,
     value: String,
     icon: ImageVector,
-    iconColor: Color = Color(0xFF5ED961),
+    iconColor: Color? = null,
     modifier: Modifier = Modifier
 ) {
+    val displayColor = iconColor ?: MaterialTheme.evoColors.green
+
     Card(
-        modifier = modifier.height(115.dp),
-        shape = RoundedCornerShape(24.dp),
+        modifier = modifier.height(Dimens.EvoCardHeightSmall),
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Dimens.SpacingMedium),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(20.dp)
+                tint = displayColor,
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraExtraSmall)) {
                 Text(
                     text = value,
-                    color = iconColor,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    color = displayColor,
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium)
                 )
             }
         }
@@ -130,30 +118,30 @@ fun EvoExerciseChart(
     onTabChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activeColor = if (isCargaSelected) Color(0xFF5ED961) else EvoPurple
+    val activeColor = if (isCargaSelected) MaterialTheme.evoColors.green else MaterialTheme.evoColors.purple
     
     val locale = LocalConfiguration.current.locales[0]
+    val theme = MaterialTheme.colorScheme
 
-    // Estado interno para rastrear qual ponto está selecionado (padrão é o último)
-    var selectedIndex by androidx.compose.runtime.remember(points) {
-        androidx.compose.runtime.mutableStateOf(if (points.isNotEmpty()) points.size - 1 else -1)
+    var selectedIndex by remember(points) {
+        mutableStateOf(if (points.isNotEmpty()) points.size - 1 else -1)
     }
 
     val showTabs = unit == MeasurementUnit.WEIGHT || unit == MeasurementUnit.DISTANCE
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+        colors = CardDefaults.cardColors(containerColor = theme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(Dimens.SpacingLarge)
         ) {
             if (showTabs) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingLarge),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val primaryTabLabel = when (unit) {
@@ -169,49 +157,47 @@ fun EvoExerciseChart(
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (isCargaSelected) Color(0xFF1A271B) else Color.Transparent)
+                            .clip(RoundedCornerShape(Dimens.SpacingMedium))
+                            .background(if (isCargaSelected) theme.primaryContainer.copy(alpha = 0.5f) else Color.Transparent)
                             .clickable { onTabChanged(true) }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = Dimens.SpacingMedium, vertical = Dimens.SpacingSmall)
                     ) {
                         Text(
                             text = primaryTabLabel,
-                            color = if (isCargaSelected) Color(0xFF5ED961) else MaterialTheme.colorScheme.secondary,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            color = if (isCargaSelected) MaterialTheme.evoColors.green else theme.secondary,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                     
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (!isCargaSelected) Color(0xFF261A35) else Color.Transparent)
+                            .clip(RoundedCornerShape(Dimens.SpacingMedium))
+                            .background(if (!isCargaSelected) theme.tertiaryContainer.copy(alpha = 0.5f) else Color.Transparent)
                             .clickable { onTabChanged(false) }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = Dimens.SpacingMedium, vertical = Dimens.SpacingSmall)
                     ) {
                         Text(
                             text = secondaryTabLabel,
-                            color = if (!isCargaSelected) EvoPurple else MaterialTheme.colorScheme.secondary,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            color = if (!isCargaSelected) MaterialTheme.evoColors.purple else theme.secondary,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
             }
 
             val selectedPoint = if (selectedIndex in points.indices) points[selectedIndex] else null
             
             Text(
                 text = if (selectedPoint != null) "Média • ${selectedPoint.label}" else "Nenhum registro",
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 14.sp
+                color = theme.secondary,
+                style = MaterialTheme.typography.bodySmall
             )
             
             Row(
                 verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraExtraSmall)
             ) {
                 val formattedValue = when (unit) {
                     MeasurementUnit.TIME -> {
@@ -233,14 +219,13 @@ fun EvoExerciseChart(
                 Text(
                     text = formattedValue,
                     color = activeColor,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Black
+                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 36.sp)
                 )
 
                 val unitLabel = when (unit) {
                     MeasurementUnit.WEIGHT -> if (isCargaSelected) "kg" else "vol"
                     MeasurementUnit.DISTANCE -> if (isCargaSelected) "km" else "km/h"
-                    MeasurementUnit.TIME -> "" // Já formatado no valor
+                    MeasurementUnit.TIME -> ""
                     MeasurementUnit.REPS -> "reps"
                 }
 
@@ -248,19 +233,17 @@ fun EvoExerciseChart(
                     Text(
                         text = unitLabel,
                         color = activeColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp)
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(bottom = Dimens.SpacingTiny)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
-            // Área do gráfico (Rule 1.1 e 1.3)
-            val scrollState = androidx.compose.foundation.rememberScrollState()
-            val itemWidth = 72.dp 
-            val labelColor = MaterialTheme.colorScheme.secondary.toArgb()
+            val scrollState = rememberScrollState()
+            val itemWidth = Dimens.EvoGraphItemWidth 
+            val labelColor = theme.secondary.toArgb()
             val isScrollable = points.size > 5
             
             val yAxisConfig = calculateYAxisConfig(points)
@@ -268,13 +251,12 @@ fun EvoExerciseChart(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(Dimens.EvoGraphHeight)
             ) {
-                // Legendas Y Fixas (Rule 1.1)
                 Canvas(modifier = Modifier
                     .fillMaxHeight()
-                    .width(44.dp)
-                    .padding(vertical = 20.dp)
+                    .width(Dimens.EvoGraphYAxisWidth)
+                    .padding(vertical = Dimens.SpacingLarge)
                 ) {
                     val canvasHeight = size.height
                     val steps = ((yAxisConfig.max - yAxisConfig.min) / yAxisConfig.step).toInt()
@@ -293,7 +275,7 @@ fun EvoExerciseChart(
                         
                         drawContext.canvas.nativeCanvas.drawText(
                             value.toInt().toString(),
-                            size.width - 6.dp.toPx(),
+                            size.width - Dimens.SpacingTiny.toPx(),
                             y + (paint.textSize / 3),
                             paint
                         )
@@ -313,7 +295,7 @@ fun EvoExerciseChart(
                         Canvas(modifier = Modifier
                             .then(contentWidthModifier)
                             .fillMaxHeight()
-                            .padding(vertical = 20.dp)
+                            .padding(vertical = Dimens.SpacingLarge)
                             .pointerInput(points) {
                                 detectTapGestures { offset ->
                                     val xPos = offset.x
@@ -336,10 +318,10 @@ fun EvoExerciseChart(
                                 val y = canvasHeight - ((value - yAxisConfig.min) / (yAxisConfig.max - yAxisConfig.min) * canvasHeight)
                                 
                                 drawLine(
-                                    color = Color(0xFF2C2C2E),
+                                    color = theme.surfaceVariant,
                                     start = Offset(0f, y),
                                     end = Offset(canvasWidth, y),
-                                    strokeWidth = 0.5.dp.toPx()
+                                    strokeWidth = Dimens.BorderWidthThin.toPx() / 2
                                 )
                             }
 
@@ -357,7 +339,7 @@ fun EvoExerciseChart(
                                     color = activeColor.copy(alpha = 0.1f),
                                     topLeft = Offset(selectedX - (barWidth / 2), 0f),
                                     size = androidx.compose.ui.geometry.Size(barWidth, canvasHeight),
-                                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(12.dp.toPx(), 12.dp.toPx())
+                                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(Dimens.SpacingMediumSmall.toPx(), Dimens.SpacingMediumSmall.toPx())
                                 )
                             }
 
@@ -410,21 +392,21 @@ fun EvoExerciseChart(
                                 drawPath(
                                     path = strokePath,
                                     color = activeColor,
-                                    style = Stroke(width = 3.dp.toPx())
+                                    style = Stroke(width = Dimens.SpacingExtraExtraSmall.toPx() + 1.dp.toPx())
                                 )
                             }
 
                             drawPoints.forEachIndexed { index, pt ->
                                 val isSelected = index == selectedIndex
                                 drawCircle(
-                                    color = if (isSelected) Color.White else Color(0xFF121212),
-                                    radius = if (isSelected) 6.dp.toPx() else 4.dp.toPx(),
+                                    color = if (isSelected) Color.White else theme.background,
+                                    radius = if (isSelected) Dimens.SpacingTiny.toPx() else Dimens.SpacingExtraSmall.toPx(),
                                     center = pt
                                 )
                                 drawCircle(
                                     color = activeColor,
-                                    radius = if (isSelected) 6.dp.toPx() else 4.dp.toPx(),
-                                    style = Stroke(width = 2.dp.toPx()),
+                                    radius = if (isSelected) Dimens.SpacingTiny.toPx() else Dimens.SpacingExtraSmall.toPx(),
+                                    style = Stroke(width = Dimens.SpacingExtraExtraSmall.toPx()),
                                     center = pt
                                 )
                             }
@@ -433,10 +415,10 @@ fun EvoExerciseChart(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
 
-            val scrollStateLabels = androidx.compose.foundation.rememberScrollState()
-            androidx.compose.runtime.LaunchedEffect(scrollState.value) {
+            val scrollStateLabels = rememberScrollState()
+            LaunchedEffect(scrollState.value) {
                 scrollStateLabels.scrollTo(scrollState.value)
             }
 
@@ -448,7 +430,7 @@ fun EvoExerciseChart(
 
             Row(
                 modifier = Modifier
-                    .padding(start = 44.dp)
+                    .padding(start = Dimens.EvoGraphYAxisWidth)
                     .then(labelsModifier),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -462,19 +444,18 @@ fun EvoExerciseChart(
                     ) {
                         Text(
                             text = point.label,
-                            color = if (isSelected) activeColor else MaterialTheme.colorScheme.secondary,
-                            fontSize = 12.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) activeColor else theme.secondary,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            ),
                             textAlign = TextAlign.Center
                         )
                     }
                 }
             }
-
         }
     }
 }
-
 
 fun getMockAnalyticsChartData(isLoad: Boolean): List<AnalyticsChartPoint> {
     return if (isLoad) {
@@ -497,8 +478,8 @@ fun getMockAnalyticsChartData(isLoad: Boolean): List<AnalyticsChartPoint> {
 private fun MetricStatCardPreview() {
     EvoFitTheme {
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(Dimens.ScreenPaddingHorizontal),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             MetricStatCard(
                 title = "Recorde máximo",
@@ -521,10 +502,9 @@ private fun MetricStatCardPreview() {
 private fun EvoExerciseChartPreview() {
     EvoFitTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(Dimens.SpacingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
-            // Carga state com 6 meses
             EvoExerciseChart(
                 isCargaSelected = true,
                 unit = MeasurementUnit.WEIGHT,
@@ -532,7 +512,6 @@ private fun EvoExerciseChartPreview() {
                 onTabChanged = {}
             )
             
-            // Volume state com 12 meses
             EvoExerciseChart(
                 isCargaSelected = false,
                 unit = MeasurementUnit.WEIGHT,
@@ -540,7 +519,6 @@ private fun EvoExerciseChartPreview() {
                 onTabChanged = {}
             )
 
-            // Estado com apenas 1 ponto (Mês centralizado)
             EvoExerciseChart(
                 isCargaSelected = true,
                 unit = MeasurementUnit.WEIGHT,

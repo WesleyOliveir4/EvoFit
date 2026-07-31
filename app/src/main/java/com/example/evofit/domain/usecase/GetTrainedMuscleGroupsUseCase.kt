@@ -4,13 +4,13 @@ import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.WorkoutDone
 
 interface GetTrainedMuscleGroupsUseCase {
-    operator fun invoke(history: List<WorkoutDone>): List<MuscleGroup>
+    operator fun invoke(history: List<WorkoutDone>, allGroups: List<MuscleGroup>): List<MuscleGroup>
 }
 
 class GetTrainedMuscleGroupsUseCaseImpl(
     private val filterTrainedMuscleGroupsUseCase: FilterTrainedMuscleGroupsUseCase
 ) : GetTrainedMuscleGroupsUseCase {
-    override fun invoke(history: List<WorkoutDone>): List<MuscleGroup> {
-        return filterTrainedMuscleGroupsUseCase(history)
+    override fun invoke(history: List<WorkoutDone>, allGroups: List<MuscleGroup>): List<MuscleGroup> {
+        return filterTrainedMuscleGroupsUseCase(history, allGroups)
     }
 }
