@@ -29,10 +29,8 @@ import com.example.evofit.presentation.ui.feature.authentication.components.NewP
 import com.example.evofit.presentation.ui.feature.authentication.state.NewPasswordUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.NewPasswordViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextSecondary
 import org.koin.androidx.compose.koinViewModel
 
 private const val MIN_PASSWORD_LENGTH = 6
@@ -96,7 +94,7 @@ fun NewPasswordContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onBackClick
@@ -146,7 +144,7 @@ fun NewPasswordContent(
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
                                     },
-                                    tint = TextSecondary
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         },
@@ -177,7 +175,7 @@ fun NewPasswordContent(
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
                                     },
-                                    tint = TextSecondary
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         },

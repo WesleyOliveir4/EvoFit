@@ -27,13 +27,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
  * Seletor giratório de peso (estilo "wheel picker"), usado dentro de [WeightPickerDialog].
@@ -69,16 +67,16 @@ fun WeightWheel(
 
     Box(
         modifier = modifier
-            .height(if (isExpanded) 200.dp else 48.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(16.dp)),
+            .height(if (isExpanded) Dimens.PreviewHeightLarge - Dimens.OnboardingLogoSize else Dimens.ButtonHeightSecondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(Dimens.CornerRadiusDefault)),
         contentAlignment = Alignment.Center
     ) {
         if (isExpanded) {
             LazyColumn(
                 state = listState,
                 flingBehavior = flingBehavior,
-                contentPadding = PaddingValues(vertical = 88.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = Dimens.IndicatorWidthActive + Dimens.SpacingExtraLargePlus), // Roughly 88.dp
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -91,8 +89,7 @@ fun WeightWheel(
                     Text(
                         text = if (isWhole) "${weight.toInt()} kg" else "$weight kg",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.displayLarge
                     )
                 }
             }
@@ -100,8 +97,8 @@ fun WeightWheel(
             LazyRow(
                 state = listState,
                 flingBehavior = flingBehavior,
-                contentPadding = PaddingValues(horizontal = 36.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                contentPadding = PaddingValues(horizontal = Dimens.AuthBadgeSizeDefault), // Roughly 36.dp
+                horizontalArrangement = Arrangement.spacedBy(Dimens.CornerRadiusMedium),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxSize(),
                 userScrollEnabled = false
@@ -115,8 +112,7 @@ fun WeightWheel(
                     Text(
                         text = if (isWhole) "${weight.toInt()}" else "$weight",
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
                     )
                 }
             }
@@ -126,16 +122,16 @@ fun WeightWheel(
             modifier = if (isExpanded) {
                 Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 20.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
+                    .height(Dimens.ButtonHeightSecondary)
+                    .padding(horizontal = Dimens.SpacingLarge)
+                    .border(Dimens.SpacingExtraExtraSmall, MaterialTheme.colorScheme.primary, RoundedCornerShape(Dimens.SpacingMediumSmall))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.SpacingMediumSmall))
             } else {
                 Modifier
-                    .width(42.dp)
+                    .width(Dimens.SpacingExtraExtraLarge)
                     .fillMaxHeight()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                    .border(Dimens.BorderWidthThin, MaterialTheme.colorScheme.primary, RoundedCornerShape(Dimens.SpacingSmall))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.SpacingSmall))
             }
         )
     }
@@ -145,7 +141,7 @@ fun WeightWheel(
 @Composable
 private fun WeightWheelPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WeightWheel(
                 initialWeight = 60.0,
                 onWeightSelected = {}
@@ -158,7 +154,7 @@ private fun WeightWheelPreview() {
 @Composable
 private fun WeightWheelExpandedPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WeightWheel(
                 initialWeight = 60.0,
                 onWeightSelected = {},

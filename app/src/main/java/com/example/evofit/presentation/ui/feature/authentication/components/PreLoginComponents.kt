@@ -21,7 +21,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
  * Logo + headline + subtitle block shown in the upper/central area of the
@@ -29,6 +30,7 @@ import com.example.evofit.presentation.ui.theme.*
  */
 @Composable
 fun PreLoginHeader(modifier: Modifier = Modifier) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,7 +50,7 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
             val startIndex = fullTitle.indexOf(highlightPart)
             if (startIndex >= 0) {
                 append(fullTitle.substring(0, startIndex))
-                withStyle(style = SpanStyle(color = AppGreen)) {
+                withStyle(style = SpanStyle(color = primaryColor)) {
                     append(highlightPart)
                 }
                 append(fullTitle.substring(startIndex + highlightPart.length))
@@ -59,13 +61,13 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
 
         Text(
             text = annotatedTitle,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.displayLarge
         )
 
         Text(
             text = stringResource(id = R.string.pre_login_subtitle),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
@@ -92,7 +94,7 @@ fun PreLoginPageIndicator(
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(if (isActive) AppGreen else TextSecondary.copy(alpha = 0.3f))
+                    .background(if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f))
                     .size(if (isActive) Dimens.SpacingSmall else Dimens.SpacingTiny)
             )
         }
@@ -113,8 +115,8 @@ fun PreLoginFooter(
             .fillMaxWidth()
             .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppGreen,
-            contentColor = Color.Black
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
     ) {

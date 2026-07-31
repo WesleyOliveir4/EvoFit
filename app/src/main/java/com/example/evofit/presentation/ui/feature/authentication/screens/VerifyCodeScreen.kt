@@ -4,7 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +20,6 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Veri
 import com.example.evofit.presentation.ui.feature.authentication.state.VerifyCodeUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.VerifyCodeViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -70,7 +69,7 @@ fun VerifyCodeContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onBackClick

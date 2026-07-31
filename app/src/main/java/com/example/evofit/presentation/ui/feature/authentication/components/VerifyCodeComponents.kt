@@ -25,7 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 const val VERIFY_CODE_LENGTH = 6
 
@@ -43,12 +44,12 @@ fun VerifyCodeHeader(
     ) {
         Text(
             text = stringResource(id = R.string.verify_code_title),
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineLarge
         )
         Text(
             text = stringResource(id = R.string.verify_code_subtitle_format, email),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge
         )
     }
@@ -110,17 +111,17 @@ private fun OtpDigitBox(
         modifier = modifier
             .size(Dimens.MinimumTouchTarget)
             .clip(RoundedCornerShape(Dimens.CornerRadiusMedium))
-            .background(AppSurface)
+            .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = if (isActive) Dimens.SpacingExtraExtraSmall else Dimens.SpacingNone,
-                color = if (isActive) AppGreen else Color.Transparent,
+                color = if (isActive) MaterialTheme.colorScheme.primary else Color.Transparent,
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
             ),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = digit,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge
         )
     }
@@ -140,16 +141,16 @@ fun VerifyCodeFooter(
             .fillMaxWidth()
             .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppGreen,
-            contentColor = Color.Black,
-            disabledContainerColor = AppGreen.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
         ),
         shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(Dimens.IconSizeDefault),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onPrimary,
                 strokeWidth = Dimens.SpacingExtraExtraSmall
             )
         } else {
@@ -179,7 +180,7 @@ fun VerifyCodeResendRow(
     ) {
         Text(
             text = stringResource(id = R.string.verify_code_not_received),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
@@ -191,13 +192,13 @@ fun VerifyCodeResendRow(
                     id = R.string.verify_code_resend_format,
                     "%02d:%02d".format(minutes, seconds)
                 ),
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
             )
         } else {
             Text(
                 text = stringResource(id = R.string.verify_code_resend),
-                color = AppGreen,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable { onResendClick() }
             )

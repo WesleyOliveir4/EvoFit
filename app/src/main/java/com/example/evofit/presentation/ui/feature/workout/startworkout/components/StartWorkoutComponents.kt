@@ -23,12 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.TextStyle
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -44,11 +44,11 @@ fun ExerciseTrackingCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -56,21 +56,20 @@ fun ExerciseTrackingCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onExpandClick() }
-                    .padding(16.dp),
+                    .padding(Dimens.SpacingMedium),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(Dimens.SpacingExtraExtraLarge)
                         .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "${index + 1}",
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
@@ -78,14 +77,13 @@ fun ExerciseTrackingCard(
                     Text(
                         text = exercise.name,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
                     val completedInExercise = exercise.sets.count { it.isDone }
                     Text(
                         text = stringResource(R.string.workout_start_exercise_progress, completedInExercise, exercise.sets.size),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
 
@@ -102,10 +100,10 @@ fun ExerciseTrackingCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(start = Dimens.SpacingMedium, end = Dimens.SpacingMedium, bottom = Dimens.SpacingMedium)
                 ) {
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
-                    Spacer(modifier = Modifier.height(12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = Dimens.BorderWidthThin)
+                    Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -114,7 +112,7 @@ fun ExerciseTrackingCard(
                         Text(
                             stringResource(R.string.workout_start_column_set),
                             color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 13.sp,
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.weight(0.8f),
                             textAlign = TextAlign.Center
                         )
@@ -123,14 +121,14 @@ fun ExerciseTrackingCard(
                                 Text(
                                     stringResource(R.string.workout_start_column_weight),
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
                                     stringResource(R.string.workout_start_column_reps),
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
                                     textAlign = TextAlign.Center
                                 )
@@ -139,14 +137,14 @@ fun ExerciseTrackingCard(
                                 Text(
                                     "Dist. (km)",
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
                                     "Tempo (min)",
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
                                     textAlign = TextAlign.Center
                                 )
@@ -155,7 +153,7 @@ fun ExerciseTrackingCard(
                                 Text(
                                     "Tempo (min)",
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(2.4f),
                                     textAlign = TextAlign.Center
                                 )
@@ -164,7 +162,7 @@ fun ExerciseTrackingCard(
                                 Text(
                                     "Reps",
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = 13.sp,
+                                    style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(2.4f),
                                     textAlign = TextAlign.Center
                                 )
@@ -173,25 +171,24 @@ fun ExerciseTrackingCard(
                         Text(
                             stringResource(R.string.workout_start_column_ok),
                             color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 13.sp,
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.weight(0.8f),
                             textAlign = TextAlign.Center
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                     exercise.sets.forEach { setItem ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(44.dp),
+                                .height(Dimens.AuthIllustrationSizeMedium / 3), // ~46.dp
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = "${setItem.setNumber}",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(0.8f),
                                 textAlign = TextAlign.Center
                             )
@@ -202,16 +199,14 @@ fun ExerciseTrackingCard(
                                     Text(
                                         text = "$weightStr kg",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(1.2f),
                                         textAlign = TextAlign.Center
                                     )
                                     Text(
                                         text = "${setItem.reps}",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(1.2f),
                                         textAlign = TextAlign.Center
                                     )
@@ -221,16 +216,14 @@ fun ExerciseTrackingCard(
                                     Text(
                                         text = "$distStr km",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(1.2f),
                                         textAlign = TextAlign.Center
                                     )
                                     Text(
                                         text = "${setItem.time} min",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(1.2f),
                                         textAlign = TextAlign.Center
                                     )
@@ -239,8 +232,7 @@ fun ExerciseTrackingCard(
                                     Text(
                                         text = "${setItem.time} min",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(2.4f),
                                         textAlign = TextAlign.Center
                                     )
@@ -249,8 +241,7 @@ fun ExerciseTrackingCard(
                                     Text(
                                         text = "${setItem.reps}",
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         modifier = Modifier.weight(2.4f),
                                         textAlign = TextAlign.Center
                                     )
@@ -286,11 +277,11 @@ fun CustomCircularCheckbox(
 ) {
     Box(
         modifier = modifier
-            .size(28.dp)
+            .size(Dimens.AuthBadgeSizeDefault - Dimens.SpacingSmall) // ~28.dp
             .clip(CircleShape)
             .background(if (isChecked) MaterialTheme.colorScheme.primary else Color.Transparent)
             .border(
-                width = 2.dp,
+                width = Dimens.SpacingExtraExtraSmall,
                 color = if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                 shape = CircleShape
             )
@@ -301,8 +292,8 @@ fun CustomCircularCheckbox(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
-                tint = Color.Black,
-                modifier = Modifier.size(16.dp)
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(Dimens.SpacingMedium)
             )
         }
     }
@@ -315,13 +306,13 @@ fun HeaderIndicatorCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.height(70.dp)
+        modifier = modifier.height(Dimens.BottomNavigationHeight - Dimens.SpacingSmall) // ~72.dp
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -332,15 +323,13 @@ fun HeaderIndicatorCard(
             Text(
                 text = value,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Black
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Black)
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium)
             )
         }
     }
@@ -356,12 +345,12 @@ fun StartWorkoutComponentsPreview() {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(Dimens.SpacingMedium)
                     .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
-                Text("Indicators", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Indicators", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onBackground)
+                Row(horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)) {
                     HeaderIndicatorCard(value = "00:45", label = "Tempo", modifier = Modifier.weight(1f))
                     HeaderIndicatorCard(value = "120", label = "Kcal", modifier = Modifier.weight(1f))
                     HeaderIndicatorCard(value = "2/8", label = "Séries", modifier = Modifier.weight(1f))
@@ -402,8 +391,8 @@ fun StartWorkoutComponentsPreview() {
                     onToggleSetDone = { _, _ -> }
                 )
 
-                Text("Checkboxes", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text("Checkboxes", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onBackground)
+                Row(horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)) {
                     CustomCircularCheckbox(isChecked = false, onCheckedChange = {})
                     CustomCircularCheckbox(isChecked = true, onCheckedChange = {})
                 }

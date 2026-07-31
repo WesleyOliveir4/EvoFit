@@ -16,7 +16,14 @@
 - [x] Final verification and cleanup
 - [x] Adjust vertical spacing for 3-button navigation compatibility
 - [x] Add commented layout recommendations in `Dimens.kt`
-- [x] Fix scroll and structure in Authentication Screens (Register, Login, etc.)
-    - [x] Move footers to `bottomBar` slot
-    - [x] Remove `verticalScroll` from main `Column` where unnecessary (replaced with structured scroll)
-    - [x] Ensure content starts at the top and only scrolls if overflowed
+- [x] Fix scroll and structure in Authentication Screens
+- [x] Padronização do Fluxo de Onboarding
+- [x] Update `Theme.kt` with new color mappings
+- [x] Update `COMPOSE_GUIDE.md` with theme-based color recommendation
+- [x] Padronização do Fluxo de Workout
+    - [x] Update `Dimens.kt` with workout specific values
+    - [x] Refactor Workout Home (screens & components)
+    - [x] Refactor Workout Resume (screens & components)
+    - [x] Refactor Workout Start/Preview (screens & components)
+    - [x] Refactor Workout Create/Edit (screens & components)
+    - [x] Global cleanup and verification

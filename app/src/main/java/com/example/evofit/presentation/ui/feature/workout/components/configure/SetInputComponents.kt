@@ -25,14 +25,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evofit.R
-
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
@@ -47,15 +44,15 @@ fun RepsCounterComponent(
 ) {
     Row(
         modifier = modifier
-            .height(48.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+            .height(Dimens.ButtonHeightSecondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = "–",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f)
                 .clickable { if (value >= step) onValueChange(value - step) else if (value > 0) onValueChange(0) },
@@ -64,15 +61,14 @@ fun RepsCounterComponent(
         Text(
             text = "$value",
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center
         )
         Text(
             text = "+",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f)
                 .clickable { onValueChange(value + step) },
@@ -94,7 +90,7 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(Dimens.ButtonHeightSecondary)
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -102,24 +98,23 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
             drawRoundRect(
                 color = strokeColor,
                 style = stroke,
-                cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
+                cornerRadius = CornerRadius(Dimens.SpacingMediumSmall.toPx(), Dimens.SpacingMediumSmall.toPx())
             )
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(Dimens.SpacingMedium)
             )
             Text(
                 text = stringResource(R.string.configure_workout_add_set),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
             )
         }
     }
@@ -130,8 +125,8 @@ fun AddSetDashedButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 private fun SetInputComponentsPreview() {
     EvoFitTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(Dimens.SpacingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             RepsCounterComponent(
                 value = 10,

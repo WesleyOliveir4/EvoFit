@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.MeasurementUnit
@@ -28,6 +27,7 @@ import com.example.evofit.presentation.ui.feature.workout.components.configure.R
 import com.example.evofit.presentation.ui.feature.workout.components.configure.WeightWheelSelector
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -46,27 +46,26 @@ fun ExerciseSetRow(
         Row(
             modifier = Modifier
                 .weight(0.8f)
-                .height(48.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+                .height(Dimens.ButtonHeightSecondary)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(36.dp)
+                    .width(Dimens.AuthBadgeSizeDefault) // ~36.dp
                     .background(
-                        Color(0xFFBA1A1A),
-                        RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
+                        MaterialTheme.colorScheme.error,
+                        RoundedCornerShape(topStart = Dimens.SpacingMediumSmall, bottomStart = Dimens.SpacingMediumSmall)
                     )
                     .clickable { onRemoveSet() },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "–",
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onError,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.offset(y = (-1).dp)
                 )
             }
@@ -74,14 +73,13 @@ fun ExerciseSetRow(
             Text(
                 text = "${index + 1}",
                 color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
         when (unit) {
             MeasurementUnit.WEIGHT -> {
@@ -93,7 +91,7 @@ fun ExerciseSetRow(
                     }
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
                 RepsCounterComponent(
                     modifier = Modifier.weight(1.2f),
@@ -114,7 +112,7 @@ fun ExerciseSetRow(
                     }
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
                 RepsCounterComponent(
                     modifier = Modifier.weight(1.5f),
@@ -160,14 +158,14 @@ fun ExerciseConfigHeader(
     val muscleGroupIcon = muscleGroupType?.toIcon()
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(Dimens.MinimumTouchTarget)
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -176,7 +174,7 @@ fun ExerciseConfigHeader(
                         imageVector = muscleGroupIcon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
             }
@@ -184,30 +182,29 @@ fun ExerciseConfigHeader(
                 Text(
                     text = name,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = stringResource(R.string.configure_workout_header_sets, setCount),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(R.string.configure_workout_col_set),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.weight(0.8f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
             val (col1Text, col1Weight) = when (unit) {
                 MeasurementUnit.WEIGHT -> stringResource(R.string.configure_workout_col_weight) to 1f
@@ -219,13 +216,13 @@ fun ExerciseConfigHeader(
             Text(
                 text = col1Text,
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.weight(col1Weight),
                 textAlign = TextAlign.Center
             )
 
             if (unit == MeasurementUnit.WEIGHT || unit == MeasurementUnit.DISTANCE) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
                 val (col2Text, col2Weight) = when (unit) {
                     MeasurementUnit.WEIGHT -> stringResource(R.string.configure_workout_col_reps) to 1.2f
@@ -235,7 +232,7 @@ fun ExerciseConfigHeader(
                 Text(
                     text = col2Text,
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.weight(col2Weight),
                     textAlign = TextAlign.Center
                 )
@@ -250,9 +247,9 @@ fun ExerciseConfigFooter(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
         AddSetDashedButton(onClick = onAddSet)
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingExtraLargePlus))
     }
 }
 
@@ -268,8 +265,8 @@ fun ExerciseConfigContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
     ) {
         item {
             ExerciseConfigHeader(

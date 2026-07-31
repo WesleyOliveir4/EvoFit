@@ -47,6 +47,7 @@ object Dimens {
 
 ### 2.3 Tema e Recursos
 - **MaterialTheme:** Sempre utilize `MaterialTheme.colorScheme`, `MaterialTheme.typography` e `MaterialTheme.shapes`.
+    - **Regra de Ouro:** Nunca utilize constantes de cores diretamente (ex: `AppGreen`). Use sempre o slot semântico correspondente (ex: `MaterialTheme.colorScheme.primary`). Isso garante que o app suporte Dark e Light mode automaticamente.
 - **Strings:** Nunca utilize textos fixos (hardcoded). Use sempre `stringResource(R.string.exemplo)`.
 - **Window Insets:** Garanta suporte a Edge-to-Edge utilizando `enableEdgeToEdge()` e tratando insets com `WindowInsets.safeDrawing`.
 

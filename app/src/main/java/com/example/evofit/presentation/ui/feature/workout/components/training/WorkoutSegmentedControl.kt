@@ -23,8 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.IconContainerBg
 
@@ -44,10 +43,10 @@ fun WorkoutSegmentedControl(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .height(Dimens.ButtonHeightSecondary)
+            .clip(RoundedCornerShape(Dimens.CornerRadiusDefault))
             .background(backgroundColor)
-            .padding(4.dp)
+            .padding(Dimens.SpacingExtraSmall)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -70,7 +69,7 @@ fun WorkoutSegmentedControl(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(Dimens.SpacingMediumSmall))
                         .background(itemBgColor)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
@@ -83,8 +82,9 @@ fun WorkoutSegmentedControl(
                     Text(
                         text = title,
                         color = textColor,
-                        fontSize = 15.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
                     )
                 }
             }
@@ -96,7 +96,7 @@ fun WorkoutSegmentedControl(
 @Composable
 private fun WorkoutSegmentedControlPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutSegmentedControl(
                 options = listOf("Meus treinos", "Histórico"),
                 selectedIndex = 0,

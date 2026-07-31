@@ -7,8 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,10 +25,8 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Reco
 import com.example.evofit.presentation.ui.feature.authentication.state.RecoverPasswordUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextSecondary
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,7 +73,7 @@ fun RecoverPasswordContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onBackClick

@@ -3,7 +3,7 @@ package com.example.evofit.presentation.ui.feature.authentication.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +12,6 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Forg
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordIllustration
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
@@ -40,7 +39,7 @@ fun ForgotPasswordContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = { onBackClick() }

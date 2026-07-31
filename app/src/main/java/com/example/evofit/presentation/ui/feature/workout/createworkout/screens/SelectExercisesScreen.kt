@@ -19,14 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.ExerciseRowItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -109,8 +108,7 @@ fun SelectExercisesContent(
                             stringResource(R.string.select_exercises_title)
                         },
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
@@ -133,25 +131,26 @@ fun SelectExercisesContent(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.navigationBars)
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp)
+                        .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                        .padding(bottom = Dimens.SpacingMedium)
                 ) {
                     Button(
                         onClick = onContinueClick,
                         enabled = isButtonEnabled && !isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .height(Dimens.ButtonHeightPrimary),
+                        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            disabledContentColor = MaterialTheme.colorScheme.secondary
                         )
                     ) {
                         Text(
                             text = if (isLastGroup) "Configurar exercícios" else "Próximo grupo muscular",
-                            color = if (isButtonEnabled) Color.Black else MaterialTheme.colorScheme.secondary,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
@@ -167,11 +166,11 @@ fun SelectExercisesContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
                     if (isEditingName) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -181,6 +180,7 @@ fun SelectExercisesContent(
                                 value = tempWorkoutName,
                                 onValueChange = onTempNameChange,
                                 modifier = Modifier.weight(1f),
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
                                     unfocusedContainerColor = Color.Transparent,
@@ -214,15 +214,13 @@ fun SelectExercisesContent(
                                 Text(
                                     text = stringResource(R.string.select_exercises_label_name),
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(Dimens.SpacingExtraSmall))
                                 Text(
                                     text = workoutName,
                                     color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                             }
                             IconButton(onClick = onStartEditingName) {
@@ -230,18 +228,18 @@ fun SelectExercisesContent(
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = stringResource(R.string.select_exercises_edit_name_desc),
                                     tint = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(Dimens.IconSizeSmall)
                                 )
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
                     Text(
                         text = "$muscleGroupName: " + stringResource(R.string.select_exercises_available_count, exercises.size),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodySmall
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
                 }
 
                 items(exercises, key = { it.id }) { exercise ->
@@ -253,7 +251,7 @@ fun SelectExercisesContent(
                     )
                 }
 
-                item { Spacer(modifier = Modifier.height(24.dp)) }
+                item { Spacer(modifier = Modifier.height(Dimens.SpacingLarge)) }
             }
         }
     }

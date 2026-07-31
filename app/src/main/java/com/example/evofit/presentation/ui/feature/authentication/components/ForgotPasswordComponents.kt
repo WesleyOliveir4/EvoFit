@@ -28,12 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.AppGreen
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
-import com.example.evofit.presentation.ui.theme.WelcomeBoxBg
 
 /**
  * Envelope illustration with a small "edit" badge, matching the artwork on
@@ -49,13 +45,13 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(Dimens.AuthIllustrationSizeMedium)
                 .clip(RoundedCornerShape(Dimens.CornerRadiusExtraLarge))
-                .background(WelcomeBoxBg),
+                .background(MaterialTheme.colorScheme.secondaryContainer),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.MailOutline,
                 contentDescription = stringResource(id = R.string.forgot_password_content_desc_illustration),
-                tint = AppGreen,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(Dimens.SpacingExtraLargePlus)
             )
         }
@@ -63,14 +59,14 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .clip(CircleShape)
-                .background(AppGreen)
+                .background(MaterialTheme.colorScheme.primary)
                 .size(Dimens.AuthBadgeSizeDefault),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = null,
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(Dimens.IconSizeMedium)
             )
         }
@@ -86,13 +82,13 @@ fun ForgotPasswordHeader(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = stringResource(id = R.string.forgot_password_title),
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(id = R.string.forgot_password_subtitle),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
@@ -110,8 +106,8 @@ fun ForgotPasswordFooter(
             .fillMaxWidth()
             .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppGreen,
-            contentColor = Color.Black
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {

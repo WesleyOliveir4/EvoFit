@@ -43,10 +43,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
@@ -55,6 +54,7 @@ import com.example.evofit.presentation.ui.feature.workout.startworkout.session.E
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -150,13 +150,13 @@ fun WorkoutStartContent(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
                     .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onBackClick, modifier = Modifier.size(40.dp)) {
+                    IconButton(onClick = onBackClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.workout_start_back_desc),
@@ -166,7 +166,7 @@ fun WorkoutStartContent(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    IconButton(onClick = onCancelWorkoutClick, modifier = Modifier.size(40.dp)) {
+                    IconButton(onClick = onCancelWorkoutClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_clipboard_off),
                             contentDescription = "Cancelar treino",
@@ -174,7 +174,7 @@ fun WorkoutStartContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -184,41 +184,39 @@ fun WorkoutStartContent(
                         Text(
                             text = uiState.workoutTitle,
                             color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.titleLarge
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraSmall))
                         Text(
                             text = stringResource(R.string.workout_start_status, doneSets, totalSets),
                             color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
 
                     Row(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.CornerRadiusDefault))
+                            .padding(horizontal = Dimens.SpacingMediumSmall, vertical = Dimens.SpacingTiny),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                     ) {
-                        Text("🕒", fontSize = 12.sp)
+                        Text("🕒", style = TextStyle(fontSize = Dimens.TextSizeTiny))
                         Text(
                             text = uiState.elapsedTime,
                             color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
                 
                 LinearProgressIndicator(
                     progress = { if (totalSets > 0) doneSets.toFloat() / totalSets else 0f },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp)),
+                        .height(Dimens.SpacingExtraSmall)
+                        .clip(RoundedCornerShape(Dimens.SpacingExtraExtraSmall)),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant
                 )
@@ -229,21 +227,23 @@ fun WorkoutStartContent(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(16.dp)
+                    .padding(Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingMedium)
             ) {
                 Button(
                     onClick = onFinishWorkoutClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        .height(Dimens.ButtonHeightPrimary),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Text(
                         text = stringResource(R.string.workout_start_finish_button),
-                        color = Color.Black,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
@@ -253,8 +253,8 @@ fun WorkoutStartContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             val groupedExercises = uiState.exercises.groupBy { it.muscleGroupName }
             
@@ -263,9 +263,8 @@ fun WorkoutStartContent(
                     Text(
                         text = groupName.uppercase(),
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(top = Dimens.SpacingSmall, bottom = Dimens.SpacingExtraSmall)
                     )
                 }
 

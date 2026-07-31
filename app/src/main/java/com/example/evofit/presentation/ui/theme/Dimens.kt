@@ -50,6 +50,7 @@ object Dimens {
 
     // Icons & Media
     val IconSizeSmall = 20.dp
+    val IconSizeMediumSmall = 18.dp
     val IconSizeMedium = 18.dp
     val IconSizeDefault = 24.dp
     val IconSizeLarge = 32.dp
@@ -60,6 +61,14 @@ object Dimens {
     val AuthIllustrationSizeLarge = 160.dp
     val AuthIllustrationSizeMedium = 140.dp
     val AuthBadgeSizeDefault = 36.dp
+
+    // Onboarding Specifics
+    val OnboardingLogoSize = 120.dp
+    val OnboardingIconSize = 90.dp
+    val WheelPickerItemHeight = 60.dp
+    val IndicatorWidthActive = 24.dp
+    val IndicatorWidthInactive = 8.dp
+    val IndicatorHeight = 8.dp
 
     // Corners & Radii
     val CornerRadiusExtraSmall = 8.dp
@@ -82,10 +91,17 @@ object Dimens {
     // Previews & Temporary
     val PreviewHeightLarge = 300.dp
 
+    // Workout Specifics
+    val StatCardIconSize = 32.dp
+    val ExerciseIconSize = 40.dp
+    val FloatingActionButtonIconSize = 32.dp
+    val WorkoutCardCornerRadius = 14.dp
+
     // Accessibility
     val MinimumTouchTarget = 48.dp
 
     // Text Sizes (SP)
+    val TextSizeExtraExtraSmall = 10.sp
     val TextSizeTiny = 12.sp
     val TextSizeExtraSmall = 13.sp
     val TextSizeSmall = 14.sp

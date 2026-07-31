@@ -29,15 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.AppGreen
-import com.example.evofit.presentation.ui.theme.AppSurface
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.IconContainerBg
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
 
 @Composable
 fun WorkoutSummaryCard(
@@ -51,24 +45,23 @@ fun WorkoutSummaryCard(
     Card(
         modifier = modifier.fillMaxWidth()
             .border(
-            width = 1.dp,
+            width = Dimens.BorderWidthThin,
             color = MaterialTheme.colorScheme.outlineVariant,
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(Dimens.CornerRadiusCard)
         ),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = AppSurface)
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(Dimens.SpacingLarge),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Text(
                 text = stringResource(R.string.workout_resume_label_summary),
-                color = TextSecondary,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -122,36 +115,35 @@ fun ResumeRowItem(
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(Dimens.SpacingExtraExtraLarge)
                 .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = AppGreen,
-                modifier = Modifier.size(20.dp)
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
         }
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraExtraSmall)
         ) {
             Text(
                 text = label,
-                color = TextSecondary,
-                fontSize = 14.sp
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = value,
-                color = TextPrimary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -161,7 +153,7 @@ fun ResumeRowItem(
 @Composable
 private fun WorkoutSummaryCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutSummaryCard(
                 totalExercises = 5,
                 totalSets = 15,
@@ -175,7 +167,7 @@ private fun WorkoutSummaryCardPreview() {
 @Composable
 private fun ResumeRowItemPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             ResumeRowItem(
                 icon = Icons.AutoMirrored.Filled.List,
                 label = "Exercícios",

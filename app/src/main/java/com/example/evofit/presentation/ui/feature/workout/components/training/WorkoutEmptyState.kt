@@ -9,8 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.evofit.presentation.ui.theme.Dimens
 
 @Composable
 fun WorkoutEmptyState(
@@ -20,14 +19,13 @@ fun WorkoutEmptyState(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 40.dp),
+            .padding(vertical = Dimens.SpacingExtraExtraLarge),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = message,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
         )
     }
 }

@@ -2,6 +2,8 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -12,9 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
@@ -23,6 +23,7 @@ import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.components.EvoWheelPicker
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,10 +71,32 @@ fun OnboardHeightContent(
     onBack: () -> Unit
 ) {
     Scaffold(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         topBar = {
             TopBarReturn(
                 onBackClick = onBack
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PageIndicators(
+                    pageCount = totalPages,
+                    selectedPage = currentPage,
+                    modifier = Modifier.padding(bottom = Dimens.SpacingMedium)
+                )
+
+                EvoFitButton(
+                    text = stringResource(R.string.onboarding_button_continue),
+                    enabled = isButtonEnabled,
+                    onClick = onContinue
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -81,22 +104,22 @@ fun OnboardHeightContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
         ) {
 
             Text(
                 text = stringResource(R.string.onboarding_height_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
             Text(
                 text = stringResource(R.string.onboarding_height_description),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp
+                style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.weight(0.5f))
@@ -110,22 +133,8 @@ fun OnboardHeightContent(
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
-            PageIndicators(
-                pageCount = totalPages,
-                selectedPage = currentPage,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 16.dp)
-            )
-
-            EvoFitButton(
-                text = stringResource(R.string.onboarding_button_continue),
-                enabled = isButtonEnabled,
-                onClick = onContinue
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
+            
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }

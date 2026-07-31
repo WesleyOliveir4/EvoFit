@@ -28,7 +28,8 @@ import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSi
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -103,7 +104,7 @@ fun LoginContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onBackClick
@@ -113,6 +114,7 @@ fun LoginContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                     .padding(bottom = Dimens.SpacingMedium),
                 contentAlignment = Alignment.Center
             ) {
@@ -171,7 +173,7 @@ fun LoginContent(
                             Icon(
                                 imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription = null,
-                                tint = TextSecondary.copy(alpha = 0.7f)
+                                tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
                             )
                         }
                     },
@@ -190,9 +192,8 @@ fun LoginContent(
             ) {
                 Text(
                     text = stringResource(id = R.string.login_forgot_password),
-                    color = AppGreen,
-                    fontSize = Dimens.TextSizeSmall,
-                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
                 )
             }

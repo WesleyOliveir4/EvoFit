@@ -3,6 +3,8 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +29,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.text.KeyboardOptions
 import com.example.evofit.presentation.ui.feature.components.EvoDatePickerDialog
@@ -37,6 +38,7 @@ import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -89,10 +91,32 @@ fun OnboardUserDataContent(
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         topBar = {
             TopBarReturn(
                 onBackClick = onBack
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PageIndicators(
+                    pageCount = totalPages,
+                    selectedPage = currentPage,
+                    modifier = Modifier.padding(bottom = Dimens.SpacingMedium)
+                )
+
+                EvoFitButton(
+                    text = stringResource(R.string.onboarding_button_continue),
+                    enabled = isFormValid,
+                    onClick = onContinue
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -101,25 +125,25 @@ fun OnboardUserDataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
         ) {
 
             Text(
                 text = stringResource(R.string.onboarding_user_data_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
             Text(
                 text = stringResource(R.string.onboarding_user_data_description),
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp
+                style = MaterialTheme.typography.bodyLarge
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
 
             EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_name),
@@ -128,7 +152,7 @@ fun OnboardUserDataContent(
                 onValueChange = onNameChange
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
             EvoFitInputField(
                 label = stringResource(R.string.onboarding_user_data_label_birth_date),
@@ -141,23 +165,7 @@ fun OnboardUserDataContent(
                 modifier = Modifier.clickable { showDatePicker = true }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            PageIndicators(
-                pageCount = totalPages,
-                selectedPage = currentPage,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 16.dp)
-            )
-
-            EvoFitButton(
-                text = stringResource(R.string.onboarding_button_continue),
-                enabled = isFormValid,
-                onClick = onContinue
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }

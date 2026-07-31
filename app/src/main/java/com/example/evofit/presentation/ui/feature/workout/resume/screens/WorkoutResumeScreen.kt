@@ -23,14 +23,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.workout.resume.components.WorkoutSummaryCard
 import com.example.evofit.presentation.ui.feature.workout.resume.state.ResumeMode
 import com.example.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
 import com.example.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -62,7 +61,7 @@ fun WorkoutResumeContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             WorkoutResumeBottomBar(
                 isLoading = uiState.isLoading,
@@ -87,7 +86,7 @@ private fun ResumeMainContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = Dimens.ScreenPaddingHorizontal),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -95,39 +94,38 @@ private fun ResumeMainContent(
 
         Box(
             modifier = Modifier
-                .size(72.dp)
-                .background(IconContainerBg, CircleShape),
+                .size(Dimens.FabSizeDefault)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = tint,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(Dimens.StatCardIconSize)
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
         Text(
             text = getTitleForMode(uiState.mode),
-            color = TextPrimary,
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
         Text(
             text = getSubtitleForMode(uiState.mode, uiState.workoutName),
-            color = TextSecondary,
-            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
 
         if (uiState.mode != ResumeMode.CANCELLED) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
             WorkoutSummaryCard(
                 totalExercises = uiState.totalExercises,
                 totalSets = uiState.totalSets,
@@ -137,15 +135,15 @@ private fun ResumeMainContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(56.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingExtraLargePlus))
     }
 }
 
 @Composable
 private fun getModeResources(mode: ResumeMode): Pair<ImageVector, Color> = when (mode) {
-    ResumeMode.CANCELLED -> ImageVector.vectorResource(id = R.drawable.ic_clipboard_off) to AppGreen
-    ResumeMode.UPDATED -> Icons.Default.Edit to AppGreen
-    else -> Icons.Default.CheckCircle to AppGreen
+    ResumeMode.CANCELLED -> ImageVector.vectorResource(id = R.drawable.ic_clipboard_off) to MaterialTheme.colorScheme.primary
+    ResumeMode.UPDATED -> Icons.Default.Edit to MaterialTheme.colorScheme.primary
+    else -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
 }
 
 @Composable
@@ -171,22 +169,21 @@ private fun WorkoutResumeBottomBar(
 ) {
     Column(
         modifier = Modifier
-            .background(AppDarkBg)
+            .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(16.dp)
+            .padding(Dimens.SpacingMedium)
     ) {
         Button(
             onClick = onContinueClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier.fillMaxWidth().height(Dimens.ButtonHeightPrimary),
             enabled = !isLoading,
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AppGreen)
+            shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(
                 text = stringResource(R.string.workout_resume_button_confirm),
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
@@ -195,7 +192,7 @@ private fun WorkoutResumeBottomBar(
 @Composable
 private fun FullScreenLoader() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = AppGreen)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 

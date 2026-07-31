@@ -21,7 +21,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun LoginHeader(modifier: Modifier = Modifier) {
@@ -39,7 +40,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .size(Dimens.SpacingExtraExtraLarge)
-                    .background(IconContainerBg, RoundedCornerShape(Dimens.CornerRadiusSmall)),
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(Dimens.CornerRadiusSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -51,7 +52,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
             }
             Text(
                 text = "EvoFit",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -62,12 +63,12 @@ fun LoginHeader(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = "Bem-vindo de volta",
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.headlineLarge
             )
             Text(
                 text = "Continue de onde parou na sua evolução.",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -90,26 +91,26 @@ fun LoginInputField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth().heightIn(min = Dimens.TextFieldHeight),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
         label = { Text(label) },
-        placeholder = { Text(placeholder, color = TextSecondary.copy(alpha = 0.5f)) },
+        placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)) },
         trailingIcon = trailingIcon,
         enabled = enabled,
         singleLine = true,
         shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = AppSurface,
-            unfocusedContainerColor = AppSurface,
-            focusedBorderColor = TextPrimary,
-            unfocusedBorderColor = AppSurfaceVariant,
-            cursorColor = TextPrimary,
-            disabledContainerColor = AppSurface,
-            disabledBorderColor = AppSurfaceVariant,
-            disabledTextColor = TextSecondary,
-            focusedLabelColor = TextPrimary,
-            unfocusedLabelColor = TextSecondary,
-            focusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f),
-            unfocusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f)
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            cursorColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledTextColor = MaterialTheme.colorScheme.secondary,
+            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
         ),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions
@@ -129,10 +130,10 @@ fun LoginButton(
             .fillMaxWidth()
             .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppGreen,
-            contentColor = Color.Black,
-            disabledContainerColor = AppGreen.copy(alpha = 0.5f),
-            disabledContentColor = Color.Black.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
         ),
         shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
         enabled = enabled && !isLoading
@@ -140,7 +141,7 @@ fun LoginButton(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(Dimens.SpacingLarge),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onPrimary,
                 strokeWidth = Dimens.SpacingExtraExtraSmall
             )
         } else {
@@ -164,7 +165,7 @@ fun SocialLoginButton(
         modifier = modifier
             .height(Dimens.ButtonHeightSecondary)
             .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
-            .border(Dimens.BorderWidthThin, AppSurfaceVariant, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
+            .border(Dimens.BorderWidthThin, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.CornerRadiusCardSmall))
             .background(Color.Transparent)
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center
@@ -181,7 +182,7 @@ fun SocialLoginButton(
             )
             Text(
                 text = text,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
         }
@@ -196,14 +197,14 @@ fun LoginSocialDivider(modifier: Modifier = Modifier) {
             .padding(vertical = Dimens.SectionSpacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = AppSurfaceVariant)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.surfaceVariant)
         Text(
             text = stringResource(id = R.string.login_or_continue_with),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = Dimens.SpacingMedium)
         )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = AppSurfaceVariant)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.surfaceVariant)
     }
 }
 
@@ -220,12 +221,12 @@ fun LoginRegistrationFooter(
     ) {
         Text(
             text = stringResource(id = R.string.login_no_account),
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall
         )
         Text(
             text = stringResource(id = R.string.login_sign_up),
-            color = AppGreen,
+            color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.clickable(enabled = enabled) { onSignUpClick() }
         )

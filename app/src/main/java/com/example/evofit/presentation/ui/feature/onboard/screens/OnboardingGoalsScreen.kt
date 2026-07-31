@@ -31,6 +31,7 @@ import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalB
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -96,10 +97,42 @@ fun OnboardingGoalsContent(
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         topBar = {
             TopBarReturn(
                 onBackClick = onBack
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextButton(onClick = onSkip) {
+                    Text(
+                        text = stringResource(R.string.onboarding_goals_button_skip),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+                PageIndicators(
+                    pageCount = totalPages,
+                    selectedPage = currentPage,
+                    modifier = Modifier.padding(bottom = Dimens.SpacingMedium)
+                )
+
+                EvoFitButton(
+                    text = stringResource(R.string.onboarding_button_continue),
+                    enabled = activeGoals.isNotEmpty(),
+                    onClick = onFinish
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -107,7 +140,7 @@ fun OnboardingGoalsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
@@ -117,88 +150,62 @@ fun OnboardingGoalsContent(
                 Text(
                     text = stringResource(R.string.onboarding_goals_title),
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineLarge
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                 Text(
                     text = stringResource(R.string.onboarding_goals_description),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            suggestions.forEach { suggestion ->
-                GoalTag(
-                    text = suggestion.text,
-                    onClick = {
-                        selectedSuggestion = suggestion
-                        showDialog = true
-                    }
-                )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
+            ) {
+                suggestions.forEach { suggestion ->
+                    GoalTag(
+                        text = suggestion.text,
+                        onClick = {
+                            selectedSuggestion = suggestion
+                            showDialog = true
+                        }
+                    )
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(
-                items = activeGoals,
-                key = { it.id }
-            ) { goal ->
-                ActiveGoalItem(
-                    text = goal.displayText,
-                    onRemoveClick = {
-                        onRemoveGoal(goal.id)
-                    }
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
+            ) {
+                items(
+                    items = activeGoals,
+                    key = { it.id }
+                ) { goal ->
+                    ActiveGoalItem(
+                        text = goal.displayText,
+                        onRemoveClick = {
+                            onRemoveGoal(goal.id)
+                        }
+                    )
+                }
+                
+                item {
+                    AddNewGoalButton(
+                        onClick = { showDialog = true }
+                    )
+                }
             }
-            
-            item {
-                AddNewGoalButton(
-                    onClick = { showDialog = true }
-                )
-            }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = onSkip) {
-            Text(
-                text = stringResource(R.string.onboarding_goals_button_skip),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PageIndicators(
-            pageCount = totalPages,
-            selectedPage = currentPage,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-            EvoFitButton(
-            text = stringResource(R.string.onboarding_button_continue),
-            enabled = activeGoals.isNotEmpty(),
-            onClick = onFinish
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }

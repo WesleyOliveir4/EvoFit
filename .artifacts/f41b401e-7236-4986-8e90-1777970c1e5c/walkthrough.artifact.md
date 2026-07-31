@@ -1,37 +1,21 @@
-# Otimização de Layout para Diferentes Modos de Navegação
+# Correção de Erros de Compilação e Finalização do Design System
 
-As dimensões verticais foram refinadas para garantir que as telas de autenticação caibam em dispositivos com a barra de navegação de 3 botões sem gerar scroll desnecessário.
+Este passo final corrigiu referências residuais de `.dp` em arquivos que haviam perdido o import correspondente durante a refatoração, garantindo que o projeto compile com sucesso.
 
 ## Mudanças Realizadas
 
-### [Dimens.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/theme/Dimens.kt)
-- **Redução de Espaçamentos Críticos:**
-    - `SpacingExtraLargePlus`: Reduzido de `64.dp` para `40.dp` (ganho de 24dp no topo).
-    - `SectionSpacing` e `SpacingExtraLarge`: Reduzidos de `32.dp` para `24.dp` (ganho de 8dp entre seções).
-- **Documentação de Recomendações:** Adicionado um bloco de comentários KDoc com as diretrizes para manter a compatibilidade com a navegação do sistema.
+### [WorkoutResumeComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/resume/components/WorkoutResumeComponents.kt)
+- **Correção de Preview:** Substituído o valor fixo `16.dp` por `Dimens.SpacingMedium` na função de preview, eliminando a necessidade do import de `dp` e mantendo a padronização.
 
-### [LoginComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/authentication/components/LoginComponents.kt)
-- `LoginHeader`: Ajustado o padding superior de `SpacingLarge` (24dp) para `SpacingMedium` (16dp).
+### [WorkoutPreviewScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/startworkout/screens/WorkoutPreviewScreen.kt)
+- **Refino de Layout:** Substituídos paddings e espaçadores de `16.dp` e `24.dp` por `Dimens.ScreenPaddingHorizontal` e `Dimens.SpacingLarge`, respectivamente. Isso resolveu os erros de "Unresolved reference 'dp'".
 
-## Recomendações Implementadas
-As seguintes diretrizes foram adicionadas ao código como guia para futuros desenvolvimentos:
+### Limpeza de Imports
+- Removidos imports não utilizados de `androidx.compose.ui.unit.dp` e `sp` em diversas telas de Onboarding e Workout, deixando o código mais limpo e seguindo as melhores práticas.
 
-```kotlin
-/**
- * Layout Recommendations for Authentication Screens:
- * 1. Use Scaffold with systemBarsPadding().
- * 2. Prefer SectionSpacing (24.dp) between major blocks to avoid scroll on 3-button navigation devices.
- * 3. Use SpacingExtraLargePlus (40.dp) for top headers instead of legacy 64dp.
- * 4. Ensure horizontal padding is ScreenPaddingHorizontal (16.dp).
- */
-```
+## Estado Atual do Projeto
+- **Compilação:** O projeto está compilando com sucesso (`Build finished successfully`).
+- **Design System:** 100% dos pacotes de Autenticação, Onboarding e Workout estão agora integrados ao `Dimens.kt`, `Type.kt` e `MaterialTheme.colorScheme`.
 
-> [!TIP]
-> Essas mudanças economizam aproximadamente **32dp a 48dp** de espaço vertical total por tela, o que compensa exatamente o tamanho da barra de navegação clássica do Android.
-
-### Otimização de Estrutura e Scroll
-As telas de autenticação foram reestruturadas para garantir fluidez em diferentes tamanhos de tela e modos de navegação:
-- **Footers Fixos:** Botões de ação e links de navegação foram movidos para o slot `bottomBar` do `Scaffold`. Isso garante que fiquem sempre visíveis e estáveis na base da tela.
-- **Scroll Inteligente:** O conteúdo central agora utiliza `verticalScroll` apenas quando necessário (ex: teclado aberto ou telas muito pequenas).
-- **Correção de Alinhamento:** Removemos o uso de `Arrangement.SpaceBetween` dentro de containers roláveis. Isso garante que o conteúdo comece sempre no topo da tela, eliminando o "salto" ou scroll fantasma na abertura da tela.
-- **Compatibilidade com Teclado:** A nova estrutura permite que o formulário suba suavemente quando o teclado é ativado, mantendo os campos de input acessíveis.
+> [!CHECK]
+> O guia de estilo [COMPOSE_GUIDE.md](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/guide/COMPOSE_GUIDE.md) foi atualizado e deve ser seguido em todas as novas implementações para manter essa consistência.

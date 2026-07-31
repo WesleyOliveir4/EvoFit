@@ -29,7 +29,8 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Term
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -101,7 +102,7 @@ fun RegisterContent(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
-        containerColor = AppDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onLoginClick
@@ -111,6 +112,7 @@ fun RegisterContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                     .padding(bottom = Dimens.SpacingMedium),
                 contentAlignment = Alignment.Center
             ) {
@@ -166,7 +168,7 @@ fun RegisterContent(
                                 } else {
                                     stringResource(id = R.string.login_content_desc_show_password)
                                 },
-                                tint = TextSecondary
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },
@@ -190,7 +192,7 @@ fun RegisterContent(
                                 } else {
                                     stringResource(id = R.string.login_content_desc_show_password)
                                 },
-                                tint = TextSecondary
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },

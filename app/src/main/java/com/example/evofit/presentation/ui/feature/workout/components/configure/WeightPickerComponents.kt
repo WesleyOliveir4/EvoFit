@@ -37,12 +37,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.example.evofit.R
-
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
@@ -89,22 +87,21 @@ fun CompactWeightDisplay(
 
     Box(
         modifier = modifier
-            .widthIn(max = 240.dp)
+            .widthIn(max = Dimens.OnboardingLogoSize * 2) // ~240.dp
             .fillMaxWidth()
-            .height(48.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp)),
+            .height(Dimens.ButtonHeightSecondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(Dimens.SpacingMediumSmall))
+            .clip(RoundedCornerShape(Dimens.SpacingMediumSmall)),
         contentAlignment = Alignment.Center
     ) {
         if (prevStr.isNotEmpty()) {
             Text(
                 text = prevStr,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .padding(start = 8.dp)
+                    .padding(start = Dimens.SpacingSmall)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         layout(placeable.width, placeable.height) {
@@ -116,28 +113,26 @@ fun CompactWeightDisplay(
 
         Box(
             modifier = Modifier
-                .width(64.dp)
-                .height(36.dp)
-                .border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
+                .width(Dimens.FabSizeLarge)
+                .height(Dimens.AuthBadgeSizeDefault)
+                .border(Dimens.BorderWidthThin + Dimens.SpacingExtraExtraSmall / 4, MaterialTheme.colorScheme.primary, RoundedCornerShape(Dimens.SpacingSmall)) // ~1.5dp
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.SpacingSmall)),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = weightStr,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold)
             )
         }
 
         Text(
             text = nextStr,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 8.dp)
+                .padding(end = Dimens.SpacingSmall)
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     layout(placeable.width, placeable.height) {
@@ -160,13 +155,13 @@ fun WeightPickerDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(24.dp),
+                .padding(Dimens.SpacingMedium),
+            shape = RoundedCornerShape(Dimens.CornerRadiusCard),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(20.dp),
+                    .padding(Dimens.SpacingLarge),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -176,9 +171,8 @@ fun WeightPickerDialog(
                 ) {
                     Text(
                         text = stringResource(R.string.configure_workout_col_weight),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     IconButton(onClick = onDismiss) {
                         Icon(
@@ -189,7 +183,7 @@ fun WeightPickerDialog(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
 
                 WeightWheel(
                     initialWeight = initialWeight,
@@ -198,26 +192,27 @@ fun WeightPickerDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
                 Button(
                     onClick = { onConfirm(selectedWeight) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        .height(Dimens.ButtonHeightPrimary),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = Color.Black
+                        contentDescription = null
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
                     Text(
                         text = "Confirmar",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
@@ -229,7 +224,7 @@ fun WeightPickerDialog(
 @Composable
 private fun CompactWeightDisplayPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             CompactWeightDisplay(weight = 60.0)
         }
     }

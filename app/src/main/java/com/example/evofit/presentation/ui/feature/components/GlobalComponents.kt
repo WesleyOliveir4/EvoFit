@@ -73,17 +73,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
-import com.example.evofit.presentation.ui.theme.AppSurface
-import com.example.evofit.presentation.ui.theme.AppSurfaceVariant
 import com.example.evofit.presentation.ui.theme.Dimens
-import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.EvoIconBgRed
-import com.example.evofit.presentation.ui.theme.EvoIconBgYellow
-import com.example.evofit.presentation.ui.theme.EvoWarningYellow
-import com.example.evofit.presentation.ui.theme.IconContainerBg
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
 
 @Composable
 fun AppBottomNavigation(
@@ -249,13 +240,13 @@ fun EvoFitAlertDialog(
                 Box(
                     modifier = Modifier
                         .size(Dimens.MinimumTouchTarget)
-                        .background(EvoIconBgRed, CircleShape),
+                        .background(MaterialTheme.colorScheme.errorContainer, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = EvoDestructiveRed,
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
@@ -285,12 +276,12 @@ fun EvoFitAlertDialog(
                         .height(Dimens.MinimumTouchTarget),
                     shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = EvoDestructiveRed
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
                     )
                 ) {
                     Text(
                         text = confirmButtonText,
-                        color = Color.Black,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -349,13 +340,13 @@ fun EvoFitCautionDialog(
                 Box(
                     modifier = Modifier
                         .size(Dimens.MinimumTouchTarget)
-                        .background(EvoIconBgYellow, CircleShape),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
                         contentDescription = null,
-                        tint = EvoWarningYellow,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
@@ -385,12 +376,12 @@ fun EvoFitCautionDialog(
                         .height(Dimens.MinimumTouchTarget),
                     shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = EvoWarningYellow
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
                     )
                 ) {
                     Text(
                         text = confirmButtonText,
-                        color = Color.Black,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -450,7 +441,7 @@ fun EvoFitActionDialog(
                 Box(
                     modifier = Modifier
                         .size(Dimens.MinimumTouchTarget)
-                        .background(IconContainerBg, CircleShape),
+                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -486,12 +477,12 @@ fun EvoFitActionDialog(
                         .height(Dimens.MinimumTouchTarget),
                     shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Text(
                         text = confirmButtonText,
-                        color = Color.Black,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -724,26 +715,26 @@ fun EvoFitInputField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth().heightIn(min = Dimens.TextFieldHeight),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
         label = { Text(label) },
-        placeholder = { Text(placeholder, color = TextSecondary.copy(alpha = 0.5f)) },
+        placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)) },
         trailingIcon = trailingIcon,
         enabled = enabled,
         singleLine = true,
         shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = AppSurface,
-            unfocusedContainerColor = AppSurface,
-            focusedBorderColor = TextPrimary,
-            unfocusedBorderColor = AppSurfaceVariant,
-            cursorColor = TextPrimary,
-            disabledContainerColor = AppSurface,
-            disabledBorderColor = AppSurfaceVariant,
-            disabledTextColor = TextSecondary,
-            focusedLabelColor = TextPrimary,
-            unfocusedLabelColor = TextSecondary,
-            focusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f),
-            unfocusedPlaceholderColor = TextSecondary.copy(alpha = 0.5f)
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            cursorColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledTextColor = MaterialTheme.colorScheme.secondary,
+            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
         ),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions
