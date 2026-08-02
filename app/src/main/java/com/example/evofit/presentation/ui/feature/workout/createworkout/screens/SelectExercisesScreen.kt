@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.model.ExerciseSelectionUIModel
@@ -195,17 +196,24 @@ fun SelectExercisesContent(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
                                     text = stringResource(R.string.select_exercises_label_name),
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                    maxLines = 1
                                 )
                                 Spacer(modifier = Modifier.width(Dimens.SpacingExtraSmall))
                                 Text(
                                     text = workoutName,
                                     color = MaterialTheme.colorScheme.primary,
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false)
                                 )
                             }
                             IconButton(onClick = onStartEditingName) {

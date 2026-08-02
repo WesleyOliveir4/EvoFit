@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.model.WorkoutUIModel
@@ -95,7 +96,9 @@ fun WorkoutListItem(
                 Text(
                     text = workout.title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 val exercisesStr = stringResource(R.string.main_workout_exercise_count, workout.exercises)
                 val seriesStr = stringResource(R.string.main_workout_series_count, workout.series)

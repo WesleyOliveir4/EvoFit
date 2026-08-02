@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExercisePreviewItem
@@ -57,14 +58,15 @@ fun WorkoutDoneItem(
         Column(modifier = Modifier.padding(Dimens.SpacingMediumSmall)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = workoutDone.name,
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "${workoutDone.date} • ${workoutDone.time}",

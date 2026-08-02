@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
@@ -62,7 +63,9 @@ fun MuscleGroupPreviewCard(
                     Text(
                         text = groupName.uppercase(),
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = stringResource(R.string.workout_preview_exercises_count, exercises.size),
@@ -140,7 +143,9 @@ fun ExercisePreviewCard(
                 Text(
                     text = item.name,
                     color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 val detailText = when (item.unit) {
                     MeasurementUnit.WEIGHT -> {

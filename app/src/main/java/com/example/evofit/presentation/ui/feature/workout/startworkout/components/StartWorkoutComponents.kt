@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.TextStyle
 import com.example.evofit.R
@@ -77,7 +78,9 @@ fun ExerciseTrackingCard(
                     Text(
                         text = exercise.name,
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     val completedInExercise = exercise.sets.count { it.isDone }
                     Text(
