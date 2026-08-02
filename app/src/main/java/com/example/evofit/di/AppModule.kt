@@ -325,7 +325,6 @@ val workoutModule = module {
             getExercisesByIdsUseCase = get(),
             saveWorkoutDoneUseCase = get(),
             getUserIdUseCase = get(),
-            getWorkoutDoneHistoryUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),

@@ -80,8 +80,8 @@ fun CompactWeightDisplay(
     modifier: Modifier = Modifier
 ) {
     val weightStr = if (weight % 1 == 0.0) "${weight.toInt()}" else "$weight"
-    val prevWeight = weight - 2.5
-    val nextWeight = weight + 2.5
+    val prevWeight = weight - 1.0
+    val nextWeight = weight + 1.0
     val prevStr = if (prevWeight >= 0) (if (prevWeight % 1 == 0.0) "${prevWeight.toInt()}" else "$prevWeight") else ""
     val nextStr = if (nextWeight % 1 == 0.0) "${nextWeight.toInt()}" else "$nextWeight"
 

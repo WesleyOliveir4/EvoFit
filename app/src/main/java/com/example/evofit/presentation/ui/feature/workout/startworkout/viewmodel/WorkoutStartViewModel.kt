@@ -18,7 +18,6 @@ import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.domain.usecase.SaveWorkoutDoneUseCase
 import com.example.evofit.domain.usecase.StartWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.UpdateCompletedSetsUseCase
-import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
 import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
@@ -44,7 +43,6 @@ class WorkoutStartViewModel(
     private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val startWorkoutSessionUseCase: StartWorkoutSessionUseCase,
     private val updateCompletedSetsUseCase: UpdateCompletedSetsUseCase,
@@ -207,6 +205,7 @@ class WorkoutStartViewModel(
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
             val userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID
+            val workoutDoneId = java.util.UUID.randomUUID().toString()
 
             val doneExercises = _uiState.value.exercises.mapNotNull { exercise ->
                 val doneSets = exercise.sets.filter { it.isDone }.map { set ->
@@ -235,6 +234,7 @@ class WorkoutStartViewModel(
             }
 
             val workoutDone = WorkoutDone(
+                id = workoutDoneId,
                 userId = userId,
                 name = workout.name,
                 muscleGroupId = workout.muscleGroupId,
@@ -247,13 +247,10 @@ class WorkoutStartViewModel(
             saveWorkoutDoneUseCase(userId, workoutDone)
             clearWorkoutSessionUseCase()
 
-            val history = getWorkoutDoneHistoryUseCase(userId).first()
-            val lastWorkoutDone = history.lastOrNull()
-
             _uiState.update { it.copy(
                 showFinishDialog = false, 
                 workoutCompleted = true,
-                workoutDoneId = lastWorkoutDone?.id
+                workoutDoneId = workoutDoneId
             ) }
         }
     }
