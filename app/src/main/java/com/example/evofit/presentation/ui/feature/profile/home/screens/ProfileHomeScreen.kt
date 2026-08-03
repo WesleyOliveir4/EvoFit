@@ -10,44 +10,42 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItem
-import com.example.evofit.presentation.ui.theme.AppDarkBg
-import com.example.evofit.presentation.ui.theme.AppSurface
-import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
-
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
-import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.core.common.DateMapper
+import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
+import com.example.evofit.presentation.ui.feature.profile.home.components.LogoutComponent
+import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItemData
+import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileOptionsMenuComponent
+import com.example.evofit.presentation.ui.feature.profile.home.components.UserDataInfoComponent
+import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -69,8 +67,9 @@ fun ProfileHomeScreen(
 
     ProfileHomeScreenContent(
         userName = uiState.name,
-        userBirthDate = uiState.birthDate,
         userWeight = uiState.weight,
+        userHeight = uiState.height.ifEmpty { "--" },
+        profileImageUrl = "", // Placeholder
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick,
@@ -97,31 +96,42 @@ fun ProfileHomeScreen(
 fun ProfileHomeScreenContent(
     modifier: Modifier = Modifier,
     userName: String,
-    userBirthDate: String,
     userWeight: String,
+    userHeight: String,
+    profileImageUrl: String,
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
-    val displayAge = remember(userBirthDate) { DateMapper.calculateAge(userBirthDate) }
+    // Lista de itens do menu
+    val menuItems = remember {
+        listOf(
+            ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, onUserDataClick),
+            ProfileMenuItemData("2", "Metas Pessoais", Icons.Default.Star, onGoalsClick),
+            ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, {}),
+            ProfileMenuItemData("4", "Notificações", Icons.Default.Notifications, {}),
+            ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, {}),
+            ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, {})
+        )
+    }
 
     Scaffold(
         modifier = modifier,
-        containerColor = AppDarkBg,
+        containerColor = com.example.evofit.presentation.ui.theme.AppDarkBg,
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                    .padding(horizontal = Dimens.SpacingLarge, vertical = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.nav_profile),
-                    color = TextPrimary,
-                    fontSize = 28.sp,
+                    color = com.example.evofit.presentation.ui.theme.TextPrimary,
+                    fontSize = Dimens.TextSizeHeadlineLarge,
                     fontWeight = FontWeight.Black
                 )
             }
@@ -137,67 +147,30 @@ fun ProfileHomeScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
         ) {
+            
+            // 1. Bloco de Informações do Usuário
+            UserDataInfoComponent(
+                userName = userName,
+                weight = "$userWeight kg",
+                height = "$userHeight m",
+                profileImageUrl = profileImageUrl
+            )
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = AppSurface)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = userName,
-                        color = TextPrimary,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(id = R.string.profile_user_summary_format, displayAge, userWeight),
-                        color = TextSecondary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+            // 2. Bloco de Opções do Menu
+            ProfileOptionsMenuComponent(
+                items = menuItems
+            )
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = stringResource(id = R.string.profile_my_account),
-                    color = TextSecondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
+            // 3. Bloco de Logout
+            LogoutComponent(
+                onLogoutClick = onLogoutClick
+            )
 
-                ProfileMenuItem(
-                    title = stringResource(id = R.string.profile_user_data),
-                    icon = Icons.Default.Person,
-                    onClick = onUserDataClick
-                )
-
-                ProfileMenuItem(
-                    title = stringResource(id = R.string.profile_personal_goals),
-                    icon = Icons.Default.Star,
-                    onClick = onGoalsClick
-                )
-
-                ProfileMenuItem(
-                    title = stringResource(id = R.string.profile_logout),
-                    icon = ImageVector.vectorResource(id = R.drawable.ic_logout),
-                    onClick = onLogoutClick
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }
@@ -207,9 +180,10 @@ fun ProfileHomeScreenContent(
 private fun ProfileHomeScreenPreview() {
     EvoFitTheme {
         ProfileHomeScreenContent(
-            userName = "Wesley",
-            userBirthDate = "27/07/1995",
-            userWeight = "78",
+            userName = "Julia",
+            userWeight = "54",
+            userHeight = "1.65",
+            profileImageUrl = "",
             onNavigate = {},
             onUserDataClick = {},
             onGoalsClick = {},

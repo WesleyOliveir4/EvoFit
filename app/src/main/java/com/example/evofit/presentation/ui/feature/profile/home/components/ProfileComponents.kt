@@ -1,15 +1,34 @@
 package com.example.evofit.presentation.ui.feature.profile.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,172 +39,312 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evofit.presentation.ui.theme.AppGreen
-import com.example.evofit.presentation.ui.theme.AppSurface
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.IconContainerBg
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
 
+// Estrutura de dados para os itens do menu
+data class ProfileMenuItemData(
+    val id: String,
+    val title: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)
+
+/**
+ * 1. Bloco de Informações do Usuário (Foto com borda verde + Card com Nome, Peso e Altura)
+ */
 @Composable
-fun ProfileMenuItem(
-    title: String,
-    icon: ImageVector,
-    onClick: () -> Unit,
+fun UserDataInfoComponent(
+    userName: String,
+    weight: String,
+    height: String,
+    profileImageUrl: String,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(72.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = AppSurface)
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Row(
+        // Card de fundo (com padding superior para acomodar a foto sobreposta)
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth()
+                .padding(top = 44.dp),
+            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            // Container do Ícone
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(IconContainerBg, RoundedCornerShape(12.dp)),
+                    .fillMaxWidth()
+                    .padding(top = 52.dp, bottom = Dimens.SpacingLarge, start = Dimens.SpacingLarge, end = Dimens.SpacingLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Linha com as estatísticas de Peso e Altura
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Coluna Peso
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "🏋️", fontSize = Dimens.TextSizeLarge) 
+                        Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
+                        Text(
+                            text = weight, 
+                            color = MaterialTheme.colorScheme.onSurface, 
+                            fontSize = Dimens.TextSizeMedium, 
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Peso", 
+                            color = MaterialTheme.colorScheme.secondary, 
+                            fontSize = Dimens.TextSizeExtraSmall
+                        )
+                    }
+
+                    // Nome Centralizado
+                    Text(
+                        text = userName,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = Dimens.TextSizeExtraLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // Coluna Altura
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "↕️", fontSize = Dimens.TextSizeLarge)
+                        Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
+                        Text(
+                            text = height, 
+                            color = MaterialTheme.colorScheme.onSurface, 
+                            fontSize = Dimens.TextSizeMedium, 
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Altura", 
+                            color = MaterialTheme.colorScheme.secondary, 
+                            fontSize = Dimens.TextSizeExtraSmall
+                        )
+                    }
+                }
+            }
+        }
+
+        // Foto de perfil circular sobreposta com borda verde
+        // Nota: Placeholder usado pois Coil não está disponível
+        Box(
+            modifier = Modifier
+                .size(88.dp)
+                .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .padding(4.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Foto de perfil",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxSize(0.6f)
+            )
+        }
+    }
+}
+
+/**
+ * 2. Bloco do Menu de Opções ("MINHA CONTA")
+ */
+@Composable
+fun ProfileOptionsMenuComponent(
+    items: List<ProfileMenuItemData>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
+    ) {
+        Text(
+            text = "MINHA CONTA",
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = Dimens.TextSizeTiny,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp,
+            modifier = Modifier.padding(horizontal = Dimens.SpacingSmall)
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                items.forEachIndexed { index, item ->
+                    ProfileOptionRow(
+                        title = item.title,
+                        icon = item.icon,
+                        onClick = item.onClick
+                    )
+
+                    // Divisória horizontal entre os itens (menos no último)
+                    if (index < items.size - 1) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            thickness = Dimens.BorderWidthThin,
+                            modifier = Modifier.padding(start = 68.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Item reutilizável da lista do menu
+@Composable
+private fun ProfileOptionRow(
+    title: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .clickable { onClick() }
+            .padding(horizontal = Dimens.SpacingMedium),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+    ) {
+        Card(
+            shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            Box(
+                modifier = Modifier.size(38.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = AppGreen,
-                    modifier = Modifier.size(20.dp)
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
                 )
             }
-
-            // Título do Menu
-            Text(
-                text = title,
-                color = TextPrimary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-
-            // Seta indicativa
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = TextSecondary,
-                modifier = Modifier.size(18.dp)
-            )
         }
+
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = Dimens.TextSizeMediumSmall,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.size(Dimens.IconSizeMediumSmall)
+        )
     }
 }
 
+/**
+ * 3. Bloco de Logout ("SAIR")
+ */
 @Composable
-fun ProfileStatColumn(
-    value: String,
-    label: String,
+fun LogoutComponent(
+    onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = value,
-            color = AppGreen,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = label,
-            color = TextSecondary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-fun ProfileStatsCard(
-    totalWorkouts: String,
-    records: String,
-    goals: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = AppSurface)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
-        Row(
+        Text(
+            text = "SAIR",
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = Dimens.TextSizeTiny,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp,
+            modifier = Modifier.padding(horizontal = Dimens.SpacingSmall)
+        )
+
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp, horizontal = 12.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .clip(RoundedCornerShape(Dimens.CornerRadiusCard))
+                .clickable { onLogoutClick() },
+            shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            ProfileStatColumn(
-                value = totalWorkouts,
-                label = "Treinos",
-                modifier = Modifier.weight(1f)
-            )
-            ProfileStatColumn(
-                value = records,
-                label = "Recordes",
-                modifier = Modifier.weight(1f)
-            )
-            ProfileStatColumn(
-                value = goals,
-                label = "Metas",
-                modifier = Modifier.weight(1f)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = Dimens.SpacingMedium),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+            ) {
+                Card(
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Box(
+                        modifier = Modifier.size(38.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(Dimens.IconSizeSmall)
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Sair da Conta",
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = Dimens.TextSizeMediumSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(Dimens.IconSizeMediumSmall)
+                )
+            }
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ProfileMenuItemPreview() {
+private fun ProfileComponentsPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ProfileMenuItem(
-                title = "Dados do Usuário",
-                icon = Icons.Default.Person,
-                onClick = {}
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            UserDataInfoComponent(
+                userName = "Julia",
+                weight = "54 kg",
+                height = "1,65 m",
+                profileImageUrl = ""
             )
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-private fun ProfileStatColumnPreview() {
-    EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ProfileStatColumn(
-                value = "128",
-                label = "Treinos"
+            ProfileOptionsMenuComponent(
+                items = listOf(
+                    ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, {}),
+                    ProfileMenuItemData("2", "Metas Pessoais", Icons.Default.Star, {})
+                )
             )
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-private fun ProfileStatsCardPreview() {
-    EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ProfileStatsCard(
-                totalWorkouts = "128",
-                records = "5",
-                goals = "3"
-            )
+            LogoutComponent(onLogoutClick = {})
         }
     }
 }

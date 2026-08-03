@@ -35,6 +35,7 @@ class ProfileViewModel(
                         name = getFirstName(userData.name),
                         birthDate = userData.birthDate,
                         weight = userData.weight,
+                        height = userData.height,
                         isLoading = false
                     )
                 }
