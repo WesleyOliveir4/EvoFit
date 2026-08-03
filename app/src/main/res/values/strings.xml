@@ -373,6 +373,32 @@
     <string name="user_data_edit_desc">Editar campos</string>
     <string name="user_data_update_button">Atualizar informações</string>
 
+    <!-- Analytics Detail -->
+    <string name="analytics_detail_subtitle">Análise de evolução</string>
+    <string name="analytics_detail_record_max">Recorde máximo</string>
+    <string name="analytics_detail_record_distance">Recorde distância</string>
+    <string name="analytics_detail_record_time">Recorde tempo</string>
+    <string name="analytics_detail_record_reps">Recorde repetições</string>
+    <string name="analytics_detail_avg_speed">Velocidade média</string>
+    <string name="analytics_detail_total_sets">Total de séries</string>
+    <string name="analytics_detail_first_record">Primeiro registro</string>
+    <string name="analytics_detail_last_record">Último registro</string>
+
+    <string name="analytics_chart_tab_load">Carga</string>
+    <string name="analytics_chart_tab_volume">Volume</string>
+    <string name="analytics_chart_tab_distance">Distância</string>
+    <string name="analytics_chart_tab_speed">Velocidade</string>
+    <string name="analytics_chart_average_label">Média • %1$s</string>
+    <string name="analytics_chart_empty_history">Nenhum registro</string>
+
+    <string name="analytics_unit_kg">kg</string>
+    <string name="analytics_unit_vol">vol</string>
+    <string name="analytics_unit_km">km</string>
+    <string name="analytics_unit_kmh">km/h</string>
+    <string name="analytics_unit_reps">reps</string>
+    <string name="analytics_unit_hours_format">%1$dh %2$02dm</string>
+    <string name="analytics_unit_minutes_format">%1$dm</string>
+
     <!-- Personal Goals Screen -->
     <string name="profile_goals_title">Metas Pessoais</string>
     <string name="profile_goals_subtitle">Suas metas a serem atingidas!</string>

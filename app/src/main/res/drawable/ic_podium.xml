@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="32dp"
+    android:viewportWidth="24"
+    android:viewportHeight="28">
+    <!-- Bloco 2º Lugar -->
+    <path
+        android:pathData="M4,13h5v7h-5z"
+        android:strokeColor="@color/black"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"/>
+    <!-- Bloco 1º Lugar -->
+    <path
+        android:pathData="M9.5,10h5v10h-5z"
+        android:strokeColor="@color/black"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"/>
+    <!-- Bloco 3º Lugar -->
+    <path
+        android:pathData="M15,14h5v6h-5z"
+        android:strokeColor="@color/black"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"/>
+</vector>

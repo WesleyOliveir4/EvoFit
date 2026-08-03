@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.coil.compose)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.credentials)

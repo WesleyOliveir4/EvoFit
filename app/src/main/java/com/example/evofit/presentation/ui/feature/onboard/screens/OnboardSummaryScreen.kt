@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.dp
@@ -159,20 +160,20 @@ fun OnboardSummaryContent(
                     )
 
                     SummaryRow(
-                        icon = Icons.Default.Favorite,
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_balance),
                         label = stringResource(R.string.onboarding_summary_label_weight),
                         value = stringResource(R.string.onboarding_summary_value_weight, userData.weight)
                     )
 
                     SummaryRow(
-                        icon = Icons.Default.Straighten,
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_ruller),
                         label = stringResource(R.string.onboarding_summary_label_height),
                         value = stringResource(R.string.onboarding_summary_value_height, userData.height)
                     )
 
                     if (userData.goals.isNotEmpty()) {
                         SummaryRow(
-                            icon = Icons.Default.Star,
+                            icon = ImageVector.vectorResource(id = R.drawable.ic_medal),
                             label = stringResource(R.string.onboarding_summary_label_goals),
                             value = "${userData.goals.size}"
                         )

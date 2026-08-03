@@ -36,6 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.theme.Dimens
@@ -97,7 +99,7 @@ fun MetricStatCard(
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraExtraSmall)) {
                 Text(
                     text = value,
-                    color = displayColor,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
@@ -145,13 +147,13 @@ fun EvoExerciseChart(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val primaryTabLabel = when (unit) {
-                        MeasurementUnit.WEIGHT -> "Carga"
-                        MeasurementUnit.DISTANCE -> "Distância"
+                        MeasurementUnit.WEIGHT -> stringResource(R.string.analytics_chart_tab_load)
+                        MeasurementUnit.DISTANCE -> stringResource(R.string.analytics_chart_tab_distance)
                         else -> ""
                     }
                     val secondaryTabLabel = when (unit) {
-                        MeasurementUnit.WEIGHT -> "Volume"
-                        MeasurementUnit.DISTANCE -> "Velocidade"
+                        MeasurementUnit.WEIGHT -> stringResource(R.string.analytics_chart_tab_volume)
+                        MeasurementUnit.DISTANCE -> stringResource(R.string.analytics_chart_tab_speed)
                         else -> ""
                     }
 
@@ -190,7 +192,11 @@ fun EvoExerciseChart(
             val selectedPoint = if (selectedIndex in points.indices) points[selectedIndex] else null
             
             Text(
-                text = if (selectedPoint != null) "Média • ${selectedPoint.label}" else "Nenhum registro",
+                text = if (selectedPoint != null) {
+                    stringResource(R.string.analytics_chart_average_label, selectedPoint.label)
+                } else {
+                    stringResource(R.string.analytics_chart_empty_history)
+                },
                 color = theme.secondary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -204,8 +210,11 @@ fun EvoExerciseChart(
                         val totalMinutes = selectedPoint?.value ?: 0f
                         val hours = (totalMinutes / 60).toInt()
                         val minutes = (totalMinutes % 60).toInt()
-                        if (hours > 0) String.format(locale, "%dh %02dm", hours, minutes)
-                        else String.format(locale, "%dm", minutes)
+                        if (hours > 0) {
+                            stringResource(R.string.analytics_unit_hours_format, hours, minutes)
+                        } else {
+                            stringResource(R.string.analytics_unit_minutes_format, minutes)
+                        }
                     }
                     else -> {
                         if (isCargaSelected || unit == MeasurementUnit.REPS) {
@@ -218,21 +227,21 @@ fun EvoExerciseChart(
 
                 Text(
                     text = formattedValue,
-                    color = activeColor,
+                    color = theme.onSurface,
                     style = MaterialTheme.typography.displayLarge.copy(fontSize = 36.sp)
                 )
 
                 val unitLabel = when (unit) {
-                    MeasurementUnit.WEIGHT -> if (isCargaSelected) "kg" else "vol"
-                    MeasurementUnit.DISTANCE -> if (isCargaSelected) "km" else "km/h"
+                    MeasurementUnit.WEIGHT -> if (isCargaSelected) stringResource(R.string.analytics_unit_kg) else stringResource(R.string.analytics_unit_vol)
+                    MeasurementUnit.DISTANCE -> if (isCargaSelected) stringResource(R.string.analytics_unit_km) else stringResource(R.string.analytics_unit_kmh)
                     MeasurementUnit.TIME -> ""
-                    MeasurementUnit.REPS -> "reps"
+                    MeasurementUnit.REPS -> stringResource(R.string.analytics_unit_reps)
                 }
 
                 if (unitLabel.isNotEmpty()) {
                     Text(
                         text = unitLabel,
-                        color = activeColor,
+                        color = theme.onSurface,
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(bottom = Dimens.SpacingTiny)
                     )

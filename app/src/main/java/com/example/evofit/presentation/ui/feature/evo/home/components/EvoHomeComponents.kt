@@ -14,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
 import com.example.evofit.presentation.ui.theme.evoColors
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
@@ -80,7 +82,12 @@ fun StrengthGainsCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
             ) {
-                Text(text = "🏋️", style = TextStyle(fontSize = Dimens.TextSizeSmall))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_trophy),
+                    contentDescription = null,
+                    tint = MaterialTheme.evoColors.yellow,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
+                )
                 Text(
                     text = stringResource(R.string.evo_home_strength_title),
                     color = MaterialTheme.colorScheme.secondary,
@@ -125,7 +132,13 @@ fun MostEvolvedCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
             ) {
-                Text(text = "🏅", style = TextStyle(fontSize = Dimens.TextSizeSmall)) // Medalha/Selo de evolução
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_medal),
+                    contentDescription = null,
+                    tint = MaterialTheme.evoColors.green,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
+                )
+
                 Text(
                     text = stringResource(R.string.evo_home_most_evolved_title),
                     color = MaterialTheme.colorScheme.secondary,
@@ -178,7 +191,12 @@ fun WorkoutsCompletedCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
             ) {
-                Text(text = "🔥", style = TextStyle(fontSize = Dimens.TextSizeSmall))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_fire),
+                    contentDescription = null,
+                    tint = MaterialTheme.evoColors.red,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
+                )
                 Text(
                     text = stringResource(R.string.evo_home_workouts_title),
                     color = MaterialTheme.colorScheme.secondary,
@@ -196,7 +214,7 @@ fun WorkoutsCompletedCard(
                 )
                 Text(
                     text = stringResource(R.string.evo_home_workouts_completed),
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.evoColors.red,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -234,10 +252,10 @@ fun LeastTrainedCard(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Info,
+                        painter = painterResource(id = R.drawable.ic_alert),
                         contentDescription = null,
                         tint = MaterialTheme.evoColors.orange,
-                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny) // ~14.dp
+                        modifier = Modifier.size(Dimens.IconSizeSmall)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_least_trained_title),
@@ -293,10 +311,10 @@ fun KmPerWeekCard(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Place,
+                        painter = painterResource(id = R.drawable.ic_person_running),
                         contentDescription = null,
                         tint = MaterialTheme.evoColors.blue,
-                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny)
+                        modifier = Modifier.size(Dimens.IconSizeSmall)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_km_per_week_title),
@@ -355,10 +373,10 @@ fun AverageWorkoutTimeCard(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        painter = painterResource(id = R.drawable.ic_hourglass),
                         contentDescription = null,
                         tint = MaterialTheme.evoColors.green,
-                        modifier = Modifier.size(Dimens.SpacingSmall + Dimens.SpacingTiny)
+                        modifier = Modifier.size(Dimens.IconSizeSmall)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_avg_time_title),
@@ -417,7 +435,7 @@ fun ExerciseAnalyticsCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_tabler_presentation_analytics),
+                    painter = painterResource(id = R.drawable.ic_tabler_presentation_analytics),
                     contentDescription = null,
                     tint = MaterialTheme.evoColors.green,
                     modifier = Modifier.size(Dimens.IconSizeLarge)

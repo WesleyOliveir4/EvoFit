@@ -59,7 +59,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -263,84 +262,105 @@ fun EvoFitAlertDialog(
             dismissOnClickOutside = false
         )
     ) {
-        Card(
+        EvoFitAlertDialogContent(
+            title = title,
+            description = description,
+            confirmButtonText = confirmButtonText,
+            dismissButtonText = dismissButtonText,
+            icon = icon,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+}
+
+@Composable
+fun EvoFitAlertDialogContent(
+    title: String,
+    description: String,
+    confirmButtonText: String,
+    dismissButtonText: String? = null,
+    icon: ImageVector = Icons.Default.Cancel,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.SpacingMedium),
+        shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens.SpacingMedium),
-            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .padding(Dimens.SpacingLarge),
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
+            Box(
+                modifier = Modifier
+                    .size(Dimens.MinimumTouchTarget)
+                    .background(MaterialTheme.colorScheme.errorContainer, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(Dimens.IconSizeDefault)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
+
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+            Text(
+                text = description,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
+
+            Button(
+                onClick = onConfirm,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens.SpacingLarge),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.MinimumTouchTarget)
-                        .background(MaterialTheme.colorScheme.errorContainer, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(Dimens.IconSizeDefault)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
-
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    .height(Dimens.MinimumTouchTarget),
+                shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
                 )
+            ) {
+                Text(
+                    text = confirmButtonText,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
 
+            if (dismissButtonText != null) {
                 Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-                Text(
-                    text = description,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
-
-                Button(
-                    onClick = onConfirm,
+                TextButton(
+                    onClick = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Dimens.MinimumTouchTarget),
-                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    )
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                 ) {
                     Text(
-                        text = confirmButtonText,
+                        text = dismissButtonText,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                }
-
-                if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-
-                    TextButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.MinimumTouchTarget),
-                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
-                    ) {
-                        Text(
-                            text = dismissButtonText,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
                 }
             }
         }
@@ -363,84 +383,103 @@ fun EvoFitCautionDialog(
             dismissOnClickOutside = false
         )
     ) {
-        Card(
+        EvoFitCautionDialogContent(
+            title = title,
+            description = description,
+            confirmButtonText = confirmButtonText,
+            dismissButtonText = dismissButtonText,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+}
+
+@Composable
+fun EvoFitCautionDialogContent(
+    title: String,
+    description: String,
+    confirmButtonText: String,
+    dismissButtonText: String? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.SpacingMedium),
+        shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens.SpacingMedium),
-            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .padding(Dimens.SpacingLarge),
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
+            Box(
+                modifier = Modifier
+                    .size(Dimens.MinimumTouchTarget)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(Dimens.IconSizeDefault)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
+
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+            Text(
+                text = description,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
+
+            Button(
+                onClick = onConfirm,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens.SpacingLarge),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.MinimumTouchTarget)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(Dimens.IconSizeDefault)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
-
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    .height(Dimens.MinimumTouchTarget),
+                shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary
                 )
+            ) {
+                Text(
+                    text = confirmButtonText,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
 
+            if (dismissButtonText != null) {
                 Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-                Text(
-                    text = description,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
-
-                Button(
-                    onClick = onConfirm,
+                TextButton(
+                    onClick = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Dimens.MinimumTouchTarget),
-                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
-                    )
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                 ) {
                     Text(
-                        text = confirmButtonText,
+                        text = dismissButtonText,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                }
-
-                if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-
-                    TextButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.MinimumTouchTarget),
-                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
-                    ) {
-                        Text(
-                            text = dismissButtonText,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
                 }
             }
         }
@@ -464,84 +503,105 @@ fun EvoFitActionDialog(
             dismissOnClickOutside = false
         )
     ) {
-        Card(
+        EvoFitActionDialogContent(
+            title = title,
+            description = description,
+            confirmButtonText = confirmButtonText,
+            dismissButtonText = dismissButtonText,
+            icon = icon,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+}
+
+@Composable
+fun EvoFitActionDialogContent(
+    title: String,
+    description: String,
+    confirmButtonText: String,
+    dismissButtonText: String? = null,
+    icon: ImageVector = Icons.Outlined.CheckCircle,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.SpacingMedium),
+        shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens.SpacingMedium),
-            shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .padding(Dimens.SpacingLarge),
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
+            Box(
+                modifier = Modifier
+                    .size(Dimens.MinimumTouchTarget)
+                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(Dimens.IconSizeDefault)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
+
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+            Text(
+                text = description,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
+
+            Button(
+                onClick = onConfirm,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens.SpacingLarge),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.MinimumTouchTarget)
-                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(Dimens.IconSizeDefault)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
-
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineSmall
+                    .height(Dimens.MinimumTouchTarget),
+                shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
+            ) {
+                Text(
+                    text = confirmButtonText,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
 
+            if (dismissButtonText != null) {
                 Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-                Text(
-                    text = description,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
-
-                Button(
-                    onClick = onConfirm,
+                TextButton(
+                    onClick = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Dimens.MinimumTouchTarget),
-                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
                 ) {
                     Text(
-                        text = confirmButtonText,
+                        text = dismissButtonText,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                }
-
-                if (dismissButtonText != null) {
-                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-
-                    TextButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.MinimumTouchTarget),
-                        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
-                    ) {
-                        Text(
-                            text = dismissButtonText,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
                 }
             }
         }
@@ -563,14 +623,16 @@ private fun AppBottomNavigationPreview() {
 @Composable
 private fun EvoFitConfirmationDialogPreview() {
     EvoFitTheme {
-        EvoFitAlertDialog(
-            title = "Excluir treino?",
-            description = "Costas predio e seus 3 exercícios serão apagados. Essa ação não pode ser desfeita.",
-            confirmButtonText = "Excluir treino",
-            dismissButtonText = "Cancelar",
-            onConfirm = {},
-            onDismiss = {}
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            EvoFitAlertDialogContent(
+                title = "Excluir treino?",
+                description = "Costas predio e seus 3 exercícios serão apagados. Essa ação não pode ser desfeita.",
+                confirmButtonText = "Excluir treino",
+                dismissButtonText = "Cancelar",
+                onConfirm = {},
+                onDismiss = {}
+            )
+        }
     }
 }
 
@@ -578,12 +640,14 @@ private fun EvoFitConfirmationDialogPreview() {
 @Composable
 private fun EvoFitConfirmationDialogNoDismissPreview() {
     EvoFitTheme {
-        EvoFitAlertDialog(
-            title = "Ação Obrigatória",
-            description = "Você precisa confirmar esta ação para continuar.",
-            confirmButtonText = "Entendido",
-            onConfirm = {}
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            EvoFitAlertDialogContent(
+                title = "Ação Obrigatória",
+                description = "Você precisa confirmar esta ação para continuar.",
+                confirmButtonText = "Entendido",
+                onConfirm = {}
+            )
+        }
     }
 }
 
@@ -591,14 +655,16 @@ private fun EvoFitConfirmationDialogNoDismissPreview() {
 @Composable
 private fun EvoFitConfirmationActionDialogPreview() {
     EvoFitTheme {
-        EvoFitActionDialog(
-            title = "Concluir treino?",
-            description = "Seu progresso será salvo e você poderá ver as estatísticas depois.",
-            confirmButtonText = "Concluir",
-            dismissButtonText = "Continuar treinando",
-            onConfirm = {},
-            onDismiss = {}
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            EvoFitActionDialogContent(
+                title = "Concluir treino?",
+                description = "Seu progresso será salvo e você poderá ver as estatísticas depois.",
+                confirmButtonText = "Concluir",
+                dismissButtonText = "Continuar treinando",
+                onConfirm = {},
+                onDismiss = {}
+            )
+        }
     }
 }
 
@@ -606,14 +672,54 @@ private fun EvoFitConfirmationActionDialogPreview() {
 @Composable
 private fun EvoFitCautionDialogPreview() {
     EvoFitTheme {
-        EvoFitCautionDialog(
-            title = "Atenção!",
-            description = "Você está prestes a sair sem salvar. Algumas alterações podem ser perdidas.",
-            confirmButtonText = "Salvar e Sair",
-            dismissButtonText = "Cancelar",
-            onConfirm = {},
-            onDismiss = {}
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            EvoFitCautionDialogContent(
+                title = "Atenção!",
+                description = "Você está prestes a sair sem salvar. Algumas alterações podem ser perdidas.",
+                confirmButtonText = "Salvar e Sair",
+                dismissButtonText = "Cancelar",
+                onConfirm = {},
+                onDismiss = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun DialogsGalleryPreview() {
+    EvoFitTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Dimens.SpacingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingLarge),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Galeria de Diálogos", color = Color.White, style = MaterialTheme.typography.titleMedium)
+            
+            EvoFitAlertDialogContent(
+                title = "Diálogo de Alerta (Erro)",
+                description = "Este é o estilo usado para ações críticas.",
+                confirmButtonText = "Confirmar",
+                dismissButtonText = "Cancelar",
+                onConfirm = {}
+            )
+
+            EvoFitCautionDialogContent(
+                title = "Diálogo de Cuidado",
+                description = "Este é o estilo usado para avisos importantes.",
+                confirmButtonText = "Entendi",
+                onConfirm = {}
+            )
+
+            EvoFitActionDialogContent(
+                title = "Diálogo de Sucesso",
+                description = "Este é o estilo usado para conclusões positivas.",
+                confirmButtonText = "Concluir",
+                onConfirm = {}
+            )
+        }
     }
 }
 
