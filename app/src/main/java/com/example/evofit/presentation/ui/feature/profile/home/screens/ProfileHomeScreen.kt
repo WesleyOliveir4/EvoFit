@@ -1,5 +1,9 @@
 package com.example.evofit.presentation.ui.feature.profile.home.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,24 +33,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
+import com.example.evofit.presentation.ui.feature.profile.home.components.ImageSourcePickerBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.home.components.LogoutComponent
 import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItemData
 import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileOptionsMenuComponent
+import com.example.evofit.presentation.ui.feature.profile.home.components.ProfilePhotoExpandedDialog
 import com.example.evofit.presentation.ui.feature.profile.home.components.UserDataInfoComponent
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 @Composable
 fun ProfileHomeScreen(
@@ -57,7 +66,28 @@ fun ProfileHomeScreen(
     onLogoutSuccess: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var isPhotoExpanded by remember { mutableStateOf(false) }
+    var showImageSourcePicker by remember { mutableStateOf(false) }
+
+    // Gerenciamento de URI para a Câmera
+    var tempPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let { viewModel.updateProfilePicture(it.toString()) }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempPhotoUri?.let { viewModel.updateProfilePicture(it.toString()) }
+        }
+    }
 
     LaunchedEffect(uiState.isLoggedOut) {
         if (uiState.isLoggedOut) {
@@ -69,12 +99,49 @@ fun ProfileHomeScreen(
         userName = uiState.name,
         userWeight = uiState.weight,
         userHeight = uiState.height.ifEmpty { "--" },
-        profileImageUrl = "", // Placeholder
+        profileImageUrl = uiState.profilePictureUri ?: "",
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick,
-        onLogoutClick = { showLogoutDialog = true }
+        onLogoutClick = { showLogoutDialog = true },
+        onImageClick = { isPhotoExpanded = true }
     )
+
+    // Diálogo de Foto Expandida
+    if (isPhotoExpanded) {
+        ProfilePhotoExpandedDialog(
+            profileImageUrl = uiState.profilePictureUri ?: "",
+            onDismiss = { isPhotoExpanded = false },
+            onEditClick = {
+                isPhotoExpanded = false
+                showImageSourcePicker = true
+            }
+        )
+    }
+
+    // Bottom Sheet de Seleção de Fonte
+    if (showImageSourcePicker) {
+        ImageSourcePickerBottomSheet(
+            onDismiss = { showImageSourcePicker = false },
+            onGalleryClick = {
+                galleryLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
+            onCameraClick = {
+                val file = File(context.cacheDir, "images/profile_temp.jpg").apply {
+                    parentFile?.mkdirs()
+                }
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+                tempPhotoUri = uri
+                cameraLauncher.launch(uri)
+            }
+        )
+    }
 
     if (showLogoutDialog) {
         EvoFitActionDialog(
@@ -102,7 +169,8 @@ fun ProfileHomeScreenContent(
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onImageClick: () -> Unit
 ) {
     // Lista de itens do menu
     val menuItems = remember {
@@ -157,7 +225,8 @@ fun ProfileHomeScreenContent(
                 userName = userName,
                 weight = "$userWeight kg",
                 height = "$userHeight m",
-                profileImageUrl = profileImageUrl
+                profileImageUrl = profileImageUrl,
+                onImageClick = onImageClick
             )
 
             // 2. Bloco de Opções do Menu
@@ -187,7 +256,8 @@ private fun ProfileHomeScreenPreview() {
             onNavigate = {},
             onUserDataClick = {},
             onGoalsClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onImageClick = {}
         )
     }
 }

@@ -1,5 +1,7 @@
 package com.example.evofit.data.repository
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
@@ -18,13 +20,15 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingRepositoryImpl(
     private val userDataSource: UserLocalDataSource,
     private val userRemoteDataSource: UserRemoteDataSource,
     private val workoutLocalDataSource: WorkoutLocalDataSource,
-    private val workoutRemoteDataSource: WorkoutRemoteDataSource
+    private val workoutRemoteDataSource: WorkoutRemoteDataSource,
+    private val context: Context
 ) : OnboardingRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -99,6 +103,17 @@ class OnboardingRepositoryImpl(
         }
     }
 
+    override suspend fun deleteProfilePicture(uri: String) {
+        try {
+            val file = File(context.filesDir, "profile/profile_photo.jpg")
+            if (file.exists()) {
+                file.delete()
+            }
+        } catch (e: Exception) {
+            Log.e("OnboardingRepo", "Erro ao deletar foto de perfil", e)
+        }
+    }
+
     override fun isOnboardingCompleted(): Flow<Boolean> {
         return userDataSource.getUser().map { it?.onboardingCompleted ?: false }
     }
@@ -118,13 +133,17 @@ class OnboardingRepositoryImpl(
             val remoteNewHistory = workoutRemoteDataSource.getAllWorkoutDoneHistory(userId)
 
             // 3. UPDATE LOCAL ATOMICALLY: Nuke/Clear + Save
+            if (shouldClearActiveSession) {
+                nukeUserData() // Isso agora limpa as fotos de perfil locais também
+            }
+
             userDataSource.syncAllData(
                 user = remoteUser,
                 goals = remoteGoals,
                 workouts = remoteWorkouts,
                 legacyHistory = remoteLegacyHistory,
                 newHistory = remoteNewHistory.map { it.toEntity() },
-                shouldClearActiveSession = shouldClearActiveSession
+                shouldClearActiveSession = false // Já limpamos acima
             )
 
             Result.success(Unit)
@@ -161,5 +180,14 @@ class OnboardingRepositoryImpl(
 
     override suspend fun nukeUserData() {
         userDataSource.nukeUserData()
+        // Limpar fotos de perfil locais (Privacidade/LGPD)
+        try {
+            val profileDir = File(context.filesDir, "profile")
+            if (profileDir.exists()) {
+                profileDir.deleteRecursively()
+            }
+        } catch (e: Exception) {
+            Log.e("OnboardingRepo", "Erro ao limpar fotos de perfil no nuke", e)
+        }
     }
 }

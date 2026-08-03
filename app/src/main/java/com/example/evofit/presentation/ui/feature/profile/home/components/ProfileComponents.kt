@@ -18,27 +18,41 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
@@ -59,6 +73,7 @@ fun UserDataInfoComponent(
     weight: String,
     height: String,
     profileImageUrl: String,
+    onImageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -131,22 +146,161 @@ fun UserDataInfoComponent(
         }
 
         // Foto de perfil circular sobreposta com borda verde
-        // Nota: Placeholder usado pois Coil não está disponível
         Box(
             modifier = Modifier
                 .size(88.dp)
                 .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 .padding(4.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clickable { onImageClick() },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Foto de perfil",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxSize(0.6f)
+            if (profileImageUrl.isNotEmpty()) {
+                AsyncImage(
+                    model = profileImageUrl,
+                    contentDescription = "Foto de perfil",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Foto de perfil",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxSize(0.6f)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Diálogo para exibição da foto de perfil expandida
+ */
+@Composable
+fun ProfilePhotoExpandedDialog(
+    profileImageUrl: String,
+    onDismiss: () -> Unit,
+    onEditClick: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            // Imagem Centralizada
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimens.SpacingLarge),
+                contentAlignment = Alignment.Center
+            ) {
+                if (profileImageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = profileImageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(200.dp)
+                    )
+                }
+            }
+
+            // Barra Superior de Ações
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 48.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Fechar",
+                        tint = Color.White
+                    )
+                }
+
+                IconButton(onClick = onEditClick) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar foto",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * BottomSheet para escolha da fonte da imagem (Câmera ou Galeria)
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ImageSourcePickerBottomSheet(
+    onDismiss: () -> Unit,
+    onCameraClick: () -> Unit,
+    onGalleryClick: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = null
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.SpacingLarge)
+        ) {
+            Text(
+                text = "Foto de Perfil",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = Dimens.SpacingMedium)
             )
+
+            ListItem(
+                headlineContent = { Text("Câmera") },
+                leadingContent = {
+                    Icon(Icons.Default.PhotoCamera, contentDescription = null)
+                },
+                modifier = Modifier.clickable { 
+                    onCameraClick()
+                    onDismiss()
+                }
+            )
+
+            ListItem(
+                headlineContent = { Text("Galeria") },
+                leadingContent = {
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = null)
+                },
+                modifier = Modifier.clickable { 
+                    onGalleryClick()
+                    onDismiss()
+                }
+            )
+            
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
         }
     }
 }
@@ -334,7 +488,8 @@ private fun ProfileComponentsPreview() {
                 userName = "Julia",
                 weight = "54 kg",
                 height = "1,65 m",
-                profileImageUrl = ""
+                profileImageUrl = "",
+                onImageClick = {}
             )
 
             ProfileOptionsMenuComponent(

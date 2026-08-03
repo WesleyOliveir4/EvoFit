@@ -7,6 +7,7 @@ import com.example.evofit.domain.usecase.IsOnboardingCompletedUseCase
 import com.example.evofit.domain.usecase.LoginUseCase
 import com.example.evofit.domain.usecase.LoginWithGoogleUseCase
 import com.example.evofit.domain.usecase.LoginWithAppleUseCase
+import com.example.evofit.domain.usecase.NukeUserDataUseCase
 import com.example.evofit.domain.usecase.SyncUserDataUseCase
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ class LoginViewModel(
     private val loginWithAppleUseCase: LoginWithAppleUseCase,
     private val isOnboardingCompletedUseCase: IsOnboardingCompletedUseCase,
     private val authRepository: AuthRepository,
-    private val syncUserDataUseCase: SyncUserDataUseCase
+    private val syncUserDataUseCase: SyncUserDataUseCase,
+    private val nukeUserDataUseCase: NukeUserDataUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -93,6 +95,7 @@ class LoginViewModel(
     private suspend fun handleLoginSuccess() {
         val userId = authRepository.getCurrentUserId()
         if (userId != null) {
+            nukeUserDataUseCase()
             syncUserDataUseCase(userId, shouldClearActiveSession = true, isOnline = true)
         }
         val onboardingCompleted = isOnboardingCompletedUseCase().first()

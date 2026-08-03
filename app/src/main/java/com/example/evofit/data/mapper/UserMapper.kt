@@ -14,6 +14,7 @@ fun UserOnboardingData.toEntity(userId: String = UUID.randomUUID().toString()): 
         birthDate = birthDate,
         weight = weight,
         height = height,
+        profilePictureUri = profilePictureUri,
         onboardingCompleted = false,
         updatedAt = System.currentTimeMillis()
     )
@@ -63,6 +64,7 @@ fun mapToDomain(user: UserEntity, goals: List<UserGoalEntity>): UserOnboardingDa
         birthDate = user.birthDate,
         weight = user.weight,
         height = user.height,
+        profilePictureUri = user.profilePictureUri,
         goals = goals.map { it.toDomain() }
     )
 }

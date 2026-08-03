@@ -5,6 +5,7 @@ data class UserOnboardingData(
     val birthDate: String = "",
     val weight: String = "",
     val height: String = "",
+    val profilePictureUri: String? = null,
     val goals: List<UserGoal> = emptyList()
 ) {
     companion object {

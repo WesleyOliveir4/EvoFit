@@ -3,6 +3,7 @@ package com.example.evofit.data.local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 
 @Entity(tableName = "users")
@@ -23,6 +24,9 @@ data class UserEntity(
 
     @get:PropertyName("height") @set:PropertyName("height") @PropertyName("height")
     var height: String = "",
+
+    @Exclude
+    var profilePictureUri: String? = null,
     
     @get:PropertyName("onboardingCompleted")
     @set:PropertyName("onboardingCompleted")

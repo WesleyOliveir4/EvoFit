@@ -159,7 +159,7 @@ val dataModule = module {
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), androidContext()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
@@ -341,14 +341,14 @@ val evoModule = module {
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { UserDataViewModel(get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {
     viewModel { RegisterViewModel(get(), get()) }
-    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get()) }
     viewModel { VerifyCodeViewModel(get(), get()) }
     viewModel { NewPasswordViewModel(get()) }
