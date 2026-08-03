@@ -35,6 +35,7 @@ interface WorkoutLocalDataSource {
     // New Workout History
     fun getLatestWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDoneEntity>>
     fun getAllWorkoutDoneHistory(userId: String): Flow<List<WorkoutDoneEntity>>
+    fun getWorkoutsSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDoneEntity>>
     suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity)
     suspend fun deleteAllWorkoutDone(userId: String)
 
@@ -82,6 +83,9 @@ class WorkoutLocalDataSourceImpl(
 
     override fun getAllWorkoutDoneHistory(userId: String) = 
         userDao.getAllWorkoutDoneHistory(userId)
+
+    override fun getWorkoutsSince(userId: String, sinceTimestamp: Long) = 
+        userDao.getWorkoutsSince(userId, sinceTimestamp)
 
     override suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity) = 
         userDao.insertWorkoutDone(workoutDone)

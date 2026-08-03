@@ -13,6 +13,7 @@ interface WorkoutRepository {
     suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone)
     fun getWorkoutDoneHistory(userId: String): Flow<List<WorkoutDone>>
     fun getWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDone>>
+    fun getWorkoutDoneSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDone>>
     suspend fun updateWorkoutsOrder(workouts: List<Workout>)
     suspend fun getMaxOrderIndex(userId: String): Int
 }

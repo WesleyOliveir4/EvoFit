@@ -6,6 +6,7 @@ import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.GetWorkoutsSinceUseCase
 import com.example.evofit.domain.usecase.GetWorkoutsUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.GetCurrentWeekRangeUseCase
@@ -44,6 +45,7 @@ class WorkoutViewModel(
     private val getWorkoutsUseCase: GetWorkoutsUseCase,
     private val updateWorkoutsOrderUseCase: UpdateWorkoutsOrderUseCase,
     private val getWorkoutDoneHistoryUseCase: GetWorkoutDoneHistoryUseCase,
+    private val getWorkoutsSinceUseCase: GetWorkoutsSinceUseCase,
     private val getCurrentWeekRangeUseCase: GetCurrentWeekRangeUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val connectivityObserver: ConnectivityObserver,
@@ -101,12 +103,12 @@ class WorkoutViewModel(
             if (userId.isEmpty()) {
                 flowOf(WorkoutState(userName = firstName))
             } else {
+                val startOfWeek = getCurrentWeekRangeUseCase()
                 combine(
                     getWorkoutsUseCase(userId),
-                    getWorkoutDoneHistoryUseCase(userId, 7)
-                ) { workouts, history ->
-                    val startOfWeek = getCurrentWeekRangeUseCase()
-
+                    getWorkoutDoneHistoryUseCase(userId, 50),
+                    getWorkoutsSinceUseCase(userId, startOfWeek)
+                ) { workouts, history, weeklyWorkouts ->
                     WorkoutState(
                         userName = firstName,
                         workouts = workouts.map { workout ->
@@ -118,10 +120,7 @@ class WorkoutViewModel(
                             )
                         },
                         totalWorkouts = workouts.size,
-                        workoutsThisWeek = history.count {
-                            val date = DateMapper.parseDate(it.date)
-                            date != null && date.time >= startOfWeek
-                        },
+                        workoutsThisWeek = weeklyWorkouts.size,
                         history = history.map { workoutDone ->
                             WorkoutHistoryUIModel(
                                 id = workoutDone.id,

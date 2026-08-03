@@ -180,6 +180,7 @@ val domainModule = module {
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
+    factory<GetWorkoutsSinceUseCase> { GetWorkoutsSinceUseCaseImpl(get()) }
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
     factory<SaveWorkoutDoneUseCase> { SaveWorkoutDoneUseCaseImpl(get()) }
@@ -260,6 +261,7 @@ val homeModule = module {
 val workoutModule = module {
     viewModel {
         WorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),

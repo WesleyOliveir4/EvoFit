@@ -195,6 +195,9 @@ interface UserDao {
     @Query("SELECT * FROM workout_done WHERE userId = :userId ORDER BY createdAt DESC")
     fun getAllWorkoutDoneHistory(userId: String): Flow<List<WorkoutDoneEntity>>
 
+    @Query("SELECT * FROM workout_done WHERE userId = :userId AND createdAt >= :sinceTimestamp ORDER BY createdAt DESC")
+    fun getWorkoutsSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDoneEntity>>
+
     @Query("DELETE FROM workout_done WHERE userId = :userId")
     suspend fun deleteAllWorkoutDone(userId: String)
 
