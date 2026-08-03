@@ -10,31 +10,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun NewPasswordHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 24.dp),
+            .padding(top = Dimens.SpacingLarge),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
             text = stringResource(id = R.string.new_password_title),
-            color = TextPrimary,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Black
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineLarge
         )
         Text(
             text = stringResource(id = R.string.new_password_subtitle),
-            color = TextSecondary,
-            fontSize = 16.sp,
-            lineHeight = 22.sp
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
@@ -51,25 +49,24 @@ fun NewPasswordFooter(
         enabled = enabled && !isLoading,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(Dimens.ButtonHeightPrimary),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppGreen,
-            contentColor = Color.Black,
-            disabledContainerColor = AppGreen.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
-                color = Color.Black,
-                strokeWidth = 2.dp
+                modifier = Modifier.size(Dimens.IconSizeDefault),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = Dimens.SpacingExtraExtraSmall
             )
         } else {
             Text(
                 text = stringResource(id = R.string.new_password_button_save),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }

@@ -192,7 +192,7 @@
     <string name="evo_home_exercise_analysis_card_desc">Filtre por exercício e veja a evolução detalhada de carga, volume e frequência</string>
 
     <!-- Evo Analytics -->
-    <string name="evo_analytics_select_muscle_group">Selecione o grupo muscular</string>
+    <string name="evo_analytics_select_muscle_group">Grupo muscular</string>
     <string name="evo_analytics_select_exercise">Selecione um exercício</string>
     <string name="evo_analytics_back_desc">Voltar</string>
     <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>

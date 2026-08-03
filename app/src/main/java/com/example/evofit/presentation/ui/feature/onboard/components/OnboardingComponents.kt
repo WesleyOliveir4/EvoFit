@@ -47,16 +47,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.AppSurface
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
 
 data class OnboardingPage(
     val title: String,
@@ -73,7 +70,7 @@ fun EvoWheelPicker(
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val itemHeight = 60.dp
+    val itemHeight = Dimens.WheelPickerItemHeight
     val visibleItemsCount = 5
     val listState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = listState)
@@ -106,8 +103,8 @@ fun EvoWheelPicker(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(itemHeight - 8.dp)
-                .background(AppSurface, RoundedCornerShape(16.dp))
+                .height(itemHeight - Dimens.SpacingSmall)
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.CornerRadiusDefault))
         )
 
         LazyColumn(
@@ -128,17 +125,15 @@ fun EvoWheelPicker(
                 ) {
                     Text(
                         text = "${range[index]}",
-                        color = TextPrimary,
-                        fontSize = if (isSelected) 24.sp else 16.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = if (isSelected) MaterialTheme.typography.displayLarge else MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
                     Text(
                         text = unit,
-                        color = if (isSelected) TextPrimary else TextSecondary,
-                        fontSize = if (isSelected) 16.sp else 14.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary,
+                        style = if (isSelected) MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.bodySmall,
                         modifier = Modifier.alpha(if (isSelected) 1.0f else 0.4f)
                     )
                 }
@@ -155,14 +150,14 @@ fun PageIndicators(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         repeat(pageCount) { index ->
             Box(
                 modifier = Modifier
                     .size(
-                        width = if (selectedPage == index) 24.dp else 8.dp,
-                        height = 8.dp
+                        width = if (selectedPage == index) Dimens.IndicatorWidthActive else Dimens.IndicatorWidthInactive,
+                        height = Dimens.IndicatorHeight
                     )
                     .clip(CircleShape)
                     .background(
@@ -188,11 +183,10 @@ fun UserInputField(
         Text(
             text = label,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
         OutlinedTextField(
             value = value,
@@ -201,7 +195,7 @@ fun UserInputField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             ),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -226,17 +220,17 @@ fun GoalTag(
     Box(
         modifier = modifier
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
             )
             .clickable { onClick() }
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = Dimens.SpacingSmall, vertical = Dimens.SpacingExtraSmall)
     ) {
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 10.sp
+            style = TextStyle(fontSize = Dimens.TextSizeExtraExtraSmall)
         )
     }
 }
@@ -250,27 +244,26 @@ fun ActiveGoalItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
-            .padding(horizontal = 12.dp),
+            .height(Dimens.ButtonHeightPrimary)
+            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(Dimens.CornerRadiusMedium))
+            .padding(horizontal = Dimens.SpacingMediumSmall),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
             Text(
                 text = text,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
             )
         }
 
@@ -279,7 +272,7 @@ fun ActiveGoalItem(
                 imageVector = Icons.Default.Clear,
                 contentDescription = stringResource(R.string.onboarding_component_remove_goal),
                 tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(Dimens.IconSizeSmall)
             )
         }
     }
@@ -300,8 +293,8 @@ fun AddNewGoalButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .height(Dimens.ButtonHeightPrimary)
+            .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -309,25 +302,24 @@ fun AddNewGoalButton(
             drawRoundRect(
                 color = strokeColor,
                 style = stroke,
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx(), 16.dp.toPx())
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(Dimens.CornerRadiusMedium.toPx(), Dimens.CornerRadiusMedium.toPx())
             )
         }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(Dimens.IconSizeMediumSmall)
             )
             Text(
                 text = stringResource(R.string.onboarding_component_add_new_goal),
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
     }

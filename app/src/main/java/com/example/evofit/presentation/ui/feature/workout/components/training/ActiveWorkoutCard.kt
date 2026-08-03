@@ -25,12 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evofit.R
-
-
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -43,47 +41,48 @@ fun ActiveWorkoutCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             )
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f))
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(Dimens.SpacingMediumSmall)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), RoundedCornerShape(12.dp)),
+                    .size(Dimens.OnboardingIconSize / 2) // 40.dp
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), RoundedCornerShape(Dimens.SpacingMediumSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(Dimens.StatCardIconSize)
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimens.SpacingMedium))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = workoutName,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = stringResource(R.string.main_workout_active_session_resume),
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
@@ -100,7 +99,7 @@ fun ActiveWorkoutCard(
 @Composable
 private fun ActiveWorkoutCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             ActiveWorkoutCard(
                 workoutName = "Treino de Peito",
                 onClick = {}

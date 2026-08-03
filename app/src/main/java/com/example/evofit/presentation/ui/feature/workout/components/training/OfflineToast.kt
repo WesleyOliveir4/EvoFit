@@ -11,9 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -22,28 +21,27 @@ fun OfflineToast(
 ) {
     Surface(
         color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.95f),
-        shape = RoundedCornerShape(12.dp),
-        shadowElevation = 4.dp,
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall),
+        shadowElevation = Dimens.SpacingExtraSmall,
         modifier = modifier
-            .padding(16.dp)
+            .padding(Dimens.SpacingMedium)
             .fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = Dimens.SpacingMedium, vertical = Dimens.SpacingMediumSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             Icon(
                 imageVector = Icons.Default.CloudOff,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(Dimens.IconSizeDefault)
             )
             Text(
                 text = stringResource(R.string.main_workout_offline_sync_warning),
                 color = MaterialTheme.colorScheme.onErrorContainer,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
             )
         }
     }

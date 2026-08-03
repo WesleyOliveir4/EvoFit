@@ -19,8 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
@@ -29,6 +27,8 @@ import com.example.evofit.presentation.model.WorkoutDetailPreview
 import com.example.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
 import com.example.evofit.presentation.ui.feature.workout.startworkout.components.HeaderIndicatorCard
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -136,24 +136,10 @@ fun WorkoutPreviewContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = preview.title,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.workout_preview_back_desc),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
+            TopBarReturn(
+                title = preview.title,
+                onBackClick = onBackClick,
+                isCenterAligned = false,
                 actions = {
                     IconButton(onClick = onEditClick) {
                         Icon(
@@ -169,8 +155,7 @@ fun WorkoutPreviewContent(
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                }
             )
         },
         bottomBar = {
@@ -178,25 +163,24 @@ fun WorkoutPreviewContent(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(16.dp)
+                    .padding(Dimens.ScreenPaddingHorizontal)
             ) {
                 Button(
                     onClick = onStartWorkoutClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(Dimens.ButtonHeightPrimary),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
                     ) {
                         Text(
                             text = stringResource(R.string.workout_preview_start_training),
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
@@ -207,14 +191,14 @@ fun WorkoutPreviewContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             item {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     HeaderIndicatorCard(
                         modifier = Modifier.weight(1f),
@@ -228,7 +212,7 @@ fun WorkoutPreviewContent(
                         label = stringResource(R.string.workout_preview_sets)
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
             }
 
             preview.groupedExercises.forEach { (groupName, exercises) ->
@@ -249,7 +233,7 @@ fun WorkoutPreviewContent(
             }
             
             item {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
             }
         }
     }

@@ -27,12 +27,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -47,31 +47,31 @@ fun WorkoutDoneItem(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             )
             .clickable { isExpanded = !isExpanded },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(Dimens.SpacingMediumSmall)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = workoutDone.name,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "${workoutDone.date} • ${workoutDone.time}",
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Icon(
@@ -82,13 +82,13 @@ fun WorkoutDoneItem(
             }
 
             if (isExpanded) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
                 workoutDone.exercises.forEachIndexed { index, exerciseItem ->
                     ExercisePreviewCard(
                         index = index + 1,
                         item = exerciseItem
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                 }
             }
         }
@@ -99,7 +99,7 @@ fun WorkoutDoneItem(
 @Composable
 private fun WorkoutDoneItemPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutDoneItem(
                 workoutDone = WorkoutHistoryUIModel(
                     id = "1",
@@ -134,7 +134,7 @@ private fun WorkoutDoneItemPreview() {
 @Composable
 private fun WorkoutDoneItemExpandedPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutDoneItem(
                 initiallyExpanded = true,
                 workoutDone = WorkoutHistoryUIModel(

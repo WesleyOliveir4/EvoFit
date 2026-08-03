@@ -32,15 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evofit.presentation.model.ExerciseSelectionUIModel
-import com.example.evofit.presentation.model.MuscleGroupItem
-
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.evofit.presentation.model.ExerciseSelectionUIModel
+import com.example.evofit.presentation.model.MuscleGroupItem
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
@@ -72,49 +70,48 @@ fun MuscleGroupCard(
             .border(
                 width = borderWidth,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             )
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(Dimens.CornerRadiusDefault))
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingMediumSmall)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+                        .size(Dimens.SpacingExtraExtraLarge)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = item.temporaryIcon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Dimens.IconSizeDefault)
                     )
                 }
 
                 Text(
                     text = item.name,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
 
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(Dimens.IconSizeDefault)
                     .background(
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                         shape = CircleShape
@@ -129,14 +126,14 @@ fun MuscleGroupCard(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(16.dp)
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(Dimens.SpacingMedium)
                     )
                 }
                 if (!isSelected) {
                     Box(
                         modifier = Modifier
-                            .size(20.dp)
+                            .size(Dimens.IconSizeSmall)
                             .background(MaterialTheme.colorScheme.surface, CircleShape)
                     )
                 }
@@ -174,23 +171,23 @@ fun ExerciseRowItem(
             .border(
                 width = borderWidth,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             )
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(Dimens.CornerRadiusDefault))
             .clickable { onCheckedChange(!isSelected) },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 20.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingLarge)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(Dimens.IconSizeDefault)
                     .background(
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                         shape = CircleShape
@@ -205,14 +202,14 @@ fun ExerciseRowItem(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(16.dp)
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(Dimens.SpacingMedium)
                     )
                 }
                 if (!isSelected) {
                     Box(
                         modifier = Modifier
-                            .size(20.dp)
+                            .size(Dimens.IconSizeSmall)
                             .background(MaterialTheme.colorScheme.surface, CircleShape)
                     )
                 }
@@ -221,8 +218,7 @@ fun ExerciseRowItem(
             Text(
                 text = item.name,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -242,21 +238,21 @@ fun ExercisePageSegmentedIndicator(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+            .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
     ) {
         for (i in 0 until totalCount) {
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(4.dp)
+                    .height(Dimens.SpacingExtraSmall)
                     .background(
                         color = if (i <= currentIndex) {
                             MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.surfaceVariant
                         },
-                        shape = RoundedCornerShape(2.dp)
+                        shape = RoundedCornerShape(Dimens.SpacingExtraExtraSmall)
                     )
             )
         }
@@ -268,8 +264,8 @@ fun ExercisePageSegmentedIndicator(
 private fun ExerciseSelectionComponentsPreview() {
     EvoFitTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(Dimens.SpacingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             MuscleGroupCard(
                 item = MuscleGroupItem("1", "Peito", Icons.Default.FitnessCenter),

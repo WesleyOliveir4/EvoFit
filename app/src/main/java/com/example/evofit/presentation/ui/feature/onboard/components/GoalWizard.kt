@@ -24,9 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.R
 import com.example.evofit.domain.model.*
@@ -196,9 +195,9 @@ fun GoalWizardBottomSheet(
         sheetState = sheetState,
         dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)) },
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        tonalElevation = 8.dp,
+        tonalElevation = Dimens.SpacingSmall,
         scrimColor = Color.Black.copy(alpha = 0.5f),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        shape = RoundedCornerShape(topStart = Dimens.SpacingLarge, topEnd = Dimens.SpacingLarge)
     ) {
         GoalWizardContent(
             state = state,
@@ -227,15 +226,15 @@ fun GoalWizardContent(
         HorizontalDivider(color = MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
 
         Column(
-            modifier = Modifier.padding(24.dp).weight(1f)
+            modifier = Modifier.padding(Dimens.SpacingLarge).weight(1f)
         ) {
             WizardTopBar(onBack = { onAction(GoalAction.Back) }, onClose = onClose, showBack = state.currentStep != GoalWizardStep.GOAL_TYPE)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
             WizardProgress(state.currentStep)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
 
             AnimatedContent(
                 targetState = state.currentStep,
@@ -273,7 +272,7 @@ fun GoalWizardContent(
             }
         }
         
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
     }
 }
 
@@ -292,13 +291,12 @@ fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
                 fontWeight = FontWeight.SemiBold
             )
         } else {
-            Spacer(modifier = Modifier.width(40.dp))
+            Spacer(modifier = Modifier.width(Dimens.SpacingExtraExtraLarge))
         }
 
         Text(
             text = stringResource(R.string.goal_dialog_title_new),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -324,26 +322,26 @@ fun WizardProgress(currentStep: GoalWizardStep) {
             val isCompleted = index < currentStep.ordinal
             val isCurrent = index == currentStep.ordinal
 
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isCompleted || isCurrent) MaterialTheme.colorScheme.primary 
-                        else MaterialTheme.colorScheme.surface
-                    )
-                    .border(
-                        width = if (isCurrent) 2.dp else 0.dp,
-                        color = if (isCurrent) MaterialTheme.colorScheme.onBackground else Color.Transparent,
-                        shape = CircleShape
-                    )
+        Box(
+            modifier = Modifier
+                .size(Dimens.SpacingMediumSmall)
+                .clip(CircleShape)
+                .background(
+                    if (isCompleted || isCurrent) MaterialTheme.colorScheme.primary 
+                    else MaterialTheme.colorScheme.surface
+                )
+                .border(
+                    width = if (isCurrent) Dimens.SpacingExtraExtraSmall else Dimens.SpacingNone,
+                    color = if (isCurrent) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                    shape = CircleShape
+                )
             )
 
             if (index < steps.size - 1) {
                 Box(
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(2.dp)
+                        .width(Dimens.SpacingExtraExtraLarge)
+                        .height(Dimens.SpacingExtraExtraSmall)
                         .background(
                             if (isCompleted) MaterialTheme.colorScheme.primary 
                             else MaterialTheme.colorScheme.surface
@@ -363,20 +361,23 @@ fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
         stringResource(R.string.goal_category_muscle_gain)
     )
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
             text = stringResource(R.string.goal_dialog_choose_type),
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodySmall
         )
         categories.forEach { category ->
             Button(
                 onClick = { onAction(GoalAction.SelectCategory(category)) },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.fillMaxWidth().height(Dimens.ButtonHeightPrimary),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ) {
-                Text(category, color = MaterialTheme.colorScheme.background, fontWeight = FontWeight.Medium)
+                Text(category, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
             }
         }
     }
@@ -384,28 +385,28 @@ fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
 
 @Composable
 fun MuscleGroupStep(muscleGroups: List<MuscleGroup>, onAction: (GoalAction) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
             text = stringResource(R.string.goal_step_muscle_group),
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodySmall
         )
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.heightIn(max = 300.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall),
+            modifier = Modifier.heightIn(max = Dimens.PreviewHeightLarge)
         ) {
             items(muscleGroups) { group ->
-                Surface(
+                    Surface(
                     onClick = { onAction(GoalAction.SelectMuscle(group)) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(
                         text = group.name,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.background,
-                        fontWeight = FontWeight.Medium
+                        modifier = Modifier.padding(Dimens.SpacingMedium),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
                     )
                 }
             }
@@ -420,11 +421,11 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
         else exercises.filter { it.name.contains(search, ignoreCase = true) }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
             text = stringResource(R.string.goal_step_exercise),
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodySmall
         )
 
         OutlinedTextField(
@@ -433,7 +434,7 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(R.string.goal_search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -443,21 +444,21 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
         )
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.heightIn(max = 250.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall),
+            modifier = Modifier.heightIn(max = Dimens.OnboardingLogoSize + Dimens.AuthLogoSizeOnboarding) // Custom max height or use constants
         ) {
             items(filtered) { exercise ->
-                Surface(
+                    Surface(
                     onClick = { onAction(GoalAction.SelectExercise(exercise)) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(
                         text = exercise.name,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.background,
-                        fontWeight = FontWeight.Medium
+                        modifier = Modifier.padding(Dimens.SpacingMedium),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
                     )
                 }
             }
@@ -481,11 +482,11 @@ fun GoalValueStep(selectedExercise: Exercise?, value: String, onAction: (GoalAct
         else -> stringResource(R.string.goal_unit_kg)
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)) {
         Text(
             text = label,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 14.sp
+            style = MaterialTheme.typography.bodySmall
         )
 
         OutlinedTextField(
@@ -494,7 +495,7 @@ fun GoalValueStep(selectedExercise: Exercise?, value: String, onAction: (GoalAct
             modifier = Modifier.fillMaxWidth(),
             suffix = { Text(suffix) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
             colors = OutlinedTextFieldDefaults.colors(
@@ -507,12 +508,12 @@ fun GoalValueStep(selectedExercise: Exercise?, value: String, onAction: (GoalAct
         Button(
             onClick = { onAction(GoalAction.Confirm) },
             enabled = value.isNotBlank(),
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(16.dp)
+            modifier = Modifier.fillMaxWidth().height(Dimens.ButtonHeightPrimary),
+            shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
         ) {
             Icon(Icons.Default.Check, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.onboarding_button_continue))
+            Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
+            Text(stringResource(R.string.onboarding_button_continue), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
         }
     }
 }
@@ -594,7 +595,7 @@ fun GoalWizardGoalValuePreview() {
 @Composable
 fun WizardProgressPreview() {
     EvoFitTheme {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(modifier = Modifier.padding(Dimens.SpacingMedium), verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)) {
             WizardProgress(GoalWizardStep.GOAL_TYPE)
             WizardProgress(GoalWizardStep.MUSCLE_GROUP)
             WizardProgress(GoalWizardStep.EXERCISE)

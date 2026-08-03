@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.evo.analytics.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,16 +9,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.IconContainerBg
 
 data class MuscleGroup(
     val name: String,
@@ -31,30 +30,41 @@ fun MuscleGroupCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val containerColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface,
+        label = "containerColor"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+        label = "contentColor"
+    )
+    val iconColor by animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        label = "iconColor"
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(130.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .height(Dimens.EvoCardHeightLarge)
+            .clip(RoundedCornerShape(Dimens.CornerRadiusCard))
             .clickable { onClick() }
             .then(
                 if (isSelected) {
                     Modifier.border(
-                        width = 1.dp,
+                        width = Dimens.BorderWidthThin,
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(Dimens.CornerRadiusCard)
                     )
                 } else Modifier
             ),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) IconContainerBg else MaterialTheme.colorScheme.surface
-        )
+        shape = RoundedCornerShape(Dimens.CornerRadiusCard),
+        colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Dimens.SpacingMedium),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -62,17 +72,16 @@ fun MuscleGroupCard(
                 Icon(
                     imageVector = group.icon,
                     contentDescription = null,
-                    tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(32.dp)
+                    tint = iconColor,
+                    modifier = Modifier.size(Dimens.StatCardIconSize)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
             }
 
             Text(
                 text = group.name,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                color = contentColor,
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }
@@ -83,8 +92,8 @@ fun MuscleGroupCard(
 private fun MuscleGroupCardPreview() {
     EvoFitTheme {
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(Dimens.SpacingMedium),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             MuscleGroupCard(
                 group = MuscleGroup("Costas", Icons.Default.Refresh),

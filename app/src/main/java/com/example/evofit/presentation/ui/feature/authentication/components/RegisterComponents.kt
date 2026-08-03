@@ -11,32 +11,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.theme.*
+import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun RegisterHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 64.dp),
+            .padding(top = Dimens.SpacingExtraLargePlus),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
             text = stringResource(id = R.string.register_title),
-            color = TextPrimary,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Black,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displayLarge,
             letterSpacing = 0.5.sp
         )
         Text(
             text = stringResource(id = R.string.register_subtitle),
-            color = TextSecondary,
-            fontSize = 16.sp,
-            lineHeight = 22.sp
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
@@ -64,37 +62,35 @@ fun TermsCheckboxRow(
             onCheckedChange = onCheckedChange,
             enabled = enabled,
             colors = CheckboxDefaults.colors(
-                checkedColor = AppGreen,
-                uncheckedColor = TextSecondary,
-                checkmarkColor = Color.Black
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.secondary,
+                checkmarkColor = MaterialTheme.colorScheme.onPrimary
             )
         )
         FlowRow(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall)
         ) {
             Text(
                 text = stringResource(id = R.string.register_terms_agree_prefix),
-                color = TextSecondary,
-                fontSize = 13.sp
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.labelSmall
             )
             Text(
                 text = stringResource(id = R.string.register_terms_of_use),
-                color = AppGreen,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable(enabled = enabled) { onTermsOfUseClick() }
             )
             Text(
                 text = stringResource(id = R.string.register_terms_and),
-                color = TextSecondary,
-                fontSize = 13.sp
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.labelSmall
             )
             Text(
                 text = stringResource(id = R.string.register_privacy_policy),
-                color = AppGreen,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable(enabled = enabled) { onPrivacyPolicyClick() }
             )
         }
@@ -112,53 +108,51 @@ fun RegisterFooter(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 32.dp),
+            .padding(bottom = Dimens.SpacingExtraLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SpacingLarge)
     ) {
         Button(
             onClick = onRegisterClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(Dimens.ButtonHeightPrimary),
             enabled = enabled && !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppGreen,
-                contentColor = Color.Black,
-                disabledContainerColor = AppGreen.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = Color.Black,
-                    strokeWidth = 2.dp
+                    modifier = Modifier.size(Dimens.IconSizeDefault),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = Dimens.SpacingExtraExtraSmall
                 )
             } else {
                 Text(
                     text = stringResource(id = R.string.register_button_confirm),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
         }
 
         Row(
-            modifier = Modifier.padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(bottom = Dimens.SpacingSmall),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(id = R.string.register_already_have_account),
-                color = TextSecondary,
-                fontSize = 14.sp
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = stringResource(id = R.string.register_login),
-                color = AppGreen,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable { onLoginClick() }
             )
         }

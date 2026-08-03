@@ -38,26 +38,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.model.ActiveSessionUIModel
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.workout.components.training.ActiveWorkoutCard
-import com.example.evofit.presentation.ui.feature.workout.components.training.HeaderSection
-import com.example.evofit.presentation.ui.feature.workout.components.training.OfflineToast
-import com.example.evofit.presentation.ui.feature.workout.components.training.StatCard
-import com.example.evofit.presentation.ui.feature.workout.components.training.WorkoutDoneItem
-import com.example.evofit.presentation.ui.feature.workout.components.training.WorkoutEmptyState
-import com.example.evofit.presentation.ui.feature.workout.components.training.WorkoutSegmentedControl
-import com.example.evofit.presentation.ui.feature.workout.components.training.draggableWorkoutList
-import com.example.evofit.presentation.ui.feature.workout.components.training.rememberWorkoutDraggableListState
+import com.example.evofit.presentation.ui.feature.workout.components.training.*
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -143,14 +135,14 @@ fun WorkoutContent(
             FloatingActionButton(
                 onClick = onAddWorkoutClick,
                 containerColor = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.size(64.dp)
+                shape = RoundedCornerShape(Dimens.SpacingMedium),
+                modifier = Modifier.size(Dimens.FabSizeDefault)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.main_workout_new_workout_desc),
-                    tint = Color.Black,
-                    modifier = Modifier.size(32.dp)
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(Dimens.StatCardIconSize)
                 )
             }
         },
@@ -166,19 +158,19 @@ fun WorkoutContent(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
                     HeaderSection(userName = userName)
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
                 }
 
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                     ) {
                         StatCard(
                             modifier = Modifier.weight(1f),
@@ -193,7 +185,7 @@ fun WorkoutContent(
                             icon = ImageVector.vectorResource(id = R.drawable.ic_fire)
                         )
                     }
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
                 }
 
                 if (activeSession != null) {
@@ -201,16 +193,14 @@ fun WorkoutContent(
                         Text(
                             text = stringResource(R.string.main_workout_active_session_title),
                             color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                         ActiveWorkoutCard(
                             workoutName = activeSession.workoutName,
                             onClick = { onActiveSessionClick(activeSession) }
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
                     }
                 }
 
@@ -223,7 +213,7 @@ fun WorkoutContent(
                         selectedIndex = selectedTabIndex,
                         onOptionSelected = { selectedTabIndex = it }
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                 }
 
                 if (selectedTabIndex == 0) {
@@ -256,7 +246,7 @@ fun WorkoutContent(
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(100.dp)) }
+                item { Spacer(modifier = Modifier.height(Dimens.TopAppBarHeightSmall + Dimens.SectionSpacing)) }
             }
 
             AnimatedVisibility(

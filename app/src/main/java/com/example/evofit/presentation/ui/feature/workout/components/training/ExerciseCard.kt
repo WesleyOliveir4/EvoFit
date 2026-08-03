@@ -23,12 +23,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExercisePreviewItem
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -43,11 +43,11 @@ fun MuscleGroupPreviewCard(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -55,21 +55,22 @@ fun MuscleGroupPreviewCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onExpandClick() }
-                    .padding(16.dp),
+                    .padding(Dimens.SpacingMedium),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = groupName.uppercase(),
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = stringResource(R.string.workout_preview_exercises_count, exercises.size),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
 
@@ -89,8 +90,8 @@ fun MuscleGroupPreviewCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(start = Dimens.SpacingMedium, end = Dimens.SpacingMedium, bottom = Dimens.SpacingMedium),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
                 ) {
                     exercises.forEachIndexed { index, exercise ->
                         ExercisePreviewCard(index = index + 1, item = exercise)
@@ -109,31 +110,30 @@ fun ExercisePreviewCard(
     Card(
         modifier = Modifier.fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(Dimens.SpacingMediumSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(Dimens.SpacingExtraExtraLarge)
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "$index",
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
 
@@ -143,8 +143,9 @@ fun ExercisePreviewCard(
                 Text(
                     text = item.name,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 val detailText = when (item.unit) {
                     MeasurementUnit.WEIGHT -> {
@@ -169,7 +170,7 @@ fun ExercisePreviewCard(
                         detailText
                     ),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
@@ -180,7 +181,7 @@ fun ExercisePreviewCard(
 @Composable
 private fun ExercisePreviewCardPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             ExercisePreviewCard(
                 index = 1,
                 item = ExercisePreviewItem(

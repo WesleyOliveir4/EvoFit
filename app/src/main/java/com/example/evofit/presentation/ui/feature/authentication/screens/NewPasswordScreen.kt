@@ -2,26 +2,19 @@ package com.example.evofit.presentation.ui.feature.authentication.screens
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -29,8 +22,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.NewPasswordFooter
@@ -38,9 +29,8 @@ import com.example.evofit.presentation.ui.feature.authentication.components.NewP
 import com.example.evofit.presentation.ui.feature.authentication.state.NewPasswordUiState
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.NewPasswordViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.theme.AppDarkBg
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
-import com.example.evofit.presentation.ui.theme.TextSecondary
 import org.koin.androidx.compose.koinViewModel
 
 private const val MIN_PASSWORD_LENGTH = 6
@@ -103,26 +93,43 @@ fun NewPasswordContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier,
-        containerColor = AppDarkBg,
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
                 onBackClick = onBackClick
             )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                contentAlignment = Alignment.Center
+            ) {
+                NewPasswordFooter(
+                    onSaveClick = onSaveClick,
+                    enabled = canSubmit,
+                    isLoading = uiState.isLoading
+                )
+            }
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier.fillMaxSize().systemBarsPadding()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start
         ) {
             Column {
                 NewPasswordHeader()
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
 
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)) {
                     LoginInputField(
                         value = uiState.password,
                         onValueChange = onPasswordChange,
@@ -137,7 +144,7 @@ fun NewPasswordContent(
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
                                     },
-                                    tint = TextSecondary
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         },
@@ -150,7 +157,7 @@ fun NewPasswordContent(
                         Text(
                             text = stringResource(id = R.string.new_password_error_too_short),
                             color = MaterialTheme.colorScheme.error,
-                            fontSize = 13.sp
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
 
@@ -168,7 +175,7 @@ fun NewPasswordContent(
                                     } else {
                                         stringResource(id = R.string.login_content_desc_show_password)
                                     },
-                                    tint = TextSecondary
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         },
@@ -181,18 +188,13 @@ fun NewPasswordContent(
                         Text(
                             text = stringResource(id = R.string.new_password_error_mismatch),
                             color = MaterialTheme.colorScheme.error,
-                            fontSize = 13.sp
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
             }
-
-            NewPasswordFooter(
-                onSaveClick = onSaveClick,
-                enabled = canSubmit,
-                isLoading = uiState.isLoading,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+            
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }

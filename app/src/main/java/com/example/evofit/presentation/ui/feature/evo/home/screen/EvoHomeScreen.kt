@@ -26,23 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitDropdownFilter
-import com.example.evofit.presentation.ui.feature.evo.home.components.AverageWorkoutTimeCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.ExerciseAnalyticsCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.KmPerWeekCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.LeastTrainedCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.MostEvolvedCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.StrengthGainsCard
-import com.example.evofit.presentation.ui.feature.evo.home.components.StrengthProgressRow
-import com.example.evofit.presentation.ui.feature.evo.home.components.WorkoutsCompletedCard
+import com.example.evofit.presentation.ui.feature.evo.home.components.*
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,25 +61,36 @@ fun EvoHomeContent(
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
+        bottomBar = {
+            AppBottomNavigation(
+                currentRoute = NavRoutes.Evo.route,
+                onNavigate = onNavigate
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+        ) {
+            val periods = EvoPeriod.entries
+            val periodNames = periods.map { stringResource(it.displayNameRes) }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                ,
+                    .padding(top = Dimens.SpacingMedium, bottom = Dimens.SpacingSmall),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(R.string.evo_home_title),
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Black
+                    style = MaterialTheme.typography.displayLarge
                 )
-
-                val periods = EvoPeriod.entries
-                val periodNames = periods.map { stringResource(it.displayNameRes) }
 
                 EvoFitDropdownFilter(
                     selectedOption = stringResource(uiState.selectedPeriod.displayNameRes),
@@ -100,22 +103,6 @@ fun EvoHomeContent(
                     }
                 )
             }
-        },
-        bottomBar = {
-            AppBottomNavigation(
-                currentRoute = NavRoutes.Evo.route,
-                onNavigate = onNavigate
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
             
             StrengthGainsCard {
                 val gains = uiState.strengthGains
@@ -123,8 +110,8 @@ fun EvoHomeContent(
                     Text(
                         text = stringResource(R.string.evo_home_insufficient_data),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(vertical = Dimens.SpacingSmall)
                     )
                 } else {
                     gains.forEachIndexed { index, gain ->
@@ -136,8 +123,8 @@ fun EvoHomeContent(
                         if (index < gains.size - 1) {
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.outlineVariant,
-                                thickness = 0.5.dp,
-                                modifier = Modifier.padding(vertical = 12.dp)
+                                thickness = Dimens.BorderWidthThin / 2,
+                                modifier = Modifier.padding(vertical = Dimens.SpacingMediumSmall)
                             )
                         }
                     }
@@ -146,7 +133,7 @@ fun EvoHomeContent(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
             ) {
                 val evolution = uiState.mostEvolvedMuscle
                 MostEvolvedCard(
@@ -179,16 +166,15 @@ fun EvoHomeContent(
             Text(
                 text = stringResource(R.string.evo_home_exercise_analysis_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp)
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = Dimens.SpacingSmall)
             )
 
             ExerciseAnalyticsCard(
                 onClick = { onNavigate(NavRoutes.MuscleGroupSelection.route) }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
         }
     }
 }

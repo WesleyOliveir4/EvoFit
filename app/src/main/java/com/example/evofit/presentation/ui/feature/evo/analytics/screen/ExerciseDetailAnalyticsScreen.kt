@@ -15,8 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
@@ -25,6 +23,8 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.components.Metri
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
@@ -51,35 +51,11 @@ fun ExerciseDetailAnalyticsContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = uiState.selectedExerciseName,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Análise de evolução",
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.evo_analytics_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                title = uiState.selectedExerciseName,
+                subtitle = "Análise de evolução",
+                onBackClick = onBackClick,
+                isCenterAligned = false
             )
         }
     ) { paddingValues ->
@@ -87,16 +63,16 @@ fun ExerciseDetailAnalyticsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     MetricStatCard(
                         title = when (uiState.unit) {
@@ -129,7 +105,7 @@ fun ExerciseDetailAnalyticsContent(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     MetricStatCard(
                         title = "Primeiro registro",
@@ -153,7 +129,7 @@ fun ExerciseDetailAnalyticsContent(
                 onTabChanged = { isCargaSelected = it }
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.ScreenPaddingHorizontal))
         }
     }
 }

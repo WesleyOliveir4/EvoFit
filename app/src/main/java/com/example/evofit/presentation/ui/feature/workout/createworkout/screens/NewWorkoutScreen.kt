@@ -43,13 +43,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.model.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.configure.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -114,27 +114,10 @@ fun NewWorkoutContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_workout_title),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.new_workout_back_desc),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            TopBarReturn(
+                title = stringResource(R.string.new_workout_title),
+                onBackClick = onBackClick,
+                isCenterAligned = false
             )
         },
         bottomBar = {
@@ -142,25 +125,26 @@ fun NewWorkoutContent(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(16.dp)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingMedium)
             ) {
                 Button(
                     onClick = onContinueClick,
                     enabled = isButtonEnabled && !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(Dimens.ButtonHeightPrimary),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContentColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     Text(
                         text = stringResource(R.string.select_exercises_title), // "Selecionar exercícios"
-                        color = if (isButtonEnabled) Color.Black else MaterialTheme.colorScheme.secondary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
@@ -180,18 +164,18 @@ fun NewWorkoutContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
                     Text(
                         text = "Selecione os grupos musculares para seu treino",
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                 }
 
                 items(muscleGroups, key = { it.id }) { item ->
@@ -202,7 +186,7 @@ fun NewWorkoutContent(
                     )
                 }
 
-                item { Spacer(modifier = Modifier.height(24.dp)) }
+                item { Spacer(modifier = Modifier.height(Dimens.SpacingLarge)) }
             }
         }
     }

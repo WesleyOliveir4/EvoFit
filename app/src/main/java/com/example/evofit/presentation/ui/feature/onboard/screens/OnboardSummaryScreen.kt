@@ -2,8 +2,10 @@ package com.example.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -26,6 +28,7 @@ import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,10 +65,31 @@ fun OnboardSummaryContent(
     onBack: () -> Unit
 ) {
     Scaffold(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         topBar = {
             TopBarReturn(
                 onBackClick = onBack
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = Dimens.SpacingExtraLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PageIndicators(
+                    pageCount = totalPages,
+                    selectedPage = currentPage,
+                    modifier = Modifier.padding(bottom = Dimens.SpacingMedium)
+                )
+
+                EvoFitButton(
+                    text = stringResource(R.string.onboarding_summary_button_start_training),
+                    onClick = onStartTraining
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -73,9 +97,9 @@ fun OnboardSummaryContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier
@@ -89,36 +113,36 @@ fun OnboardSummaryContent(
                     Text(
                         text = stringResource(R.string.onboarding_summary_title),
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.headlineLarge
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
                     Text(
                         text = stringResource(R.string.onboarding_summary_description),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 16.sp
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                shape = RoundedCornerShape(14.dp),
+                    .padding(horizontal = Dimens.SpacingSmall),
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                        .padding(Dimens.SpacingLarge),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     Text(
                         text = stringResource(R.string.onboarding_summary_label_summary),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         letterSpacing = 1.sp
                     )
 
@@ -156,24 +180,7 @@ fun OnboardSummaryContent(
                 }
             }
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-
-                PageIndicators(
-                    pageCount = totalPages,
-                    selectedPage = currentPage,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                EvoFitButton(
-                    text = stringResource(R.string.onboarding_summary_button_start_training),
-                    onClick = onStartTraining
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-            }
+            Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
     }
 }
@@ -187,11 +194,11 @@ fun SummaryRow(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(Dimens.MinimumTouchTarget)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
@@ -199,7 +206,7 @@ fun SummaryRow(
                 imageVector = icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(Dimens.IconSizeDefault)
             )
         }
 
@@ -207,13 +214,12 @@ fun SummaryRow(
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = 14.sp
+                style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = value,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleSmall
             )
         }
     }

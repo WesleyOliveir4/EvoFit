@@ -21,12 +21,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.model.WorkoutUIModel
-
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import androidx.compose.material.icons.filled.FitnessCenter
 
@@ -47,7 +46,7 @@ fun WorkoutListItem(
     val currentOnDragEnd by rememberUpdatedState(onDragEnd)
     val currentOnDragCancel by rememberUpdatedState(onDragCancel)
 
-    val animatedElevation by animateDpAsState(if (isDragging) 12.dp else 0.dp, label = "elevation")
+    val animatedElevation by animateDpAsState(if (isDragging) Dimens.SpacingMediumSmall else Dimens.SpacingNone, label = "elevation")
     val animatedScale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
 
     Card(
@@ -58,54 +57,55 @@ fun WorkoutListItem(
                 scaleX = animatedScale
                 scaleY = animatedScale
                 shadowElevation = animatedElevation.toPx()
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
                 clip = true
             }
             .border(
-                width = 1.dp,
+                width = Dimens.BorderWidthThin,
                 color = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             )
             .clickable(enabled = !isDragging) { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(Dimens.SpacingMediumSmall)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+                    .size(Dimens.OnboardingIconSize / 2) // Roughly 40.dp
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.FitnessCenter,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(Dimens.StatCardIconSize)
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimens.SpacingMedium))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = workout.title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 val exercisesStr = stringResource(R.string.main_workout_exercise_count, workout.exercises)
                 val seriesStr = stringResource(R.string.main_workout_series_count, workout.series)
                 Text(
                     text = stringResource(R.string.main_workout_exercise_series_format, exercisesStr, seriesStr),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
@@ -114,7 +114,7 @@ fun WorkoutListItem(
                 contentDescription = stringResource(R.string.main_workout_drag_handle_desc),
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(Dimens.IconSizeDefault)
                     .pointerInput(workout.id) {
                         detectDragGesturesAfterLongPress(
                             onDragStart = { currentOnDragStart() },
@@ -128,7 +128,7 @@ fun WorkoutListItem(
                     }
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
@@ -143,7 +143,7 @@ fun WorkoutListItem(
 @Composable
 private fun WorkoutListItemPreview() {
     EvoFitTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
             WorkoutListItem(
                 workout = WorkoutUIModel(
                     id = "1",

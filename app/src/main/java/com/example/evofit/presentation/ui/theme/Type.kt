@@ -6,29 +6,76 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
+/**
+ * Material 3 Typography configuration for EvoFit, using centralized dimensions from [Dimens].
+ */
 val Typography = Typography(
+    // Large Titles (Welcome screens)
+    displayLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Black,
+        fontSize = Dimens.TextSizeDisplay,
+        lineHeight = 38.sp
+    ),
+    
+    // Main Screen Titles
+    headlineLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = Dimens.TextSizeHeadlineLarge,
+        lineHeight = 32.sp
+    ),
+
+    // Intermediate Titles
+    headlineMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Black,
+        fontSize = Dimens.TextSizeHeadlineMedium,
+        lineHeight = 30.sp
+    ),
+
+    // Dialog & Small Section Titles
+    headlineSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = Dimens.TextSizeHeadlineSmall
+    ),
+
+    // Logos & Highlights
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = Dimens.TextSizeExtraLarge
+    ),
+
+    // Standard Body Text (Inputs, Buttons)
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = Dimens.TextSizeMedium,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
+    ),
+
+    // Secondary Body Text (Subtitles)
+    bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        fontSize = Dimens.TextSizeMediumSmall,
+        lineHeight = 21.sp
     ),
+
+    // Small Text (Footers, Descriptions)
+    bodySmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = Dimens.TextSizeSmall
+    ),
+
+    // Tiny Text (Secondary Info)
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = Dimens.TextSizeExtraSmall
     )
-    */
 )

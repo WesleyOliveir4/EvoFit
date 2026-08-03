@@ -5,38 +5,100 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+
+@Immutable
+data class EvoCustomColors(
+    val orange: Color,
+    val blue: Color,
+    val green: Color,
+    val purple: Color
+)
+
+val LocalEvoCustomColors = staticCompositionLocalOf {
+    EvoCustomColors(
+        orange = Color.Unspecified,
+        blue = Color.Unspecified,
+        green = Color.Unspecified,
+        purple = Color.Unspecified
+    )
+}
+
+val MaterialTheme.evoColors: EvoCustomColors
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalEvoCustomColors.current
 
 private val DarkColorScheme = darkColorScheme(
     primary = AppGreen,
-    secondary = TextSecondary,
-    tertiary = AppSurfaceVariant,
-    background = AppDarkBg,
-    surface = AppSurface,
-    surfaceVariant = AppSurfaceVariant,
-    outline = TextDisabled,
-    outlineVariant = InputBorder,
     onPrimary = Color.Black,
+    primaryContainer = IconContainerBg,
+    onPrimaryContainer = AppGreen,
+    
+    secondary = TextSecondary,
     onSecondary = Color.White,
+    secondaryContainer = WelcomeBoxBg,
+    onSecondaryContainer = AppGreen,
+    
+    tertiary = EvoWarningYellow,
+    onTertiary = Color.Black,
+    tertiaryContainer = EvoIconBgYellow,
+    onTertiaryContainer = EvoWarningYellow,
+    
+    background = AppDarkBg,
     onBackground = TextPrimary,
+    
+    surface = AppSurface,
     onSurface = TextPrimary,
-    onSurfaceVariant = TextTertiary
+    
+    surfaceVariant = AppSurfaceVariant,
+    onSurfaceVariant = TextTertiary,
+    
+    error = EvoDestructiveRed,
+    onError = Color.Black,
+    errorContainer = EvoIconBgRed,
+    onErrorContainer = EvoDestructiveRed,
+    
+    outline = TextDisabled,
+    outlineVariant = InputBorder
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = AppGreen,
-    secondary = TextSecondary,
-    tertiary = AppSurfaceVariant,
-    background = Color.White,
-    surface = Color(0xFFF5F5F5),
-    surfaceVariant = Color(0xFFEEEEEE),
-    outline = Color.LightGray,
-    outlineVariant = Color.Gray,
     onPrimary = Color.White,
+    primaryContainer = Color(0xFFE8F5E9),
+    onPrimaryContainer = Color(0xFF2E7D32),
+    
+    secondary = Color(0xFF757575),
     onSecondary = Color.Black,
+    secondaryContainer = Color(0xFFF1F8E9),
+    onSecondaryContainer = Color(0xFF33691E),
+    
+    tertiary = Color(0xFFFBC02D),
+    onTertiary = Color.Black,
+    tertiaryContainer = Color(0xFFFFF9C4),
+    onTertiaryContainer = Color(0xFFF57F17),
+    
+    background = Color.White,
     onBackground = Color.Black,
+    
+    surface = Color(0xFFF5F5F5),
     onSurface = Color.Black,
-    onSurfaceVariant = Color.Black
+    
+    surfaceVariant = Color(0xFFEEEEEE),
+    onSurfaceVariant = Color.DarkGray,
+    
+    error = Color(0xFFD32F2F),
+    onError = Color.White,
+    errorContainer = Color(0xFFFFCDD2),
+    onErrorContainer = Color(0xFFB71C1C),
+    
+    outline = Color.LightGray,
+    outlineVariant = Color.Gray
 )
 
 @Composable
@@ -49,9 +111,20 @@ fun EvoFitTheme(
         else -> DarkColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+    val evoCustomColors = EvoCustomColors(
+        orange = EvoOrange,
+        blue = EvoBlue,
+        green = EvoGreen,
+        purple = EvoPurple
     )
+
+    CompositionLocalProvider(
+        LocalEvoCustomColors provides evoCustomColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

@@ -336,7 +336,7 @@ val workoutModule = module {
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val profileModule = module {
