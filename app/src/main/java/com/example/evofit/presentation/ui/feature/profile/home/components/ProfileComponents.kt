@@ -42,10 +42,12 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,14 +55,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
+import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import com.example.evofit.presentation.ui.theme.evoColors
 
 // Estrutura de dados para os itens do menu
 data class ProfileMenuItemData(
     val id: String,
     val title: String,
     val icon: ImageVector,
+    val isEnabled: Boolean = true,
+    val isVisible: Boolean = true,
     val onClick: () -> Unit
 )
 
@@ -91,7 +97,7 @@ fun UserDataInfoComponent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 52.dp, bottom = Dimens.SpacingLarge, start = Dimens.SpacingLarge, end = Dimens.SpacingLarge),
+                    .padding(top = 52.dp, bottom = Dimens.SpacingLarge, ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Linha com as estatísticas de Peso e Altura
@@ -102,7 +108,12 @@ fun UserDataInfoComponent(
                 ) {
                     // Coluna Peso
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "🏋️", fontSize = Dimens.TextSizeLarge) 
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_balance),
+                            contentDescription = null,
+                            tint = MaterialTheme.evoColors.green,
+                            modifier = Modifier.size(Dimens.IconSizeSmall)
+                        )
                         Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
                         Text(
                             text = weight, 
@@ -127,7 +138,12 @@ fun UserDataInfoComponent(
 
                     // Coluna Altura
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "↕️", fontSize = Dimens.TextSizeLarge)
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_ruller),
+                            contentDescription = null,
+                            tint = MaterialTheme.evoColors.green,
+                            modifier = Modifier.size(Dimens.IconSizeSmall)
+                        )
                         Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
                         Text(
                             text = height, 
@@ -313,6 +329,9 @@ fun ProfileOptionsMenuComponent(
     items: List<ProfileMenuItemData>,
     modifier: Modifier = Modifier
 ) {
+    val visibleItems = items.filter { it.isVisible }
+    if (visibleItems.isEmpty()) return
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
@@ -332,15 +351,16 @@ fun ProfileOptionsMenuComponent(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                items.forEachIndexed { index, item ->
+                visibleItems.forEachIndexed { index, item ->
                     ProfileOptionRow(
                         title = item.title,
                         icon = item.icon,
+                        isEnabled = item.isEnabled,
                         onClick = item.onClick
                     )
 
                     // Divisória horizontal entre os itens (menos no último)
-                    if (index < items.size - 1) {
+                    if (index < visibleItems.size - 1) {
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outlineVariant,
                             thickness = Dimens.BorderWidthThin,
@@ -358,13 +378,17 @@ fun ProfileOptionsMenuComponent(
 private fun ProfileOptionRow(
     title: String,
     icon: ImageVector,
+    isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
+    val contentAlpha = if (isEnabled) 1f else 0.4f
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .clickable { onClick() }
+            .alpha(contentAlpha)
+            .clickable(enabled = isEnabled) { onClick() }
             .padding(horizontal = Dimens.SpacingMedium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
@@ -492,10 +516,13 @@ private fun ProfileComponentsPreview() {
                 onImageClick = {}
             )
 
+            Text("Preview de Estados (Visíveis e Ocultos)", style = MaterialTheme.typography.labelSmall)
+            
             ProfileOptionsMenuComponent(
                 items = listOf(
-                    ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, {}),
-                    ProfileMenuItemData("2", "Metas Pessoais", Icons.Default.Star, {})
+                    ProfileMenuItemData("1", "Habilitado e Visível", Icons.Default.Person, isEnabled = true, isVisible = true, {}),
+                    ProfileMenuItemData("2", "Desabilitado e Visível", Icons.Default.Star, isEnabled = false, isVisible = true, {}),
+                    ProfileMenuItemData("3", "Oculto (não aparecerá abaixo)", Icons.Default.Settings, isEnabled = false, isVisible = false, {})
                 )
             )
 

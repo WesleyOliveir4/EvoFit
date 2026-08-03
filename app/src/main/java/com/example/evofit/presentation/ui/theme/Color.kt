@@ -25,6 +25,9 @@ val EvoBlue = Color(0xFF5A9EED)
 val EvoGreen = Color(0xFF5ED961)
 val EvoPurple = Color(0xFFA855F7)
 val EvoDarkBg = Color(0xFF121212)
+val EvoRed = Color(0xFFFF453A)
+val EvoYellow = Color(0xFFFFD60A)
+
 
 // Text Colors
 val TextPrimary = Color(0xFFFFFFFF)

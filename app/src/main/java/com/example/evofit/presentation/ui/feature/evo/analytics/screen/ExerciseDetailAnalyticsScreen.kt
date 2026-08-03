@@ -12,7 +12,9 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,7 +55,7 @@ fun ExerciseDetailAnalyticsContent(
         topBar = {
             TopBarReturn(
                 title = uiState.selectedExerciseName,
-                subtitle = "Análise de evolução",
+                subtitle = stringResource(R.string.analytics_detail_subtitle),
                 onBackClick = onBackClick,
                 isCenterAligned = false
             )
@@ -76,26 +78,26 @@ fun ExerciseDetailAnalyticsContent(
                 ) {
                     MetricStatCard(
                         title = when (uiState.unit) {
-                            MeasurementUnit.WEIGHT -> "Recorde máximo"
-                            MeasurementUnit.DISTANCE -> "Recorde distância"
-                            MeasurementUnit.TIME -> "Recorde tempo"
-                            MeasurementUnit.REPS -> "Recorde repetições"
+                            MeasurementUnit.WEIGHT -> stringResource(R.string.analytics_detail_record_max)
+                            MeasurementUnit.DISTANCE -> stringResource(R.string.analytics_detail_record_distance)
+                            MeasurementUnit.TIME -> stringResource(R.string.analytics_detail_record_time)
+                            MeasurementUnit.REPS -> stringResource(R.string.analytics_detail_record_reps)
                         },
                         value = uiState.maxRecord,
-                        icon = Icons.Default.Star,
+                        icon = ImageVector.vectorResource(R.drawable.ic_trophy),
                         modifier = Modifier.weight(1f)
                     )
                     
                     if (uiState.unit == MeasurementUnit.DISTANCE && uiState.secondaryRecord != null) {
                         MetricStatCard(
-                            title = "Velocidade média",
+                            title = stringResource(R.string.analytics_detail_avg_speed),
                             value = uiState.secondaryRecord,
-                            icon = Icons.Default.Info,
+                            icon = ImageVector.vectorResource(R.drawable.ic_speed),
                             modifier = Modifier.weight(1f)
                         )
                     } else {
                         MetricStatCard(
-                            title = "Total de séries",
+                            title = stringResource(R.string.analytics_detail_total_sets),
                             value = uiState.totalSets,
                             icon = Icons.Default.Refresh,
                             modifier = Modifier.weight(1f)
@@ -108,15 +110,15 @@ fun ExerciseDetailAnalyticsContent(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     MetricStatCard(
-                        title = "Primeiro registro",
+                        title = stringResource(R.string.analytics_detail_first_record),
                         value = uiState.firstRecordDate,
                         icon = Icons.Default.DateRange,
                         modifier = Modifier.weight(1f)
                     )
                     MetricStatCard(
-                        title = "Último registro",
+                        title = stringResource(R.string.analytics_detail_last_record),
                         value = uiState.lastRecordDate,
-                        icon = Icons.Default.Info,
+                        icon = ImageVector.vectorResource(R.drawable.ic_today),
                         modifier = Modifier.weight(1f)
                     )
                 }

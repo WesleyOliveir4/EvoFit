@@ -6,7 +6,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +21,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +45,7 @@ import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
+import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialogContent
 import com.example.evofit.presentation.ui.feature.profile.home.components.ImageSourcePickerBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.home.components.LogoutComponent
 import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItemData
@@ -144,7 +145,7 @@ fun ProfileHomeScreen(
     }
 
     if (showLogoutDialog) {
-        EvoFitActionDialog(
+        EvoFitAlertDialogContent(
             title = stringResource(id = R.string.logout_dialog_title),
             description = stringResource(id = R.string.logout_dialog_message),
             confirmButtonText = stringResource(id = R.string.logout_dialog_confirm),
@@ -172,38 +173,23 @@ fun ProfileHomeScreenContent(
     onLogoutClick: () -> Unit,
     onImageClick: () -> Unit
 ) {
+    val medalIcon = ImageVector.vectorResource(id = R.drawable.ic_medal)
+
     // Lista de itens do menu
-    val menuItems = remember {
+    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon) {
         listOf(
-            ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, onUserDataClick),
-            ProfileMenuItemData("2", "Metas Pessoais", Icons.Default.Star, onGoalsClick),
-            ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, {}),
-            ProfileMenuItemData("4", "Notificações", Icons.Default.Notifications, {}),
-            ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, {}),
-            ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, {})
+            ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, isEnabled = true, isVisible = true, onUserDataClick),
+            ProfileMenuItemData("2", "Metas Pessoais", medalIcon, isEnabled = true, isVisible = true, onGoalsClick),
+            ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, isEnabled = false, isVisible = false, {}),
+            ProfileMenuItemData("4", "Notificações", Icons.Default.Notifications, isEnabled = false, isVisible = false, {}),
+            ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, isEnabled = false, isVisible = true, {}),
+            ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, isEnabled = false, isVisible = true, {})
         )
     }
 
     Scaffold(
         modifier = modifier,
         containerColor = com.example.evofit.presentation.ui.theme.AppDarkBg,
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = Dimens.SpacingLarge, vertical = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.nav_profile),
-                    color = com.example.evofit.presentation.ui.theme.TextPrimary,
-                    fontSize = Dimens.TextSizeHeadlineLarge,
-                    fontWeight = FontWeight.Black
-                )
-            }
-        },
         bottomBar = {
             AppBottomNavigation(
                 currentRoute = NavRoutes.Profile.route,
@@ -219,6 +205,15 @@ fun ProfileHomeScreenContent(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
         ) {
+            // Título Integrado ao Scroll
+            Text(
+                text = stringResource(id = R.string.nav_profile),
+                color = com.example.evofit.presentation.ui.theme.TextPrimary,
+                style = MaterialTheme.typography.displayLarge,
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(top = Dimens.SpacingMedium)
+            )
             
             // 1. Bloco de Informações do Usuário
             UserDataInfoComponent(

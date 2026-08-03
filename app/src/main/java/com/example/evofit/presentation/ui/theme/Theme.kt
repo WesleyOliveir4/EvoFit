@@ -16,7 +16,9 @@ data class EvoCustomColors(
     val orange: Color,
     val blue: Color,
     val green: Color,
-    val purple: Color
+    val purple: Color,
+    val red: Color,
+    val yellow: Color
 )
 
 val LocalEvoCustomColors = staticCompositionLocalOf {
@@ -24,7 +26,9 @@ val LocalEvoCustomColors = staticCompositionLocalOf {
         orange = Color.Unspecified,
         blue = Color.Unspecified,
         green = Color.Unspecified,
-        purple = Color.Unspecified
+        purple = Color.Unspecified,
+        red = Color.Unspecified,
+        yellow = Color.Unspecified,
     )
 }
 
@@ -115,7 +119,9 @@ fun EvoFitTheme(
         orange = EvoOrange,
         blue = EvoBlue,
         green = EvoGreen,
-        purple = EvoPurple
+        purple = EvoPurple,
+        red = EvoRed,
+        yellow = EvoYellow,
     )
 
     CompositionLocalProvider(
