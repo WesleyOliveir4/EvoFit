@@ -85,7 +85,14 @@ fun EvoWheelPicker(
     }
 
     val selectedIndex by remember {
-        derivedStateOf { listState.firstVisibleItemIndex }
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val center = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+            layoutInfo.visibleItemsInfo.minByOrNull { item ->
+                val itemCenter = item.offset + item.size / 2
+                kotlin.math.abs(itemCenter - center)
+            }?.index ?: listState.firstVisibleItemIndex
+        }
     }
 
     LaunchedEffect(selectedIndex) {

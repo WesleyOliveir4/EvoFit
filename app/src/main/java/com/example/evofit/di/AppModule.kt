@@ -180,6 +180,7 @@ val domainModule = module {
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
+    factory<GetWorkoutsSinceUseCase> { GetWorkoutsSinceUseCaseImpl(get()) }
     factory<GetWorkoutByIdUseCase> { GetWorkoutByIdUseCaseImpl(get()) }
     factory<SaveWorkoutUseCase> { SaveWorkoutUseCaseImpl(get()) }
     factory<SaveWorkoutDoneUseCase> { SaveWorkoutDoneUseCaseImpl(get()) }
@@ -269,6 +270,7 @@ val workoutModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -325,7 +327,6 @@ val workoutModule = module {
             getExercisesByIdsUseCase = get(),
             saveWorkoutDoneUseCase = get(),
             getUserIdUseCase = get(),
-            getWorkoutDoneHistoryUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),

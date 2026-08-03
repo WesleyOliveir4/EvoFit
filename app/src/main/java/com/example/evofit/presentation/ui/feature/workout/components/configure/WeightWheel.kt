@@ -45,7 +45,7 @@ fun WeightWheel(
     onWeightSelected: (Double) -> Unit,
     isExpanded: Boolean = false
 ) {
-    val weights = remember { generateSequence(0.0) { it + 2.5 }.takeWhile { it <= 250 }.toList() }
+    val weights = remember { generateSequence(0.0) { it + 1.0 }.takeWhile { it <= 250 }.toList() }
     val startIndex = remember(initialWeight) {
         val index = weights.indexOfFirst { it >= initialWeight }
         if (index != -1) index else 0
@@ -59,7 +59,14 @@ fun WeightWheel(
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val center = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+            layoutInfo.visibleItemsInfo.minByOrNull { item ->
+                val itemCenter = item.offset + item.size / 2
+                kotlin.math.abs(itemCenter - center)
+            }?.index ?: listState.firstVisibleItemIndex
+        }
             .map { weights.getOrNull(it) ?: initialWeight }
             .distinctUntilChanged()
             .collect { onWeightSelected(it) }

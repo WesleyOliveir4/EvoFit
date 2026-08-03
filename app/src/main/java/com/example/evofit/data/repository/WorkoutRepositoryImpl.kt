@@ -253,4 +253,10 @@ class WorkoutRepositoryImpl(
             }
         }
     }
+
+    override fun getWorkoutDoneSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDone>> {
+        return workoutDataSource.getWorkoutsSince(userId, sinceTimestamp).map { list ->
+            list.map { it.toDomain() }
+        }
+    }
 }

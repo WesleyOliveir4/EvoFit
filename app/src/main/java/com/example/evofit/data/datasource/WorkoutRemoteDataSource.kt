@@ -28,6 +28,7 @@ interface WorkoutRemoteDataSource {
     suspend fun saveWorkoutDone(workoutDone: WorkoutDone)
     suspend fun getLatestWorkoutDoneHistory(userId: String, limit: Int): List<WorkoutDone>
     suspend fun getAllWorkoutDoneHistory(userId: String): List<WorkoutDone>
+    suspend fun getWorkoutsSince(userId: String, sinceTimestamp: Long): List<WorkoutDone>
     suspend fun deleteOldHistorySummary(userId: String)
 }
 
@@ -166,6 +167,25 @@ class WorkoutRemoteDataSourceImpl(
                 .mapNotNull { it.toObject<WorkoutDone>() }
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao buscar todo o historico: $userId", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getWorkoutsSince(userId: String, sinceTimestamp: Long): List<WorkoutDone> {
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .collection("history")
+                .whereGreaterThanOrEqualTo("createdAt", sinceTimestamp)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+            
+            snapshot.documents
+                .filter { it.id != "summary" }
+                .mapNotNull { it.toObject<WorkoutDone>() }
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar historico por data: $userId", e)
             emptyList()
         }
     }
