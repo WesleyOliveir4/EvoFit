@@ -242,6 +242,48 @@ fun WorkoutPreviewContent(
 @Preview
 @Composable
 private fun WorkoutPreviewScreenPreview() {
+    val exercises = listOf(
+        ExercisePreviewItem(
+            workoutExerciseId = "1",
+            name = "Supino reto",
+            muscleGroupName = "Peito",
+            setsCount = 3,
+            weight = 80.0,
+            reps = 10,
+            unit = MeasurementUnit.WEIGHT
+        ),
+        ExercisePreviewItem(
+            workoutExerciseId = "2",
+            name = "Corrida",
+            muscleGroupName = "Cardio",
+            setsCount = 1,
+            weight = 0.0,
+            reps = 0,
+            unit = MeasurementUnit.DISTANCE,
+            distance = 5.0,
+            time = 25
+        ),
+        ExercisePreviewItem(
+            workoutExerciseId = "3",
+            name = "Prancha",
+            muscleGroupName = "Core",
+            setsCount = 3,
+            weight = 0.0,
+            reps = 0,
+            unit = MeasurementUnit.TIME,
+            time = 2
+        ),
+        ExercisePreviewItem(
+            workoutExerciseId = "4",
+            name = "Abdominais",
+            muscleGroupName = "Core",
+            setsCount = 3,
+            weight = 0.0,
+            reps = 20,
+            unit = MeasurementUnit.REPS
+        )
+    )
+
     EvoFitTheme {
         WorkoutPreviewContent(
             preview = WorkoutDetailPreview(
@@ -249,43 +291,8 @@ private fun WorkoutPreviewScreenPreview() {
                 muscleGroupId = "chest",
                 totalExercises = 4,
                 totalSets = 10,
-                exercises = listOf(
-                    ExercisePreviewItem(
-                        workoutExerciseId = "1",
-                        name = "Supino reto",
-                        setsCount = 3,
-                        weight = 80.0,
-                        reps = 10,
-                        unit = MeasurementUnit.WEIGHT
-                    ),
-                    ExercisePreviewItem(
-                        workoutExerciseId = "2",
-                        name = "Corrida",
-                        setsCount = 1,
-                        weight = 0.0,
-                        reps = 0,
-                        unit = MeasurementUnit.DISTANCE,
-                        distance = 5.0,
-                        time = 25
-                    ),
-                    ExercisePreviewItem(
-                        workoutExerciseId = "3",
-                        name = "Prancha",
-                        setsCount = 3,
-                        weight = 0.0,
-                        reps = 0,
-                        unit = MeasurementUnit.TIME,
-                        time = 2
-                    ),
-                    ExercisePreviewItem(
-                        workoutExerciseId = "4",
-                        name = "Abdominais",
-                        setsCount = 3,
-                        weight = 0.0,
-                        reps = 20,
-                        unit = MeasurementUnit.REPS
-                    )
-                )
+                exercises = exercises,
+                groupedExercises = exercises.groupBy { it.muscleGroupName }
             ),
             onBackClick = {},
             onStartWorkoutClick = {}

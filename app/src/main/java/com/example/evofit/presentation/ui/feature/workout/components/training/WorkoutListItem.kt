@@ -2,6 +2,7 @@ package com.example.evofit.presentation.ui.feature.workout.components.training
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,8 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,15 +83,25 @@ fun WorkoutListItem(
             Box(
                 modifier = Modifier
                     .size(Dimens.OnboardingIconSize / 2) // Roughly 40.dp
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Dimens.SpacingMediumSmall))
+                    .clip(RoundedCornerShape(Dimens.SpacingMediumSmall)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.FitnessCenter,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens.StatCardIconSize)
-                )
+                if (workout.imageRes != null) {
+                    Image(
+                        painter = painterResource(id = workout.imageRes),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.FitnessCenter,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(Dimens.StatCardIconSize)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(Dimens.SpacingMedium))
@@ -149,7 +163,8 @@ private fun WorkoutListItemPreview() {
                     id = "1",
                     title = "Treino de Peito",
                     exercises = 5,
-                    series = 15
+                    series = 15,
+                    imageRes = com.example.evofit.R.drawable.img_chest
                 ),
                 onClick = {}
             )

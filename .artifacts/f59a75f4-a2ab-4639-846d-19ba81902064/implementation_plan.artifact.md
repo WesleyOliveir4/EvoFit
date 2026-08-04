@@ -1,35 +1,36 @@
-# Remover toIcon e Unificar Uso de Imagens
+# Unificar Imagens de Grupos Musculares na WorkoutScreen
 
-Como agora existem imagens para todos os grupos musculares, a função `.toIcon()` e a propriedade `icon` no `MuscleGroupItem` tornaram-se redundantes. O objetivo é simplificar o código utilizando apenas `imageRes` (imagens `.webp`).
+O objetivo é garantir que todos os componentes da `WorkoutScreen` que representam um treino (Treinos Atuais, Sessão Ativa e Histórico) utilizem a imagem do grupo muscular correspondente. Seguindo a orientação do usuário, para treinos com múltiplos grupos, será utilizada a imagem do primeiro grupo associado.
 
-## Alterações Propostas
+## Mudanças Propostas
 
-### [Modelo de Dados]
+### [Modelos de UI]
 
-#### [MODIFY] [MuscleGroupItem.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/model/MuscleGroupItem.kt)
-- Remover a propriedade `icon: ImageVector?`.
+#### [MODIFY] [WorkoutHomeUIModels.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/model/WorkoutHomeUIModels.kt)
+- Adicionar `val imageRes: Int? = null` aos modelos `WorkoutHistoryUIModel` e `ActiveSessionUIModel`.
 
-### [Mapeamento]
+### [Mapeamento de Dados]
 
-#### [MODIFY] [MuscleGroupMapper.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/mapper/MuscleGroupMapper.kt)
-- Remover a função de extensão `MuscleGroupType.toIcon()`.
-- Atualizar `MuscleGroup.toItem()` para não tentar mapear o ícone.
+#### [MODIFY] [WorkoutViewModel.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/home/viewmodel/WorkoutViewModel.kt)
+- Atualizar o mapeamento do histórico (`history`) para preencher `imageRes` usando `workoutDone.muscleGroup?.type?.toImageRes()`.
+- Atualizar o mapeamento da sessão ativa (`activeSession`) para preencher `imageRes` usando `activeSession.workout.muscleGroup?.type?.toImageRes()`.
 
-### [UI Components]
+### [Componentes de UI]
 
-#### [MODIFY] [ExerciseSelectionComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/components/configure/ExerciseSelectionComponents.kt)
-- Atualizar `MuscleGroupCard` para remover a lógica de fallback para o ícone.
-- Atualizar o preview do componente.
+#### [MODIFY] [ActiveWorkoutCard.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/components/training/ActiveWorkoutCard.kt)
+- Adicionar parâmetro `imageRes: Int?` ao componente.
+- Substituir o ícone fixo por um componente `Image` que renderiza o `imageRes` (com fallback para o ícone de peso se nulo).
 
-#### [MODIFY] [CreateWorkoutComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/createworkout/components/CreateWorkoutComponents.kt)
-- Atualizar `ExerciseConfigHeader` para usar `imageRes` via `toImageRes()` em vez de `toIcon()`.
-- Substituir o `Icon` por um `Image` com `ContentScale.Crop`.
+#### [MODIFY] [WorkoutDoneItem.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/components/training/WorkoutDoneItem.kt)
+- Adicionar um Box de ícone/imagem similar ao do `WorkoutListItem`.
+- Renderizar a imagem do grupo muscular do histórico.
 
-#### [MODIFY] [NewWorkoutScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/createworkout/screens/NewWorkoutScreen.kt)
-- Atualizar o preview para remover a passagem do parâmetro `icon`.
+#### [MODIFY] [WorkoutScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/workout/home/screens/WorkoutScreen.kt)
+- Passar o `imageRes` para o `ActiveWorkoutCard`.
 
 ## Plano de Verificação
 
 ### Verificação Manual
-- Validar se todas as telas (Seleção de Grupos Musculares e Configuração de Exercícios) estão exibindo as imagens corretamente.
-- Garantir que o círculo de ícone no cabeçalho da configuração agora exibe a imagem do grupo muscular recortada.
+- Validar no app/preview se o card de "Sessão Ativa" exibe a imagem correta.
+- Validar se os itens do "Histórico" também exibem as imagens dos grupos musculares.
+- Confirmar que a imagem utilizada é sempre a do primeiro grupo (conforme definido no salvamento do treino).

@@ -14,6 +14,7 @@ import com.example.evofit.core.common.DateMapper
 import com.example.evofit.core.network.ConnectivityObserver
 import com.example.evofit.data.local.session.SessionManager
 import com.example.evofit.domain.usecase.SyncUserDataUseCase
+import com.example.evofit.presentation.mapper.toImageRes
 import com.example.evofit.presentation.model.ActiveSessionUIModel
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
@@ -116,7 +117,8 @@ class WorkoutViewModel(
                                 id = workout.id,
                                 title = workout.name.ifEmpty { workout.muscleGroupId },
                                 exercises = workout.exercises.size,
-                                series = workout.exercises.sumOf { it.sets.size }
+                                series = workout.exercises.sumOf { it.sets.size },
+                                imageRes = workout.muscleGroup?.type?.toImageRes()
                             )
                         },
                         totalWorkouts = workouts.size,

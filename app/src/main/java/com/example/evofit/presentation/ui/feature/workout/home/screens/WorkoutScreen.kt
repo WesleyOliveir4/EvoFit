@@ -268,12 +268,12 @@ private fun WorkoutContentPreview() {
         WorkoutContent(
             userName = "Augusto",
             workouts = listOf(
-                WorkoutUIModel("1", "Peito", 6, 18),
-                WorkoutUIModel("2", "Costas", 6, 20),
-                WorkoutUIModel("3", "Pernas", 8, 24),
-                WorkoutUIModel("4", "Ombros", 5, 15),
-                WorkoutUIModel("5", "Braços", 6, 18),
-                WorkoutUIModel("6", "Cardio", 4, 0),
+                WorkoutUIModel("1", "Peito", 6, 18, R.drawable.img_chest),
+                WorkoutUIModel("2", "Costas", 6, 20, R.drawable.img_back),
+                WorkoutUIModel("3", "Pernas", 8, 24, R.drawable.img_legs),
+                WorkoutUIModel("4", "Ombros", 5, 15, R.drawable.img_shoulder),
+                WorkoutUIModel("5", "Braços", 6, 18, R.drawable.img_arms),
+                WorkoutUIModel("6", "Cardio", 4, 0, R.drawable.img_cardio),
             ),
             totalWorkouts = 124,
             workoutsThisWeek = 3,

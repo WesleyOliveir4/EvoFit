@@ -1,7 +1,2 @@
-- [x] Remover `icon` de `MuscleGroupItem.kt`
-- [x] Limpar `MuscleGroupMapper.kt` (remover `toIcon`)
-- [x] Atualizar `ExerciseSelectionComponents.kt` (remover lógica de ícone)
-- [x] Atualizar `CreateWorkoutComponents.kt` para usar `imageRes` no cabeçalho
-- [x] Ajustar Preview em `NewWorkoutScreen.kt`
-- [x] Corrigir erro de compilação em `MuscleGroupSelectionScreen.kt`
-- [x] Atualizar `MuscleGroupSelectionComponents.kt` para usar imagens
+- [x] Atualizar `WorkoutPreviewScreenPreview` em `WorkoutPreviewScreen.kt`
+- [x] Verificar a renderização do Preview
