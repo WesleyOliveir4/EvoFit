@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,42 +12,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.model.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
+import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.workout.components.configure.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
-import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -198,13 +191,17 @@ fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
             muscleGroups = listOf(
-                MuscleGroupItem(
-                    id = "1",
-                    name = "Peito",
-                    temporaryIcon = Icons.Default.Favorite
-                )
+                MuscleGroupItem("1", "Costas", imageRes = R.drawable.img_back),
+                MuscleGroupItem("2", "Peito", imageRes = R.drawable.img_chest),
+                MuscleGroupItem("3", "Pernas", imageRes = R.drawable.img_legs),
+                MuscleGroupItem("4", "Braços", imageRes = R.drawable.img_arms),
+                MuscleGroupItem("5", "Ombros", imageRes = R.drawable.img_shoulder),
+                MuscleGroupItem("6", "Core", imageRes = R.drawable.img_abs),
+                MuscleGroupItem("7", "Cardio", imageRes = R.drawable.img_cardio),
+                MuscleGroupItem("8", "Gluteo", imageRes = R.drawable.img_gluteus),
+                MuscleGroupItem("9", "Panturrilha", imageRes = R.drawable.img_calf),
             ),
-            selectedMuscleGroupIds = setOf("1"),
+            selectedMuscleGroupIds = setOf("1", "2"),
             isLoading = false,
             onBackClick = {},
             onMuscleGroupClick = {},

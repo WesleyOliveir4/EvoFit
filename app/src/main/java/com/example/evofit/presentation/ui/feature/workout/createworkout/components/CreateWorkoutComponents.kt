@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.createworkout.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MuscleGroupType
 import com.example.evofit.domain.model.MeasurementUnit
-import com.example.evofit.presentation.mapper.toIcon
+import com.example.evofit.presentation.mapper.toImageRes
 import com.example.evofit.presentation.ui.feature.workout.components.configure.AddSetDashedButton
 import com.example.evofit.presentation.ui.feature.workout.components.configure.RepsCounterComponent
 import com.example.evofit.presentation.ui.feature.workout.components.configure.WeightWheelSelector
@@ -155,7 +159,7 @@ fun ExerciseConfigHeader(
     unit: MeasurementUnit,
     modifier: Modifier = Modifier
 ) {
-    val muscleGroupIcon = muscleGroupType?.toIcon()
+    val muscleGroupImageRes = muscleGroupType?.toImageRes()
 
     Column(modifier = modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
@@ -166,15 +170,16 @@ fun ExerciseConfigHeader(
             Box(
                 modifier = Modifier
                     .size(Dimens.MinimumTouchTarget)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                if (muscleGroupIcon != null) {
-                    Icon(
-                        imageVector = muscleGroupIcon,
+                if (muscleGroupImageRes != null) {
+                    Image(
+                        painter = painterResource(id = muscleGroupImageRes),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(Dimens.IconSizeDefault)
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }

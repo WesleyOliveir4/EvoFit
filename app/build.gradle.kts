@@ -65,6 +65,15 @@ android {
         compose = true
         resValues = true
     }
+
+    sourceSets {
+        getByName("main") {
+            res.srcDirs(
+                "src/main/res",
+                "src/main/res-musclegroup"
+            )
+        }
+    }
 }
 
 dependencies {
