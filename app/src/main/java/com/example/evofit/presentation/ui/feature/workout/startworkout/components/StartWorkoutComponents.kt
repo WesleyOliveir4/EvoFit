@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
@@ -39,6 +41,7 @@ fun ExerciseTrackingCard(
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
     onToggleSetDone: (String, Int) -> Unit,
+    onInfoClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -62,19 +65,42 @@ fun ExerciseTrackingCard(
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(Dimens.SpacingExtraExtraLarge)
-                        .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f), CircleShape),
+                    modifier = Modifier.size(Dimens.SpacingExtraExtraLarge + 4.dp), // Extra space for badge
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "${index + 1}",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(Dimens.SpacingExtraExtraLarge)
+                            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${index + 1}",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(Dimens.IconSizeSmall)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                            .clip(CircleShape)
+                            .clickable { onInfoClick(exercise.exerciseId) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Informação",
+                            tint = Color.Black,
+                            modifier = Modifier.size(Dimens.SpacingMediumSmall)
+                        )
+                    }
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
+// ...
                     Text(
                         text = exercise.name,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -375,7 +401,8 @@ fun StartWorkoutComponentsPreview() {
                     index = 0,
                     isExpanded = true,
                     onExpandClick = {},
-                    onToggleSetDone = { _, _ -> }
+                    onToggleSetDone = { _, _ -> },
+                    onInfoClick = {}
                 )
 
                 ExerciseTrackingCard(
@@ -391,7 +418,8 @@ fun StartWorkoutComponentsPreview() {
                     index = 1,
                     isExpanded = false,
                     onExpandClick = {},
-                    onToggleSetDone = { _, _ -> }
+                    onToggleSetDone = { _, _ -> },
+                    onInfoClick = {}
                 )
 
                 Text("Checkboxes", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onBackground)

@@ -1,0 +1,8 @@
+- `[x]` Criar o mapeador de imagens de exercícios (`ExerciseMapper.kt`)
+- `[x]` Atualizar o componente `ExerciseRowItem` no `ExerciseSelectionComponents.kt`
+- `[x]` Implementar o overlay de imagem na `SelectExercisesScreen.kt`
+- `[x]` Verificar as alterações e o layout
+- `[x]` Atualizar `StartWorkoutComponents.kt` com o badge "i" verde e callback `onInfoClick`
+- `[x]` Implementar estado de overlay e Dialog na `WorkoutStartScreen.kt`
+- `[x]` Propagar callback `onInfoClick` na `WorkoutStartScreen.kt`
+- `[x]` Verificar integração e visualização

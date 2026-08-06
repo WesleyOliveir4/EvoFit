@@ -2,6 +2,14 @@ package com.example.evofit.presentation.ui.feature.workout.startworkout.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.example.evofit.presentation.mapper.ExerciseMapper
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,23 +76,64 @@ fun WorkoutStartScreen(
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showImageForExerciseId by remember { mutableStateOf<String?>(null) }
 
-    BackHandler { onBackClick() }
+    BackHandler { 
+        if (showImageForExerciseId != null) {
+            showImageForExerciseId = null
+        } else {
+            onBackClick()
+        }
+    }
 
     if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
-        WorkoutStartContent(
-            uiState = uiState,
-            onToggleSetDone = { workoutExerciseId, setNumber ->
-                viewModel.toggleSetDone(workoutExerciseId, setNumber)
-            },
-            onFinishWorkoutClick = { viewModel.onFinishClick() },
-            onCancelWorkoutClick = { viewModel.onCancelWorkoutClick() },
-            onBackClick = onBackClick
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            WorkoutStartContent(
+                uiState = uiState,
+                onToggleSetDone = { workoutExerciseId, setNumber ->
+                    viewModel.toggleSetDone(workoutExerciseId, setNumber)
+                },
+                onFinishWorkoutClick = { viewModel.onFinishClick() },
+                onCancelWorkoutClick = { viewModel.onCancelWorkoutClick() },
+                onBackClick = onBackClick,
+                onInfoClick = { showImageForExerciseId = it }
+            )
+
+            showImageForExerciseId?.let { exerciseId ->
+                Dialog(
+                    onDismissRequest = { showImageForExerciseId = null },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.7f))
+                            .clickable(
+                                onClick = { showImageForExerciseId = null },
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        androidx.compose.foundation.Image(
+                            painter = painterResource(id = ExerciseMapper.toImageRes(exerciseId)),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth(0.85f)
+                                .offset(y = (-50).dp)
+                                .clip(RoundedCornerShape(Dimens.CornerRadiusLarge))
+                                .clickable(enabled = false) {},
+                            contentScale = ContentScale.FillWidth
+                        )
+                    }
+                }
+            }
+        }
+// ...
 
         if (uiState.showFinishDialog) {
             val totalExercises = uiState.exercises.size
@@ -130,7 +179,8 @@ fun WorkoutStartContent(
     onToggleSetDone: (String, Int) -> Unit,
     onFinishWorkoutClick: () -> Unit,
     onCancelWorkoutClick: () -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onInfoClick: (String) -> Unit = {}
 ) {
     val totalSets = uiState.exercises.sumOf { it.sets.size }
     val doneSets = uiState.exercises.sumOf { it.sets.count { set -> set.isDone } }
@@ -285,7 +335,8 @@ fun WorkoutStartContent(
                                 expandedWorkoutExerciseIds + exercise.workoutExerciseId
                             }
                         },
-                        onToggleSetDone = onToggleSetDone
+                        onToggleSetDone = onToggleSetDone,
+                        onInfoClick = onInfoClick
                     )
                 }
             }
@@ -324,7 +375,8 @@ private fun WorkoutStartScreenPreview() {
                 isLoading = false
             ),
             onToggleSetDone = { _, _ -> },
-            onFinishWorkoutClick = {}
+            onFinishWorkoutClick = {},
+            onInfoClick = {}
         )
     }
 }

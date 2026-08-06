@@ -169,7 +169,7 @@ fun ExerciseConfigHeader(
         ) {
             Box(
                 modifier = Modifier
-                    .size(Dimens.MinimumTouchTarget)
+                    .size(Dimens.FabSizeSmall)
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center

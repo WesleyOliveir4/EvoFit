@@ -54,6 +54,23 @@ import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.example.evofit.presentation.mapper.ExerciseMapper
+
+// ... (imports)
+
 @Composable
 fun SelectExercisesScreen(
     muscleGroupIds: List<String>,
@@ -66,34 +83,75 @@ fun SelectExercisesScreen(
     val uiState by viewModel.uiState.collectAsState()
     val currentGroupId = uiState.muscleGroupIds.getOrNull(uiState.currentGroupIndex) ?: ""
     val selectedIdsForCurrentGroup = uiState.allSelectedExerciseIds[currentGroupId] ?: emptySet()
+    
+    var showImageForExerciseId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(muscleGroupIds, editWorkoutId) {
         viewModel.loadInitialData(muscleGroupIds, editWorkoutId)
     }
 
-    BackHandler { viewModel.onBackPressed(onBackToGroupSelection = onBackClick) }
+    BackHandler { 
+        if (showImageForExerciseId != null) {
+            showImageForExerciseId = null
+        } else {
+            viewModel.onBackPressed(onBackToGroupSelection = onBackClick)
+        }
+    }
 
-    SelectExercisesContent(
-        muscleGroupName = uiState.muscleGroupName,
-        workoutName = uiState.workoutName,
-        tempWorkoutName = uiState.tempWorkoutName,
-        isEditingName = uiState.isEditingName,
-        isEditMode = uiState.editWorkoutId != null,
-        isLastGroup = uiState.isLastGroup,
-        exercises = uiState.exercises,
-        selectedExerciseIds = selectedIdsForCurrentGroup,
-        isLoading = uiState.isLoading,
-        onBackClick = { viewModel.onBackPressed(onBackToGroupSelection = onBackClick) },
-        onNavigate = onNavigate,
-        onExerciseToggle = { viewModel.toggleExerciseSelection(it) },
-        onContinueClick = {
-            viewModel.onContinueClick(onFinished = onConfigureExercisesClick)
-        },
-        onStartEditingName = { viewModel.startEditingName() },
-        onCancelEditingName = { viewModel.cancelEditingName() },
-        onConfirmEditingName = { viewModel.confirmEditingName() },
-        onTempNameChange = { viewModel.updateTempName(it) }
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        SelectExercisesContent(
+            muscleGroupName = uiState.muscleGroupName,
+            workoutName = uiState.workoutName,
+            tempWorkoutName = uiState.tempWorkoutName,
+            isEditingName = uiState.isEditingName,
+            isEditMode = uiState.editWorkoutId != null,
+            isLastGroup = uiState.isLastGroup,
+            exercises = uiState.exercises,
+            selectedExerciseIds = selectedIdsForCurrentGroup,
+            isLoading = uiState.isLoading,
+            onBackClick = { viewModel.onBackPressed(onBackToGroupSelection = onBackClick) },
+            onNavigate = onNavigate,
+            onExerciseToggle = { viewModel.toggleExerciseSelection(it) },
+            onInfoClick = { showImageForExerciseId = it },
+            onContinueClick = {
+                viewModel.onContinueClick(onFinished = onConfigureExercisesClick)
+            },
+            onStartEditingName = { viewModel.startEditingName() },
+            onCancelEditingName = { viewModel.cancelEditingName() },
+            onConfirmEditingName = { viewModel.confirmEditingName() },
+            onTempNameChange = { viewModel.updateTempName(it) }
+        )
+
+        showImageForExerciseId?.let { exerciseId ->
+            Dialog(
+                onDismissRequest = { showImageForExerciseId = null },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .clickable(
+                            onClick = { showImageForExerciseId = null },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = ExerciseMapper.toImageRes(exerciseId)),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth(0.85f)
+                            .offset(y = (-50).dp)
+                            .clip(RoundedCornerShape(Dimens.CornerRadiusLarge))
+                            .clickable(enabled = false) {}, // Prevent closing when clicking on image
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +167,7 @@ fun SelectExercisesContent(
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit,
     onExerciseToggle: (String) -> Unit,
+    onInfoClick: (String) -> Unit,
     onContinueClick: () -> Unit,
     onStartEditingName: () -> Unit,
     onCancelEditingName: () -> Unit,
@@ -117,6 +176,7 @@ fun SelectExercisesContent(
     isEditMode: Boolean = false,
     isLastGroup: Boolean = false
 ) {
+    // ... (rest of the content)
     // Enable button only if there's at least one exercise selected in TOTAL if it's the last group,
     // or just enable it to allow moving forward? The user said "Só habilita se tiver selecionado no mínimo 1 grupo muscular" for the first screen.
     // For this screen, let's keep it consistent: need at least one exercise to continue to next group or finish.
@@ -264,7 +324,8 @@ fun SelectExercisesContent(
                     ExerciseRowItem(
                         item = exercise,
                         isSelected = isSelected,
-                        onCheckedChange = { onExerciseToggle(exercise.id) }
+                        onCheckedChange = { onExerciseToggle(exercise.id) },
+                        onInfoClick = { onInfoClick(exercise.id) }
                     )
                 }
 
@@ -294,6 +355,7 @@ fun SelectExercisesScreenPreview() {
             onBackClick = {},
             onNavigate = {},
             onExerciseToggle = {},
+            onInfoClick = {},
             onContinueClick = {},
             onStartEditingName = {},
             onCancelEditingName = {},

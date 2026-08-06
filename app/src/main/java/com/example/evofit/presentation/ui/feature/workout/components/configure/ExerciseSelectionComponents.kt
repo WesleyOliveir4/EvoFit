@@ -21,12 +21,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -149,6 +149,7 @@ fun MuscleGroupCard(
     }
 }
 
+
 /**
  * Linha de exercício selecionável, usada em [com.example.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen].
  */
@@ -157,6 +158,7 @@ fun ExerciseRowItem(
     item: ExerciseSelectionUIModel,
     isSelected: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    onInfoClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val borderColor by animateColorAsState(
@@ -187,13 +189,34 @@ fun ExerciseRowItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingLarge)
+                .padding(horizontal = Dimens.SpacingSmall, vertical = Dimens.SpacingMedium)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
+            IconButton(
+                onClick = onInfoClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Informação do exercício",
+                    modifier = Modifier.size(Dimens.IconSizeMedium)
+                )
+            }
+
+            Text(
+                text = item.name,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                modifier = Modifier.weight(1f)
+            )
+
             Box(
                 modifier = Modifier
+                    .padding(end = Dimens.SpacingSmall)
                     .size(Dimens.IconSizeDefault)
                     .background(
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
@@ -221,13 +244,6 @@ fun ExerciseRowItem(
                     )
                 }
             }
-
-            Text(
-                text = item.name,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                modifier = Modifier.weight(1f)
-            )
         }
     }
 }
@@ -283,13 +299,15 @@ private fun ExerciseSelectionComponentsPreview() {
             ExerciseRowItem(
                 item = ExerciseSelectionUIModel("1", "Supino Reto"),
                 isSelected = true,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onInfoClick = {}
             )
 
             ExerciseRowItem(
                 item = ExerciseSelectionUIModel("2", "Supino Inclinado"),
                 isSelected = false,
-                onCheckedChange = {}
+                onCheckedChange = {},
+                onInfoClick = {}
             )
             
             ExercisePageSegmentedIndicator(
