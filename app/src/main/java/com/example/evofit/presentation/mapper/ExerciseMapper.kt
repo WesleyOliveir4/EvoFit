@@ -10,110 +10,110 @@ object ExerciseMapper {
     fun toImageRes(exerciseId: String): Int {
         return when (exerciseId) {
             // Costas
-            "1" -> R.drawable.img_back
-            "2" -> R.drawable.img_back
-            "3" -> R.drawable.img_back
-            "4" -> R.drawable.img_back
-            "5" -> R.drawable.img_back
-            "6" -> R.drawable.img_back
-            "7" -> R.drawable.img_back
+            "1" -> R.drawable.img_puxada_alta
+            "2" -> R.drawable.img_barra_fixa
+            "3" -> R.drawable.img_remada_curvada
+            "4" -> R.drawable.img_remada_unilateral
+            "5" -> R.drawable.img_remada_baixa
+            "6" -> R.drawable.img_pull_down
+            "7" -> R.drawable.img_remada_cavalinho
             "8" -> R.drawable.img_back
             "9" -> R.drawable.img_back
-            "10" -> R.drawable.img_back
+            "10" -> R.drawable.img_levantamento_terra
 
             // Peito
-            "11" -> R.drawable.img_chest
-            "12" -> R.drawable.img_chest
-            "13" -> R.drawable.img_chest
-            "14" -> R.drawable.img_chest
-            "15" -> R.drawable.img_chest
-            "16" -> R.drawable.img_chest
-            "17" -> R.drawable.img_chest
-            "18" -> R.drawable.img_chest
-            "19" -> R.drawable.img_chest
+            "11" -> R.drawable.img_supino_reto
+            "12" -> R.drawable.img_supino_inclinado
+            "13" -> R.drawable.img_supino_declinado
+            "14" -> R.drawable.img_crucifixo
+            "15" -> R.drawable.img_crucifixo_inclinado
+            "16" -> R.drawable.img_peck_deck
+            "17" -> R.drawable.img_crossover
+            "18" -> R.drawable.img_flexao_de_braco
+            "19" -> R.drawable.img_supino_reto
             "20" -> R.drawable.img_chest
 
             // Pernas
-            "21" -> R.drawable.img_legs
-            "22" -> R.drawable.img_legs
-            "23" -> R.drawable.img_legs
-            "24" -> R.drawable.img_legs
-            "25" -> R.drawable.img_legs
-            "26" -> R.drawable.img_legs
-            "27" -> R.drawable.img_legs
-            "28" -> R.drawable.img_legs
-            "29" -> R.drawable.img_legs
-            "30" -> R.drawable.img_legs
-            "31" -> R.drawable.img_legs
+            "21" -> R.drawable.img_agachamento_livre
+            "22" -> R.drawable.img_leg_press
+            "23" -> R.drawable.img_hack_squat
+            "24" -> R.drawable.img_cadeira_extensora
+            "25" -> R.drawable.img_mesa_flexora
+            "26" -> R.drawable.img_cadeira_flexora
+            "27" -> R.drawable.img_afundo
+            "28" -> R.drawable.img_passada
+            "29" -> R.drawable.img_agachamento_bulgaro
+            "30" -> R.drawable.img_stiff
+            "31" -> R.drawable.img_stiff
 
             // Braços
-            "32" -> R.drawable.img_arms
-            "33" -> R.drawable.img_arms
-            "34" -> R.drawable.img_arms
+            "32" -> R.drawable.img_biceps_polia
+            "33" -> R.drawable.img_rosca_alternada_halter
+            "34" -> R.drawable.img_biceps_martelo_polia
             "35" -> R.drawable.img_arms
             "36" -> R.drawable.img_arms
-            "37" -> R.drawable.img_arms
-            "38" -> R.drawable.img_arms
-            "39" -> R.drawable.img_arms
-            "40" -> R.drawable.img_arms
+            "37" -> R.drawable.img_triceps_pulley
+            "38" -> R.drawable.img_triceps_frances
+            "39" -> R.drawable.img_triceps_testa
+            "40" -> R.drawable.img_paralela
             "41" -> R.drawable.img_arms
-            "42" -> R.drawable.img_arms
+            "42" -> R.drawable.img_flexao_de_punho
 
             // Ombros
-            "43" -> R.drawable.img_shoulder
-            "44" -> R.drawable.img_shoulder
-            "45" -> R.drawable.img_shoulder
-            "46" -> R.drawable.img_elevacao_frontal // Elevação Frontal (Específica)
-            "47" -> R.drawable.img_shoulder
-            "48" -> R.drawable.img_shoulder
-            "49" -> R.drawable.img_shoulder
-            "50" -> R.drawable.img_shoulder
-            "51" -> R.drawable.img_shoulder
+            "43" -> R.drawable.img_desenvolvimento_militar
+            "44" -> R.drawable.img_desenvolvimento_halter
+            "45" -> R.drawable.img_elevacao_lateral
+            "46" -> R.drawable.img_elevacao_frontal
+            "47" -> R.drawable.img_crucifixo_inverso
+            "48" -> R.drawable.img_face_pull
+            "49" -> R.drawable.img_desenvolvimento_maquina
+            "50" -> R.drawable.img_remada_alta
+            "51" -> R.drawable.img_arnold_press
 
             // Core
-            "52" -> R.drawable.img_abs
-            "53" -> R.drawable.img_abs
-            "54" -> R.drawable.img_abs
-            "55" -> R.drawable.img_abs
-            "56" -> R.drawable.img_abs
-            "57" -> R.drawable.img_abs
-            "58" -> R.drawable.img_abs
-            "59" -> R.drawable.img_abs
-            "60" -> R.drawable.img_abs
-            "61" -> R.drawable.img_abs
+            "52" -> R.drawable.img_abdominal_tradicional
+            "53" -> R.drawable.img_abdominal_infra
+            "54" -> R.drawable.img_prancha
+            "55" -> R.drawable.img_prancha_lateral
+            "56" -> R.drawable.img_elevacao_pernas
+            "57" -> R.drawable.img_abdominal_bicicleta
+            "58" -> R.drawable.img_abdominal_maquina
+            "59" -> R.drawable.img_crunch_polia
+            "60" -> R.drawable.img_russian_twist
+            "61" -> R.drawable.img_mountain_climber
 
             // Cardio
-            "62" -> R.drawable.img_cardio
-            "63" -> R.drawable.img_cardio
-            "64" -> R.drawable.img_cardio
-            "65" -> R.drawable.img_cardio
-            "66" -> R.drawable.img_cardio
-            "67" -> R.drawable.img_cardio
-            "68" -> R.drawable.img_cardio
-            "69" -> R.drawable.img_cardio
-            "70" -> R.drawable.img_cardio
-            "71" -> R.drawable.img_cardio
+            "62" -> R.drawable.img_esteira_caminhada
+            "63" -> R.drawable.img_esteira_corrida
+            "64" -> R.drawable.img_bicicleta_ergometrica
+            "65" -> R.drawable.img_eliptico
+            "66" -> R.drawable.img_escada
+            "67" -> R.drawable.img_remo
+            "68" -> R.drawable.img_pular_corda
+            "69" -> R.drawable.img_corrida_externa
+            "70" -> R.drawable.img_esteira_caminhada
+            "71" -> R.drawable.img_hiit
 
             // Gluteo
-            "72" -> R.drawable.img_gluteus
-            "73" -> R.drawable.img_gluteus
-            "74" -> R.drawable.img_gluteus
-            "75" -> R.drawable.img_gluteus
-            "76" -> R.drawable.img_gluteus
-            "77" -> R.drawable.img_gluteus
-            "78" -> R.drawable.img_gluteus
-            "79" -> R.drawable.img_gluteus
+            "72" -> R.drawable.img_hip_thrust
+            "73" -> R.drawable.img_hip_thrust
+            "74" -> R.drawable.img_coice_polia
+            "75" -> R.drawable.img_abducao_quadril
+            "76" -> R.drawable.img_agachamento_sumo
+            "77" -> R.drawable.img_stiff
+            "78" -> R.drawable.img_afundo
+            "79" -> R.drawable.img_passada
             "80" -> R.drawable.img_gluteus
             "81" -> R.drawable.img_gluteus
 
             // Panturrilha
-            "82" -> R.drawable.img_calf
-            "83" -> R.drawable.img_calf
+            "82" -> R.drawable.img_panturrilha_em_pe
+            "83" -> R.drawable.img_panturrilha_sentado
             "84" -> R.drawable.img_calf
             "85" -> R.drawable.img_calf
-            "86" -> R.drawable.img_calf
-            "87" -> R.drawable.img_calf
-            "88" -> R.drawable.img_calf
+            "86" -> R.drawable.img_panturrilha_unilateral
+            "87" -> R.drawable.img_panturrilha_hack
+            "88" -> R.drawable.img_panturrilha_escada
 
             else -> R.drawable.img_cardio
         }

@@ -70,7 +70,8 @@ android {
         getByName("main") {
             res.srcDirs(
                 "src/main/res",
-                "src/main/res-musclegroup"
+                "src/main/res-musclegroup",
+                "src/main/res-exercises"
             )
         }
     }
