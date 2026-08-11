@@ -12,13 +12,13 @@ object ExerciseMapper {
             // Costas
             "1" -> R.drawable.img_puxada_alta
             "2" -> R.drawable.img_barra_fixa
-            "3" -> R.drawable.img_remada_curvada
-            "4" -> R.drawable.img_remada_unilateral
+            "3" -> R.drawable.img_remada_curvada_2
+            "4" -> R.drawable.img_remada_unilateral_1
             "5" -> R.drawable.img_remada_baixa
             "6" -> R.drawable.img_pull_down
             "7" -> R.drawable.img_remada_cavalinho
-            "8" -> R.drawable.img_back
-            "9" -> R.drawable.img_back
+            "8" -> R.drawable.img_pull_down
+            "9" -> R.drawable.img_remada_t_bar
             "10" -> R.drawable.img_levantamento_terra
 
             // Peito
