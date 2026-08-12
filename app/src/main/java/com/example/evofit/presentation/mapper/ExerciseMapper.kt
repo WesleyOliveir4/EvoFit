@@ -30,8 +30,8 @@ object ExerciseMapper {
             "16" -> R.drawable.img_peck_deck
             "17" -> R.drawable.img_crossover
             "18" -> R.drawable.img_flexao_de_braco
-            "19" -> R.drawable.img_supino_reto
-            "20" -> R.drawable.img_chest
+            "19" -> R.drawable.img_chest_press
+            "20" -> R.drawable.img_chest_press
 
             // Pernas
             "21" -> R.drawable.img_agachamento_livre
