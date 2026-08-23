@@ -104,7 +104,7 @@ fun MuscleGroupCard(
                             painter = painterResource(id = item.imageRes),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Fit
                         )
                     }
                 }

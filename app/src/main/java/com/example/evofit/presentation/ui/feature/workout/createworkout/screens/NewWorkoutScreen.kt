@@ -17,9 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.EditOff
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -191,15 +189,15 @@ fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
             muscleGroups = listOf(
-                MuscleGroupItem("1", "Costas", imageRes = R.drawable.img_back),
-                MuscleGroupItem("2", "Peito", imageRes = R.drawable.img_chest),
-                MuscleGroupItem("3", "Pernas", imageRes = R.drawable.img_legs),
-                MuscleGroupItem("4", "Braços", imageRes = R.drawable.img_arms),
-                MuscleGroupItem("5", "Ombros", imageRes = R.drawable.img_shoulder),
-                MuscleGroupItem("6", "Core", imageRes = R.drawable.img_abs),
-                MuscleGroupItem("7", "Cardio", imageRes = R.drawable.img_cardio),
-                MuscleGroupItem("8", "Gluteo", imageRes = R.drawable.img_gluteus),
-                MuscleGroupItem("9", "Panturrilha", imageRes = R.drawable.img_calf),
+                MuscleGroupItem("1", "Costas", imageRes = R.drawable.ic_back),
+                MuscleGroupItem("2", "Peito", imageRes = R.drawable.ic_chest),
+                MuscleGroupItem("3", "Pernas", imageRes = R.drawable.ic_legs),
+                MuscleGroupItem("4", "Braços", imageRes = R.drawable.ic_arms),
+                MuscleGroupItem("5", "Ombros", imageRes = R.drawable.ic_shoulder),
+                MuscleGroupItem("6", "Core", imageRes = R.drawable.ic_abs),
+                MuscleGroupItem("7", "Cardio", imageRes = R.drawable.ic_cardio),
+                MuscleGroupItem("8", "Gluteo", imageRes = R.drawable.ic_gluteus),
+                MuscleGroupItem("9", "Panturrilha", imageRes = R.drawable.ic_calf),
             ),
             selectedMuscleGroupIds = setOf("1", "2"),
             isLoading = false,

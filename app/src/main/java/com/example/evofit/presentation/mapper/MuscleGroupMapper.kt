@@ -7,15 +7,15 @@ import com.example.evofit.presentation.model.MuscleGroupItem
 
 fun MuscleGroupType.toImageRes(): Int? {
     return when (this) {
-        MuscleGroupType.BACK -> R.drawable.img_back
-        MuscleGroupType.SHOULDERS -> R.drawable.img_shoulder
-        MuscleGroupType.ARMS -> R.drawable.img_arms
-        MuscleGroupType.LEGS -> R.drawable.img_legs
-        MuscleGroupType.ABS -> R.drawable.img_abs
-        MuscleGroupType.GLUTES -> R.drawable.img_gluteus
-        MuscleGroupType.CALVES -> R.drawable.img_calf
-        MuscleGroupType.CHEST -> R.drawable.img_chest
-        MuscleGroupType.CARDIO -> R.drawable.img_cardio
+        MuscleGroupType.BACK -> R.drawable.ic_back
+        MuscleGroupType.SHOULDERS -> R.drawable.ic_shoulder
+        MuscleGroupType.ARMS -> R.drawable.ic_arms
+        MuscleGroupType.LEGS -> R.drawable.ic_legs
+        MuscleGroupType.ABS -> R.drawable.ic_legs
+        MuscleGroupType.GLUTES -> R.drawable.ic_gluteus
+        MuscleGroupType.CALVES -> R.drawable.ic_calf
+        MuscleGroupType.CHEST -> R.drawable.ic_chest
+        MuscleGroupType.CARDIO -> R.drawable.ic_cardio
         else -> null
     }
 }
