@@ -11,5 +11,7 @@ class GetExercisesByGroupUseCaseImpl(
     private val repository: ExerciseRepository
 ) : GetExercisesByGroupUseCase {
     override fun invoke(groupId: String): List<Exercise> = 
-        repository.getExercisesByGroup(groupId).sortedBy { it.sortOrder }
+        repository.getExercisesByGroup(groupId)
+            .filter { it.isEnabled }
+            .sortedBy { it.sortOrder }
 }

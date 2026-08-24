@@ -37,7 +37,8 @@ fun ExerciseModel.toDomain(): Exercise {
         name = name,
         muscleGroupId = muscleGroupId,
         unit = unit,
-        sortOrder = sortOrder
+        sortOrder = sortOrder,
+        isEnabled = isEnabled
     )
 }
 

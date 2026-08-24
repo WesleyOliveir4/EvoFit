@@ -95,25 +95,25 @@ object ExerciseMapper {
             "71" -> R.drawable.img_hiit
 
             // Gluteo
-            "72" -> R.drawable.img_hip_thrust
-            "73" -> R.drawable.img_hip_thrust
+            "72" -> R.drawable.img_elevacao_pelvica
+            "73" -> R.drawable.img_elevacao_pelvica
             "74" -> R.drawable.img_coice_polia
             "75" -> R.drawable.img_abducao_quadril
             "76" -> R.drawable.img_agachamento_sumo
             "77" -> R.drawable.img_stiff
             "78" -> R.drawable.img_afundo
             "79" -> R.drawable.img_passada
-            "80" -> R.drawable.img_gluteus
-            "81" -> R.drawable.img_gluteus
+            "80" -> R.drawable.img_gluteo_maquina
+            "81" -> R.drawable.img_ponte_gluteo
 
             // Panturrilha
             "82" -> R.drawable.img_panturrilha_em_pe
             "83" -> R.drawable.img_panturrilha_sentado
-            "84" -> R.drawable.img_calf
-            "85" -> R.drawable.img_calf
+            "84" -> R.drawable.img_panturrilha_leg_press
+            "85" -> R.drawable.img_panturrilha_smith
             "86" -> R.drawable.img_panturrilha_unilateral
             "87" -> R.drawable.img_panturrilha_hack
-            "88" -> R.drawable.img_panturrilha_escada
+            "88" -> R.drawable.img_panturrilha_degrau
 
             // Novos Braços
             "89" -> R.drawable.img_rosca_direta_pulley

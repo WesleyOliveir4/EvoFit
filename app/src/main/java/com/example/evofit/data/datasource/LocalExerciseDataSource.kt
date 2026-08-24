@@ -44,7 +44,7 @@ class LocalExerciseDataSource {
         ExerciseModel("17", "Crossover", "2", MeasurementUnit.WEIGHT, 7),
         ExerciseModel("18", "Flexão de Braço", "2", MeasurementUnit.REPS, 8),
         ExerciseModel("19", "Supino Máquina", "2", MeasurementUnit.WEIGHT, 9),
-        ExerciseModel("20", "Chest Press", "2", MeasurementUnit.WEIGHT, 10),
+        ExerciseModel("20", "Chest Press", "2", MeasurementUnit.WEIGHT, 10,false),
 
         // Pernas (3)
         ExerciseModel("21", "Agachamento Livre", "3", MeasurementUnit.WEIGHT, 1),
@@ -112,7 +112,7 @@ class LocalExerciseDataSource {
 
         // Gluteo (8)
         ExerciseModel("72", "Elevação Pélvica", "8", MeasurementUnit.WEIGHT, 1),
-        ExerciseModel("73", "Hip Thrust", "8", MeasurementUnit.WEIGHT, 2),
+        ExerciseModel("73", "Hip Thrust", "8", MeasurementUnit.WEIGHT, 2,false),
         ExerciseModel("74", "Coice na Polia", "8", MeasurementUnit.WEIGHT, 3),
         ExerciseModel("75", "Abdução de Quadril", "8", MeasurementUnit.WEIGHT, 4),
         ExerciseModel("76", "Agachamento Sumô", "8", MeasurementUnit.WEIGHT, 5),
