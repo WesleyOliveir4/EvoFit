@@ -127,6 +127,11 @@ class LocalExerciseDataSource {
         ExerciseModel("86", "Panturrilha Unilateral", "9", MeasurementUnit.WEIGHT),
         ExerciseModel("87", "Panturrilha no Hack", "9", MeasurementUnit.WEIGHT),
         ExerciseModel("88", "Elevação de Panturrilha Degrau", "9", MeasurementUnit.REPS),
+
+        // Braços (Adicionais)
+        ExerciseModel("89", "Rosca Direta Pulley", "4", MeasurementUnit.WEIGHT),
+        ExerciseModel("90", "Rosca Martelo Pulley", "4", MeasurementUnit.WEIGHT),
+        ExerciseModel("91", "Triceps Pulley Corda", "4", MeasurementUnit.WEIGHT),
     )
 
     private val suggestions = listOf(

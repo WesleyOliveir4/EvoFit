@@ -92,7 +92,7 @@ fun WorkoutListItem(
                         painter = painterResource(id = workout.imageRes),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Fit
                     )
                 } else {
                     Icon(

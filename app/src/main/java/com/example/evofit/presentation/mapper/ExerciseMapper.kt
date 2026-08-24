@@ -47,16 +47,16 @@ object ExerciseMapper {
             "31" -> R.drawable.img_stiff
 
             // Braços
-            "32" -> R.drawable.img_biceps_polia
-            "33" -> R.drawable.img_rosca_alternada_halter
-            "34" -> R.drawable.img_biceps_martelo_polia
-            "35" -> R.drawable.img_arms
-            "36" -> R.drawable.img_arms
+            "32" -> R.drawable.img_rosca_direta
+            "33" -> R.drawable.img_rosca_alternada
+            "34" -> R.drawable.img_rosca_martelo
+            "35" -> R.drawable.img_rosca_scott
+            "36" -> R.drawable.img_rosca_concentrada
             "37" -> R.drawable.img_triceps_pulley
             "38" -> R.drawable.img_triceps_frances
             "39" -> R.drawable.img_triceps_testa
-            "40" -> R.drawable.img_paralela
-            "41" -> R.drawable.img_arms
+            "40" -> R.drawable.img_paralela_2
+            "41" -> R.drawable.img_rosca_inversa
             "42" -> R.drawable.img_flexao_de_punho
 
             // Ombros
@@ -114,6 +114,11 @@ object ExerciseMapper {
             "86" -> R.drawable.img_panturrilha_unilateral
             "87" -> R.drawable.img_panturrilha_hack
             "88" -> R.drawable.img_panturrilha_escada
+
+            // Novos Braços
+            "89" -> R.drawable.img_rosca_direta_pulley
+            "90" -> R.drawable.img_rosca_martelo_pulley
+            "91" -> R.drawable.img_triceps_pulley_corda
 
             else -> R.drawable.img_cardio
         }
