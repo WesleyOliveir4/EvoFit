@@ -10,5 +10,6 @@ interface GetExercisesByGroupUseCase {
 class GetExercisesByGroupUseCaseImpl(
     private val repository: ExerciseRepository
 ) : GetExercisesByGroupUseCase {
-    override fun invoke(groupId: String): List<Exercise> = repository.getExercisesByGroup(groupId)
+    override fun invoke(groupId: String): List<Exercise> = 
+        repository.getExercisesByGroup(groupId).sortedBy { it.sortOrder }
 }

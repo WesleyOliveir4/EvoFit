@@ -4,5 +4,6 @@ data class Exercise(
     val id: String,
     val name: String,
     val muscleGroupId: String,
-    val unit: MeasurementUnit = MeasurementUnit.WEIGHT
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val sortOrder: Int = 0
 )

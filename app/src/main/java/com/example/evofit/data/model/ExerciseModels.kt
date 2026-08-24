@@ -21,7 +21,8 @@ data class ExerciseModel(
     val id: String,
     val name: String,
     val muscleGroupId: String,
-    val unit: MeasurementUnit = MeasurementUnit.WEIGHT
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val sortOrder: Int = 0
 )
 
 data class MuscleGroupWithExercises(
