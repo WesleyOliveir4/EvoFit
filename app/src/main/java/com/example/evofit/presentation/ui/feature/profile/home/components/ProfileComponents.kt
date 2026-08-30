@@ -20,9 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
@@ -359,7 +356,6 @@ fun ProfileOptionsMenuComponent(
                         onClick = item.onClick
                     )
 
-                    // Divisória horizontal entre os itens (menos no último)
                     if (index < visibleItems.size - 1) {
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outlineVariant,

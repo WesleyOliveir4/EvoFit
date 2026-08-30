@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,21 +28,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialogContent
 import com.example.evofit.presentation.ui.feature.profile.home.components.ImageSourcePickerBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.home.components.LogoutComponent
@@ -73,7 +67,6 @@ fun ProfileHomeScreen(
     var isPhotoExpanded by remember { mutableStateOf(false) }
     var showImageSourcePicker by remember { mutableStateOf(false) }
 
-    // Gerenciamento de URI para a Câmera
     var tempPhotoUri by remember { mutableStateOf<Uri?>(null) }
     
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -108,7 +101,6 @@ fun ProfileHomeScreen(
         onImageClick = { isPhotoExpanded = true }
     )
 
-    // Diálogo de Foto Expandida
     if (isPhotoExpanded) {
         ProfilePhotoExpandedDialog(
             profileImageUrl = uiState.profilePictureUri ?: "",
@@ -120,7 +112,6 @@ fun ProfileHomeScreen(
         )
     }
 
-    // Bottom Sheet de Seleção de Fonte
     if (showImageSourcePicker) {
         ImageSourcePickerBottomSheet(
             onDismiss = { showImageSourcePicker = false },
@@ -175,7 +166,6 @@ fun ProfileHomeScreenContent(
 ) {
     val medalIcon = ImageVector.vectorResource(id = R.drawable.ic_medal)
 
-    // Lista de itens do menu
     val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon) {
         listOf(
             ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, isEnabled = true, isVisible = true, onUserDataClick),
@@ -205,7 +195,6 @@ fun ProfileHomeScreenContent(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
         ) {
-            // Título Integrado ao Scroll
             Text(
                 text = stringResource(id = R.string.nav_profile),
                 color = com.example.evofit.presentation.ui.theme.TextPrimary,
@@ -215,7 +204,6 @@ fun ProfileHomeScreenContent(
                     .padding(top = Dimens.SpacingMedium)
             )
             
-            // 1. Bloco de Informações do Usuário
             UserDataInfoComponent(
                 userName = userName,
                 weight = "$userWeight kg",
@@ -224,12 +212,10 @@ fun ProfileHomeScreenContent(
                 onImageClick = onImageClick
             )
 
-            // 2. Bloco de Opções do Menu
             ProfileOptionsMenuComponent(
                 items = menuItems
             )
 
-            // 3. Bloco de Logout
             LogoutComponent(
                 onLogoutClick = onLogoutClick
             )
