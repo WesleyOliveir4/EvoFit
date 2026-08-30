@@ -141,7 +141,7 @@ fun EvoHomeContent(
                     percentage = evolution?.let { 
                         stringResource(R.string.evo_home_evolution_percentage_format, it.evolutionPercentage) 
                     } ?: stringResource(R.string.evo_home_empty_value),
-                    modifier = Modifier.weight(1.5f)
+                    modifier = Modifier.weight(1.4f)
                 )
 
                 WorkoutsCompletedCard(

@@ -113,7 +113,7 @@ fun MostEvolvedCard(
 ) {
     Card(
         modifier = modifier
-            .height(Dimens.EvoCardHeightMedium)
+            .height(Dimens.EvoCardHeightLarge)
             .border(
                 width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
@@ -172,7 +172,7 @@ fun WorkoutsCompletedCard(
 ) {
     Card(
         modifier = modifier
-            .height(Dimens.EvoCardHeightMedium)
+            .height(Dimens.EvoCardHeightLarge)
             .border(
                 width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
@@ -376,7 +376,7 @@ fun AverageWorkoutTimeCard(
                         painter = painterResource(id = R.drawable.ic_hourglass),
                         contentDescription = null,
                         tint = MaterialTheme.evoColors.green,
-                        modifier = Modifier.size(Dimens.IconSizeSmall)
+                        modifier = Modifier.size(Dimens.IconSizeTiny)
                     )
                     Text(
                         text = stringResource(R.string.evo_home_avg_time_title),

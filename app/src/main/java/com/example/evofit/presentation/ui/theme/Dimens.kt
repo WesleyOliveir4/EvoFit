@@ -50,6 +50,8 @@ object Dimens {
 
     // Icons & Media
     val IconSizeSmall = 20.dp
+
+    val IconSizeTiny = 18.dp
     val IconSizeMediumSmall = 18.dp
     val IconSizeMedium = 18.dp
     val IconSizeDefault = 24.dp
