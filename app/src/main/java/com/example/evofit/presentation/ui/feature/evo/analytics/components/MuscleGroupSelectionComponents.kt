@@ -70,11 +70,13 @@ fun MuscleGroupCard(
                     .weight(1f)
             ) {
                 if (group.imageRes != null) {
-                    Image(
+                    Icon(
                         painter = painterResource(id = group.imageRes),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
+                        modifier = Modifier
+                            .padding(Dimens.SpacingSmall)
+                            .fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }

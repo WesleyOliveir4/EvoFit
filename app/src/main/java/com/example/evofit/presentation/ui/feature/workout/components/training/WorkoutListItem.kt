@@ -99,11 +99,13 @@ fun WorkoutListItem(
                 contentAlignment = Alignment.Center
             ) {
                 if (workout.imageRes != null) {
-                    Image(
+                    Icon(
                         painter = painterResource(id = workout.imageRes),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
+                        modifier = Modifier
+                            .padding(Dimens.SpacingExtraSmall)
+                            .fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     Icon(
