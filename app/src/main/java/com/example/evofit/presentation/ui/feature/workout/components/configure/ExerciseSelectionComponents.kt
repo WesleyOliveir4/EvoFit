@@ -102,7 +102,7 @@ fun MuscleGroupCard(
                             painter = painterResource(id = item.imageRes),
                             contentDescription = null,
                             modifier = Modifier
-                                .padding(Dimens.SpacingSmall)
+                                .padding(Dimens.SpacingExtraSmall)
                                 .fillMaxSize(),
                             tint = MaterialTheme.colorScheme.primary
                         )
