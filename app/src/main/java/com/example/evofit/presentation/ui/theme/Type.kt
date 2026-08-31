@@ -17,6 +17,13 @@ val Typography = Typography(
         fontSize = Dimens.TextSizeDisplay,
         lineHeight = 38.sp
     ),
+
+    displayMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Black,
+        fontSize = Dimens.TextSizeDisplay,
+        lineHeight = 26.sp
+    ),
     
     // Main Screen Titles
     headlineLarge = TextStyle(

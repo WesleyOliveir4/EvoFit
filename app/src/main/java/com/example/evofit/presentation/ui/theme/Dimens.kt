@@ -102,7 +102,7 @@ object Dimens {
     // Evo & Analytics Specifics
     val EvoCardHeightLarge = 130.dp
     val EvoCardHeightMedium = 120.dp
-    val EvoCardHeightSmall = 115.dp
+    val EvoCardHeightSmall = 96.dp
     val EvoCardHeightExtraSmall = 88.dp
     val EvoGraphHeight = 220.dp
     val EvoGraphYAxisWidth = 44.dp

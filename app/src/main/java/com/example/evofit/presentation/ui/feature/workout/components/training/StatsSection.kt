@@ -1,7 +1,6 @@
 package com.example.evofit.presentation.ui.feature.workout.components.training
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,11 +26,6 @@ fun StatCard(
     Row(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.CornerRadiusDefault))
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            )
             .padding(Dimens.SpacingMediumSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {

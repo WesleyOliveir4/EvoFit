@@ -46,11 +46,6 @@ fun WorkoutDoneItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            )
             .clickable { isExpanded = !isExpanded },
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)

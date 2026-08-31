@@ -60,7 +60,7 @@ fun MuscleGroupCard(
         label = "borderColor"
     )
     val borderWidth by animateDpAsState(
-        targetValue = if (isSelected) 2.dp else 1.dp,
+        targetValue = if (isSelected) 2.dp else 0.dp,
         label = "borderWidth"
     )
     val containerColor by animateColorAsState(
@@ -166,7 +166,7 @@ fun ExerciseRowItem(
         label = "borderColor"
     )
     val borderWidth by animateDpAsState(
-        targetValue = if (isSelected) 2.dp else 1.dp,
+        targetValue = if (isSelected) 2.dp else 0.dp,
         label = "borderWidth"
     )
     val containerColor by animateColorAsState(

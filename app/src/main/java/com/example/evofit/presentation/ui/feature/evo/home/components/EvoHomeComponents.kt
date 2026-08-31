@@ -1,15 +1,26 @@
 package com.example.evofit.presentation.ui.feature.evo.home.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,9 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.theme.Dimens
-import com.example.evofit.presentation.ui.theme.EvoDestructiveRed
-import com.example.evofit.presentation.ui.theme.evoColors
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import com.example.evofit.presentation.ui.theme.evoColors
 
 @Composable
 fun StrengthProgressRow(
@@ -64,12 +74,7 @@ fun StrengthGainsCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -113,12 +118,7 @@ fun MostEvolvedCard(
 ) {
     Card(
         modifier = modifier
-            .height(Dimens.EvoCardHeightLarge)
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .height(Dimens.EvoCardHeightLarge),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -172,12 +172,7 @@ fun WorkoutsCompletedCard(
 ) {
     Card(
         modifier = modifier
-            .height(Dimens.EvoCardHeightLarge)
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .height(Dimens.EvoCardHeightLarge),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -230,12 +225,7 @@ fun LeastTrainedCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -289,12 +279,7 @@ fun KmPerWeekCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -351,12 +336,7 @@ fun AverageWorkoutTimeCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -412,12 +392,7 @@ fun ExerciseAnalyticsCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(Dimens.CornerRadiusCard))
-            .clickable { onClick() }
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-            ),
+            .clickable { onClick() },
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

@@ -43,12 +43,7 @@ fun WorkoutSummaryCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth()
-            .border(
-            width = Dimens.BorderWidthThin,
-            color = MaterialTheme.colorScheme.outlineVariant,
-            shape = RoundedCornerShape(Dimens.CornerRadiusCard)
-        ),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
