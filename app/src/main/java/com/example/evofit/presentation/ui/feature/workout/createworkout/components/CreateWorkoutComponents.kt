@@ -175,11 +175,13 @@ fun ExerciseConfigHeader(
                 contentAlignment = Alignment.Center
             ) {
                 if (muscleGroupImageRes != null) {
-                    Image(
+                    Icon(
                         painter = painterResource(id = muscleGroupImageRes),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
+                        modifier = Modifier
+                            .padding(Dimens.SpacingExtraSmall)
+                            .fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }

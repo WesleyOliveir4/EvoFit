@@ -46,12 +46,7 @@ fun ExerciseTrackingCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -335,12 +330,7 @@ fun HeaderIndicatorCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.height(Dimens.BottomNavigationHeight - Dimens.SpacingSmall) // ~72.dp
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            ),
+        modifier = modifier.height(Dimens.BottomNavigationHeight - Dimens.SpacingSmall),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

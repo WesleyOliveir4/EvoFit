@@ -191,7 +191,7 @@ fun NewWorkoutScreenPreview() {
             muscleGroups = listOf(
                 MuscleGroupItem("1", "Costas", imageRes = R.drawable.ic_back_2),
                 MuscleGroupItem("2", "Peito", imageRes = R.drawable.ic_chest_2),
-                MuscleGroupItem("3", "Pernas", imageRes = R.drawable.ic_legs_2),
+                MuscleGroupItem("3", "Pernas", imageRes = R.drawable.ic_legs_3),
                 MuscleGroupItem("4", "Braços", imageRes = R.drawable.ic_arms_2),
                 MuscleGroupItem("5", "Ombros", imageRes = R.drawable.ic_shoulder_2),
                 MuscleGroupItem("6", "Core", imageRes = R.drawable.ic_core_2),
