@@ -41,12 +41,7 @@ fun MuscleGroupPreviewCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = Dimens.BorderWidthThin,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

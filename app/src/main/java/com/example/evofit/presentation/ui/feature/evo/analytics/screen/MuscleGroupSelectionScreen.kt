@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
+import com.example.evofit.presentation.model.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroup
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroupCard
@@ -120,7 +121,15 @@ private fun MuscleGroupSelectionScreenPreview() {
     EvoFitTheme {
         MuscleGroupSelectionContent(
             uiState = EvoAnalyticsState(
-                trainedGroups = emptyList(),
+                trainedGroups = listOf(
+                    MuscleGroupItem("1", "Peito", R.drawable.ic_chest_2),
+                    MuscleGroupItem("2", "Costas", R.drawable.ic_back_2),
+                    MuscleGroupItem("3", "Braços", R.drawable.ic_arms_2),
+                    MuscleGroupItem("4", "Pernas", R.drawable.ic_legs_3),
+                    MuscleGroupItem("5", "Gluteo", R.drawable.ic_gluteus_2),
+                    MuscleGroupItem("6", "Cardio", R.drawable.ic_cardio_2),
+                    MuscleGroupItem("7", "Ombros", R.drawable.ic_shoulder_2),
+                ),
                 isLoading = false
             ),
             onBackClick = {},
