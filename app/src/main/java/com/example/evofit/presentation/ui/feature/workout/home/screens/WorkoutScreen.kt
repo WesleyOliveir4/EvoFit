@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -88,6 +89,7 @@ fun WorkoutScreen(
         workoutsThisWeek = uiState.workoutsThisWeek,
         history = uiState.history,
         activeSession = uiState.activeSession,
+        isSyncing = uiState.isSyncing,
         isOnline = isOnline,
         showOfflineToast = showOfflineToast,
         onMove = { from, to ->
@@ -120,6 +122,7 @@ fun WorkoutContent(
     onAddWorkoutClick: () -> Unit,
     activeSession: ActiveSessionUIModel? = null,
     onActiveSessionClick: (ActiveSessionUIModel) -> Unit = {},
+    isSyncing: Boolean = false,
     isOnline: Boolean = true,
     showOfflineToast: Boolean = false,
     modifier: Modifier = Modifier
@@ -154,6 +157,15 @@ fun WorkoutContent(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            if (isSyncing) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                )
+            }
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -282,6 +294,7 @@ private fun WorkoutContentPreview() {
             onNavigate = {},
             onWorkoutClick = {},
             onAddWorkoutClick = {},
+            isSyncing = true,
             isOnline = false
         )
     }

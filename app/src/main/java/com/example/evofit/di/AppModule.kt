@@ -225,7 +225,7 @@ val domainModule = module {
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get(), get(), get(), get()) }
+    viewModel { SplashViewModel(get(), get()) }
 }
 
 val onboardingModule = module {

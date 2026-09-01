@@ -59,8 +59,11 @@ class WorkoutViewModel(
     private val _isOnline = MutableStateFlow(true)
     val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
+    private val _isSyncing = MutableStateFlow(false)
+
     init {
         observeConnectivity()
+        initialSync()
         viewModelScope.launch {
             _updateOrderFlow
                 .debounce(1000L)
@@ -70,17 +73,37 @@ class WorkoutViewModel(
         }
     }
 
+    private fun initialSync() {
+        viewModelScope.launch {
+            val status = connectivityObserver.observe().first()
+            if (status == ConnectivityObserver.Status.Available) {
+                syncData()
+            }
+        }
+    }
+
     private fun observeConnectivity() {
         viewModelScope.launch {
             connectivityObserver.observe().collect { status ->
                 val online = status == ConnectivityObserver.Status.Available
                 _isOnline.value = online
                 if (online) {
-                    val userId = sessionManager.userId.firstOrNull()
-                    if (userId != null) {
-                        syncUserDataUseCase(userId, shouldClearActiveSession = false, isOnline = true)
-                    }
+                    syncData()
                 }
+            }
+        }
+    }
+
+    private fun syncData() {
+        viewModelScope.launch {
+            val userId = sessionManager.userId.firstOrNull() ?: return@launch
+            if (_isSyncing.value) return@launch
+            
+            _isSyncing.value = true
+            try {
+                syncUserDataUseCase(userId, shouldClearActiveSession = false, isOnline = true)
+            } finally {
+                _isSyncing.value = false
             }
         }
     }
@@ -155,15 +178,17 @@ class WorkoutViewModel(
 
     val uiState: StateFlow<WorkoutState> = combine(
         baseState,
-        getActiveWorkoutSessionUseCase()
-    ) { state, activeSession ->
+        getActiveWorkoutSessionUseCase(),
+        _isSyncing
+    ) { state, activeSession, isSyncing ->
         state.copy(
             activeSession = activeSession?.let {
                 ActiveSessionUIModel(
                     workoutId = it.workout.id,
                     workoutName = it.workout.name.ifEmpty { it.workout.muscleGroupId }
                 )
-            }
+            },
+            isSyncing = isSyncing
         )
     }.stateIn(
         scope = viewModelScope,
