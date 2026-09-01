@@ -48,49 +48,53 @@ class PersonalGoalsViewModel(
     private fun loadGoals() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val userId = getUserIdUseCase() ?: return@launch
-            
-            getActiveUserGoalsUseCase()
-                .flatMapLatest { goals ->
-                    if (goals.isEmpty()) {
-                        flowOf(emptyList<GoalUiModel>())
-                    } else {
-                        val goalFlows = goals.map { goal ->
-                            calculateGoalProgressUseCase(goal, userId).map { progress ->
-                                val title = when (goal) {
-                                    is UserGoal.Strength -> goal.exerciseName
-                                    is UserGoal.Cardio -> goal.type
-                                    is UserGoal.Weight -> "Peso Corporal"
-                                }
-                                
-                                val category = when (goal) {
-                                    is UserGoal.Strength -> "Força"
-                                    is UserGoal.Cardio -> "Cardio"
-                                    is UserGoal.Weight -> "Peso"
-                                }
 
-                                GoalUiModel(
-                                    id = goal.id,
-                                    title = title,
-                                    category = category,
-                                    currentValue = "${progress.currentValue}${progress.unit}",
-                                    targetValue = "${progress.targetValue}${progress.unit}",
-                                    percentage = progress.percentage
-                                )
+            getUserIdUseCase().flatMapLatest { userId ->
+                if (userId == null) {
+                    flowOf(emptyList<GoalUiModel>())
+                } else {
+                    getActiveUserGoalsUseCase()
+                        .flatMapLatest { goals ->
+                            if (goals.isEmpty()) {
+                                flowOf(emptyList<GoalUiModel>())
+                            } else {
+                                val goalFlows = goals.map { goal ->
+                                    calculateGoalProgressUseCase(goal, userId).map { progress ->
+                                        val title = when (goal) {
+                                            is UserGoal.Strength -> goal.exerciseName
+                                            is UserGoal.Cardio -> goal.type
+                                            is UserGoal.Weight -> "Peso Corporal"
+                                        }
+
+                                        val category = when (goal) {
+                                            is UserGoal.Strength -> "Força"
+                                            is UserGoal.Cardio -> "Cardio"
+                                            is UserGoal.Weight -> "Peso"
+                                        }
+
+                                        GoalUiModel(
+                                            id = goal.id,
+                                            title = title,
+                                            category = category,
+                                            currentValue = "${progress.currentValue}${progress.unit}",
+                                            targetValue = "${progress.targetValue}${progress.unit}",
+                                            percentage = progress.percentage
+                                        )
+                                    }
+                                }
+                                combine(goalFlows) { it.toList() }
                             }
                         }
-                        combine(goalFlows) { it.toList() }
-                    }
                 }
-                .collect { uiGoals ->
-                    _uiState.update { it.copy(goals = uiGoals, isLoading = false) }
-                }
+            }.collect { uiGoals ->
+                _uiState.update { it.copy(goals = uiGoals, isLoading = false) }
+            }
         }
     }
 
     fun addGoal(goal: UserGoal) {
         viewModelScope.launch {
-            val userId = getUserIdUseCase() ?: return@launch
+            val userId = getUserIdUseCase().firstOrNull() ?: return@launch
             val currentData = onboardingRepository.getUserData().firstOrNull()
             val updatedData = currentData?.copy(
                 goals = currentData.goals + goal

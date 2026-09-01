@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -47,8 +48,8 @@ class OnboardingRepositoryImpl(
         }.onEach { Log.d("OnboardingRepo", "UserOnboardingData emitido: birthDate=${it?.birthDate}") }
     }
 
-    override suspend fun getUserId(): String? {
-        return userDataSource.getUser().firstOrNull()?.id
+    override fun getUserId(): Flow<String?> {
+        return userDataSource.getUser().map { it?.id }
     }
 
     override suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean) {
@@ -90,7 +91,7 @@ class OnboardingRepositoryImpl(
     }
 
     override suspend fun deleteGoal(goalId: String) {
-        val userId = getUserId()
+        val userId = getUserId().firstOrNull()
         userDataSource.deleteGoalById(goalId)
         
         if (userId != null) {

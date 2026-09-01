@@ -1,13 +1,14 @@
 package com.example.evofit.domain.usecase
 
 import com.example.evofit.domain.repository.OnboardingRepository
+import kotlinx.coroutines.flow.Flow
 
 interface GetUserIdUseCase {
-    suspend operator fun invoke(): String?
+    operator fun invoke(): Flow<String?>
 }
 
 class GetUserIdUseCaseImpl(private val repository: OnboardingRepository) : GetUserIdUseCase {
-    override suspend fun invoke(): String? {
+    override fun invoke(): Flow<String?> {
         return repository.getUserId()
     }
 }

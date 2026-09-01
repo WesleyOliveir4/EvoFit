@@ -20,6 +20,7 @@ import com.example.evofit.presentation.ui.feature.workout.createworkout.state.Se
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -200,7 +201,7 @@ class ConfigureWorkoutViewModel(
             val (muscleGroup, workoutExercises) = buildMuscleGroupAndExercises(currentState)
 
             val workout = Workout(
-                userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
+                userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID,
                 name = workoutName,
                 muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
                 muscleGroup = muscleGroup,
@@ -232,7 +233,7 @@ class ConfigureWorkoutViewModel(
 
             val workout = Workout(
                 id = editWorkoutId,
-                userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID,
+                userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID,
                 name = workoutName,
                 muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
                 muscleGroup = muscleGroup,

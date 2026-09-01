@@ -12,9 +12,13 @@ import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.model.ExerciseWithRecordsUIModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -34,32 +38,32 @@ class EvoAnalyticsViewModel(
         loadHistory()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadHistory() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            try {
-                val userId = getUserIdUseCase()
+            getUserIdUseCase().flatMapLatest { userId ->
                 if (userId != null) {
                     val allGroups = getMuscleGroupsUseCase()
-                    getWorkoutDoneHistoryUseCase(userId).collect { history ->
+                    getWorkoutDoneHistoryUseCase(userId).map { history ->
                         val groups = getTrainedMuscleGroupsUseCase(history, allGroups)
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                historyRawData = history,
-                                trainedGroups = groups.map { group -> group.toItem() }
-                            )
-                        }
+                        history to groups.map { group -> group.toItem() }
+                    }
+                } else {
+                    flowOf(null)
+                }
+            }.collect { result ->
+                if (result != null) {
+                    val (history, trainedGroups) = result
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            historyRawData = history,
+                            trainedGroups = trainedGroups
+                        )
                     }
                 } else {
                     _uiState.update { it.copy(isLoading = false, error = "User not found") }
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = e.message ?: "Unknown error"
-                    )
                 }
             }
         }

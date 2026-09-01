@@ -5,6 +5,7 @@ import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
@@ -19,7 +20,7 @@ class CompleteOnboardingUseCaseImpl(
 ) : CompleteOnboardingUseCase {
     override suspend fun invoke(data: UserOnboardingData) {
         val userId = authRepository.getCurrentUserId()
-            ?: repository.getUserId() 
+            ?: repository.getUserId().firstOrNull() 
             ?: UUID.randomUUID().toString()
         
         // Sincroniza o nome com o perfil do Firebase Auth se o usuário estiver logado
