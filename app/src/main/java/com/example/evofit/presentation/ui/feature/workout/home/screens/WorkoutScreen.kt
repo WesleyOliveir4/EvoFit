@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -66,13 +65,13 @@ fun WorkoutScreen(
 
     BackHandler { /* Do nothing to prevent back navigation from home screen */ }
 
-    LaunchedEffect(isOnline) {
-        if (!isOnline) {
-            showOfflineToast = true
-            delay(3000)
-            showOfflineToast = false
-        } else {
-            showOfflineToast = false
+    LaunchedEffect(Unit) {
+        viewModel.showOfflineToast.collect { show ->
+            if (show) {
+                showOfflineToast = true
+                delay(3000)
+                showOfflineToast = false
+            }
         }
     }
 
@@ -157,15 +156,6 @@ fun WorkoutContent(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            if (isSyncing) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopCenter),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
-            }
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -175,7 +165,11 @@ fun WorkoutContent(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
-                    HeaderSection(userName = userName)
+                    HeaderSection(
+                        userName = userName,
+                        isSyncing = isSyncing,
+                        isOnline = isOnline
+                    )
                     Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
                 }
 

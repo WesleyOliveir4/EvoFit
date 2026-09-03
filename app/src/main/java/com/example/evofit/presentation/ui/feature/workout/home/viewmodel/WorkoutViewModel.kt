@@ -60,6 +60,10 @@ class WorkoutViewModel(
     val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
     private val _isSyncing = MutableStateFlow(false)
+    private var hasShownOfflineToast = false
+
+    private val _showOfflineToast = MutableSharedFlow<Boolean>()
+    val showOfflineToast = _showOfflineToast
 
     init {
         observeConnectivity()
@@ -89,6 +93,12 @@ class WorkoutViewModel(
                 _isOnline.value = online
                 if (online) {
                     syncData()
+                    hasShownOfflineToast = false
+                } else {
+                    if (!hasShownOfflineToast) {
+                        _showOfflineToast.emit(true)
+                        hasShownOfflineToast = true
+                    }
                 }
             }
         }
