@@ -98,20 +98,60 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
             val workoutExercises = exercises.mapIndexed { exIndex, exercise ->
                 val exerciseUuid = UUID.randomUUID().toString()
                 
-                // Base load para cada exercício (ex: 20kg + random)
-                val baseLoad = 20.0 + Random().nextInt(20)
-                val evolvedLoad = baseLoad * evolutionFactor
+                // Carga base dependendo da unidade
+                val baseValue = when (exercise.unit) {
+                    MeasurementUnit.DISTANCE -> 2.0 + Random().nextInt(3) // 2-5 km base
+                    MeasurementUnit.TIME -> 10.0 + Random().nextInt(20)   // 10-30 min base
+                    else -> 20.0 + Random().nextInt(20)                  // 20-40 kg base
+                }
+                
+                val evolvedValue = baseValue * evolutionFactor
 
                 val sets = List(3) { setIndex ->
-                    ExerciseSet(
-                        id = exercise.id,
-                        exerciseName = exercise.name,
-                        workoutExerciseId = exerciseUuid,
-                        setNumber = setIndex + 1,
-                        reps = 10 + Random().nextInt(5),
-                        load = (evolvedLoad * (1.0 - (setIndex * 0.1))).coerceAtLeast(1.0), // Diminui carga por série
-                        unit = exercise.unit
-                    )
+                    val seriesFactor = 1.0 - (setIndex * 0.1)
+                    val valueForSeries = (evolvedValue * seriesFactor).coerceAtLeast(0.1)
+                    
+                    when (exercise.unit) {
+                        MeasurementUnit.DISTANCE -> {
+                            ExerciseSet(
+                                id = exercise.id,
+                                exerciseName = exercise.name,
+                                workoutExerciseId = exerciseUuid,
+                                setNumber = setIndex + 1,
+                                reps = 0,
+                                load = 0.0,
+                                unit = exercise.unit,
+                                distance = valueForSeries,
+                                time = (valueForSeries * (8 + Random().nextInt(4))).toInt() // 8-12 min por km
+                            )
+                        }
+                        MeasurementUnit.TIME -> {
+                            ExerciseSet(
+                                id = exercise.id,
+                                exerciseName = exercise.name,
+                                workoutExerciseId = exerciseUuid,
+                                setNumber = setIndex + 1,
+                                reps = 0,
+                                load = 0.0,
+                                unit = exercise.unit,
+                                time = valueForSeries.toInt().coerceAtLeast(1),
+                                distance = null
+                            )
+                        }
+                        else -> {
+                            ExerciseSet(
+                                id = exercise.id,
+                                exerciseName = exercise.name,
+                                workoutExerciseId = exerciseUuid,
+                                setNumber = setIndex + 1,
+                                reps = 10 + Random().nextInt(5),
+                                load = valueForSeries,
+                                unit = exercise.unit,
+                                time = null,
+                                distance = null
+                            )
+                        }
+                    }
                 }
 
                 WorkoutExercise(

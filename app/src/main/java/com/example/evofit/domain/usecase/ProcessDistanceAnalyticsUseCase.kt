@@ -24,7 +24,7 @@ class ProcessDistanceAnalyticsUseCaseImpl : ProcessDistanceAnalyticsUseCase {
                 w.exercisesByGroup.flatMap { g -> g.exercises }
                     .filter { it.exerciseId == exerciseId }
                     .flatMap { it.sets }
-            }
+            }.filter { (it.distance ?: 0.0) > 0 }
             
             if (monthSets.isEmpty()) return@forEach
 

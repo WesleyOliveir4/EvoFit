@@ -19,14 +19,14 @@ class GetKmPerWeekUseCaseImpl : GetKmPerWeekUseCase {
     override fun invoke(history: List<WorkoutDone>): Double {
         if (history.isEmpty()) return 0.0
 
-        val totalKm = history.sumOf { workout ->
-            workout.exercisesByGroup.filter { it.muscleGroup?.category == ExerciseCategory.CARDIO }
-                .sumOf { group ->
-                    group.exercises.sumOf { exercise ->
-                        exercise.sets.sumOf { it.distance ?: 0.0 }
-                    }
-                }
-        }
+        val totalKm = history
+            .flatMap { it.exercisesByGroup }
+            .flatMap { it.exercises }
+            .flatMap { it.sets }
+            .mapNotNull { it.distance }
+            .sum()
+
+        if (totalKm <= 0) return 0.0
 
         val dates = history.mapNotNull { workout ->
             parseLocalDate(workout.date)
@@ -37,9 +37,12 @@ class GetKmPerWeekUseCaseImpl : GetKmPerWeekUseCase {
         val firstDate = dates.first()
         val lastDate = LocalDate.now()
         
+        // Se a data de hoje for antes da primeira data (erro de sistema), usa pelo menos 1 dia
         val days = ChronoUnit.DAYS.between(firstDate, lastDate).coerceAtLeast(1)
         val weeks = days / 7.0
         
+        // Retorna a média semanal. Se o período for < 1 semana, weeks será < 1.0, 
+        // o que dará a projeção da semana se o ritmo continuar.
         return if (weeks > 0) totalKm / weeks else totalKm
     }
 
