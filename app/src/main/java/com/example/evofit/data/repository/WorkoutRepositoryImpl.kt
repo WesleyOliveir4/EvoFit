@@ -63,10 +63,11 @@ class WorkoutRepositoryImpl(
         
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
-                val exerciseId = java.util.UUID.randomUUID().toString()
-                val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId).copy(id = exerciseId)
+                val workoutExerciseUuid = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
+                val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
-                    set.toEntity(exerciseId).copy(id = java.util.UUID.randomUUID().toString())
+                    // id do set deve ser o exerciseId conforme regra de negócio
+                    set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)
                 }
                 exerciseEntity to sets
             }
@@ -93,11 +94,11 @@ class WorkoutRepositoryImpl(
 
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
-                val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
-                val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId).copy(id = exerciseId)
+                val workoutExerciseUuid = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
+                val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
-                    val setId = if (set.id.isEmpty()) java.util.UUID.randomUUID().toString() else set.id
-                    set.toEntity(exerciseId).copy(id = setId)
+                    // id do set deve ser o exerciseId conforme regra de negócio
+                    set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)
                 }
                 exerciseEntity to sets
             }

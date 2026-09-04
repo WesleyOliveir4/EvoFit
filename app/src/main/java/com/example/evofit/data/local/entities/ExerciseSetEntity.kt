@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(
     tableName = "exercise_sets",
+    primaryKeys = ["workoutExerciseId", "setNumber"],
     foreignKeys = [
         ForeignKey(
             entity = WorkoutExerciseEntity::class,
@@ -21,7 +22,7 @@ import kotlinx.serialization.Serializable
     indices = [Index(value = ["workoutExerciseId"])]
 )
 data class ExerciseSetEntity(
-    @PrimaryKey val id: String = "",
+    val id: String = "",
     val workoutExerciseId: String = "",
     val setNumber: Int = 0,
     val reps: Int = 0,

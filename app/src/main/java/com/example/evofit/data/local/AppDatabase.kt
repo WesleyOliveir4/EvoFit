@@ -20,7 +20,7 @@ import com.example.evofit.data.local.entities.*
         ActiveSessionSetEntity::class,
         WorkoutDoneEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -28,6 +28,36 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Change Primary Key of exercise_sets from 'id' to (workoutExerciseId, setNumber)
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS exercise_sets_new (
+                        id TEXT NOT NULL,
+                        workoutExerciseId TEXT NOT NULL,
+                        setNumber INTEGER NOT NULL,
+                        reps INTEGER NOT NULL,
+                        load REAL NOT NULL,
+                        unit TEXT NOT NULL,
+                        time INTEGER,
+                        distance REAL,
+                        PRIMARY KEY(workoutExerciseId, setNumber),
+                        FOREIGN KEY(workoutExerciseId) REFERENCES workout_exercises(id) ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """)
+                
+                // Copy data (ignoring duplicates if any existed in a broken state)
+                database.execSQL("""
+                    INSERT OR IGNORE INTO exercise_sets_new (id, workoutExerciseId, setNumber, reps, load, unit, time, distance)
+                    SELECT id, workoutExerciseId, setNumber, reps, load, unit, time, distance FROM exercise_sets
+                """)
+                
+                database.execSQL("DROP TABLE exercise_sets")
+                database.execSQL("ALTER TABLE exercise_sets_new RENAME TO exercise_sets")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_exercise_sets_workoutExerciseId ON exercise_sets(workoutExerciseId)")
+            }
+        }
+
         val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // 1. Workouts: Drop muscleGroupId

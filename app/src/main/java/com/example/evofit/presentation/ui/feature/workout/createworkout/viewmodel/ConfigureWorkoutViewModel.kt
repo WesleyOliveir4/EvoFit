@@ -266,8 +266,10 @@ class ConfigureWorkoutViewModel(
                     muscleGroup = muscleGroupsMap[muscleGroupId],
                     orderIndex = 0, // Será definido no mapIndexed final
                     exercises = configs.mapIndexed { index, config ->
+                        val workoutExerciseUuid = if (config.workoutExerciseId.isEmpty()) java.util.UUID.randomUUID().toString() else config.workoutExerciseId
+                        
                         WorkoutExercise(
-                            id = config.workoutExerciseId,
+                            id = workoutExerciseUuid,
                             exerciseId = config.exerciseId,
                             orderIndex = index,
                             sets = config.sets.map { set ->
@@ -276,7 +278,7 @@ class ConfigureWorkoutViewModel(
                                         ExerciseSet(
                                             id = config.exerciseId,
                                             exerciseName = config.name,
-                                            workoutExerciseId = config.workoutExerciseId,
+                                            workoutExerciseId = workoutExerciseUuid,
                                             setNumber = set.setNumber,
                                             reps = 0,
                                             load = 0.0,
@@ -289,7 +291,7 @@ class ConfigureWorkoutViewModel(
                                         ExerciseSet(
                                             id = config.exerciseId,
                                             exerciseName = config.name,
-                                            workoutExerciseId = config.workoutExerciseId,
+                                            workoutExerciseId = workoutExerciseUuid,
                                             setNumber = set.setNumber,
                                             reps = 0,
                                             load = 0.0,
@@ -301,7 +303,7 @@ class ConfigureWorkoutViewModel(
                                         ExerciseSet(
                                             id = config.exerciseId,
                                             exerciseName = config.name,
-                                            workoutExerciseId = config.workoutExerciseId,
+                                            workoutExerciseId = workoutExerciseUuid,
                                             setNumber = set.setNumber,
                                             reps = set.reps,
                                             load = 0.0,
@@ -312,7 +314,7 @@ class ConfigureWorkoutViewModel(
                                         ExerciseSet(
                                             id = config.exerciseId,
                                             exerciseName = config.name,
-                                            workoutExerciseId = config.workoutExerciseId,
+                                            workoutExerciseId = workoutExerciseUuid,
                                             setNumber = set.setNumber,
                                             reps = set.reps,
                                             load = set.weight,

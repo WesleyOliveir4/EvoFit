@@ -45,22 +45,38 @@ class WorkoutRemoteDataSourceImpl(
         exercises: List<WorkoutExerciseEntity>,
         sets: List<List<ExerciseSetEntity>>
     ) {
-        val batch = firestore.batch()
-        
-        // Save Workout
         val workoutRef = firestore.collection("users")
             .document(workout.userId)
             .collection("workouts")
             .document(workout.workoutId)
+
+        // 1. Limpeza: Deleta exercícios e séries antigos antes de salvar o novo estado
+        // Isso resolve o problema de exercícios removidos que continuavam no servidor.
+        val exercisesSnapshot = workoutRef.collection("exercises").get().await()
+        val deleteBatch = firestore.batch()
+        for (exerciseDoc in exercisesSnapshot.documents) {
+            val setsSnapshot = exerciseDoc.reference.collection("sets").get().await()
+            for (setDoc in setsSnapshot.documents) {
+                deleteBatch.delete(setDoc.reference)
+            }
+            deleteBatch.delete(exerciseDoc.reference)
+        }
+        if (exercisesSnapshot.size() > 0) {
+            deleteBatch.commit().await()
+        }
+
+        // 2. Escrita: Salva o treino e a nova estrutura de exercícios/séries
+        val batch = firestore.batch()
         batch.set(workoutRef, workout)
 
-        // Save Exercises and Sets
         exercises.forEachIndexed { index, exercise ->
             val exerciseRef = workoutRef.collection("exercises").document(exercise.id)
             batch.set(exerciseRef, exercise)
             
             sets[index].forEach { set ->
-                val setRef = exerciseRef.collection("sets").document(set.id)
+                // Usamos setNumber como ID do documento para evitar que sets com o mesmo exerciseId (id)
+                // se sobreponham no Firestore.
+                val setRef = exerciseRef.collection("sets").document(set.setNumber.toString())
                 batch.set(setRef, set)
             }
         }
