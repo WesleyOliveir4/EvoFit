@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -40,12 +41,8 @@ import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialogContent
-import com.example.evofit.presentation.ui.feature.profile.home.components.ImageSourcePickerBottomSheet
-import com.example.evofit.presentation.ui.feature.profile.home.components.LogoutComponent
-import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileMenuItemData
-import com.example.evofit.presentation.ui.feature.profile.home.components.ProfileOptionsMenuComponent
-import com.example.evofit.presentation.ui.feature.profile.home.components.ProfilePhotoExpandedDialog
-import com.example.evofit.presentation.ui.feature.profile.home.components.UserDataInfoComponent
+import com.example.evofit.BuildConfig
+import com.example.evofit.presentation.ui.feature.profile.home.components.*
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -97,6 +94,7 @@ fun ProfileHomeScreen(
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick,
+        onDeveloperClick = { onNavigate(NavRoutes.Developer.route) },
         onLogoutClick = { showLogoutDialog = true },
         onImageClick = { isPhotoExpanded = true }
     )
@@ -161,13 +159,14 @@ fun ProfileHomeScreenContent(
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit,
+    onDeveloperClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onImageClick: () -> Unit
 ) {
     val medalIcon = ImageVector.vectorResource(id = R.drawable.ic_medal)
 
-    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon) {
-        listOf(
+    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon, onDeveloperClick) {
+        val baseList = mutableListOf(
             ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, isEnabled = true, isVisible = true, onUserDataClick),
             ProfileMenuItemData("2", "Metas Pessoais", medalIcon, isEnabled = true, isVisible = true, onGoalsClick),
             ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, isEnabled = false, isVisible = false, {}),
@@ -175,6 +174,14 @@ fun ProfileHomeScreenContent(
             ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, isEnabled = false, isVisible = true, {}),
             ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, isEnabled = false, isVisible = true, {})
         )
+
+        if (BuildConfig.FLAVOR == "staging" && BuildConfig.DEBUG) {
+            baseList.add(
+                ProfileMenuItemData("7", "Menu do Desenvolvedor", Icons.Default.BugReport, isEnabled = true, isVisible = true, onDeveloperClick)
+            )
+        }
+
+        baseList.toList()
     }
 
     Scaffold(
@@ -237,6 +244,7 @@ private fun ProfileHomeScreenPreview() {
             onNavigate = {},
             onUserDataClick = {},
             onGoalsClick = {},
+            onDeveloperClick = {},
             onLogoutClick = {},
             onImageClick = {}
         )

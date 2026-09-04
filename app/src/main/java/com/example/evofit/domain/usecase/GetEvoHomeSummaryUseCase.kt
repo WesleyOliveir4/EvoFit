@@ -22,7 +22,7 @@ class GetEvoHomeSummaryUseCaseImpl(
 ) : GetEvoHomeSummaryUseCase {
 
     override fun invoke(userId: String, period: EvoPeriod): Flow<EvoHomeSummary> {
-        return getWorkoutDoneHistoryUseCase(userId).map { fullHistory ->
+        return getWorkoutDoneHistoryUseCase(userId, 500).map { fullHistory ->
             val history = filterWorkoutHistoryByPeriodUseCase(fullHistory, period)
 
             EvoHomeSummary(

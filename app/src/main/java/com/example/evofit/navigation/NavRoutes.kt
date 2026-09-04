@@ -27,6 +27,7 @@ sealed class NavRoutes(val route: String) {
     object Profile : NavRoutes("profile")
     object ProfileUserData : NavRoutes("profile_user_data")
     object ProfilePersonalGoals : NavRoutes("profile_personal_goals")
+    object Developer : NavRoutes("developer")
     
     // Analytics Graph
     object AnalyticsGraph : NavRoutes("analytics_graph")

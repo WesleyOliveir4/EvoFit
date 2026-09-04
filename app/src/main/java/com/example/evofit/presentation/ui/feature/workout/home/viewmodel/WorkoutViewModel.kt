@@ -143,7 +143,7 @@ class WorkoutViewModel(
             val startOfWeek = getCurrentWeekRangeUseCase()
             combine(
                 getWorkoutsUseCase(userId),
-                getWorkoutDoneHistoryUseCase(userId, 50),
+                getWorkoutDoneHistoryUseCase(userId, 7),
                 getWorkoutsSinceUseCase(userId, startOfWeek)
             ) { workouts, history, weeklyWorkouts ->
                 WorkoutState(

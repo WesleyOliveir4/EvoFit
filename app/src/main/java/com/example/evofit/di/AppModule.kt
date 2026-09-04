@@ -125,6 +125,7 @@ import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCaseImpl
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCaseImpl
+import com.example.evofit.presentation.ui.feature.profile.developer.viewmodel.DeveloperViewModel
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
@@ -207,6 +208,7 @@ val domainModule = module {
     factory<ClearWorkoutSessionUseCase> { ClearWorkoutSessionUseCaseImpl(get()) }
     factory<DeleteWorkoutUseCase> { DeleteWorkoutUseCaseImpl(get()) }
     factory<UpdateWorkoutUseCase> { UpdateWorkoutUseCaseImpl(get()) }
+    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get()) }
     factory<ProcessWeightAnalyticsUseCase> { ProcessWeightAnalyticsUseCaseImpl() }
     factory<ProcessDistanceAnalyticsUseCase> { ProcessDistanceAnalyticsUseCaseImpl() }
     factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
@@ -344,6 +346,7 @@ val evoModule = module {
 
 val profileModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
+    viewModel { DeveloperViewModel(get()) }
     viewModel { UserDataViewModel(get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
