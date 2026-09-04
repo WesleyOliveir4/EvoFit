@@ -17,20 +17,34 @@ import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.model.WorkoutExercise
 import com.example.evofit.domain.model.WorkoutSession
 
+import com.example.evofit.domain.model.WorkoutGroup
+
 fun FullWorkout.toDomain(
-    muscleGroup: MuscleGroup? = null,
+    muscleGroups: List<MuscleGroup> = emptyList(),
     exerciseNameResolver: (String) -> String = { "" }
 ): Workout {
+    val muscleGroupsMap = muscleGroups.associateBy { it.id }
+    
+    val groupedExercises = exercises
+        .groupBy { it.workoutExercise.muscleGroupId }
+        .map { (muscleGroupId, exercisesWithSets) ->
+            WorkoutGroup(
+                muscleGroupId = muscleGroupId,
+                muscleGroup = muscleGroupsMap[muscleGroupId],
+                orderIndex = exercisesWithSets.minOfOrNull { it.workoutExercise.orderIndex } ?: 0,
+                exercises = exercisesWithSets
+                    .sortedBy { it.workoutExercise.orderIndex }
+                    .map { it.toDomain(exerciseNameResolver) }
+            )
+        }
+        .sortedBy { it.orderIndex }
+
     return Workout(
         id = workout.workoutId,
         userId = workout.userId,
         name = workout.name,
-        muscleGroupId = workout.muscleGroupId,
-        muscleGroup = muscleGroup,
         date = workout.date,
-        exercises = exercises
-            .sortedBy { it.workoutExercise.orderIndex }
-            .map { it.toDomain(exerciseNameResolver) },
+        exercisesByGroup = groupedExercises,
         orderIndex = workout.orderIndex
     )
 }
@@ -64,18 +78,18 @@ fun Workout.toEntity(): WorkoutEntity {
         workoutId = id,
         userId = userId,
         name = name,
-        muscleGroupId = muscleGroupId,
         date = date,
         orderIndex = orderIndex,
-        updatedAt = System.currentTimeMillis() // Adicionado updatedAt
+        updatedAt = System.currentTimeMillis()
     )
 }
 
-fun WorkoutExercise.toEntity(workoutId: String): WorkoutExerciseEntity {
+fun WorkoutExercise.toEntity(workoutId: String, muscleGroupId: String): WorkoutExerciseEntity {
     return WorkoutExerciseEntity(
         id = id,
         workoutId = workoutId,
         exerciseId = exerciseId,
+        muscleGroupId = muscleGroupId,
         orderIndex = orderIndex
     )
 }
@@ -121,9 +135,8 @@ fun WorkoutDone.toEntity(): WorkoutDoneEntity {
         id = id,
         userId = userId,
         name = name,
-        muscleGroupId = muscleGroupId,
         date = date,
-        exercises = exercises,
+        exercisesByGroup = exercisesByGroup,
         time = time,
         createdAt = createdAt
     )
@@ -134,9 +147,8 @@ fun WorkoutDoneEntity.toDomain(): WorkoutDone {
         id = id,
         userId = userId,
         name = name,
-        muscleGroupId = muscleGroupId,
         date = date,
-        exercises = exercises,
+        exercisesByGroup = exercisesByGroup,
         time = time,
         createdAt = createdAt
     )

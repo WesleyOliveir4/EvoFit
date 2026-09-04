@@ -10,20 +10,20 @@ interface GetStrengthGainsUseCase {
 
 class GetStrengthGainsUseCaseImpl : GetStrengthGainsUseCase {
     override fun invoke(history: List<WorkoutDone>): List<StrengthGain>? {
-        val strengthHistory = history.filter { 
-            it.muscleGroup?.category == ExerciseCategory.STRENGTH 
-        }
-
         val exercisesLoads = mutableMapOf<String, MutableList<Double>>()
         val exerciseNames = mutableMapOf<String, String>()
 
-        strengthHistory.forEach { workout ->
-            workout.exercises.forEach { exercise ->
-                val maxLoad = exercise.sets.maxOfOrNull { it.load } ?: 0.0
-                if (maxLoad > 0) {
-                    exercisesLoads.getOrPut(exercise.exerciseId) { mutableListOf() }.add(maxLoad)
-                    exerciseNames.getOrPut(exercise.exerciseId) { 
-                        exercise.sets.firstOrNull()?.exerciseName ?: "Exercício" 
+        history.forEach { workout ->
+            workout.exercisesByGroup.forEach { group ->
+                if (group.muscleGroup?.category == ExerciseCategory.STRENGTH) {
+                    group.exercises.forEach { exercise ->
+                        val maxLoad = exercise.sets.maxOfOrNull { it.load } ?: 0.0
+                        if (maxLoad > 0) {
+                            exercisesLoads.getOrPut(exercise.exerciseId) { mutableListOf() }.add(maxLoad)
+                            exerciseNames.getOrPut(exercise.exerciseId) { 
+                                exercise.sets.firstOrNull()?.exerciseName ?: "Exercício" 
+                            }
+                        }
                     }
                 }
             }

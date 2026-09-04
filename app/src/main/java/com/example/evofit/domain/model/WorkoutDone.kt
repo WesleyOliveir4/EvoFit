@@ -7,10 +7,8 @@ data class WorkoutDone(
     val id: String = "",
     val userId: String = "",
     val name: String = "",
-    val muscleGroupId: String = "",
-    val muscleGroup: MuscleGroup? = null,
     val date: String = "",
-    val exercises: List<WorkoutExercise> = emptyList(),
+    val exercisesByGroup: List<WorkoutGroup> = emptyList(),
     val time: String = "",
     val createdAt: Long = System.currentTimeMillis()
 )

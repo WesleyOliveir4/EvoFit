@@ -9,6 +9,7 @@ import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.Workout
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.model.WorkoutExercise
+import com.example.evofit.domain.model.WorkoutGroup
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
@@ -78,8 +79,7 @@ class WorkoutStartViewModel(
             
             workoutDomain = workout
             workout?.let { w ->
-                val groupName = w.muscleGroup?.name ?: ""
-                val exerciseIds = w.exercises.map { it.exerciseId }
+                val exerciseIds = w.exercisesByGroup.flatMap { it.exercises }.map { it.exerciseId }
                 val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds).associateBy { it.id }
                 val muscleGroups = getMuscleGroupsUseCase()
                 val muscleGroupsMap = muscleGroups.associateBy { it.id }
@@ -90,33 +90,35 @@ class WorkoutStartViewModel(
                     emptyList()
                 }
 
-                val exercises = w.exercises.map { workoutExercise ->
-                    val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
-                    val mGroupId = exerciseInfo?.muscleGroupId ?: ""
-                    val mGroupName = muscleGroupsMap[mGroupId]?.name ?: ""
+                val exercises = w.exercisesByGroup.flatMap { group ->
+                    group.exercises.map { workoutExercise ->
+                        val exerciseInfo = exerciseDataMap[workoutExercise.exerciseId]
+                        val mGroupId = group.muscleGroupId
+                        val mGroupName = muscleGroupsMap[mGroupId]?.name ?: ""
 
-                    ExerciseProgressState(
-                        workoutExerciseId = workoutExercise.id,
-                        exerciseId = workoutExercise.exerciseId,
-                        name = exerciseInfo?.name ?: "",
-                        muscleGroupName = mGroupName,
-                        unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
-                        sets = workoutExercise.sets.map { set ->
-                            SetProgressState(
-                                setNumber = set.setNumber,
-                                weight = set.load,
-                                reps = set.reps,
-                                time = set.time,
-                                distance = set.distance,
-                                isDone = completedSets.any {
-                                    it.workoutExerciseId == workoutExercise.id && it.setNumber == set.setNumber
-                                }
-                            )
-                        }
-                    )
+                        ExerciseProgressState(
+                            workoutExerciseId = workoutExercise.id,
+                            exerciseId = workoutExercise.exerciseId,
+                            name = exerciseInfo?.name ?: "",
+                            muscleGroupName = mGroupName,
+                            unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
+                            sets = workoutExercise.sets.map { set ->
+                                SetProgressState(
+                                    setNumber = set.setNumber,
+                                    weight = set.load,
+                                    reps = set.reps,
+                                    time = set.time,
+                                    distance = set.distance,
+                                    isDone = completedSets.any {
+                                        it.workoutExerciseId == workoutExercise.id && it.setNumber == set.setNumber
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
 
-                _uiState.update { it.copy(workoutTitle = w.name.ifEmpty { groupName }, exercises = exercises, isLoading = false) }
+                _uiState.update { it.copy(workoutTitle = w.name, exercises = exercises, isLoading = false) }
             }
         }
     }
@@ -208,10 +210,14 @@ class WorkoutStartViewModel(
             val userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID
             val workoutDoneId = java.util.UUID.randomUUID().toString()
 
+            val allWorkoutExercises = workout.exercisesByGroup.flatMap { it.exercises }
+
             val doneExercises = _uiState.value.exercises.mapNotNull { exercise ->
                 val doneSets = exercise.sets.filter { it.isDone }.map { set ->
                     ExerciseSet(
+                        id = exercise.exerciseId,
                         exerciseName = exercise.name,
+                        workoutExerciseId = exercise.workoutExerciseId,
                         setNumber = set.setNumber,
                         reps = set.reps,
                         load = set.weight,
@@ -223,7 +229,7 @@ class WorkoutStartViewModel(
                 if (doneSets.isEmpty()) {
                     null
                 } else {
-                    val totalSetsPlanned = workout.exercises.find { it.id == exercise.workoutExerciseId }?.sets?.size ?: 0
+                    val totalSetsPlanned = allWorkoutExercises.find { it.id == exercise.workoutExerciseId }?.sets?.size ?: 0
 
                     WorkoutExercise(
                         id = exercise.workoutExerciseId,
@@ -234,14 +240,29 @@ class WorkoutStartViewModel(
                 }
             }
 
+            // Agrupa os exercícios finalizados seguindo a estrutura original do treino e ajusta orderIndex
+            val exercisesByGroup = workout.exercisesByGroup.mapNotNull { group ->
+                val groupExercises = doneExercises.filter { de ->
+                    group.exercises.any { ge -> ge.id == de.id }
+                }.mapIndexed { index, de ->
+                    de.copy(orderIndex = index)
+                }
+                
+                if (groupExercises.isNotEmpty()) {
+                    group.copy(exercises = groupExercises)
+                } else {
+                    null
+                }
+            }.mapIndexed { index, group -> 
+                group.copy(orderIndex = index)
+            }
+
             val workoutDone = WorkoutDone(
                 id = workoutDoneId,
                 userId = userId,
                 name = workout.name,
-                muscleGroupId = workout.muscleGroupId,
-                muscleGroup = workout.muscleGroup,
                 date = DateMapper.formatDate(java.util.Date()),
-                exercises = doneExercises,
+                exercisesByGroup = exercisesByGroup,
                 time = _uiState.value.elapsedTime
             )
 

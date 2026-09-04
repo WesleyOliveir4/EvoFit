@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 
+import com.example.evofit.domain.model.WorkoutGroup
+
 class ConfigureWorkoutViewModel(
     private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
@@ -49,7 +51,7 @@ class ConfigureWorkoutViewModel(
             }
 
             val existingWorkout = editWorkoutId?.let { getWorkoutByIdUseCase(it).first() }
-            val existingExercisesById = existingWorkout?.exercises?.associateBy { it.exerciseId } ?: emptyMap()
+            val existingExercisesById = existingWorkout?.exercisesByGroup?.flatMap { it.exercises }?.associateBy { it.exerciseId } ?: emptyMap()
             existingWorkout?.let {
                 originalOrderIndex = it.orderIndex
                 originalDate = it.date
@@ -198,15 +200,13 @@ class ConfigureWorkoutViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val (muscleGroup, workoutExercises) = buildMuscleGroupAndExercises(currentState)
+            val workoutGroups = buildWorkoutGroups(currentState)
 
             val workout = Workout(
                 userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID,
                 name = workoutName,
-                muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
-                muscleGroup = muscleGroup,
                 date = DateMapper.formatDate(Date()),
-                exercises = workoutExercises
+                exercisesByGroup = workoutGroups
             )
 
             val workoutId = saveWorkoutUseCase(workout)
@@ -229,16 +229,14 @@ class ConfigureWorkoutViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val (muscleGroup, workoutExercises) = buildMuscleGroupAndExercises(currentState)
+            val workoutGroups = buildWorkoutGroups(currentState)
 
             val workout = Workout(
                 id = editWorkoutId,
                 userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID,
                 name = workoutName,
-                muscleGroupId = muscleGroup?.id ?: currentState.exerciseConfigs.firstOrNull()?.muscleGroupId.orEmpty(),
-                muscleGroup = muscleGroup,
                 date = originalDate,
-                exercises = workoutExercises,
+                exercisesByGroup = workoutGroups,
                 orderIndex = originalOrderIndex
             )
 
@@ -253,68 +251,82 @@ class ConfigureWorkoutViewModel(
         }
     }
 
-    private suspend fun buildMuscleGroupAndExercises(
+    private suspend fun buildWorkoutGroups(
         currentState: ConfigureWorkoutUiState
-    ): Pair<com.example.evofit.domain.model.MuscleGroup?, List<WorkoutExercise>> {
+    ): List<WorkoutGroup> {
         val muscleGroups = getMuscleGroupsUseCase()
-        val firstConfig = currentState.exerciseConfigs.firstOrNull()
-        val muscleGroup = muscleGroups.find { it.id == firstConfig?.muscleGroupId }
+        val muscleGroupsMap = muscleGroups.associateBy { it.id }
 
-        val workoutExercises = currentState.exerciseConfigs.mapIndexed { index, config ->
-            WorkoutExercise(
-                id = config.workoutExerciseId,
-                exerciseId = config.exerciseId,
-                orderIndex = index,
-                sets = config.sets.map { set ->
-                    when (config.unit) {
-                        MeasurementUnit.DISTANCE -> {
-                            ExerciseSet(
-                                id = set.id,
-                                exerciseName = config.name,
-                                setNumber = set.setNumber,
-                                reps = 0,
-                                load = 0.0,
-                                unit = config.unit,
-                                distance = set.weight,
-                                time = set.reps
-                            )
-                        }
-                        MeasurementUnit.TIME -> {
-                            ExerciseSet(
-                                id = set.id,
-                                exerciseName = config.name,
-                                setNumber = set.setNumber,
-                                reps = 0,
-                                load = 0.0,
-                                unit = config.unit,
-                                time = set.reps
-                            )
-                        }
-                        MeasurementUnit.REPS -> {
-                            ExerciseSet(
-                                id = set.id,
-                                exerciseName = config.name,
-                                setNumber = set.setNumber,
-                                reps = set.reps,
-                                load = 0.0,
-                                unit = config.unit
-                            )
-                        }
-                        MeasurementUnit.WEIGHT -> {
-                            ExerciseSet(
-                                id = set.id,
-                                exerciseName = config.name,
-                                setNumber = set.setNumber,
-                                reps = set.reps,
-                                load = set.weight,
-                                unit = config.unit
-                            )
-                        }
+        // Agrupa preservando a ordem em que os grupos aparecem na lista de configurações
+        return currentState.exerciseConfigs
+            .groupBy { it.muscleGroupId }
+            .map { (muscleGroupId, configs) ->
+                WorkoutGroup(
+                    muscleGroupId = muscleGroupId,
+                    muscleGroup = muscleGroupsMap[muscleGroupId],
+                    orderIndex = 0, // Será definido no mapIndexed final
+                    exercises = configs.mapIndexed { index, config ->
+                        WorkoutExercise(
+                            id = config.workoutExerciseId,
+                            exerciseId = config.exerciseId,
+                            orderIndex = index,
+                            sets = config.sets.map { set ->
+                                when (config.unit) {
+                                    MeasurementUnit.DISTANCE -> {
+                                        ExerciseSet(
+                                            id = config.exerciseId,
+                                            exerciseName = config.name,
+                                            workoutExerciseId = config.workoutExerciseId,
+                                            setNumber = set.setNumber,
+                                            reps = 0,
+                                            load = 0.0,
+                                            unit = config.unit,
+                                            distance = set.weight,
+                                            time = set.reps
+                                        )
+                                    }
+                                    MeasurementUnit.TIME -> {
+                                        ExerciseSet(
+                                            id = config.exerciseId,
+                                            exerciseName = config.name,
+                                            workoutExerciseId = config.workoutExerciseId,
+                                            setNumber = set.setNumber,
+                                            reps = 0,
+                                            load = 0.0,
+                                            unit = config.unit,
+                                            time = set.reps
+                                        )
+                                    }
+                                    MeasurementUnit.REPS -> {
+                                        ExerciseSet(
+                                            id = config.exerciseId,
+                                            exerciseName = config.name,
+                                            workoutExerciseId = config.workoutExerciseId,
+                                            setNumber = set.setNumber,
+                                            reps = set.reps,
+                                            load = 0.0,
+                                            unit = config.unit
+                                        )
+                                    }
+                                    MeasurementUnit.WEIGHT -> {
+                                        ExerciseSet(
+                                            id = config.exerciseId,
+                                            exerciseName = config.name,
+                                            workoutExerciseId = config.workoutExerciseId,
+                                            setNumber = set.setNumber,
+                                            reps = set.reps,
+                                            load = set.weight,
+                                            unit = config.unit
+                                        )
+                                    }
+                                }
+                            }
+                        )
                     }
-                }
-            )
-        }
-
-        return muscleGroup to workoutExercises
+                )
+            }
+            .mapIndexed { index, group -> 
+                group.copy(orderIndex = index) 
+            }
     }
 }

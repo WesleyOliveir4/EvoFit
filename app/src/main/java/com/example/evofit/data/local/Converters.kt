@@ -6,6 +6,8 @@ import com.example.evofit.domain.model.WorkoutExercise
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+import com.example.evofit.domain.model.WorkoutGroup
+
 class Converters {
     @TypeConverter
     fun fromWorkoutDoneList(value: List<WorkoutDone>): String {
@@ -18,12 +20,12 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromWorkoutExerciseList(value: List<WorkoutExercise>): String {
+    fun fromWorkoutGroupList(value: List<WorkoutGroup>): String {
         return Json.encodeToString(value)
     }
 
     @TypeConverter
-    fun toWorkoutExerciseList(value: String): List<WorkoutExercise> {
+    fun toWorkoutGroupList(value: String): List<WorkoutGroup> {
         return Json.decodeFromString(value)
     }
 }

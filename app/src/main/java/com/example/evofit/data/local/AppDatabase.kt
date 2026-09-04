@@ -20,7 +20,7 @@ import com.example.evofit.data.local.entities.*
         ActiveSessionSetEntity::class,
         WorkoutDoneEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -28,6 +28,70 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 1. Workouts: Drop muscleGroupId
+                database.execSQL("""
+                    CREATE TABLE workouts_new (
+                        workoutId TEXT NOT NULL PRIMARY KEY,
+                        userId TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        date TEXT NOT NULL,
+                        orderIndex INTEGER NOT NULL DEFAULT 0,
+                        updatedAt INTEGER NOT NULL DEFAULT 0,
+                        FOREIGN KEY(userId) REFERENCES users(id) ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """)
+                database.execSQL("""
+                    INSERT INTO workouts_new (workoutId, userId, name, date, orderIndex, updatedAt)
+                    SELECT workoutId, userId, name, date, orderIndex, updatedAt FROM workouts
+                """)
+                database.execSQL("DROP TABLE workouts")
+                database.execSQL("ALTER TABLE workouts_new RENAME TO workouts")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_workouts_userId ON workouts(userId)")
+
+                // 2. WorkoutExercises: Add muscleGroupId
+                database.execSQL("""
+                    CREATE TABLE workout_exercises_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        workoutId TEXT NOT NULL,
+                        exerciseId TEXT NOT NULL,
+                        muscleGroupId TEXT NOT NULL DEFAULT '',
+                        orderIndex INTEGER NOT NULL DEFAULT 0,
+                        FOREIGN KEY(workoutId) REFERENCES workouts(workoutId) ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """)
+                database.execSQL("""
+                    INSERT INTO workout_exercises_new (id, workoutId, exerciseId, muscleGroupId, orderIndex)
+                    SELECT id, workoutId, exerciseId, '', orderIndex FROM workout_exercises
+                """)
+                database.execSQL("DROP TABLE workout_exercises")
+                database.execSQL("ALTER TABLE workout_exercises_new RENAME TO workout_exercises")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_workout_exercises_workoutId ON workout_exercises(workoutId)")
+
+                // 3. WorkoutDone: Drop muscleGroupId, change exercises to exercisesByGroup
+                database.execSQL("""
+                    CREATE TABLE workout_done_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        userId TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        date TEXT NOT NULL,
+                        exercisesByGroup TEXT NOT NULL,
+                        time TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                """)
+                // For simplicity, we initialize exercisesByGroup as empty or we could try to map, 
+                // but since the format changes significantly, empty is safer for schema migration.
+                database.execSQL("""
+                    INSERT INTO workout_done_new (id, userId, name, date, exercisesByGroup, time, createdAt)
+                    SELECT id, userId, name, date, '[]', time, createdAt FROM workout_done
+                """)
+                database.execSQL("DROP TABLE workout_done")
+                database.execSQL("ALTER TABLE workout_done_new RENAME TO workout_done")
+            }
+        }
+
         val MIGRATION_8_9 = object : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("""

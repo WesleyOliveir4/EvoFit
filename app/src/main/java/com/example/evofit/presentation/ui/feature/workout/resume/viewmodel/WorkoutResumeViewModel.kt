@@ -54,11 +54,12 @@ class WorkoutResumeViewModel(
             getWorkoutDoneByIdUseCase(id).collect { workoutDone ->
                 _uiState.update { state ->
                     workoutDone?.let { done ->
+                        val allExercises = done.exercisesByGroup.flatMap { it.exercises }
                         state.copy(
                             workoutName = done.name,
-                            totalExercises = done.exercises.size,
-                            totalSets = done.exercises.sumOf { it.totalSets },
-                            completedSets = done.exercises.sumOf { it.sets.size },
+                            totalExercises = allExercises.size,
+                            totalSets = allExercises.sumOf { it.totalSets },
+                            completedSets = allExercises.sumOf { it.sets.size },
                             duration = done.time,
                             formattedDate = done.date,
                             isLoading = false
@@ -78,10 +79,11 @@ class WorkoutResumeViewModel(
         getWorkoutByIdUseCase(id).collect { workout ->
             _uiState.update { state ->
                 workout?.let { w ->
+                    val allExercises = w.exercisesByGroup.flatMap { it.exercises }
                     state.copy(
                         workoutName = w.name,
-                        totalExercises = w.exercises.size,
-                        totalSets = w.exercises.sumOf { it.sets.size },
+                        totalExercises = allExercises.size,
+                        totalSets = allExercises.sumOf { it.sets.size },
                         formattedDate = w.date,
                         isLoading = false
                     )

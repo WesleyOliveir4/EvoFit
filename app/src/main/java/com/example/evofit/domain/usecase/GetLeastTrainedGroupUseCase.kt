@@ -10,9 +10,8 @@ class GetLeastTrainedGroupUseCaseImpl : GetLeastTrainedGroupUseCase {
     override fun invoke(history: List<WorkoutDone>): Pair<String, Int>? {
         if (history.isEmpty()) return null
 
-        //TODO Rever
         return history
-            .filter { it.muscleGroup != null }
+            .flatMap { it.exercisesByGroup }
             .groupBy { it.muscleGroup?.name ?: "Unknown" }
             .minByOrNull { it.value.size }
             ?.let { it.key to it.value.size }

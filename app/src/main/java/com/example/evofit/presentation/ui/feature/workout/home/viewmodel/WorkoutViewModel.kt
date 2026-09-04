@@ -149,23 +149,25 @@ class WorkoutViewModel(
                 WorkoutState(
                     userName = firstName,
                     workouts = workouts.map { workout ->
+                        val allExercises = workout.exercisesByGroup.flatMap { it.exercises }
                         WorkoutUIModel(
                             id = workout.id,
-                            title = workout.name.ifEmpty { workout.muscleGroupId },
-                            exercises = workout.exercises.size,
-                            series = workout.exercises.sumOf { it.sets.size },
-                            imageRes = workout.muscleGroup?.type?.toImageRes()
+                            title = workout.name,
+                            exercises = allExercises.size,
+                            series = allExercises.sumOf { it.sets.size },
+                            imageRes = workout.exercisesByGroup.firstOrNull()?.muscleGroup?.type?.toImageRes()
                         )
                     },
                     totalWorkouts = workouts.size,
                     workoutsThisWeek = weeklyWorkouts.size,
                     history = history.map { workoutDone ->
+                        val doneExercises = workoutDone.exercisesByGroup.flatMap { it.exercises }
                         WorkoutHistoryUIModel(
                             id = workoutDone.id,
                             name = workoutDone.name,
                             date = workoutDone.date,
                             time = workoutDone.time,
-                            exercises = workoutDone.exercises.map { workoutExercise ->
+                            exercises = doneExercises.map { workoutExercise ->
                                 val sets = workoutExercise.sets
                                 val firstSet = sets.firstOrNull()
                                 ExercisePreviewItem(
@@ -195,7 +197,7 @@ class WorkoutViewModel(
             activeSession = activeSession?.let {
                 ActiveSessionUIModel(
                     workoutId = it.workout.id,
-                    workoutName = it.workout.name.ifEmpty { it.workout.muscleGroupId }
+                    workoutName = it.workout.name
                 )
             },
             isSyncing = isSyncing

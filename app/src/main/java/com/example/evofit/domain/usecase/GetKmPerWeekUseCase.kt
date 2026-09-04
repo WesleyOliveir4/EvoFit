@@ -19,13 +19,13 @@ class GetKmPerWeekUseCaseImpl : GetKmPerWeekUseCase {
     override fun invoke(history: List<WorkoutDone>): Double {
         if (history.isEmpty()) return 0.0
 
-        val cardioWorkouts = history.filter { it.muscleGroup?.category == ExerciseCategory.CARDIO }
-        if (cardioWorkouts.isEmpty()) return 0.0
-
-        val totalKm = cardioWorkouts.sumOf { workout ->
-            workout.exercises.sumOf { exercise ->
-                exercise.sets.sumOf { it.distance ?: 0.0 }
-            }
+        val totalKm = history.sumOf { workout ->
+            workout.exercisesByGroup.filter { it.muscleGroup?.category == ExerciseCategory.CARDIO }
+                .sumOf { group ->
+                    group.exercises.sumOf { exercise ->
+                        exercise.sets.sumOf { it.distance ?: 0.0 }
+                    }
+                }
         }
 
         val dates = history.mapNotNull { workout ->

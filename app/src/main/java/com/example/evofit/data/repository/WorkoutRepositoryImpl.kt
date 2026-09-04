@@ -31,9 +31,8 @@ class WorkoutRepositoryImpl(
         return workoutDataSource.getFullWorkouts(userId).map { fullWorkouts ->
             val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
             fullWorkouts.map { fullWorkout ->
-                val group = muscleGroups.find { it.id == fullWorkout.workout.muscleGroupId }
                 val nameResolver = buildExerciseNameResolver(fullWorkout.exercises.map { it.workoutExercise.exerciseId })
-                fullWorkout.toDomain(group, nameResolver)
+                fullWorkout.toDomain(muscleGroups, nameResolver)
             }
         }
     }
@@ -41,11 +40,9 @@ class WorkoutRepositoryImpl(
     override fun getWorkoutById(workoutId: String): Flow<Workout?> {
         return workoutDataSource.getFullWorkoutById(workoutId).map { fullWorkout ->
             fullWorkout?.let {
-                val group = exerciseDataSource.getAllMuscleGroups()
-                    .find { it.id == fullWorkout.workout.muscleGroupId }
-                    ?.toDomain()
+                val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
                 val nameResolver = buildExerciseNameResolver(fullWorkout.exercises.map { ex -> ex.workoutExercise.exerciseId })
-                fullWorkout.toDomain(group, nameResolver)
+                fullWorkout.toDomain(muscleGroups, nameResolver)
             }
         }
     }
@@ -64,13 +61,15 @@ class WorkoutRepositoryImpl(
             orderIndex = nextOrderIndex
         )
         
-        val exercises = workout.exercises.map { exercise ->
-            val exerciseId = java.util.UUID.randomUUID().toString()
-            val exerciseEntity = exercise.toEntity(workoutId).copy(id = exerciseId)
-            val sets = exercise.sets.map { set ->
-                set.toEntity(exerciseId).copy(id = java.util.UUID.randomUUID().toString())
+        val exercises = workout.exercisesByGroup.flatMap { group ->
+            group.exercises.map { exercise ->
+                val exerciseId = java.util.UUID.randomUUID().toString()
+                val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId).copy(id = exerciseId)
+                val sets = exercise.sets.map { set ->
+                    set.toEntity(exerciseId).copy(id = java.util.UUID.randomUUID().toString())
+                }
+                exerciseEntity to sets
             }
-            exerciseEntity to sets
         }
 
         val exerciseEntities = exercises.map { it.first }
@@ -92,14 +91,16 @@ class WorkoutRepositoryImpl(
     override suspend fun updateWorkout(workout: Workout): String {
         val workoutEntity = workout.toEntity()
 
-        val exercises = workout.exercises.map { exercise ->
-            val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
-            val exerciseEntity = exercise.toEntity(workout.id).copy(id = exerciseId)
-            val sets = exercise.sets.map { set ->
-                val setId = if (set.id.isEmpty()) java.util.UUID.randomUUID().toString() else set.id
-                set.toEntity(exerciseId).copy(id = setId)
+        val exercises = workout.exercisesByGroup.flatMap { group ->
+            group.exercises.map { exercise ->
+                val exerciseId = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
+                val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId).copy(id = exerciseId)
+                val sets = exercise.sets.map { set ->
+                    val setId = if (set.id.isEmpty()) java.util.UUID.randomUUID().toString() else set.id
+                    set.toEntity(exerciseId).copy(id = setId)
+                }
+                exerciseEntity to sets
             }
-            exerciseEntity to sets
         }
 
         val exerciseEntities = exercises.map { it.first }
