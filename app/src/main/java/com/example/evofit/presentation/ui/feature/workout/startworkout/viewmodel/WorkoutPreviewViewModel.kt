@@ -9,17 +9,22 @@ import com.example.evofit.domain.usecase.GetActiveWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.GetExercisesByIdsUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
+import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
 import com.example.evofit.presentation.ui.feature.workout.startworkout.state.WorkoutPreviewUiState
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class WorkoutPreviewViewModel(
     private val workoutId: String,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
@@ -27,14 +32,24 @@ class WorkoutPreviewViewModel(
     private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase,
-    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
+    private val updateWorkoutUseCase: UpdateWorkoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutPreviewUiState())
     val uiState: StateFlow<WorkoutPreviewUiState> = _uiState.asStateFlow()
 
+    private val _updateOrderFlow = MutableSharedFlow<List<String>>()
+
     init {
         loadWorkoutPreview()
+        viewModelScope.launch {
+            _updateOrderFlow
+                .debounce(1000L)
+                .collect { newOrder ->
+                    performUpdateMuscleGroupOrder(newOrder)
+                }
+        }
     }
 
     private fun loadWorkoutPreview() {
@@ -159,5 +174,28 @@ class WorkoutPreviewViewModel(
 
     fun onDismissEditBlockedDialog() {
         _uiState.update { it.copy(showEditBlockedDialog = false) }
+    }
+
+    fun updateMuscleGroupOrder(newOrder: List<String>) {
+        viewModelScope.launch {
+            _updateOrderFlow.emit(newOrder)
+        }
+    }
+
+    private suspend fun performUpdateMuscleGroupOrder(newOrder: List<String>) {
+        val currentWorkout = getWorkoutByIdUseCase(workoutId).first() ?: return
+        
+        val updatedGroups = currentWorkout.exercisesByGroup.map { group ->
+            val newIndex = newOrder.indexOf(group.muscleGroup?.name)
+            if (newIndex != -1) {
+                group.copy(orderIndex = newIndex)
+            } else {
+                group
+            }
+        }.sortedBy { it.orderIndex }
+
+        if (updatedGroups != currentWorkout.exercisesByGroup) {
+            updateWorkoutUseCase(currentWorkout.copy(exercisesByGroup = updatedGroups))
+        }
     }
 }

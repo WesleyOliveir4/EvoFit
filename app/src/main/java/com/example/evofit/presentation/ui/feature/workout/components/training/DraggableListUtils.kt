@@ -6,14 +6,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.evofit.presentation.model.WorkoutUIModel
 
 @Stable
-class WorkoutDraggableListState(
+class DraggableListState(
     private val onMoveState: State<(Int, Int) -> Unit>,
-    private val density: Density
+    private val density: Density,
+    private val itemHeight: Dp = 104.dp
 ) {
     var draggedItemId by mutableStateOf<String?>(null)
         private set
@@ -25,16 +27,16 @@ class WorkoutDraggableListState(
         dragOffset = 0f
     }
 
-    fun onDrag(deltaY: Float, workouts: List<WorkoutUIModel>) {
-        val currentIndex = workouts.indexOfFirst { it.id == draggedItemId }
+    fun <T> onDrag(deltaY: Float, items: List<T>, idSelector: (T) -> String) {
+        val currentIndex = items.indexOfFirst { idSelector(it) == draggedItemId }
         if (currentIndex == -1) return
 
-        val totalItemHeightPx = with(density) { 104.dp.toPx() }
+        val totalItemHeightPx = with(density) { itemHeight.toPx() }
         val newOffset = dragOffset + deltaY
         val threshold = totalItemHeightPx * 0.5f
 
         when {
-            newOffset > threshold && currentIndex < workouts.lastIndex -> {
+            newOffset > threshold && currentIndex < items.lastIndex -> {
                 onMoveState.value(currentIndex, currentIndex + 1)
                 dragOffset = newOffset - totalItemHeightPx
             }
@@ -45,7 +47,7 @@ class WorkoutDraggableListState(
             else -> {
                 dragOffset = when {
                     currentIndex == 0 -> newOffset.coerceAtLeast(-totalItemHeightPx * 0.2f)
-                    currentIndex == workouts.lastIndex -> newOffset.coerceAtMost(totalItemHeightPx * 0.2f)
+                    currentIndex == items.lastIndex -> newOffset.coerceAtMost(totalItemHeightPx * 0.2f)
                     else -> newOffset
                 }
             }
@@ -59,19 +61,20 @@ class WorkoutDraggableListState(
 }
 
 @Composable
-fun rememberWorkoutDraggableListState(
+fun rememberDraggableListState(
+    itemHeight: Dp = 104.dp,
     onMove: (Int, Int) -> Unit
-): WorkoutDraggableListState {
+): DraggableListState {
     val density = LocalDensity.current
     val onMoveState = rememberUpdatedState(onMove)
-    return remember(density) {
-        WorkoutDraggableListState(onMoveState, density)
+    return remember(density, itemHeight) {
+        DraggableListState(onMoveState, density, itemHeight)
     }
 }
 
 fun LazyListScope.draggableWorkoutList(
     workouts: List<WorkoutUIModel>,
-    dragState: WorkoutDraggableListState,
+    dragState: DraggableListState,
     onWorkoutClick: (WorkoutUIModel) -> Unit
 ) {
     itemsIndexed(workouts, key = { _, it -> it.id }) { _, workout ->
@@ -87,7 +90,7 @@ fun LazyListScope.draggableWorkoutList(
                     fadeOutSpec = null
                 )),
             onDragStart = { dragState.onDragStart(workout.id) },
-            onDrag = { deltaY -> dragState.onDrag(deltaY, workouts) },
+            onDrag = { deltaY -> dragState.onDrag(deltaY, workouts, { it.id }) },
             onDragEnd = dragState::onDragEnd,
             onDragCancel = dragState::onDragEnd,
             onClick = { onWorkoutClick(workout) }
