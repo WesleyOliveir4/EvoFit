@@ -272,6 +272,7 @@ class ConfigureWorkoutViewModel(
                             id = workoutExerciseUuid,
                             exerciseId = config.exerciseId,
                             orderIndex = index,
+                            totalSets = config.sets.size,
                             sets = config.sets.map { set ->
                                 when (config.unit) {
                                     MeasurementUnit.DISTANCE -> {

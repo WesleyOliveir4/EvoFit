@@ -22,5 +22,7 @@ data class WorkoutExerciseEntity(
     val workoutId: String = "",
     val exerciseId: String = "",
     val muscleGroupId: String = "",
-    val orderIndex: Int = 0
+    val orderIndex: Int = 0,
+    val groupOrderIndex: Int = 0,
+    val totalSets: Int = 0
 )

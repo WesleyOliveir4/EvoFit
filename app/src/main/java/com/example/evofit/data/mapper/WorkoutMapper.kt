@@ -31,7 +31,7 @@ fun FullWorkout.toDomain(
             WorkoutGroup(
                 muscleGroupId = muscleGroupId,
                 muscleGroup = muscleGroupsMap[muscleGroupId],
-                orderIndex = exercisesWithSets.minOfOrNull { it.workoutExercise.orderIndex } ?: 0,
+                orderIndex = exercisesWithSets.firstOrNull()?.workoutExercise?.groupOrderIndex ?: 0,
                 exercises = exercisesWithSets
                     .sortedBy { it.workoutExercise.orderIndex }
                     .map { it.toDomain(exerciseNameResolver) }
@@ -51,10 +51,12 @@ fun FullWorkout.toDomain(
 
 fun WorkoutExerciseWithSets.toDomain(exerciseNameResolver: (String) -> String = { "" }): WorkoutExercise {
     val exerciseName = exerciseNameResolver(workoutExercise.exerciseId)
+    val domainSets = sets.sortedBy { it.setNumber }.map { it.toDomain(exerciseName) }
     return WorkoutExercise(
         id = workoutExercise.id,
         exerciseId = workoutExercise.exerciseId,
-        sets = sets.sortedBy { it.setNumber }.map { it.toDomain(exerciseName) },
+        sets = domainSets,
+        totalSets = if (workoutExercise.totalSets > 0) workoutExercise.totalSets else domainSets.size,
         orderIndex = workoutExercise.orderIndex
     )
 }
@@ -84,13 +86,19 @@ fun Workout.toEntity(): WorkoutEntity {
     )
 }
 
-fun WorkoutExercise.toEntity(workoutId: String, muscleGroupId: String): WorkoutExerciseEntity {
+fun WorkoutExercise.toEntity(
+    workoutId: String,
+    muscleGroupId: String,
+    groupOrderIndex: Int
+): WorkoutExerciseEntity {
     return WorkoutExerciseEntity(
         id = id,
         workoutId = workoutId,
         exerciseId = exerciseId,
         muscleGroupId = muscleGroupId,
-        orderIndex = orderIndex
+        orderIndex = orderIndex,
+        groupOrderIndex = groupOrderIndex,
+        totalSets = if (totalSets > 0) totalSets else sets.size
     )
 }
 
@@ -142,6 +150,19 @@ fun WorkoutDone.toEntity(): WorkoutDoneEntity {
     )
 }
 
+fun WorkoutDone.fixInconsistencies(): WorkoutDone {
+    val fixedGroups = exercisesByGroup.map { group ->
+        group.copy(
+            exercises = group.exercises.map { exercise ->
+                if (exercise.totalSets <= 0) {
+                    exercise.copy(totalSets = exercise.sets.size)
+                } else exercise
+            }
+        )
+    }
+    return this.copy(exercisesByGroup = fixedGroups)
+}
+
 fun WorkoutDoneEntity.toDomain(): WorkoutDone {
     return WorkoutDone(
         id = id,
@@ -151,5 +172,5 @@ fun WorkoutDoneEntity.toDomain(): WorkoutDone {
         exercisesByGroup = exercisesByGroup,
         time = time,
         createdAt = createdAt
-    )
+    ).fixInconsistencies()
 }

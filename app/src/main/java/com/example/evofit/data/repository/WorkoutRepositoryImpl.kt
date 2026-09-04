@@ -64,7 +64,7 @@ class WorkoutRepositoryImpl(
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
                 val workoutExerciseUuid = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
-                val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId).copy(id = workoutExerciseUuid)
+                val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId, group.orderIndex).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
                     // id do set deve ser o exerciseId conforme regra de negócio
                     set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)
@@ -95,7 +95,7 @@ class WorkoutRepositoryImpl(
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
                 val workoutExerciseUuid = if (exercise.id.isEmpty()) java.util.UUID.randomUUID().toString() else exercise.id
-                val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId).copy(id = workoutExerciseUuid)
+                val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId, group.orderIndex).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
                     // id do set deve ser o exerciseId conforme regra de negócio
                     set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)

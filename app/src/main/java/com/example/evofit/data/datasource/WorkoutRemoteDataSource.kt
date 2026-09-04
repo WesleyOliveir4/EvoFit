@@ -6,6 +6,7 @@ import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.example.evofit.data.local.entities.WorkoutEntity
 import com.example.evofit.data.local.entities.WorkoutExerciseEntity
+import com.example.evofit.data.mapper.fixInconsistencies
 import com.example.evofit.domain.model.WorkoutDone
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -161,7 +162,7 @@ class WorkoutRemoteDataSourceImpl(
                 .get()
                 .await()
             
-            snapshot.toObjects(WorkoutDone::class.java)
+            snapshot.toObjects(WorkoutDone::class.java).map { it.fixInconsistencies() }
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao buscar historico recente: $userId", e)
             emptyList()
@@ -180,7 +181,7 @@ class WorkoutRemoteDataSourceImpl(
             // Filtramos o "summary" se ele ainda existir na lista (toObjects pode tentar mapear se houver campos iguais)
             snapshot.documents
                 .filter { it.id != "summary" }
-                .mapNotNull { it.toObject<WorkoutDone>() }
+                .mapNotNull { it.toObject<WorkoutDone>()?.fixInconsistencies() }
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao buscar todo o historico: $userId", e)
             emptyList()
@@ -199,7 +200,7 @@ class WorkoutRemoteDataSourceImpl(
             
             snapshot.documents
                 .filter { it.id != "summary" }
-                .mapNotNull { it.toObject<WorkoutDone>() }
+                .mapNotNull { it.toObject<WorkoutDone>()?.fixInconsistencies() }
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao buscar historico por data: $userId", e)
             emptyList()
