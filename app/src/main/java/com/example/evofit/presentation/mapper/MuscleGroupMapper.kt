@@ -9,7 +9,9 @@ fun MuscleGroupType.toImageRes(): Int? {
     return when (this) {
         MuscleGroupType.BACK -> R.drawable.ic_back_2
         MuscleGroupType.SHOULDERS -> R.drawable.ic_shoulder_2
-        MuscleGroupType.ARMS -> R.drawable.ic_arms_2
+        MuscleGroupType.BICEPS -> R.drawable.ic_biceps_3
+        MuscleGroupType.TRICEPS -> R.drawable.ic_triceps
+        MuscleGroupType.FOREARMS -> R.drawable.ic_forearm
         MuscleGroupType.LEGS -> R.drawable.ic_legs_3
         MuscleGroupType.ABS -> R.drawable.ic_core_2
         MuscleGroupType.GLUTES -> R.drawable.ic_gluteus_2

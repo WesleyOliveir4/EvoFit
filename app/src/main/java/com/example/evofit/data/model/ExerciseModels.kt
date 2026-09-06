@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class MuscleGroupType {
-    CHEST, BACK, SHOULDERS, ARMS, LEGS, ABS, CARDIO, GLUTES, CALVES, OTHER
+    CHEST, BACK, SHOULDERS, BICEPS, TRICEPS, FOREARMS, LEGS, ABS, CARDIO, GLUTES, CALVES, OTHER
 }
 
 @Serializable

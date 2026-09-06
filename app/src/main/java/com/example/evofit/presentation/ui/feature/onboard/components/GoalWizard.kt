@@ -542,8 +542,8 @@ fun GoalWizardMuscleGroupPreview() {
                 selectedCategory = stringResource(R.string.goal_category_strength)
             ),
             muscleGroups = listOf(
-                MuscleGroup("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
-                MuscleGroup("2", "Costas", MuscleGroupType.BACK, ExerciseCategory.STRENGTH)
+                MuscleGroup("2", "Chest", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
+                MuscleGroup("1", "Back", MuscleGroupType.BACK, ExerciseCategory.STRENGTH)
             ),
             getExercises = { emptyList() },
             onAction = {},
@@ -559,13 +559,13 @@ fun GoalWizardExercisePreview() {
         GoalWizardContent(
             state = GoalWizardUiState(
                 currentStep = GoalWizardStep.EXERCISE,
-                selectedMuscle = MuscleGroup("1", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH)
+                selectedMuscle = MuscleGroup("2", "Chest", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH)
             ),
             muscleGroups = emptyList(),
             getExercises = { 
                 listOf(
-                    Exercise("1", "Supino Reto", "1"),
-                    Exercise("2", "Supino Inclinado", "1")
+                    Exercise("11", "Bench Press", "2"),
+                    Exercise("12", "Incline Bench Press", "2")
                 )
             },
             onAction = {},
@@ -581,7 +581,7 @@ fun GoalWizardGoalValuePreview() {
         GoalWizardContent(
             state = GoalWizardUiState(
                 currentStep = GoalWizardStep.GOAL_VALUE,
-                selectedExercise = Exercise("1", "Supino Reto", "1", MeasurementUnit.WEIGHT)
+                selectedExercise = Exercise("11", "Bench Press", "2", MeasurementUnit.WEIGHT)
             ),
             muscleGroups = emptyList(),
             getExercises = { emptyList() },

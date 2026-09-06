@@ -273,17 +273,17 @@ fun WorkoutPreviewContent(
 private fun WorkoutPreviewScreenPreview() {
     val exercises = listOf(
         ExercisePreviewItem(
-            workoutExerciseId = "1",
-            name = "Supino reto",
-            muscleGroupName = "Peito",
+            workoutExerciseId = "11",
+            name = "Bench Press",
+            muscleGroupName = "Chest",
             setsCount = 3,
             weight = 80.0,
             reps = 10,
             unit = MeasurementUnit.WEIGHT
         ),
         ExercisePreviewItem(
-            workoutExerciseId = "2",
-            name = "Corrida",
+            workoutExerciseId = "72",
+            name = "Outdoor Run",
             muscleGroupName = "Cardio",
             setsCount = 1,
             weight = 0.0,
@@ -293,8 +293,8 @@ private fun WorkoutPreviewScreenPreview() {
             time = 25
         ),
         ExercisePreviewItem(
-            workoutExerciseId = "3",
-            name = "Prancha",
+            workoutExerciseId = "57",
+            name = "Plank",
             muscleGroupName = "Core",
             setsCount = 3,
             weight = 0.0,
@@ -303,8 +303,8 @@ private fun WorkoutPreviewScreenPreview() {
             time = 2
         ),
         ExercisePreviewItem(
-            workoutExerciseId = "4",
-            name = "Abdominais",
+            workoutExerciseId = "55",
+            name = "Abdominal Crunch",
             muscleGroupName = "Core",
             setsCount = 3,
             weight = 0.0,
@@ -316,8 +316,8 @@ private fun WorkoutPreviewScreenPreview() {
     EvoFitTheme {
         WorkoutPreviewContent(
             preview = WorkoutDetailPreview(
-                title = "Treino Completo",
-                muscleGroupId = "chest",
+                title = "Full Workout",
+                muscleGroupId = "2",
                 totalExercises = 4,
                 totalSets = 10,
                 exercises = exercises,
