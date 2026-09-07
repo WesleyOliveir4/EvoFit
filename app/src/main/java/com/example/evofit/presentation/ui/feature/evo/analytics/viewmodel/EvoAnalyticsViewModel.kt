@@ -45,7 +45,7 @@ class EvoAnalyticsViewModel(
             getUserIdUseCase().flatMapLatest { userId ->
                 if (userId != null) {
                     val allGroups = getMuscleGroupsUseCase()
-                    getWorkoutDoneHistoryUseCase(userId).map { history ->
+                    getWorkoutDoneHistoryUseCase(userId, 500).map { history ->
                         val groups = getTrainedMuscleGroupsUseCase(history, allGroups)
                         history to groups.map { group -> group.toItem() }
                     }

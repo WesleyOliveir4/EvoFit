@@ -43,7 +43,7 @@ class CalculateGoalProgressUseCaseImpl(
 
         var bestValue = 0.0
         history.forEach { workout ->
-            workout.exercises.forEach { exercise ->
+            workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
                 exercise.sets.forEach { set ->
                     if (set.exerciseName.equals(goal.exerciseName, ignoreCase = true)) {
                         val value = if (goal.unit.name == "REPS") set.reps.toDouble() else set.load
@@ -65,7 +65,7 @@ class CalculateGoalProgressUseCaseImpl(
         var bestTime = 0.0
 
         history.forEach { workout ->
-            workout.exercises.forEach { exercise ->
+            workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
                 exercise.sets.forEach { set ->
                     if (set.exerciseName.equals(goal.type, ignoreCase = true)) {
                         set.distance?.let { if (it > bestDistance) bestDistance = it }

@@ -42,14 +42,15 @@ class WorkoutPreviewViewModel(
             getWorkoutByIdUseCase(workoutId)
                 .map { workout ->
                     workout?.let { workoutSelected ->
-                        val exerciseIds = workoutSelected.exercises.map { it.exerciseId }
+                        val allExercises = workoutSelected.exercisesByGroup.flatMap { it.exercises }
+                        val exerciseIds = allExercises.map { it.exerciseId }
                         val exerciseDataMap = getExercisesByIdsUseCase(exerciseIds)
                             .associateBy { it.id }
 
                         val muscleGroups = getMuscleGroupsUseCase()
                         val muscleGroupsMap = muscleGroups.associateBy { it.id }
 
-                        val exercises = workoutSelected.exercises.map { workoutExercise ->
+                        val exercises = allExercises.map { workoutExercise ->
                             val exercise = exerciseDataMap[workoutExercise.exerciseId]
                             val unit = exercise?.unit ?: MeasurementUnit.WEIGHT
                             val mGroupId = exercise?.muscleGroupId ?: ""
@@ -78,11 +79,13 @@ class WorkoutPreviewViewModel(
                             )
                         }
 
+                        val firstMuscleGroup = workoutSelected.exercisesByGroup.firstOrNull()?.muscleGroup
+                        
                         WorkoutDetailPreview(
-                            title = workoutSelected.name.ifEmpty { workoutSelected.muscleGroupId },
-                            muscleGroupId = workoutSelected.muscleGroupId,
-                            totalExercises = workoutSelected.exercises.size,
-                            totalSets = workoutSelected.exercises.sumOf { ex -> ex.sets.size },
+                            title = workoutSelected.name,
+                            muscleGroupId = firstMuscleGroup?.id ?: "",
+                            totalExercises = allExercises.size,
+                            totalSets = allExercises.sumOf { ex -> ex.sets.size },
                             exercises = exercises,
                             groupedExercises = exercises.groupBy { it.muscleGroupName }
                         )

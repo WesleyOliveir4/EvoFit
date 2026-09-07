@@ -26,6 +26,7 @@ import com.example.evofit.presentation.ui.feature.onboard.screens.*
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.example.evofit.presentation.ui.feature.profile.developer.screens.DeveloperScreen
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
@@ -510,6 +511,14 @@ fun NavNavigation() {
 
         composable(NavRoutes.ProfileUserData.route) {
             UserDataScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.Developer.route) {
+            DeveloperScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }

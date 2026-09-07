@@ -19,7 +19,8 @@ class GetExercisesWithRecordCountUseCaseImpl(
         val exercises = getExercisesByGroupUseCase(muscleGroupId)
 
         return exercises.map { exercise ->
-            val count = history.flatMap { it.exercises }
+            val count = history.flatMap { it.exercisesByGroup }
+                .flatMap { it.exercises }
                 .count { it.exerciseId == exercise.id }
             ExerciseWithRecords(exercise, count)
         }.filter { it.recordsCount > 0 }

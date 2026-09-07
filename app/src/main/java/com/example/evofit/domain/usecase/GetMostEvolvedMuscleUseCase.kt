@@ -10,20 +10,20 @@ interface GetMostEvolvedMuscleUseCase {
 
 class GetMostEvolvedMuscleUseCaseImpl : GetMostEvolvedMuscleUseCase {
     override fun invoke(history: List<WorkoutDone>): MuscleEvolution? {
-        val strengthHistory = history.filter { 
-            it.muscleGroup?.category == ExerciseCategory.STRENGTH 
-        }
-
         val exercisesLoads = mutableMapOf<String, MutableList<Double>>()
         val exerciseToMuscleGroup = mutableMapOf<String, String>()
 
-        strengthHistory.forEach { workout ->
-            val muscleGroupName = workout.muscleGroup?.name ?: "Outros"
-            workout.exercises.forEach { exercise ->
-                val maxLoad = exercise.sets.maxOfOrNull { it.load } ?: 0.0
-                if (maxLoad > 0) {
-                    exercisesLoads.getOrPut(exercise.exerciseId) { mutableListOf() }.add(maxLoad)
-                    exerciseToMuscleGroup[exercise.exerciseId] = muscleGroupName
+        history.forEach { workout ->
+            workout.exercisesByGroup.forEach { group ->
+                if (group.muscleGroup?.category == ExerciseCategory.STRENGTH) {
+                    val muscleGroupName = group.muscleGroup.name
+                    group.exercises.forEach { exercise ->
+                        val maxLoad = exercise.sets.maxOfOrNull { it.load } ?: 0.0
+                        if (maxLoad > 0) {
+                            exercisesLoads.getOrPut(exercise.exerciseId) { mutableListOf() }.add(maxLoad)
+                            exerciseToMuscleGroup[exercise.exerciseId] = muscleGroupName
+                        }
+                    }
                 }
             }
         }

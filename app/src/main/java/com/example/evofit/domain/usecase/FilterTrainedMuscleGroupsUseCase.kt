@@ -9,7 +9,7 @@ interface FilterTrainedMuscleGroupsUseCase {
 
 class FilterTrainedMuscleGroupsUseCaseImpl : FilterTrainedMuscleGroupsUseCase {
     override fun invoke(history: List<WorkoutDone>, allGroups: List<MuscleGroup>): List<MuscleGroup> {
-        val trainedGroupIds = history.map { it.muscleGroupId }.toSet()
+        val trainedGroupIds = history.flatMap { it.exercisesByGroup }.map { it.muscleGroupId }.toSet()
         return allGroups.filter { trainedGroupIds.contains(it.id) }
     }
 }

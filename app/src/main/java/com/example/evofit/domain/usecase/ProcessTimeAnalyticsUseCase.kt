@@ -16,7 +16,11 @@ class ProcessTimeAnalyticsUseCaseImpl : ProcessTimeAnalyticsUseCase {
         var totalSetsCount = 0
 
         groupWorkoutsByMonth(filteredWorkouts).forEach { (_, workouts) ->
-            val monthSets = workouts.flatMap { w -> w.exercises.first { it.exerciseId == exerciseId }.sets }
+            val monthSets = workouts.flatMap { w -> 
+                w.exercisesByGroup.flatMap { g -> g.exercises }
+                    .filter { it.exerciseId == exerciseId }
+                    .flatMap { it.sets }
+            }
             totalSetsCount += monthSets.size
             val label = formatDateToMonth(workouts.first().date)
 

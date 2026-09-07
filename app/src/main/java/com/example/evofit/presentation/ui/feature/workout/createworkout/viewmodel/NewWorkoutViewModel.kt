@@ -31,7 +31,7 @@ class NewWorkoutViewModel(
             if (editWorkoutId != null) {
                 val workout = getWorkoutByIdUseCase(editWorkoutId).first()
                 workout?.let { w ->
-                    val exerciseIds = w.exercises.map { it.exerciseId }
+                    val exerciseIds = w.exercisesByGroup.flatMap { it.exercises }.map { it.exerciseId }
                     val exercisesData = getExercisesByIdsUseCase(exerciseIds)
                     initialSelected = exercisesData.map { it.muscleGroupId }.toSet()
                 }

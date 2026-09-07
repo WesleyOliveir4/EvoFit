@@ -33,7 +33,7 @@ class SelectExercisesViewModel(
             if (editWorkoutId != null) {
                 val existingWorkout = getWorkoutByIdUseCase(editWorkoutId).first()
                 existingWorkout?.let { workout ->
-                    val exerciseIds = workout.exercises.map { it.exerciseId }
+                    val exerciseIds = workout.exercisesByGroup.flatMap { it.exercises }.map { it.exerciseId }
                     val exercisesData = getExercisesByIdsUseCase(exerciseIds)
                     
                     val groupedSelected = exercisesData.groupBy { it.muscleGroupId }

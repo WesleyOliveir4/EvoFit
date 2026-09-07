@@ -16,7 +16,7 @@ class ProcessExerciseAnalyticsUseCaseImpl(
 ) : ProcessExerciseAnalyticsUseCase {
     override fun invoke(exerciseId: String, history: List<WorkoutDone>): ExerciseAnalyticsResult? {
         val filteredWorkouts = history.filter { workout ->
-            workout.exercises.any { it.exerciseId == exerciseId }
+            workout.exercisesByGroup.flatMap { it.exercises }.any { it.exerciseId == exerciseId }
         }.sortedBy { workout ->
             try {
                 if (workout.date.contains("/")) {
@@ -32,7 +32,8 @@ class ProcessExerciseAnalyticsUseCaseImpl(
 
         if (filteredWorkouts.isEmpty()) return null
 
-        val firstExerciseOccurrence = filteredWorkouts.first().exercises.first { it.exerciseId == exerciseId }
+        val firstExerciseOccurrence = filteredWorkouts.first().exercisesByGroup.flatMap { it.exercises }
+            .first { it.exerciseId == exerciseId }
         val unit = firstExerciseOccurrence.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT
 
         return when (unit) {
