@@ -46,9 +46,7 @@ class ConfigureWorkoutViewModel(
             _uiState.update { it.copy(isLoading = true, editWorkoutId = editWorkoutId) }
             val selectedExercises = getExercisesByIdsUseCase(exerciseIds)
             val muscleGroups = getMuscleGroupsUseCase()
-            val muscleGroupType = selectedExercises.firstOrNull()?.let { first ->
-                muscleGroups.find { it.id == first.muscleGroupId }?.type
-            }
+            val muscleGroupsMap = muscleGroups.associateBy { it.id }
 
             val existingWorkout = editWorkoutId?.let { getWorkoutByIdUseCase(it).first() }
             val existingExercisesById = existingWorkout?.exercisesByGroup?.flatMap { it.exercises }?.associateBy { it.exerciseId } ?: emptyMap()
@@ -58,6 +56,7 @@ class ConfigureWorkoutViewModel(
             }
 
             val configs = selectedExercises.map { exercise ->
+                val type = muscleGroupsMap[exercise.muscleGroupId]?.type
                 val existing = existingExercisesById[exercise.id]
                 if (existing != null) {
                     ExerciseConfigState(
@@ -65,6 +64,7 @@ class ConfigureWorkoutViewModel(
                         exerciseId = exercise.id,
                         name = exercise.name,
                         muscleGroupId = exercise.muscleGroupId,
+                        muscleGroupType = type,
                         unit = exercise.unit,
                         sets = existing.sets.mapIndexed { index, set -> 
                             set.toSetState(index + 1).copy(id = set.id) 
@@ -85,6 +85,7 @@ class ConfigureWorkoutViewModel(
                         exerciseId = exercise.id,
                         name = exercise.name,
                         muscleGroupId = exercise.muscleGroupId,
+                        muscleGroupType = type,
                         unit = exercise.unit,
                         sets = listOf(
                             SetState(
@@ -101,7 +102,6 @@ class ConfigureWorkoutViewModel(
             _uiState.update {
                 it.copy(
                     exerciseConfigs = configs,
-                    muscleGroupType = muscleGroupType,
                     isLoading = false
                 )
             }

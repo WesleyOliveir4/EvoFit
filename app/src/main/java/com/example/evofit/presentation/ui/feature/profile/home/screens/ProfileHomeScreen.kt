@@ -40,7 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
-import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialogContent
+import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.example.evofit.BuildConfig
 import com.example.evofit.presentation.ui.feature.profile.home.components.*
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
@@ -134,7 +134,7 @@ fun ProfileHomeScreen(
     }
 
     if (showLogoutDialog) {
-        EvoFitAlertDialogContent(
+        EvoFitAlertDialog(
             title = stringResource(id = R.string.logout_dialog_title),
             description = stringResource(id = R.string.logout_dialog_message),
             confirmButtonText = stringResource(id = R.string.logout_dialog_confirm),

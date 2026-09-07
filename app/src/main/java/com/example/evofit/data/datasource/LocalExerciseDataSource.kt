@@ -152,12 +152,12 @@ class LocalExerciseDataSource {
     )
 
     private val suggestions = listOf(
-        GoalSuggestion("1", "Lose weight", isWeightGoal = true),
-        GoalSuggestion("2", "Gain muscle", isWeightGoal = true),
-        GoalSuggestion("3", "Increase strength", ExerciseCategory.STRENGTH, muscleGroupId = "3"),
-        GoalSuggestion("4", "Improve pace", ExerciseCategory.CARDIO, muscleGroupId = "9"),
-        GoalSuggestion("5", "Strong core", ExerciseCategory.STRENGTH, muscleGroupId = "8"),
-        GoalSuggestion("6", "Steel chest", ExerciseCategory.STRENGTH, muscleGroupId = "2")
+        GoalSuggestion("1", "Perder peso", isWeightGoal = true),
+        GoalSuggestion("2", "Ganhar peso", isWeightGoal = true),
+        GoalSuggestion("3", "Ganho de força ", ExerciseCategory.STRENGTH, muscleGroupId = "3"),
+        GoalSuggestion("4", "Melhorar pace", ExerciseCategory.CARDIO, muscleGroupId = "9"),
+        GoalSuggestion("5", "Core Blindado", ExerciseCategory.STRENGTH, muscleGroupId = "8"),
+        GoalSuggestion("6", "Peito de aço", ExerciseCategory.STRENGTH, muscleGroupId = "2")
     )
 
     fun getAllMuscleGroups(): List<MuscleGroupModel> = groups

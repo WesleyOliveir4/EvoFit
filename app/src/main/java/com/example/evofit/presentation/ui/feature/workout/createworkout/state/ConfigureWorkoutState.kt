@@ -7,7 +7,6 @@ import com.example.evofit.domain.model.MeasurementUnit
 @Immutable
 data class ConfigureWorkoutUiState(
     val exerciseConfigs: List<ExerciseConfigState> = emptyList(),
-    val muscleGroupType: MuscleGroupType? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val savedWorkoutId: String? = null,
@@ -20,6 +19,7 @@ data class ExerciseConfigState(
     val exerciseId: String,
     val name: String,
     val muscleGroupId: String,
+    val muscleGroupType: MuscleGroupType? = null,
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val sets: List<SetState> = emptyList()
 )

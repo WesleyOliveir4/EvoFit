@@ -263,7 +263,6 @@ fun ExerciseConfigFooter(
 @Composable
 fun ExerciseConfigContent(
     config: ExerciseConfigState,
-    muscleGroupType: MuscleGroupType?,
     onAddSet: (String) -> Unit,
     onUpdateSet: (String, Int, Double, Int) -> Unit,
     onRemoveSet: (String, Int) -> Unit,
@@ -279,7 +278,7 @@ fun ExerciseConfigContent(
             ExerciseConfigHeader(
                 name = config.name,
                 setCount = config.sets.size,
-                muscleGroupType = muscleGroupType,
+                muscleGroupType = config.muscleGroupType,
                 unit = config.unit
             )
         }
@@ -338,7 +337,6 @@ private fun ExerciseConfigContentDistancePreview() {
         }
         ExerciseConfigContent(
             config = mockConfig,
-            muscleGroupType = MuscleGroupType.CARDIO,
             onAddSet = {},
             onUpdateSet = { _, _, _, _ -> },
             onRemoveSet = { _, _ -> }
@@ -365,7 +363,6 @@ private fun ExerciseConfigContentTimePreview() {
         }
         ExerciseConfigContent(
             config = mockConfig,
-            muscleGroupType = MuscleGroupType.ABS,
             onAddSet = {},
             onUpdateSet = { _, _, _, _ -> },
             onRemoveSet = { _, _ -> }
@@ -392,7 +389,6 @@ private fun ExerciseConfigContentRepsPreview() {
         }
         ExerciseConfigContent(
             config = mockConfig,
-            muscleGroupType = MuscleGroupType.CHEST,
             onAddSet = {},
             onUpdateSet = { _, _, _, _ -> },
             onRemoveSet = { _, _ -> }
