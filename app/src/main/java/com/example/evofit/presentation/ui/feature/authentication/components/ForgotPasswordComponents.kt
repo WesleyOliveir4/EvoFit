@@ -32,8 +32,7 @@ import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
- * Envelope illustration with a small "edit" badge, matching the artwork on
- * mock screen 4 ("Esqueci minha senha").
+ * Envelope illustration matching the success state of sending the reset link.
  */
 @Composable
 fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
@@ -55,26 +54,14 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(Dimens.SpacingExtraLargePlus)
             )
         }
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .size(Dimens.AuthBadgeSizeDefault),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(Dimens.IconSizeMedium)
-            )
-        }
     }
 }
 
 @Composable
-fun ForgotPasswordHeader(modifier: Modifier = Modifier) {
+fun ForgotPasswordHeader(
+    email: String,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +74,7 @@ fun ForgotPasswordHeader(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(id = R.string.forgot_password_subtitle),
+            text = stringResource(id = R.string.forgot_password_subtitle, email),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
@@ -130,6 +117,8 @@ private fun ForgotPasswordIllustrationPreview() {
 @Composable
 private fun ForgotPasswordHeaderPreview() {
     EvoFitTheme {
-        ForgotPasswordHeader()
+        ForgotPasswordHeader(
+            "teste@teste.com"
+        )
     }
 }

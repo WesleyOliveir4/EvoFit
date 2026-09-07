@@ -92,7 +92,7 @@ fun NavNavigation() {
         composable(NavRoutes.RecoverPassword.route) {
             RecoverPasswordScreen(
                 onCodeSent = { email ->
-                    navController.navigate(NavRoutes.VerifyCode.createRoute(email))
+                    navController.navigate(NavRoutes.ForgotPassword.createRoute(email))
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -101,37 +101,16 @@ fun NavNavigation() {
         }
 
         composable(
-            route = NavRoutes.VerifyCode.route,
+            route = NavRoutes.ForgotPassword.route,
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
-            VerifyCodeScreen(
+            ForgotPasswordScreen(
                 email = email,
-                onCodeVerified = { code ->
-                    navController.navigate(NavRoutes.NewPassword.createRoute(code))
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable(
-            route = NavRoutes.NewPassword.route,
-            arguments = listOf(
-                navArgument("code") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val code = backStackEntry.arguments?.getString("code") ?: ""
-            NewPasswordScreen(
-                oobCode = code,
-                onPasswordResetSuccess = {
+                onContinueClick = {
                     navController.navigate(NavRoutes.Login.route) {
-                        popUpTo(NavRoutes.RecoverPassword.route) { inclusive = true }
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
                     }
-                },
-                onBackClick = {
-                    navController.popBackStack()
                 }
             )
         }

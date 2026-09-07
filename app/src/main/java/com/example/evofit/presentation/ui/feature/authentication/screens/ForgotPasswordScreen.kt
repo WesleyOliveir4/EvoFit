@@ -16,35 +16,29 @@ import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 /**
- * Intro screen of the "esqueci minha senha" sub-flow (mock screen 4).
- * Purely presentational — it only explains what is about to happen and
- * hands off to [RecoverPasswordScreen] where the user types their e-mail.
+ * Success screen of the password recovery flow.
+ * Informs the user that the reset link has been sent to their e-mail.
  */
 @Composable
 fun ForgotPasswordScreen(
-    onBackClick: () -> Unit = {},
+    email: String,
     onContinueClick: () -> Unit = {}
 ) {
     ForgotPasswordContent(
-        onBackClick = onBackClick,
+        email = email,
         onContinueClick = onContinueClick
     )
 }
 
 @Composable
 fun ForgotPasswordContent(
-    onBackClick: () -> Unit,
+    email: String,
     onContinueClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            TopBarReturn(
-                onBackClick = { onBackClick() }
-            )
-        },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -70,7 +64,7 @@ fun ForgotPasswordContent(
         ) {
             ForgotPasswordIllustration()
             Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
-            ForgotPasswordHeader()
+            ForgotPasswordHeader(email = email)
             
             // Add a small spacer to avoid clipping if scroll is active
             Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
@@ -83,7 +77,7 @@ fun ForgotPasswordContent(
 private fun ForgotPasswordScreenPreview() {
     EvoFitTheme {
         ForgotPasswordContent(
-            onBackClick = {},
+            email = "exemplo@email.com",
             onContinueClick = {}
         )
     }
