@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface OnboardingRepository {
     fun getUserData(): Flow<UserOnboardingData?>
-    suspend fun getUserId(): String?
+    fun getUserId(): Flow<String?>
     suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean)
     suspend fun completeOnboarding()
     suspend fun deleteGoal(goalId: String)

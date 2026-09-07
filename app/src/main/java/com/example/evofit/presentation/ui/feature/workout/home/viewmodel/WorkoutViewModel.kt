@@ -86,7 +86,7 @@ class WorkoutViewModel(
     }
 
     private suspend fun performUpdateOrder(orderedList: List<WorkoutUIModel>) {
-        val userId = getUserIdUseCase() ?: return
+        val userId = getUserIdUseCase().firstOrNull() ?: return
         val currentWorkouts = getWorkoutsUseCase(userId).first()
 
         val reorderedWorkouts = orderedList.mapNotNull { uiModel ->
@@ -97,58 +97,61 @@ class WorkoutViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val baseState: Flow<WorkoutState> = getOnboardingDataUseCase()
-        .flatMapLatest { userData ->
-            val userId = getUserIdUseCase() ?: ""
-            val firstName = getFirstName(userData.name)
-            if (userId.isEmpty()) {
-                flowOf(WorkoutState(userName = firstName))
-            } else {
-                val startOfWeek = getCurrentWeekRangeUseCase()
-                combine(
-                    getWorkoutsUseCase(userId),
-                    getWorkoutDoneHistoryUseCase(userId, 50),
-                    getWorkoutsSinceUseCase(userId, startOfWeek)
-                ) { workouts, history, weeklyWorkouts ->
-                    WorkoutState(
-                        userName = firstName,
-                        workouts = workouts.map { workout ->
-                            WorkoutUIModel(
-                                id = workout.id,
-                                title = workout.name.ifEmpty { workout.muscleGroupId },
-                                exercises = workout.exercises.size,
-                                series = workout.exercises.sumOf { it.sets.size },
-                                imageRes = workout.muscleGroup?.type?.toImageRes()
-                            )
-                        },
-                        totalWorkouts = workouts.size,
-                        workoutsThisWeek = weeklyWorkouts.size,
-                        history = history.map { workoutDone ->
-                            WorkoutHistoryUIModel(
-                                id = workoutDone.id,
-                                name = workoutDone.name,
-                                date = workoutDone.date,
-                                time = workoutDone.time,
-                                exercises = workoutDone.exercises.map { workoutExercise ->
-                                    val sets = workoutExercise.sets
-                                    val firstSet = sets.firstOrNull()
-                                    ExercisePreviewItem(
-                                        workoutExerciseId = workoutExercise.id,
-                                        name = firstSet?.exerciseName ?: "",
-                                        setsCount = sets.size,
-                                        weight = sets.maxOfOrNull { it.load } ?: 0.0,
-                                        reps = sets.maxOfOrNull { it.reps } ?: 0,
-                                        unit = firstSet?.unit ?: com.example.evofit.domain.model.MeasurementUnit.WEIGHT,
-                                        time = sets.maxOfOrNull { it.time ?: 0 } ?: 0,
-                                        distance = sets.maxOfOrNull { it.distance ?: 0.0 } ?: 0.0
-                                    )
-                                }
-                            )
-                        }
-                    )
-                }
+    private val baseState: Flow<WorkoutState> = combine(
+        getOnboardingDataUseCase(),
+        getUserIdUseCase()
+    ) { userData, userId ->
+        userData to userId
+    }.flatMapLatest { (userData, userId) ->
+        val firstName = getFirstName(userData.name)
+        if (userId.isNullOrEmpty()) {
+            flowOf(WorkoutState(userName = firstName))
+        } else {
+            val startOfWeek = getCurrentWeekRangeUseCase()
+            combine(
+                getWorkoutsUseCase(userId),
+                getWorkoutDoneHistoryUseCase(userId, 50),
+                getWorkoutsSinceUseCase(userId, startOfWeek)
+            ) { workouts, history, weeklyWorkouts ->
+                WorkoutState(
+                    userName = firstName,
+                    workouts = workouts.map { workout ->
+                        WorkoutUIModel(
+                            id = workout.id,
+                            title = workout.name.ifEmpty { workout.muscleGroupId },
+                            exercises = workout.exercises.size,
+                            series = workout.exercises.sumOf { it.sets.size },
+                            imageRes = workout.muscleGroup?.type?.toImageRes()
+                        )
+                    },
+                    totalWorkouts = workouts.size,
+                    workoutsThisWeek = weeklyWorkouts.size,
+                    history = history.map { workoutDone ->
+                        WorkoutHistoryUIModel(
+                            id = workoutDone.id,
+                            name = workoutDone.name,
+                            date = workoutDone.date,
+                            time = workoutDone.time,
+                            exercises = workoutDone.exercises.map { workoutExercise ->
+                                val sets = workoutExercise.sets
+                                val firstSet = sets.firstOrNull()
+                                ExercisePreviewItem(
+                                    workoutExerciseId = workoutExercise.id,
+                                    name = firstSet?.exerciseName ?: "",
+                                    setsCount = sets.size,
+                                    weight = sets.maxOfOrNull { it.load } ?: 0.0,
+                                    reps = sets.maxOfOrNull { it.reps } ?: 0,
+                                    unit = firstSet?.unit ?: com.example.evofit.domain.model.MeasurementUnit.WEIGHT,
+                                    time = sets.maxOfOrNull { it.time ?: 0 } ?: 0,
+                                    distance = sets.maxOfOrNull { it.distance ?: 0.0 } ?: 0.0
+                                )
+                            }
+                        )
+                    }
+                )
             }
         }
+    }
 
     val uiState: StateFlow<WorkoutState> = combine(
         baseState,
@@ -164,7 +167,7 @@ class WorkoutViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Lazily,
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = WorkoutState()
     )
 

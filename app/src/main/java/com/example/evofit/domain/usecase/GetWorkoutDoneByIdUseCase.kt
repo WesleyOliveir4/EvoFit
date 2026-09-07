@@ -18,10 +18,8 @@ class GetWorkoutDoneByIdUseCaseImpl(
 ) : GetWorkoutDoneByIdUseCase {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun invoke(workoutDoneId: String): Flow<WorkoutDone?> {
-        return flow {
-            emit(getUserIdUseCase() ?: "")
-        }.flatMapLatest { userId ->
-            getWorkoutDoneHistoryUseCase(userId).map { history ->
+        return getUserIdUseCase().flatMapLatest { userId ->
+            getWorkoutDoneHistoryUseCase(userId ?: "").map { history ->
                 history.find { it.id == workoutDoneId }
             }
         }

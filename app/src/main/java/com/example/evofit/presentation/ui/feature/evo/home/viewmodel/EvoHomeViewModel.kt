@@ -19,38 +19,41 @@ class EvoHomeViewModel(
 
     private val _selectedPeriod = MutableStateFlow(EvoPeriod.LAST_30_DAYS)
 
-    val uiState: StateFlow<EvoHomeUiState> = _selectedPeriod
-        .flatMapLatest { period ->
-            val userId = getUserIdUseCase() ?: ""
-            if (userId.isEmpty()) {
-                flowOf(EvoHomeUiState(selectedPeriod = period))
-            } else {
-                getEvoHomeSummaryUseCase(userId, period).map { summary ->
-                    EvoHomeUiState(
-                        isLoading = false,
-                        selectedPeriod = period,
-                        strengthGains = summary.strengthGains?.map {
-                            StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
-                        },
-                        mostEvolvedMuscle = summary.mostEvolvedMuscle?.let {
-                            MuscleEvolutionUIModel(
-                                muscleGroupName = it.muscleGroupName,
-                                evolutionPercentage = it.evolutionPercentage
-                            )
-                        },
-                        workoutsCount = summary.workoutsCount,
-                        leastTrainedGroup = summary.leastTrainedGroup,
-                        kmPerWeek = summary.kmPerWeek,
-                        averageWorkoutTime = summary.averageWorkoutTime
-                    )
-                }
+    val uiState: StateFlow<EvoHomeUiState> = combine(
+        _selectedPeriod,
+        getUserIdUseCase()
+    ) { period, userId ->
+        period to userId
+    }.flatMapLatest { (period, userId) ->
+        if (userId.isNullOrEmpty()) {
+            flowOf(EvoHomeUiState(selectedPeriod = period, isLoading = false))
+        } else {
+            getEvoHomeSummaryUseCase(userId, period).map { summary ->
+                EvoHomeUiState(
+                    isLoading = false,
+                    selectedPeriod = period,
+                    strengthGains = summary.strengthGains?.map {
+                        StrengthGainUIModel(exerciseName = it.exerciseName, gainKg = it.gainKg)
+                    },
+                    mostEvolvedMuscle = summary.mostEvolvedMuscle?.let {
+                        MuscleEvolutionUIModel(
+                            muscleGroupName = it.muscleGroupName,
+                            evolutionPercentage = it.evolutionPercentage
+                        )
+                    },
+                    workoutsCount = summary.workoutsCount,
+                    leastTrainedGroup = summary.leastTrainedGroup,
+                    kmPerWeek = summary.kmPerWeek,
+                    averageWorkoutTime = summary.averageWorkoutTime
+                )
             }
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = EvoHomeUiState(isLoading = true)
-        )
+    }
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = EvoHomeUiState(isLoading = true)
+    )
 
     fun onPeriodSelected(period: EvoPeriod) {
         _selectedPeriod.value = period

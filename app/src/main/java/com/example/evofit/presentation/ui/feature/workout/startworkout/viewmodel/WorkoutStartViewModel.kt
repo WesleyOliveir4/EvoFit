@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -204,7 +205,7 @@ class WorkoutStartViewModel(
     fun onConfirmFinish() {
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
-            val userId = getUserIdUseCase() ?: AppConstants.DEFAULT_USER_ID
+            val userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID
             val workoutDoneId = java.util.UUID.randomUUID().toString()
 
             val doneExercises = _uiState.value.exercises.mapNotNull { exercise ->
