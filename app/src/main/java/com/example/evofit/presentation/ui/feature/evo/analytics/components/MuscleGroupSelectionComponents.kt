@@ -107,7 +107,7 @@ private fun MuscleGroupCardPreview() {
             horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
             MuscleGroupCard(
-                group = MuscleGroup("Costas", com.example.evofit.R.drawable.img_back),
+                group = MuscleGroup("Costas", com.example.evofit.R.drawable.ic_back),
                 isSelected = true,
                 onClick = {},
                 modifier = Modifier.weight(1f)

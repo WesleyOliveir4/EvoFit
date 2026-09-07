@@ -177,7 +177,7 @@ private fun WorkoutListItemPreview() {
                     title = "Treino de Peito",
                     exercises = 5,
                     series = 15,
-                    imageRes = com.example.evofit.R.drawable.img_chest
+                    imageRes = com.example.evofit.R.drawable.ic_chest
                 ),
                 onClick = {}
             )

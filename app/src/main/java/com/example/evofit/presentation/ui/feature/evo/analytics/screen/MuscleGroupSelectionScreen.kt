@@ -122,17 +122,17 @@ private fun MuscleGroupSelectionScreenPreview() {
         MuscleGroupSelectionContent(
             uiState = EvoAnalyticsState(
                 trainedGroups = listOf(
-                    MuscleGroupItem("1", "Back", R.drawable.ic_back_2),
-                    MuscleGroupItem("2", "Chest", R.drawable.ic_chest_2),
-                    MuscleGroupItem("3", "Legs", R.drawable.ic_legs_3),
-                    MuscleGroupItem("4", "Biceps", R.drawable.ic_arms_2),
-                    MuscleGroupItem("5", "Triceps", R.drawable.ic_arms_2),
-                    MuscleGroupItem("6", "Forearms", R.drawable.ic_arms_2),
-                    MuscleGroupItem("7", "Shoulders", R.drawable.ic_shoulder_2),
-                    MuscleGroupItem("8", "Core", R.drawable.ic_core_2),
-                    MuscleGroupItem("9", "Cardio", R.drawable.ic_cardio_2),
-                    MuscleGroupItem("10", "Glutes", R.drawable.ic_gluteus_2),
-                    MuscleGroupItem("11", "Calves", R.drawable.ic_calf_2),
+                    MuscleGroupItem("1", "Back", R.drawable.ic_back),
+                    MuscleGroupItem("2", "Chest", R.drawable.ic_chest),
+                    MuscleGroupItem("3", "Legs", R.drawable.ic_legs_2),
+                    MuscleGroupItem("4", "Biceps", R.drawable.ic_arms),
+                    MuscleGroupItem("5", "Triceps", R.drawable.ic_arms),
+                    MuscleGroupItem("6", "Forearms", R.drawable.ic_arms),
+                    MuscleGroupItem("7", "Shoulders", R.drawable.ic_shoulder),
+                    MuscleGroupItem("8", "Core", R.drawable.ic_core),
+                    MuscleGroupItem("9", "Cardio", R.drawable.ic_cardio),
+                    MuscleGroupItem("10", "Glutes", R.drawable.ic_gluteus),
+                    MuscleGroupItem("11", "Calves", R.drawable.ic_calf),
                 ),
                 isLoading = false
             ),

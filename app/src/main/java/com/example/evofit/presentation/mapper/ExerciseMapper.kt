@@ -20,9 +20,9 @@ object ExerciseMapper {
             "8" -> R.drawable.img_pull_down
             "9" -> R.drawable.img_remada_t_bar
             "10" -> R.drawable.img_levantamento_terra
-            "92" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "93" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "94" -> R.drawable.img_cardio // Necessário criar imagem para este treino
+            "92" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "93" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "94" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
 
             // Chest (11-20, 95-96)
             "11" -> R.drawable.img_supino_reto
@@ -35,8 +35,8 @@ object ExerciseMapper {
             "18" -> R.drawable.img_flexao_de_braco
             "19" -> R.drawable.img_chest_press
             "20" -> R.drawable.img_chest_press
-            "95" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "96" -> R.drawable.img_cardio // Necessário criar imagem para este treino
+            "95" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "96" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
 
             // Legs (21-31, 97-100)
             "21" -> R.drawable.img_agachamento_livre
@@ -50,10 +50,10 @@ object ExerciseMapper {
             "29" -> R.drawable.img_agachamento_bulgaro
             "30" -> R.drawable.img_stiff
             "31" -> R.drawable.img_stiff
-            "97" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "98" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "99" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "100" -> R.drawable.img_cardio // Necessário criar imagem para este treino
+            "97" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "98" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "99" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "100" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
 
             // Biceps (32-38, 101)
             "32" -> R.drawable.img_rosca_direta
@@ -63,7 +63,7 @@ object ExerciseMapper {
             "36" -> R.drawable.img_rosca_martelo_pulley
             "37" -> R.drawable.img_rosca_scott
             "38" -> R.drawable.img_rosca_concentrada
-            "101" -> R.drawable.img_cardio // Necessário criar imagem para este treino
+            "101" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
 
             // Triceps (39-43, 102-104)
             "39" -> R.drawable.img_triceps_pulley
@@ -71,9 +71,9 @@ object ExerciseMapper {
             "41" -> R.drawable.img_triceps_frances
             "42" -> R.drawable.img_triceps_testa
             "43" -> R.drawable.img_paralela_2
-            "102" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "103" -> R.drawable.img_cardio // Necessário criar imagem para este treino
-            "104" -> R.drawable.img_cardio // Necessário criar imagem para este treino
+            "102" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "103" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "104" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
 
             // Forearms (44-45)
             "44" -> R.drawable.img_rosca_inversa
@@ -135,7 +135,7 @@ object ExerciseMapper {
             "90" -> R.drawable.img_panturrilha_hack
             "91" -> R.drawable.img_panturrilha_degrau
 
-            else -> R.drawable.img_cardio
+            else -> R.drawable.ic_cardio
         }
     }
 }
