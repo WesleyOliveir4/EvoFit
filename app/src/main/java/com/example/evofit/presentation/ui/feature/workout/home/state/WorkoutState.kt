@@ -12,5 +12,6 @@ data class WorkoutState(
     val totalWorkouts: Int = 0,
     val workoutsThisWeek: Int = 0,
     val history: List<WorkoutHistoryUIModel> = emptyList(),
-    val activeSession: ActiveSessionUIModel? = null
+    val activeSession: ActiveSessionUIModel? = null,
+    val isSyncing: Boolean = false
 )

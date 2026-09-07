@@ -65,13 +65,13 @@ fun WorkoutScreen(
 
     BackHandler { /* Do nothing to prevent back navigation from home screen */ }
 
-    LaunchedEffect(isOnline) {
-        if (!isOnline) {
-            showOfflineToast = true
-            delay(3000)
-            showOfflineToast = false
-        } else {
-            showOfflineToast = false
+    LaunchedEffect(Unit) {
+        viewModel.showOfflineToast.collect { show ->
+            if (show) {
+                showOfflineToast = true
+                delay(3000)
+                showOfflineToast = false
+            }
         }
     }
 
@@ -88,6 +88,7 @@ fun WorkoutScreen(
         workoutsThisWeek = uiState.workoutsThisWeek,
         history = uiState.history,
         activeSession = uiState.activeSession,
+        isSyncing = uiState.isSyncing,
         isOnline = isOnline,
         showOfflineToast = showOfflineToast,
         onMove = { from, to ->
@@ -120,6 +121,7 @@ fun WorkoutContent(
     onAddWorkoutClick: () -> Unit,
     activeSession: ActiveSessionUIModel? = null,
     onActiveSessionClick: (ActiveSessionUIModel) -> Unit = {},
+    isSyncing: Boolean = false,
     isOnline: Boolean = true,
     showOfflineToast: Boolean = false,
     modifier: Modifier = Modifier
@@ -163,7 +165,11 @@ fun WorkoutContent(
             ) {
                 item {
                     Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
-                    HeaderSection(userName = userName)
+                    HeaderSection(
+                        userName = userName,
+                        isSyncing = isSyncing,
+                        isOnline = isOnline
+                    )
                     Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
                 }
 
@@ -282,6 +288,7 @@ private fun WorkoutContentPreview() {
             onNavigate = {},
             onWorkoutClick = {},
             onAddWorkoutClick = {},
+            isSyncing = true,
             isOnline = false
         )
     }
