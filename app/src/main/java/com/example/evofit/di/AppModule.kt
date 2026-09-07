@@ -322,7 +322,8 @@ val workoutModule = module {
             deleteWorkoutUseCase = get(),
             getActiveWorkoutSessionUseCase = get(),
             clearWorkoutSessionUseCase = get(),
-            getMuscleGroupsUseCase = get()
+            getMuscleGroupsUseCase = get(),
+            updateWorkoutUseCase = get()
         )
     }
     viewModel { (workoutId: String) ->

@@ -37,9 +37,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.training.MuscleGroupPreviewCard
+import com.example.evofit.presentation.ui.feature.workout.components.training.rememberDraggableListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +68,8 @@ fun WorkoutPreviewScreen(
             onEditClick = {
                 viewModel.onEditClicked(onProceed = { onEditClick(preview.muscleGroupId, workoutId) })
             },
-            onDeleteClick = { viewModel.onDeleteClicked() }
+            onDeleteClick = { viewModel.onDeleteClicked() },
+            onMove = { newOrder -> viewModel.updateMuscleGroupOrder(newOrder) }
         )
 
         if (uiState.hasActiveSessionConflict) {
@@ -123,9 +126,26 @@ fun WorkoutPreviewContent(
     onBackClick: () -> Unit,
     onStartWorkoutClick: () -> Unit,
     onEditClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onMove: (List<String>) -> Unit = {}
 ) {
     var expandedGroups by remember { mutableStateOf(setOf<String>()) }
+
+    var localGroupedExercises by remember { mutableStateOf<List<Pair<String, List<ExercisePreviewItem>>>>(emptyList()) }
+
+    LaunchedEffect(preview.groupedExercises) {
+        localGroupedExercises = preview.groupedExercises.toList()
+    }
+
+    val dragState = rememberDraggableListState(
+        itemHeight = 80.dp,
+        onMove = { from, to ->
+            val mutableList = localGroupedExercises.toMutableList()
+            mutableList.add(to, mutableList.removeAt(from))
+            localGroupedExercises = mutableList
+            onMove(localGroupedExercises.map { it.first })
+        }
+    )
 
     LaunchedEffect(preview.groupedExercises) {
         if (expandedGroups.isEmpty() && preview.groupedExercises.isNotEmpty()) {
@@ -215,21 +235,30 @@ fun WorkoutPreviewContent(
                 Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
             }
 
-            preview.groupedExercises.forEach { (groupName, exercises) ->
-                item {
-                    MuscleGroupPreviewCard(
-                        groupName = groupName,
-                        exercises = exercises,
-                        isExpanded = expandedGroups.contains(groupName),
-                        onExpandClick = {
-                            expandedGroups = if (expandedGroups.contains(groupName)) {
-                                expandedGroups - groupName
-                            } else {
-                                expandedGroups + groupName
-                            }
+            itemsIndexed(localGroupedExercises, key = { _, pair -> pair.first }) { _, (groupName, exercises) ->
+                val isDragging = dragState.draggedItemId == groupName
+                MuscleGroupPreviewCard(
+                    groupName = groupName,
+                    exercises = exercises,
+                    isExpanded = expandedGroups.contains(groupName) && !isDragging,
+                    onExpandClick = {
+                        expandedGroups = if (expandedGroups.contains(groupName)) {
+                            expandedGroups - groupName
+                        } else {
+                            expandedGroups + groupName
                         }
+                    },
+                    isDragging = isDragging,
+                    dragOffset = { if (isDragging) dragState.dragOffset else 0f },
+                    onDragStart = { dragState.onDragStart(groupName) },
+                    onDrag = { deltaY -> dragState.onDrag(deltaY, localGroupedExercises, { it.first }) },
+                    onDragEnd = dragState::onDragEnd,
+                    onDragCancel = dragState::onDragEnd,
+                    modifier = Modifier.animateItem(
+                        fadeInSpec = null,
+                        fadeOutSpec = null
                     )
-                }
+                )
             }
             
             item {

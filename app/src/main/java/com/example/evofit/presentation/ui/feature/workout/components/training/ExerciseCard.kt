@@ -1,14 +1,17 @@
 package com.example.evofit.presentation.ui.feature.workout.components.training
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -17,14 +20,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.evofit.R
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.presentation.model.ExercisePreviewItem
@@ -37,11 +45,37 @@ fun MuscleGroupPreviewCard(
     exercises: List<ExercisePreviewItem>,
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDragging: Boolean = false,
+    dragOffset: () -> Float = { 0f },
+    onDragStart: () -> Unit = {},
+    onDrag: (Float) -> Unit = {},
+    onDragEnd: () -> Unit = {},
+    onDragCancel: () -> Unit = {},
 ) {
+    val currentOnDragStart by rememberUpdatedState(onDragStart)
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
+
+    val animatedElevation by animateDpAsState(if (isDragging) Dimens.SpacingMediumSmall else Dimens.SpacingNone, label = "elevation")
+    val animatedScale by animateFloatAsState(if (isDragging) 1.02f else 1f, label = "scale")
+
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .graphicsLayer {
+                translationY = dragOffset()
+                scaleX = animatedScale
+                scaleY = animatedScale
+                shadowElevation = animatedElevation.toPx()
+            }
+            .zIndex(if (isDragging) 10f else 1f)
+            .border(
+                width = if (isDragging) Dimens.BorderWidthThin else Dimens.ElevationNone,
+                color = if (isDragging) MaterialTheme.colorScheme.primary else Color.Transparent,
+                shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
+            ),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -49,7 +83,7 @@ fun MuscleGroupPreviewCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onExpandClick() }
+                    .clickable(enabled = !isDragging) { onExpandClick() }
                     .padding(Dimens.SpacingMedium),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
@@ -73,6 +107,26 @@ fun MuscleGroupPreviewCard(
                     targetValue = if (isExpanded) 180f else 0f,
                     label = "rotation"
                 )
+
+                Icon(
+                    imageVector = Icons.Default.DragIndicator,
+                    contentDescription = stringResource(R.string.main_workout_drag_handle_desc),
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .size(Dimens.IconSizeDefault)
+                        .pointerInput(groupName) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = { currentOnDragStart() },
+                                onDrag = { change, dragAmount ->
+                                    change.consume()
+                                    currentOnDrag(dragAmount.y)
+                                },
+                                onDragEnd = { currentOnDragEnd() },
+                                onDragCancel = { currentOnDragCancel() }
+                            )
+                        }
+                )
+
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,

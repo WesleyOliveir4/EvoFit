@@ -127,7 +127,7 @@ fun WorkoutContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    val dragState = rememberWorkoutDraggableListState(onMove = onMove)
+    val dragState = rememberDraggableListState(onMove = onMove)
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
