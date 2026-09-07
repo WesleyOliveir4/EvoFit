@@ -222,8 +222,6 @@ val domainModule = module {
     factory<LoginWithGoogleUseCase> { LoginWithGoogleUseCaseImpl(get()) }
     factory<LoginWithAppleUseCase> { LoginWithAppleUseCaseImpl(get()) }
     factory<SendPasswordResetCodeUseCase> { SendPasswordResetCodeUseCaseImpl(get()) }
-    factory<VerifyPasswordResetCodeUseCase> { VerifyPasswordResetCodeUseCaseImpl(get()) }
-    factory<ConfirmPasswordResetUseCase> { ConfirmPasswordResetUseCaseImpl(get()) }
     factory<LogoutUseCase> { LogoutUseCase(get()) }
     factory<SyncUserDataUseCase> { SyncUserDataUseCaseImpl(get()) }
     factory<NukeUserDataUseCase> { NukeUserDataUseCaseImpl(get()) }
@@ -357,8 +355,6 @@ val authModule = module {
     viewModel { RegisterViewModel(get(), get()) }
     viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get()) }
-    viewModel { VerifyCodeViewModel(get(), get()) }
-    viewModel { NewPasswordViewModel(get()) }
 }
 
 val appModule = listOf(

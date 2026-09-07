@@ -69,31 +69,6 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun verifyPasswordResetCode(email: String, code: String): Result<String> {
-        // Since Firebase sends a link, we'll simulate the code verification 
-        // by checking if the code is exactly "123456" for testing, 
-        // or just return success with a mock oobCode if we're bypassing real email for now.
-        return if (code == "123456") {
-            Result.success("mock_oob_code")
-        } else {
-            Result.failure(Exception("Código inválido"))
-        }
-    }
-
-    override suspend fun confirmPasswordReset(oobCode: String, newPassword: String): Result<Unit> {
-        return try {
-            if (oobCode == "mock_oob_code") {
-                // For mock testing
-                Result.success(Unit)
-            } else {
-                firebaseAuth.confirmPasswordReset(oobCode, newPassword).await()
-                Result.success(Unit)
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     override fun isLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
