@@ -340,17 +340,17 @@ fun SelectExercisesContent(
 fun SelectExercisesScreenPreview() {
     EvoFitTheme {
         SelectExercisesContent(
-            muscleGroupName = "Peito",
-            workoutName = "Treino A",
+            muscleGroupName = "Chest",
+            workoutName = "Workout A",
             tempWorkoutName = "",
             isEditingName = false,
             exercises = listOf(
-                ExerciseSelectionUIModel("1", "Supino Reto"),
-                ExerciseSelectionUIModel("2", "Crucifixo Inclinado"),
-                ExerciseSelectionUIModel("3", "Crossover"),
-                ExerciseSelectionUIModel("4", "Flexão de Braços")
+                ExerciseSelectionUIModel("11", "Bench Press"),
+                ExerciseSelectionUIModel("14", "Chest Fly"),
+                ExerciseSelectionUIModel("17", "Crossover"),
+                ExerciseSelectionUIModel("18", "Push-up")
             ),
-            selectedExerciseIds = setOf("1", "2"),
+            selectedExerciseIds = setOf("11", "14"),
             isLoading = false,
             onBackClick = {},
             onNavigate = {},

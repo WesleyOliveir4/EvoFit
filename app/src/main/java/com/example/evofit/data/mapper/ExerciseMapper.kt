@@ -21,7 +21,9 @@ fun MuscleGroupType.toDomain(): DomainMuscleGroupType {
         MuscleGroupType.CHEST -> DomainMuscleGroupType.CHEST
         MuscleGroupType.BACK -> DomainMuscleGroupType.BACK
         MuscleGroupType.SHOULDERS -> DomainMuscleGroupType.SHOULDERS
-        MuscleGroupType.ARMS -> DomainMuscleGroupType.ARMS
+        MuscleGroupType.BICEPS -> DomainMuscleGroupType.BICEPS
+        MuscleGroupType.TRICEPS -> DomainMuscleGroupType.TRICEPS
+        MuscleGroupType.FOREARMS -> DomainMuscleGroupType.FOREARMS
         MuscleGroupType.LEGS -> DomainMuscleGroupType.LEGS
         MuscleGroupType.ABS -> DomainMuscleGroupType.ABS
         MuscleGroupType.CARDIO -> DomainMuscleGroupType.CARDIO
@@ -56,7 +58,9 @@ fun DomainMuscleGroupType.toData(): MuscleGroupType {
         DomainMuscleGroupType.CHEST -> MuscleGroupType.CHEST
         DomainMuscleGroupType.BACK -> MuscleGroupType.BACK
         DomainMuscleGroupType.SHOULDERS -> MuscleGroupType.SHOULDERS
-        DomainMuscleGroupType.ARMS -> MuscleGroupType.ARMS
+        DomainMuscleGroupType.BICEPS -> MuscleGroupType.BICEPS
+        DomainMuscleGroupType.TRICEPS -> MuscleGroupType.TRICEPS
+        DomainMuscleGroupType.FOREARMS -> MuscleGroupType.FOREARMS
         DomainMuscleGroupType.LEGS -> MuscleGroupType.LEGS
         DomainMuscleGroupType.ABS -> MuscleGroupType.ABS
         DomainMuscleGroupType.CARDIO -> MuscleGroupType.CARDIO

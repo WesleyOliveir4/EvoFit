@@ -195,7 +195,6 @@ fun ConfigureWorkoutScreen(
             ) { page ->
                 ExerciseConfigContent(
                     config = uiState.exerciseConfigs[page],
-                    muscleGroupType = uiState.muscleGroupType,
                     onAddSet = { viewModel.addSet(it) },
                     onUpdateSet = { id, idx, weight, reps -> viewModel.updateSet(id, idx, weight, reps) },
                     onRemoveSet = { id, idx -> viewModel.removeSet(id, idx) }
@@ -228,7 +227,6 @@ private fun ConfigureWorkoutScreenPreview() {
                 ExercisePageSegmentedIndicator(totalCount = 3, currentIndex = 0)
                 ExerciseConfigContent(
                     config = mockConfig,
-                    muscleGroupType = MuscleGroupType.CHEST,
                     onAddSet = {},
                     onUpdateSet = { _, _, _, _ -> },
                     onRemoveSet = { _, _ -> }

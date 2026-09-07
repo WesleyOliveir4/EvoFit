@@ -291,7 +291,7 @@ private fun ExerciseSelectionComponentsPreview() {
             verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             MuscleGroupCard(
-                item = MuscleGroupItem("1", "Peito", imageRes = com.example.evofit.R.drawable.img_chest),
+                item = MuscleGroupItem("1", "Peito", imageRes = com.example.evofit.R.drawable.ic_chest),
                 isSelected = true,
                 onClick = {}
             )

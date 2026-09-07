@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -274,12 +273,15 @@ private fun WorkoutContentPreview() {
         WorkoutContent(
             userName = "Augusto",
             workouts = listOf(
-                WorkoutUIModel("1", "Peito", 6, 18, R.drawable.ic_chest_2),
-                WorkoutUIModel("2", "Costas", 6, 20, R.drawable.ic_back_2),
-                WorkoutUIModel("3", "Pernas", 8, 24, R.drawable.ic_legs_3),
-                WorkoutUIModel("4", "Ombros", 5, 15, R.drawable.ic_shoulder_2),
-                WorkoutUIModel("5", "Braços", 6, 18, R.drawable.ic_arms_2),
-                WorkoutUIModel("6", "Cardio", 4, 0, R.drawable.ic_cardio_2),
+                WorkoutUIModel("1", "Back", 6, 20, R.drawable.ic_back),
+                WorkoutUIModel("2", "Chest", 6, 18, R.drawable.ic_chest),
+                WorkoutUIModel("3", "Legs", 8, 24, R.drawable.ic_legs_2),
+                WorkoutUIModel("4", "Biceps", 6, 18, R.drawable.ic_arms),
+                WorkoutUIModel("5", "Triceps", 6, 18, R.drawable.ic_arms),
+                WorkoutUIModel("6", "Forearms", 4, 12, R.drawable.ic_arms),
+                WorkoutUIModel("7", "Shoulders", 5, 15, R.drawable.ic_shoulder),
+                WorkoutUIModel("8", "Core", 5, 15, R.drawable.ic_core),
+                WorkoutUIModel("9", "Cardio", 4, 0, R.drawable.ic_cardio),
             ),
             totalWorkouts = 124,
             workoutsThisWeek = 3,
