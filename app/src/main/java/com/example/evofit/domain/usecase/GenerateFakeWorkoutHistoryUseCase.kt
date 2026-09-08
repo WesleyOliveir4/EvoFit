@@ -2,6 +2,7 @@ package com.example.evofit.domain.usecase
 
 import com.example.evofit.core.common.DateMapper
 import com.example.evofit.domain.model.*
+import com.example.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.*
 import kotlin.math.pow
@@ -14,11 +15,16 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
-    private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase
+    private val saveWorkoutDoneUseCase: SaveWorkoutDoneUseCase,
+    private val onboardingRepository: OnboardingRepository
 ) : GenerateFakeWorkoutHistoryUseCase {
 
     override suspend fun invoke() {
         val userId = getUserIdUseCase().firstOrNull() ?: return
+        
+        // Gerar histórico de pesos
+        generateFakeWeightHistory(userId)
+        
         val muscleGroups = getMuscleGroupsUseCase()
         if (muscleGroups.isEmpty()) return
 
@@ -194,5 +200,44 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
         val months = endCal.get(Calendar.MONTH) - startCal.get(Calendar.MONTH)
         
         return years * 12 + months
+    }
+
+    private suspend fun generateFakeWeightHistory(userId: String) {
+        val calendar = Calendar.getInstance()
+        val endDate = calendar.time
+        calendar.add(Calendar.MONTH, -6)
+        val startDate = calendar.time
+        
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar.time = startDate
+        
+        var currentWeight = 85.0 + Random().nextInt(10) // Peso inicial aleatório entre 85-95kg
+        
+        while (!currentCalendar.time.after(endDate)) {
+            // Gera 1 a 3 registros por mês
+            val recordsInMonth = 1 + Random().nextInt(3)
+            
+            for (i in 0 until recordsInMonth) {
+                val weightCalendar = Calendar.getInstance()
+                weightCalendar.time = currentCalendar.time
+                // Espalha os registros pelo mês
+                weightCalendar.set(Calendar.DAY_OF_MONTH, 1 + (i * 10) + Random().nextInt(5))
+                
+                if (weightCalendar.time.after(endDate)) break
+                
+                // Evolução: perde entre 0.2 a 0.8kg por registro (simulando emagrecimento)
+                currentWeight -= (0.2 + Random().nextDouble() * 0.6)
+                
+                val weightUpdate = WeightUpdate(
+                    id = UUID.randomUUID().toString(),
+                    weight = String.format("%.1f", currentWeight).replace(".", ","),
+                    date = DateMapper.formatDate(weightCalendar.time)
+                )
+                
+                onboardingRepository.saveWeightUpdate(weightUpdate, userId)
+            }
+            
+            currentCalendar.add(Calendar.MONTH, 1)
+        }
     }
 }

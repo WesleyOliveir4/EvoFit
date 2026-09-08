@@ -15,9 +15,9 @@ import androidx.navigation.navArgument
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.evofit.core.common.AppConstants
-import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseDetailAnalyticsScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.CategoryDetailAnalyticsScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseSelectionScreen
-import com.example.evofit.presentation.ui.feature.evo.analytics.screen.MuscleGroupSelectionScreen
+import com.example.evofit.presentation.ui.feature.evo.analytics.screen.CategoryAnalyticsSelectionScreen
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
@@ -280,13 +280,16 @@ fun NavNavigation() {
         ) {
             composable(NavRoutes.MuscleGroupSelection.route) { backStackEntry ->
                 val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
-                MuscleGroupSelectionScreen(
+                CategoryAnalyticsSelectionScreen(
                     viewModel = viewModel,
                     onBackClick = {
                         navController.popBackStack()
                     },
                     onGroupSelected = { _, _ ->
                         navController.navigate(NavRoutes.ExerciseSelection.route)
+                    },
+                    onWeightSelected = {
+                        navController.navigate(NavRoutes.ExerciseDetailAnalytics.route)
                     }
                 )
             }
@@ -306,7 +309,7 @@ fun NavNavigation() {
 
             composable(NavRoutes.ExerciseDetailAnalytics.route) { backStackEntry ->
                 val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
-                ExerciseDetailAnalyticsScreen(
+                CategoryDetailAnalyticsScreen(
                     viewModel = viewModel,
                     onBackClick = {
                         navController.popBackStack()

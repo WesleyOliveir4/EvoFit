@@ -33,29 +33,35 @@ import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
-fun MuscleGroupSelectionScreen(
+fun CategoryAnalyticsSelectionScreen(
     onBackClick: () -> Unit = {},
     onGroupSelected: (String, String) -> Unit = { _, _ -> },
+    onWeightSelected: () -> Unit = {},
     viewModel: EvoAnalyticsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    MuscleGroupSelectionContent(
+    CategoryAnalyticsSelectionContent(
         uiState = uiState,
         onBackClick = onBackClick,
         onGroupSelected = { id, name ->
             viewModel.onMuscleGroupSelected(id, name)
             onGroupSelected(id, name)
+        },
+        onWeightSelected = {
+            viewModel.onWeightSelected()
+            onWeightSelected()
         }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MuscleGroupSelectionContent(
+fun CategoryAnalyticsSelectionContent(
     uiState: EvoAnalyticsState,
     onBackClick: () -> Unit,
-    onGroupSelected: (String, String) -> Unit
+    onGroupSelected: (String, String) -> Unit,
+    onWeightSelected: () -> Unit
 ) {
     var selectedGroupId by remember { mutableStateOf("") }
 
@@ -76,12 +82,6 @@ fun MuscleGroupSelectionContent(
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else if (uiState.trainedGroups.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.evo_analytics_empty_history),
-                    modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                )
             } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
@@ -91,6 +91,21 @@ fun MuscleGroupSelectionContent(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall),
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
+                    // Item fixo para Peso
+                    item {
+                        MuscleGroupCard(
+                            group = MuscleGroup(
+                                name = "Peso Corporal",
+                                imageRes = R.drawable.ic_balance_2
+                            ),
+                            isSelected = selectedGroupId == "WEIGHT_HISTORY",
+                            onClick = {
+                                selectedGroupId = "WEIGHT_HISTORY"
+                                onWeightSelected()
+                            }
+                        )
+                    }
+
                     items(uiState.trainedGroups, key = { it.id }) { groupItem ->
                         val isSelected = groupItem.id == selectedGroupId
                         val uiGroup = remember(groupItem) {
@@ -117,27 +132,19 @@ fun MuscleGroupSelectionContent(
 
 @Preview(showBackground = true, backgroundColor = 0xFF090909)
 @Composable
-private fun MuscleGroupSelectionScreenPreview() {
+private fun CategoryAnalyticsSelectionScreenPreview() {
     EvoFitTheme {
-        MuscleGroupSelectionContent(
+        CategoryAnalyticsSelectionContent(
             uiState = EvoAnalyticsState(
                 trainedGroups = listOf(
                     MuscleGroupItem("1", "Back", R.drawable.ic_back),
                     MuscleGroupItem("2", "Chest", R.drawable.ic_chest),
-                    MuscleGroupItem("3", "Legs", R.drawable.ic_legs_2),
-                    MuscleGroupItem("4", "Biceps", R.drawable.ic_arms),
-                    MuscleGroupItem("5", "Triceps", R.drawable.ic_arms),
-                    MuscleGroupItem("6", "Forearms", R.drawable.ic_arms),
-                    MuscleGroupItem("7", "Shoulders", R.drawable.ic_shoulder),
-                    MuscleGroupItem("8", "Core", R.drawable.ic_core),
-                    MuscleGroupItem("9", "Cardio", R.drawable.ic_cardio),
-                    MuscleGroupItem("10", "Glutes", R.drawable.ic_gluteus),
-                    MuscleGroupItem("11", "Calves", R.drawable.ic_calf),
                 ),
                 isLoading = false
             ),
             onBackClick = {},
-            onGroupSelected = { _, _ -> }
+            onGroupSelected = { _, _ -> },
+            onWeightSelected = {}
         )
     }
 }

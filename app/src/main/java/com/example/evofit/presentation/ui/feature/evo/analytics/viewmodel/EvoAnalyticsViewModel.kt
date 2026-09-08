@@ -6,7 +6,9 @@ import com.example.evofit.domain.usecase.GetExercisesWithRecordCountUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetTrainedMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
+import com.example.evofit.domain.usecase.GetWeightHistoryUseCase
 import com.example.evofit.domain.usecase.GetWorkoutDoneHistoryUseCase
+import com.example.evofit.domain.usecase.ProcessBodyWeightAnalyticsUseCase
 import com.example.evofit.domain.usecase.ProcessExerciseAnalyticsUseCase
 import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.model.ExerciseWithRecordsUIModel
@@ -16,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -29,6 +32,8 @@ class EvoAnalyticsViewModel(
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesWithRecordCountUseCase: GetExercisesWithRecordCountUseCase,
     private val processExerciseAnalyticsUseCase: ProcessExerciseAnalyticsUseCase,
+    private val getWeightHistoryUseCase: GetWeightHistoryUseCase,
+    private val processBodyWeightAnalyticsUseCase: ProcessBodyWeightAnalyticsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EvoAnalyticsState())
@@ -73,6 +78,7 @@ class EvoAnalyticsViewModel(
         val exercises = getExercisesWithRecordCountUseCase(groupId, _uiState.value.historyRawData)
         _uiState.update {
             it.copy(
+                isWeightAnalysis = false,
                 selectedMuscleGroupId = groupId,
                 muscleGroupName = groupName,
                 exercisesForSelection = exercises.map { item ->
@@ -83,6 +89,49 @@ class EvoAnalyticsViewModel(
                     )
                 }
             )
+        }
+    }
+
+    fun onWeightSelected() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, isWeightAnalysis = true, selectedExerciseName = "Peso Corporal") }
+            val userId = getUserIdUseCase().firstOrNull()
+            if (userId != null) {
+                getWeightHistoryUseCase(userId).collect { history ->
+                    val result = processBodyWeightAnalyticsUseCase(history)
+                    
+                    if (result == null) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                maxRecord = "-",
+                                secondaryRecord = "-",
+                                firstRecordDate = "-",
+                                lastRecordDate = "-",
+                                loadChartPoints = emptyList()
+                            )
+                        }
+                        return@collect
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            unit = result.unit,
+                            maxRecord = result.maxRecord,
+                            secondaryRecord = result.secondaryRecord,
+                            totalSets = result.totalSets,
+                            firstRecordDate = result.firstRecordDate,
+                            lastRecordDate = result.lastRecordDate,
+                            loadChartPoints = result.loadChartPoints.map { point ->
+                                AnalyticsChartPoint(label = point.label, value = point.value)
+                            }
+                        )
+                    }
+                }
+            } else {
+                _uiState.update { it.copy(isLoading = false, error = "User not found") }
+            }
         }
     }
 

@@ -185,6 +185,7 @@ val domainModule = module {
     factory<AddWeightUpdateUseCase> { AddWeightUpdateUseCaseImpl(get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
+    factory<GetWeightHistoryUseCase> { GetWeightHistoryUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
     factory<GetWorkoutsSinceUseCase> { GetWorkoutsSinceUseCaseImpl(get()) }
@@ -212,7 +213,8 @@ val domainModule = module {
     factory<ClearWorkoutSessionUseCase> { ClearWorkoutSessionUseCaseImpl(get()) }
     factory<DeleteWorkoutUseCase> { DeleteWorkoutUseCaseImpl(get()) }
     factory<UpdateWorkoutUseCase> { UpdateWorkoutUseCaseImpl(get()) }
-    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get()) }
+    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get(), get()) }
+    factory<ProcessBodyWeightAnalyticsUseCase> { ProcessBodyWeightAnalyticsUseCaseImpl() }
     factory<ProcessWeightAnalyticsUseCase> { ProcessWeightAnalyticsUseCaseImpl() }
     factory<ProcessDistanceAnalyticsUseCase> { ProcessDistanceAnalyticsUseCaseImpl() }
     factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
@@ -345,7 +347,7 @@ val workoutModule = module {
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val profileModule = module {

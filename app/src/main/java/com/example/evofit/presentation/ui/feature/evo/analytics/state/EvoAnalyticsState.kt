@@ -26,6 +26,7 @@ data class EvoAnalyticsState(
     val exercisesForSelection: List<ExerciseWithRecordsUIModel> = emptyList(),
     val selectedExerciseId: String? = null,
     val selectedExerciseName: String = "",
+    val isWeightAnalysis: Boolean = false,
     val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
     val maxRecord: String = "-",
     val secondaryRecord: String? = null,
