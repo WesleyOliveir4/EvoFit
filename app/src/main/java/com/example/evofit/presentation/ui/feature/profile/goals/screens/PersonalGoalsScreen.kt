@@ -37,6 +37,7 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalCard
+import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalFilterRow
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.GoalUiModel
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
@@ -81,6 +82,13 @@ fun PersonalGoalsContent(
     onAddGoalClick: () -> Unit,
     onDeleteGoal: (String) -> Unit = {}
 ) {
+    var selectedFilter by remember { mutableStateOf("Todas") }
+
+    val filteredGoals = remember(goals, selectedFilter) {
+        if (selectedFilter == "Todas") goals
+        else goals.filter { it.category == selectedFilter }
+    }
+
     Scaffold(
         containerColor = AppDarkBg,
         topBar = {
@@ -114,34 +122,31 @@ fun PersonalGoalsContent(
             contentPadding = PaddingValues(top = 8.dp, bottom = 80.dp)
         ) {
             item {
-                Row(
+                GoalFilterRow(
+                    selectedFilter = selectedFilter,
+                    onFilterSelected = { selectedFilter = it },
                     modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.profile_goals_subtitle),
-                        color = TextPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                )
             }
 
-            if (goals.isEmpty()) {
+            if (filteredGoals.isEmpty()) {
                 item {
                     Text(
-                        text = stringResource(id = R.string.profile_goals_empty),
+                        text = if (goals.isEmpty()) stringResource(id = R.string.profile_goals_empty)
+                               else "Nenhuma meta encontrada para este filtro.",
                         color = TextPrimary,
                         modifier = Modifier.padding(top = 24.dp)
                     )
                 }
             } else {
-                items(goals, key = { it.id }) { goal ->
+                items(filteredGoals, key = { it.id }) { goal ->
                     GoalCard(
                         title = goal.title,
                         category = goal.category,
                         currentValue = goal.currentValue,
                         targetValue = goal.targetValue,
                         percentage = goal.percentage,
+                        iconRes = goal.iconRes,
                         onDeleteClick = { onDeleteGoal(goal.id) }
                     )
                 }
@@ -162,15 +167,26 @@ private fun PersonalGoalsScreenPreview() {
                     "Peso",
                     "82kg",
                     "75kg",
-                    90
+                    70,
+                    com.example.evofit.R.drawable.ic_apple
                 ),
                 GoalUiModel(
                     "2",
-                    "Supino reto 100kg",
+                    "Puxada Frontal",
                     "Força",
-                    "90kg",
-                    "100kg",
-                    90
+                    "0.0",
+                    "90.0",
+                    0,
+                    com.example.evofit.R.drawable.ic_back
+                ),
+                GoalUiModel(
+                    "3",
+                    "Corrida 5km",
+                    "Cardio",
+                    "4.5km",
+                    "10.0km",
+                    45,
+                    com.example.evofit.R.drawable.ic_cardio
                 )
             ),
             onBackClick = {},

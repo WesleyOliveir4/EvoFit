@@ -10,6 +10,7 @@ import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
+import com.example.evofit.presentation.mapper.toImageRes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,7 +26,8 @@ data class GoalUiModel(
     val category: String,
     val currentValue: String,
     val targetValue: String,
-    val percentage: Int
+    val percentage: Int,
+    val iconRes: Int? = null
 )
 
 class PersonalGoalsViewModel(
@@ -48,6 +50,14 @@ class PersonalGoalsViewModel(
     private fun loadGoals() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+
+            // Pre-load muscle group mapping for exercises
+            val exerciseToMuscleGroup = mutableMapOf<String, com.example.evofit.domain.model.MuscleGroupType>()
+            getMuscleGroupsUseCase().forEach { group ->
+                getExercisesByGroupUseCase(group.id).forEach { exercise ->
+                    exerciseToMuscleGroup[exercise.name] = group.type
+                }
+            }
 
             getUserIdUseCase().flatMapLatest { userId ->
                 if (userId == null) {
@@ -72,13 +82,26 @@ class PersonalGoalsViewModel(
                                             is UserGoal.Weight -> "Peso"
                                         }
 
+                                        val iconRes = when (goal) {
+                                            is UserGoal.Strength -> {
+                                                val muscleType = exerciseToMuscleGroup[goal.exerciseName]
+                                                (muscleType ?: com.example.evofit.domain.model.MuscleGroupType.OTHER).toImageRes()
+                                            }
+                                            is UserGoal.Cardio -> com.example.evofit.domain.model.MuscleGroupType.CARDIO.toImageRes()
+                                            is UserGoal.Weight -> com.example.evofit.R.drawable.ic_apple
+                                        }
+
+                                        val currentValueFormatted = "%.1f".format(progress.currentValue)
+                                        val targetValueFormatted = "%.1f".format(progress.targetValue)
+
                                         GoalUiModel(
                                             id = goal.id,
                                             title = title,
                                             category = category,
-                                            currentValue = "${progress.currentValue}${progress.unit}",
-                                            targetValue = "${progress.targetValue}${progress.unit}",
-                                            percentage = progress.percentage
+                                            currentValue = "$currentValueFormatted${progress.unit}",
+                                            targetValue = "$targetValueFormatted${progress.unit}",
+                                            percentage = progress.percentage,
+                                            iconRes = iconRes
                                         )
                                     }
                                 }
