@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.domain.usecase.AddWeightUpdateUseCase
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.presentation.ui.feature.profile.userdata.state.UserDataUiState
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class UserDataViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
-    private val completeOnboardingUseCase: CompleteOnboardingUseCase
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase,
+    private val addWeightUpdateUseCase: AddWeightUpdateUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserDataUiState())
@@ -55,6 +57,12 @@ class UserDataViewModel(
         
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            
+            // Verifica se o peso mudou para registrar no histórico
+            if (weight != currentData.weight && weight.isNotBlank()) {
+                addWeightUpdateUseCase(weight)
+            }
+
             val updatedData = currentData.copy(
                 name = name,
                 birthDate = birthDate,

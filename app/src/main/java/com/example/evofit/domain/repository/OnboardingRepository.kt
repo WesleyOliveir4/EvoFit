@@ -1,6 +1,7 @@
 package com.example.evofit.domain.repository
 
 import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.domain.model.WeightUpdate
 import kotlinx.coroutines.flow.Flow
 
 interface OnboardingRepository {
@@ -13,4 +14,8 @@ interface OnboardingRepository {
     fun isOnboardingCompleted(): Flow<Boolean>
     suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean, isOnline: Boolean): Result<Unit>
     suspend fun nukeUserData()
+    
+    // Weight History
+    suspend fun saveWeightUpdate(weightUpdate: WeightUpdate, userId: String)
+    fun getWeightHistory(userId: String): Flow<List<WeightUpdate>>
 }

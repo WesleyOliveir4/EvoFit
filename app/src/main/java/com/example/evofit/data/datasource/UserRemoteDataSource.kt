@@ -3,6 +3,7 @@ package com.example.evofit.data.datasource
 import android.util.Log
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
+import com.example.evofit.data.local.entities.WeightUpdateEntity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
@@ -13,6 +14,10 @@ interface UserRemoteDataSource {
     suspend fun deleteGoal(userId: String, goalId: String)
     suspend fun getUser(userId: String): UserEntity?
     suspend fun getGoals(userId: String): List<UserGoalEntity>
+    
+    // Weight History
+    suspend fun saveWeightUpdate(userId: String, update: WeightUpdateEntity)
+    suspend fun getWeightHistory(userId: String): List<WeightUpdateEntity>
 }
 
 class UserRemoteDataSourceImpl(
@@ -83,6 +88,30 @@ class UserRemoteDataSourceImpl(
                 .toObjects(UserGoalEntity::class.java)
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao buscar metas: $userId", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun saveWeightUpdate(userId: String, update: WeightUpdateEntity) {
+        firestore.collection("users")
+            .document(userId)
+            .collection("weight_history")
+            .document(update.id)
+            .set(update)
+            .await()
+    }
+
+    override suspend fun getWeightHistory(userId: String): List<WeightUpdateEntity> {
+        return try {
+            firestore.collection("users")
+                .document(userId)
+                .collection("weight_history")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(WeightUpdateEntity::class.java)
+        } catch (e: Exception) {
+            Log.e(TAG, "Erro ao buscar historico de peso: $userId", e)
             emptyList()
         }
     }

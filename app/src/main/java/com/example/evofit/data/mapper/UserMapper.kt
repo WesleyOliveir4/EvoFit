@@ -2,10 +2,30 @@ package com.example.evofit.data.mapper
 
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
+import com.example.evofit.data.local.entities.WeightUpdateEntity
 import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.domain.model.WeightUpdate
 import java.util.UUID
+
+fun WeightUpdate.toEntity(userId: String): WeightUpdateEntity {
+    return WeightUpdateEntity(
+        id = id.ifBlank { UUID.randomUUID().toString() },
+        userId = userId,
+        weight = weight,
+        date = date,
+        timestamp = System.currentTimeMillis()
+    )
+}
+
+fun WeightUpdateEntity.toDomain(): WeightUpdate {
+    return WeightUpdate(
+        id = id,
+        weight = weight,
+        date = date
+    )
+}
 
 fun UserOnboardingData.toEntity(userId: String = UUID.randomUUID().toString()): UserEntity {
     return UserEntity(

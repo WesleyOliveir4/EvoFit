@@ -17,6 +17,7 @@ class OnboardingViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val saveOnboardingDataUseCase: SaveOnboardingDataUseCase,
     private val completeOnboardingUseCase: CompleteOnboardingUseCase,
+    private val addWeightUpdateUseCase: AddWeightUpdateUseCase,
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
     private val getGoalSuggestionsUseCase: GetGoalSuggestionsUseCase,
@@ -116,6 +117,9 @@ class OnboardingViewModel(
     fun finishOnboarding(onFinish: () -> Unit) {
         viewModelScope.launch {
             completeOnboardingUseCase(_userData.value)
+            if (_userData.value.weight.isNotBlank()) {
+                addWeightUpdateUseCase(_userData.value.weight)
+            }
             clearCache()
             onFinish()
         }
