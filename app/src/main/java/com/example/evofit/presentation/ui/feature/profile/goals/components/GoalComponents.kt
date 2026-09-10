@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,14 +75,19 @@ fun GoalCard(
     iconRes: Int? = null,
     initiallyExpanded: Boolean = false,
     onDeleteClick: () -> Unit = {},
+    onFinishClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val strengthLabel = stringResource(id = R.string.goal_category_label_strength)
+    val cardioLabel = stringResource(id = R.string.goal_category_label_cardio)
+    val weightLabel = stringResource(id = R.string.goal_category_label_weight)
+
     var expanded by remember { mutableStateOf(initiallyExpanded) }
 
     val categoryColors = when (category) {
-        "Força" -> Pair(EvoPurple.copy(alpha = 0.15f), EvoPurple)
-        "Cardio" -> Pair(EvoGreen.copy(alpha = 0.15f), EvoGreen)
-        "Peso" -> Pair(EvoBlue.copy(alpha = 0.15f), EvoBlue)
+        strengthLabel -> Pair(EvoPurple.copy(alpha = 0.15f), EvoPurple)
+        cardioLabel -> Pair(EvoGreen.copy(alpha = 0.15f), EvoGreen)
+        weightLabel -> Pair(EvoBlue.copy(alpha = 0.15f), EvoBlue)
         else -> Pair(Color(0xFF261A35), EvoPurple)
     }
 
@@ -192,7 +198,7 @@ fun GoalCard(
                 }
             }
 
-            if (expanded) {
+                if (expanded) {
                 // Info Detalhada
                 Column(
                     modifier = Modifier
@@ -203,15 +209,15 @@ fun GoalCard(
                     // Meta
                     GoalDetailItem(
                         icon = Icons.Default.Adjust,
-                        label = "Meta",
+                        label = stringResource(id = R.string.profile_goals_label_goal),
                         value = targetValue
                     )
                     
                     // Atual
                     val currentLabel = when (category) {
-                        "Cardio" -> "Distância atual"
-                        "Peso" -> "Peso atual"
-                        else -> "Atual"
+                        cardioLabel -> stringResource(id = R.string.profile_goals_label_distance_current)
+                        weightLabel -> stringResource(id = R.string.profile_goals_label_weight_current)
+                        else -> stringResource(id = R.string.profile_goals_label_current_simple)
                     }
                     GoalDetailItem(
                         icon = Icons.Default.Route,
@@ -228,7 +234,7 @@ fun GoalCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        onClick = { /* Sem função por hora */ },
+                        onClick = { onFinishClick()},
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = AppGreen),
                         shape = RoundedCornerShape(12.dp),
@@ -236,7 +242,11 @@ fun GoalCard(
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Finalizar", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = stringResource(id = R.string.profile_goals_button_finish),
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                     
                     Button(
@@ -248,7 +258,11 @@ fun GoalCard(
                     ) {
                         Icon(Icons.Default.Delete, contentDescription = null, tint = Color.White)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Excluir", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = stringResource(id = R.string.profile_goals_button_delete),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -294,7 +308,12 @@ fun GoalFilterRow(
     onFilterSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val filters = listOf("Todas", "Força", "Cardio", "Peso")
+    val filters = listOf(
+        stringResource(id = R.string.profile_goals_filter_all),
+        stringResource(id = R.string.goal_category_label_strength),
+        stringResource(id = R.string.goal_category_label_cardio),
+        stringResource(id = R.string.goal_category_label_weight)
+    )
     Row(
         modifier = modifier
             .fillMaxWidth()

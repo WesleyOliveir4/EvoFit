@@ -46,7 +46,7 @@
     <string name="onboarding_summary_value_age">%1$s anos</string>
     <string name="onboarding_summary_value_weight">%1$s kg</string>
     <string name="onboarding_summary_value_height">%1$s cm</string>
-    <string name="onboarding_summary_button_start_training">🔥 Começar a Treinar</string>
+    <string name="onboarding_summary_button_start_training">Começar a Treinar</string>
 
     <!-- Onboarding Components -->
     <string name="onboarding_component_remove_goal">Remover Meta</string>
@@ -64,13 +64,15 @@
     <string name="goal_category_muscle_gain">Ganhar massa</string>
     <string name="goal_category_label_strength">Força</string>
     <string name="goal_category_label_cardio">Cardio</string>
-    <string name="goal_category_label_weight">Meta de Peso</string>
+    <string name="goal_category_label_weight">Peso</string>
 
-    <string name="goal_step_muscle_group">1. Qual grupo muscular?</string>
-    <string name="goal_step_exercise">2. Qual exercício?</string>
-    <string name="goal_step_reps">3. Meta de repetições:</string>
-    <string name="goal_step_time">3. Meta de tempo (min):</string>
-    <string name="goal_step_weight">3. Meta de quilos (1RM):</string>
+    <string name="goal_type_body_weight">Peso Corporal</string>
+
+    <string name="goal_step_muscle_group">Qual grupo muscular?</string>
+    <string name="goal_step_exercise">Qual exercício?</string>
+    <string name="goal_step_reps">Meta de repetições:</string>
+    <string name="goal_step_time">Meta de tempo (min):</string>
+    <string name="goal_step_weight">Meta de quilos:</string>
 
     <string name="goal_unit_reps">reps</string>
     <string name="goal_unit_min">min</string>
@@ -80,10 +82,10 @@
     <string name="goal_search_placeholder">Buscar exercício...</string>
     <string name="goal_error_select_muscle">Selecione um grupo muscular primeiro</string>
 
-    <string name="goal_step_cardio_select">1. Selecione o Cardio:</string>
-    <string name="goal_step_cardio_distance">2. Distância aproximada:</string>
-    <string name="goal_step_cardio_duration_step2">2. Duração:</string>
-    <string name="goal_step_cardio_duration_step3">3. Duração:</string>
+    <string name="goal_step_cardio_select">Selecione o Cardio:</string>
+    <string name="goal_step_cardio_distance">Distância aproximada:</string>
+    <string name="goal_step_cardio_duration_step2">Duração:</string>
+    <string name="goal_step_cardio_duration_step3">Duração:</string>
 
     <string name="goal_step_body_weight">Meta de peso corporal:</string>
 
@@ -406,6 +408,14 @@
     <string name="profile_goals_label_current">Atual:</string>
     <string name="profile_goals_label_target">Meta:</string>
     <string name="profile_goals_empty">Nenhuma meta definida ainda.</string>
+    <string name="profile_goals_filter_empty">Nenhuma meta encontrada para este filtro.</string>
+    <string name="profile_goals_filter_all">Todas</string>
+    <string name="profile_goals_label_goal">Meta</string>
+    <string name="profile_goals_label_distance_current">Distância atual</string>
+    <string name="profile_goals_label_weight_current">Peso atual</string>
+    <string name="profile_goals_label_current_simple">Atual</string>
+    <string name="profile_goals_button_finish">Finalizar</string>
+    <string name="profile_goals_button_delete">Excluir</string>
     <string name="profile_goal_delete_description">Excluir meta</string>
 
     <string name="confirm">Confirmar</string>

@@ -74,10 +74,11 @@ fun PersonalGoalsContent(
     onAddGoalClick: () -> Unit,
     onDeleteGoal: (String) -> Unit = {}
 ) {
-    var selectedFilter by remember { mutableStateOf("Todas") }
+    val allLabel = stringResource(id = R.string.profile_goals_filter_all)
+    var selectedFilter by remember { mutableStateOf(allLabel) }
 
     val filteredGoals = remember(goals, selectedFilter) {
-        if (selectedFilter == "Todas") goals
+        if (selectedFilter == allLabel) goals
         else goals.filter { it.category == selectedFilter }
     }
 
@@ -125,7 +126,7 @@ fun PersonalGoalsContent(
                 item {
                     Text(
                         text = if (goals.isEmpty()) stringResource(id = R.string.profile_goals_empty)
-                               else "Nenhuma meta encontrada para este filtro.",
+                               else stringResource(id = R.string.profile_goals_filter_empty),
                         color = TextPrimary,
                         modifier = Modifier.padding(top = 24.dp)
                     )
@@ -139,7 +140,8 @@ fun PersonalGoalsContent(
                         targetValue = goal.targetValue,
                         percentage = goal.percentage,
                         iconRes = goal.iconRes,
-                        onDeleteClick = { onDeleteGoal(goal.id) }
+                        onDeleteClick = { onDeleteGoal(goal.id) },
+                        onFinishClick = { onDeleteGoal(goal.id) },
                     )
                 }
             }
