@@ -1,2 +1,0 @@
-- [x] Atualizar `WorkoutPreviewScreenPreview` em `WorkoutPreviewScreen.kt`
-- [x] Verificar a renderização do Preview

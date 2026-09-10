@@ -6,6 +6,7 @@ import com.example.evofit.data.local.session.SessionManager
 import com.example.evofit.data.repository.AuthRepositoryImpl
 import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.usecase.*
+import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
@@ -357,9 +358,10 @@ val profileModule = module {
 }
 
 val authModule = module {
-    viewModel { RegisterViewModel(get(), get()) }
-    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { RecoverPasswordViewModel(get()) }
+    single<AuthErrorMapper> { AuthErrorMapper(androidContext()) }
+    viewModel { RegisterViewModel(get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { RecoverPasswordViewModel(get(), get()) }
 }
 
 val goalModule = module {

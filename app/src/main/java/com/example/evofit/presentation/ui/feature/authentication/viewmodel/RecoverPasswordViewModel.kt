@@ -3,6 +3,7 @@ package com.example.evofit.presentation.ui.feature.authentication.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.usecase.SendPasswordResetCodeUseCase
+import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.RecoverPasswordUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RecoverPasswordViewModel(
-    private val sendPasswordResetCodeUseCase: SendPasswordResetCodeUseCase
+    private val sendPasswordResetCodeUseCase: SendPasswordResetCodeUseCase,
+    private val errorMapper: AuthErrorMapper
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RecoverPasswordUiState())
     val uiState = _uiState.asStateFlow()
@@ -31,7 +33,7 @@ class RecoverPasswordViewModel(
                     _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
     }
