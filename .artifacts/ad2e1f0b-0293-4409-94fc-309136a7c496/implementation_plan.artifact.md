@@ -1,45 +1,46 @@
-# Plano de Implementação - Estruturação do Fluxo de Metas
+# Plano de Implementação - Refatoração do GoalWizard para Screen
 
-Este plano visa reestruturar a tela de metas pessoais (`PersonalGoalsScreen`) e o componente de cartão de meta (`GoalCard`) para seguir o novo design proposto, incluindo ícones por grupo muscular, badges de categoria e filtros.
+Este plano visa transformar o `GoalWizardBottomSheet` em uma `GoalWizardScreen` independente, seguindo os princípios CLEAN, SOLID e MVVM, e organizando-a em um novo pacote `commons/goals`.
 
-## Propostas de Mudança
+## User Review Required
 
-### 1. Data Models & ViewModel
+> [!IMPORTANT]
+> A transformação em Screen implica que o Wizard deixará de ser um componente de sobreposição (BottomSheet) para ocupar a tela inteira ou ser um componente de navegação. Vou manter a lógica de "Wizard" mas centralizada em um `ViewModel`.
 
-#### [MODIFY] [PersonalGoalsViewModel.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/profile/goals/viewmodel/PersonalGoalsViewModel.kt)
-- Atualizar `GoalUiModel` para incluir `iconRes: Int?`.
-- Criar um mapa auxiliar no `loadGoals` para associar nomes de exercícios aos seus `MuscleGroupType` correspondentes, permitindo resolver o ícone correto para metas de "Força".
-- Atualizar a lógica de mapeamento no `loadGoals`:
-    - **Força**: Buscar o ícone baseado no grupo muscular do exercício.
-    - **Cardio**: Usar `MuscleGroupType.CARDIO.toImageRes()`.
-    - **Peso**: Usar `R.drawable.ic_apple`.
+## Proposed Changes
 
----
+### [Component Name] com.example.evofit.presentation.ui.feature.commons.goals
 
-### 2. Componentes de UI
+#### [NEW] [GoalWizardViewModel.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/commons/goals/viewmodel/GoalWizardViewModel.kt)
+- Criar o `ViewModel` para gerenciar o estado do Wizard.
+- Injetar `GetMuscleGroupsUseCase` e `GetExercisesByGroupUseCase`.
+- Gerenciar `GoalWizardUiState` e processar `GoalAction`.
 
-#### [MODIFY] [GoalComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/profile/goals/components/GoalComponents.kt)
-- Redesenhar o `GoalCard` para um layout horizontal:
-    - **Esquerda**: Ícone com background circular/arredondado semi-transparente.
-    - **Centro**: Coluna com Título, Badge de Categoria e Informação "Atual • Meta".
-    - **Direita**: Porcentagem de progresso e ícone de chevron.
-- Adicionar suporte ao `iconRes` no `GoalCard`.
-- Adicionar o componente `GoalFilterRow` (chips de filtro: Todas, Força, Cardio, Saúde).
+#### [NEW] [GoalWizardScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/commons/goals/screens/GoalWizardScreen.kt)
+- Implementar a tela principal do Wizard utilizando o `GoalWizardViewModel`.
+- Substituir o uso de `remember` e `mutableStateOf` pelo estado vindo do `ViewModel`.
+
+#### [NEW] [GoalWizardComponents.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/commons/goals/components/GoalWizardComponents.kt)
+- Extrair os componentes visuais (Passos, Progress, TopBar) de `GoalWizard.kt` para este arquivo para melhor organização.
 
 ---
 
-### 3. Tela de Metas
+### [Onboarding/Profile] Limpeza e Integração
 
 #### [MODIFY] [PersonalGoalsScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/profile/goals/screens/PersonalGoalsScreen.kt)
-- Adicionar estado para o filtro selecionado (`Todas`, `Força`, `Cardio`, `Saúde`).
-- Integrar o `GoalFilterRow` no topo da lista.
-- Filtrar a lista de `goals` exibida com base no chip selecionado.
-- Atualizar a chamada do `GoalCard` para passar o novo parâmetro `iconRes`.
+- Atualizar para usar a nova `GoalWizardScreen` ou um componente adaptado. (Manterei como um diálogo ou tela cheia dependendo da necessidade de fluxo).
 
-## Verificação
+#### [MODIFY] [OnboardingGoalsScreen.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/onboard/screens/OnboardingGoalsScreen.kt)
+- Atualizar para usar a nova implementação.
 
-### Testes Manuais
-- Verificar se cada tipo de meta (Força, Cardio, Peso) exibe o ícone correto.
-- Validar se os filtros ("Todas", "Força", etc.) atualizam a lista corretamente.
-- Garantir que o layout do `GoalCard` está fiel à imagem de referência.
-- Testar a exclusão de metas no novo layout.
+#### [DELETE] [GoalWizard.kt](file:///Users/wesleylopesdeoliveira/Documents/ProjetosGit/EvoFit/EvoFit/app/src/main/java/com/example/evofit/presentation/ui/feature/onboard/components/GoalWizard.kt)
+- Remover o arquivo antigo após a migração completa.
+
+## Verification Plan
+
+### Automated Tests
+- Validar a compilação e o correto funcionamento do fluxo de passos do Wizard.
+
+### Manual Verification
+- Testar a criação de metas via `PersonalGoalsScreen` e `OnboardingGoalsScreen`.
+- Verificar se a navegação entre os passos (Tipo -> Grupo -> Exercício -> Valor) permanece correta.

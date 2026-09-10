@@ -1,36 +1,44 @@
 package com.example.evofit.presentation.ui.feature.onboard.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evofit.domain.model.Exercise
-import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.GoalSuggestion
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.presentation.model.GoalUIModel
+import com.example.evofit.presentation.ui.feature.commons.goals.screens.GoalWizardScreen
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
-import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalItem
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
-import com.example.evofit.presentation.ui.feature.onboard.components.GoalWizardBottomSheet
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
@@ -49,8 +57,6 @@ fun OnboardingGoalsScreen(
     OnboardingGoalsContent(
         activeGoals = uiState.goals,
         suggestions = remember { viewModel.getSuggestions() },
-        muscleGroups = remember { viewModel.getMuscleGroups() },
-        getExercises = remember { { viewModel.getExercisesByGroup(it) } },
         currentPage = currentPage,
         totalPages = totalPages,
         onAddGoal = remember { { goal -> viewModel.addGoal(goal) } },
@@ -66,8 +72,6 @@ fun OnboardingGoalsScreen(
 fun OnboardingGoalsContent(
     activeGoals: List<GoalUIModel>,
     suggestions: List<GoalSuggestion>,
-    muscleGroups: List<MuscleGroup>,
-    getExercises: (String) -> List<Exercise>,
     currentPage: Int,
     totalPages: Int,
     onAddGoal: (UserGoal) -> Unit,
@@ -80,8 +84,12 @@ fun OnboardingGoalsContent(
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
 
     if (showDialog) {
-        GoalWizardBottomSheet(
-            onDismiss = {
+        GoalWizardScreen(
+            onBack = {
+                showDialog = false
+                selectedSuggestion = null
+            },
+            onClose = {
                 showDialog = false
                 selectedSuggestion = null
             },
@@ -90,8 +98,6 @@ fun OnboardingGoalsContent(
                 showDialog = false
                 selectedSuggestion = null
             },
-            muscleGroups = muscleGroups,
-            getExercises = getExercises,
             initialSuggestion = selectedSuggestion
         )
     }
@@ -236,8 +242,6 @@ fun OnboardingGoalsScreenPreview() {
         OnboardingGoalsContent(
             activeGoals = emptyList(),
             suggestions = emptyList(),
-            muscleGroups = emptyList(),
-            getExercises = { emptyList() },
             currentPage = 4,
             totalPages = 6,
             onAddGoal = {},

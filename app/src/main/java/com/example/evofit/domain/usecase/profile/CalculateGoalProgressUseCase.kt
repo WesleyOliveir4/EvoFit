@@ -1,5 +1,6 @@
 package com.example.evofit.domain.usecase.profile
 
+import com.example.evofit.domain.model.MeasurementUnit
 import com.example.evofit.domain.model.UserGoal
 import com.example.evofit.domain.model.WorkoutDone
 import com.example.evofit.domain.repository.OnboardingRepository
@@ -13,7 +14,9 @@ data class GoalProgress(
     val currentValue: Double,
     val targetValue: Double,
     val percentage: Int,
-    val unit: String = ""
+    val unit: String = "",
+    val currentTime: Double? = null,
+    val targetTime: Double? = null
 )
 
 interface CalculateGoalProgressUseCase {
@@ -39,14 +42,26 @@ class CalculateGoalProgressUseCaseImpl(
 
     private fun calculateStrengthProgress(goal: UserGoal.Strength, history: List<WorkoutDone>): GoalProgress {
         val targetValue = goal.value.toDoubleOrNull() ?: 0.0
-        if (targetValue <= 0) return GoalProgress(0.0, targetValue, 0)
+        val unitStr = when (goal.unit) {
+            MeasurementUnit.WEIGHT -> "kg"
+            MeasurementUnit.REPS -> "Reps"
+            MeasurementUnit.DISTANCE -> "km"
+            MeasurementUnit.TIME -> "min"
+        }
+        
+        if (targetValue <= 0) return GoalProgress(0.0, targetValue, 0, unitStr)
 
         var bestValue = 0.0
         history.forEach { workout ->
             workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
                 exercise.sets.forEach { set ->
                     if (set.exerciseName.equals(goal.exerciseName, ignoreCase = true)) {
-                        val value = if (goal.unit.name == "REPS") set.reps.toDouble() else set.load
+                        val value = when (goal.unit) {
+                            MeasurementUnit.REPS -> set.reps.toDouble()
+                            MeasurementUnit.TIME -> set.time?.toDouble() ?: 0.0
+                            MeasurementUnit.DISTANCE -> set.distance ?: 0.0
+                            MeasurementUnit.WEIGHT -> set.load
+                        }
                         if (value > bestValue) bestValue = value
                     }
                 }
@@ -54,7 +69,7 @@ class CalculateGoalProgressUseCaseImpl(
         }
 
         val percentage = if (targetValue > 0) (bestValue / targetValue * 100).toInt() else 0
-        return GoalProgress(bestValue, targetValue, percentage.coerceIn(0, 1000))
+        return GoalProgress(bestValue, targetValue, percentage.coerceIn(0, 1000), unitStr)
     }
 
     private fun calculateCardioProgress(goal: UserGoal.Cardio, history: List<WorkoutDone>): GoalProgress {
@@ -77,7 +92,14 @@ class CalculateGoalProgressUseCaseImpl(
 
         return if (targetDistance > 0) {
             val percentage = (bestDistance / targetDistance * 100).toInt()
-            GoalProgress(bestDistance, targetDistance, percentage.coerceIn(0, 1000), "km")
+            GoalProgress(
+                currentValue = bestDistance,
+                targetValue = targetDistance,
+                percentage = percentage.coerceIn(0, 1000),
+                unit = "km",
+                currentTime = bestTime,
+                targetTime = targetTime
+            )
         } else {
             val percentage = if (targetTime > 0) (bestTime / targetTime * 100).toInt() else 0
             GoalProgress(bestTime, targetTime, percentage.coerceIn(0, 1000), "min")
