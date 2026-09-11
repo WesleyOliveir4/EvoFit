@@ -29,6 +29,10 @@ class SessionManager(private val context: Context) {
         preferences[USER_ID]
     }
 
+    val lastSyncTime: Flow<Long> = context.dataStore.data.map { preferences ->
+        preferences[LAST_SYNC_TIME] ?: 0L
+    }
+
     suspend fun saveSession(userId: String) {
         context.dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true

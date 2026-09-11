@@ -13,7 +13,6 @@ import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -98,9 +97,12 @@ class LoginViewModel(
         val userId = authRepository.getCurrentUserId()
         if (userId != null) {
             nukeUserDataUseCase()
+            // Sincronismo obrigatório no Login para garantir dados da nuvem
             syncUserDataUseCase(userId, shouldClearActiveSession = true, isOnline = true)
         }
-        val onboardingCompleted = isOnboardingCompletedUseCase().first()
+        // Consulta direta ao banco após sync para evitar race condition de Flows
+        val onboardingCompleted = isOnboardingCompletedUseCase.executeDirect()
+        
         _uiState.update { 
             it.copy(
                 isLoading = false, 

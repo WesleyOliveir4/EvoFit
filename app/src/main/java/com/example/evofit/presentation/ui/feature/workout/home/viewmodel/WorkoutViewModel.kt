@@ -136,7 +136,7 @@ class WorkoutViewModel(
     ) { userData, userId ->
         userData to userId
     }.flatMapLatest { (userData, userId) ->
-        val firstName = getFirstName(userData.name)
+        val firstName = getFirstName(userData?.name ?: "")
         if (userId.isNullOrEmpty()) {
             flowOf(WorkoutState(userName = firstName))
         } else {

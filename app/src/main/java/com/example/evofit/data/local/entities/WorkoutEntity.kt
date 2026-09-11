@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.PropertyName
 
 @Entity(
     tableName = "workouts",
@@ -23,5 +25,11 @@ data class WorkoutEntity(
     val name: String = "",
     val date: String = "",
     val orderIndex: Int = 0,
-    val updatedAt: Long = 0L
+    var updatedAt: Long = 0L,
+
+    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    var isDeleted: Boolean = false,
+
+    @Exclude
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 )

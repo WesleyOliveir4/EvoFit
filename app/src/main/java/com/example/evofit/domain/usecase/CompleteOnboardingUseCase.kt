@@ -10,7 +10,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 interface CompleteOnboardingUseCase {
-    suspend operator fun invoke(data: UserOnboardingData)
+    suspend operator fun invoke(data: UserOnboardingData): Result<Unit>
 }
 
 class CompleteOnboardingUseCaseImpl(
@@ -18,26 +18,31 @@ class CompleteOnboardingUseCaseImpl(
     private val authRepository: AuthRepository,
     private val firebaseAuth: FirebaseAuth
 ) : CompleteOnboardingUseCase {
-    override suspend fun invoke(data: UserOnboardingData) {
-        val userId = authRepository.getCurrentUserId()
-            ?: repository.getUserId().firstOrNull() 
-            ?: UUID.randomUUID().toString()
-        
-        // Sincroniza o nome com o perfil do Firebase Auth se o usuário estiver logado
-        firebaseAuth.currentUser?.let { user ->
-            if (data.name.isNotBlank()) {
-                try {
-                    val profileUpdates = UserProfileChangeRequest.Builder()
-                        .setDisplayName(data.name)
-                        .build()
-                    user.updateProfile(profileUpdates).await()
-                } catch (e: Exception) {
-                    // Log error or handle if critical, but onboarding continues
+    override suspend fun invoke(data: UserOnboardingData): Result<Unit> {
+        return try {
+            val userId = authRepository.getCurrentUserId()
+                ?: repository.getUserId().firstOrNull() 
+                ?: UUID.randomUUID().toString()
+            
+            // Sincroniza o nome com o perfil do Firebase Auth se o usuário estiver logado
+            firebaseAuth.currentUser?.let { user ->
+                if (data.name.isNotBlank()) {
+                    try {
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(data.name)
+                            .build()
+                        user.updateProfile(profileUpdates).await()
+                    } catch (e: Exception) {
+                        // Log error
+                    }
                 }
             }
-        }
 
-        repository.saveUserData(data, userId, isCompleted = true)
-        repository.completeOnboarding()
+            repository.saveUserData(data, userId, isCompleted = true)
+            repository.completeOnboarding()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

@@ -167,7 +167,7 @@ val dataModule = module {
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), androidContext()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), androidContext()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
@@ -235,7 +235,7 @@ val domainModule = module {
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get(), get()) }
+    viewModel { SplashViewModel(get(), get(), get()) }
 }
 
 val onboardingModule = module {
@@ -359,7 +359,7 @@ val profileModule = module {
 
 val authModule = module {
     single<AuthErrorMapper> { AuthErrorMapper(androidContext()) }
-    viewModel { RegisterViewModel(get(), get(), get()) }
+    viewModel { RegisterViewModel(get(), get(), get(), get(), get()) }
     viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModel { RecoverPasswordViewModel(get(), get()) }
 }

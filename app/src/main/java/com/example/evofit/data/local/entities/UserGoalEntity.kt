@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.PropertyName
 
 @Entity(
     tableName = "user_goals",
@@ -26,5 +28,12 @@ data class UserGoalEntity(
     val unit: String? = null,
     val cardioType: String? = null,
     val distance: String? = null,
-    val time: String? = null
+    val time: String? = null,
+    var updatedAt: Long = 0L,
+
+    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    var isDeleted: Boolean = false,
+
+    @Exclude
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 )

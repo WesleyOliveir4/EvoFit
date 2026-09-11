@@ -2,8 +2,10 @@ package com.example.evofit.presentation.ui.feature.authentication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.evofit.domain.repository.AuthRepository
 import com.example.evofit.domain.usecase.NukeUserDataUseCase
 import com.example.evofit.domain.usecase.RegisterUseCase
+import com.example.evofit.domain.usecase.SyncUserDataUseCase
 import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +15,8 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     private val registerUseCase: RegisterUseCase,
+    private val authRepository: AuthRepository,
+    private val syncUserDataUseCase: SyncUserDataUseCase,
     private val nukeUserDataUseCase: NukeUserDataUseCase,
     private val errorMapper: AuthErrorMapper
 ) : ViewModel() {
@@ -55,7 +59,12 @@ class RegisterViewModel(
                 email = currentState.email,
                 password = currentState.password
             ).onSuccess {
-                nukeUserDataUseCase()
+                val userId = authRepository.getCurrentUserId()
+                if (userId != null) {
+                    nukeUserDataUseCase()
+                    // Sincronismo para garantir que se o usuário já existia (Social Login), recuperamos os dados
+                    syncUserDataUseCase(userId, shouldClearActiveSession = true, isOnline = true)
+                }
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
             }.onFailure { error ->
                 _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }

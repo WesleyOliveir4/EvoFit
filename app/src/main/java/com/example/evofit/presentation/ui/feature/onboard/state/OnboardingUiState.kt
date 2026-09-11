@@ -9,5 +9,6 @@ data class OnboardingUiState(
     val birthDate: String = "",
     val weight: String = "",
     val height: String = "",
-    val goals: List<GoalUIModel> = emptyList()
+    val goals: List<GoalUIModel> = emptyList(),
+    val isLoading: Boolean = false
 )
