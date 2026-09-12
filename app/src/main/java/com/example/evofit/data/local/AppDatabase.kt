@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.evofit.data.local.dao.UserDao
+import com.example.evofit.data.local.dao.WeightHistoryDao
 import com.example.evofit.data.local.entities.*
 
 @Database(
@@ -18,16 +19,32 @@ import com.example.evofit.data.local.entities.*
         WorkoutDoneHistoryEntity::class,
         ActiveSessionEntity::class,
         ActiveSessionSetEntity::class,
-        WorkoutDoneEntity::class
+        WorkoutDoneEntity::class,
+        WeightUpdateEntity::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun weightHistoryDao(): WeightHistoryDao
 
     companion object {
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS weight_history (
+                        id TEXT NOT NULL,
+                        userId TEXT NOT NULL,
+                        weight TEXT NOT NULL,
+                        date TEXT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        PRIMARY KEY(id)
+                    )
+                """)
+            }
+        }
         val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE workout_exercises ADD COLUMN groupOrderIndex INTEGER NOT NULL DEFAULT 0")

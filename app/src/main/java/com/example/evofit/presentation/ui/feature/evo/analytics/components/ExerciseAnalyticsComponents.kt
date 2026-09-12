@@ -131,7 +131,8 @@ fun EvoExerciseChart(
     unit: MeasurementUnit,
     points: List<AnalyticsChartPoint>,
     onTabChanged: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showTabs: Boolean = unit == MeasurementUnit.WEIGHT || unit == MeasurementUnit.DISTANCE
 ) {
     val activeColor = if (isCargaSelected) MaterialTheme.evoColors.green else MaterialTheme.evoColors.purple
     
@@ -141,8 +142,6 @@ fun EvoExerciseChart(
     var selectedIndex by remember(points) {
         mutableStateOf(if (points.isNotEmpty()) points.size - 1 else -1)
     }
-
-    val showTabs = unit == MeasurementUnit.WEIGHT || unit == MeasurementUnit.DISTANCE
 
     Card(
         modifier = modifier.fillMaxWidth(),

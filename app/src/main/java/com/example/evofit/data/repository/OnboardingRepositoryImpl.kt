@@ -9,6 +9,7 @@ import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
 import com.example.evofit.data.mapper.*
 import com.example.evofit.domain.model.UserOnboardingData
+import com.example.evofit.domain.model.WeightUpdate
 import com.example.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +133,7 @@ class OnboardingRepositoryImpl(
             val remoteWorkouts = workoutRemoteDataSource.getAllWorkouts(userId)
             val remoteLegacyHistory = workoutRemoteDataSource.getWorkoutDoneHistory(userId)
             val remoteNewHistory = workoutRemoteDataSource.getAllWorkoutDoneHistory(userId)
+            val remoteWeightHistory = userRemoteDataSource.getWeightHistory(userId)
 
             // 3. UPDATE LOCAL ATOMICALLY: Nuke/Clear + Save
             if (shouldClearActiveSession) {
@@ -146,6 +148,11 @@ class OnboardingRepositoryImpl(
                 newHistory = remoteNewHistory.map { it.toEntity() },
                 shouldClearActiveSession = false // Já limpamos acima
             )
+            
+            // Salvar historico de peso no local
+            remoteWeightHistory.forEach { 
+                userDataSource.insertWeightUpdate(it)
+            }
 
             Result.success(Unit)
         } catch (e: Exception) {
@@ -189,6 +196,25 @@ class OnboardingRepositoryImpl(
             }
         } catch (e: Exception) {
             Log.e("OnboardingRepo", "Erro ao limpar fotos de perfil no nuke", e)
+        }
+    }
+
+    override suspend fun saveWeightUpdate(weightUpdate: WeightUpdate, userId: String) {
+        val entity = weightUpdate.toEntity(userId)
+        userDataSource.insertWeightUpdate(entity)
+        
+        scope.launch {
+            try {
+                userRemoteDataSource.saveWeightUpdate(userId, entity)
+            } catch (e: Exception) {
+                Log.e("OnboardingRepo", "Erro ao salvar peso no remoto", e)
+            }
+        }
+    }
+
+    override fun getWeightHistory(userId: String): Flow<List<WeightUpdate>> {
+        return userDataSource.getWeightHistory(userId).map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }

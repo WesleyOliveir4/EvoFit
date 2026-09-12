@@ -148,17 +148,19 @@ val dataModule = module {
             AppDatabase.MIGRATION_8_9,
             AppDatabase.MIGRATION_9_10,
             AppDatabase.MIGRATION_10_11,
-            AppDatabase.MIGRATION_11_12
+            AppDatabase.MIGRATION_11_12,
+            AppDatabase.MIGRATION_12_13
         ).fallbackToDestructiveMigration()
             .build()
     }
 
     single { get<AppDatabase>().userDao() }
+    single { get<AppDatabase>().weightHistoryDao() }
     single { LocalExerciseDataSource() }
     single { SessionManager(androidContext()) }
     single<ConnectivityObserver> { NetworkConnectivityObserver(androidContext()) }
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
-    single<UserLocalDataSource> { UserLocalDataSourceImpl(get()) }
+    single<UserLocalDataSource> { UserLocalDataSourceImpl(get(), get()) }
     single { FirebaseFirestore.getInstance() }
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
@@ -180,8 +182,10 @@ val domainModule = module {
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get(), get()) }
     factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get(), get()) }
+    factory<AddWeightUpdateUseCase> { AddWeightUpdateUseCaseImpl(get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }
+    factory<GetWeightHistoryUseCase> { GetWeightHistoryUseCaseImpl(get()) }
     factory<GetUserIdUseCase> { GetUserIdUseCaseImpl(get()) }
     factory<GetWorkoutsUseCase> { GetWorkoutsUseCaseImpl(get()) }
     factory<GetWorkoutsSinceUseCase> { GetWorkoutsSinceUseCaseImpl(get()) }
@@ -209,7 +213,8 @@ val domainModule = module {
     factory<ClearWorkoutSessionUseCase> { ClearWorkoutSessionUseCaseImpl(get()) }
     factory<DeleteWorkoutUseCase> { DeleteWorkoutUseCaseImpl(get()) }
     factory<UpdateWorkoutUseCase> { UpdateWorkoutUseCaseImpl(get()) }
-    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get()) }
+    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get(), get()) }
+    factory<ProcessBodyWeightAnalyticsUseCase> { ProcessBodyWeightAnalyticsUseCaseImpl() }
     factory<ProcessWeightAnalyticsUseCase> { ProcessWeightAnalyticsUseCaseImpl() }
     factory<ProcessDistanceAnalyticsUseCase> { ProcessDistanceAnalyticsUseCaseImpl() }
     factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
@@ -234,6 +239,7 @@ val splashModule = module {
 val onboardingModule = module {
     viewModel {
         OnboardingViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -341,13 +347,13 @@ val workoutModule = module {
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val profileModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { DeveloperViewModel(get()) }
-    viewModel { UserDataViewModel(get(), get()) }
+    viewModel { UserDataViewModel(get(), get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
