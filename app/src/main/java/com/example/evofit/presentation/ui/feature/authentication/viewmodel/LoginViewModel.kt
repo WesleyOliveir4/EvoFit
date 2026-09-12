@@ -9,6 +9,7 @@ import com.example.evofit.domain.usecase.LoginWithGoogleUseCase
 import com.example.evofit.domain.usecase.LoginWithAppleUseCase
 import com.example.evofit.domain.usecase.NukeUserDataUseCase
 import com.example.evofit.domain.usecase.SyncUserDataUseCase
+import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,8 @@ class LoginViewModel(
     private val isOnboardingCompletedUseCase: IsOnboardingCompletedUseCase,
     private val authRepository: AuthRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
-    private val nukeUserDataUseCase: NukeUserDataUseCase
+    private val nukeUserDataUseCase: NukeUserDataUseCase,
+    private val errorMapper: AuthErrorMapper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -61,7 +63,7 @@ class LoginViewModel(
             loginUseCase(currentState.email, currentState.password)
                 .onSuccess { handleLoginSuccess() }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
     }
@@ -74,7 +76,7 @@ class LoginViewModel(
             loginWithGoogleUseCase(idToken)
                 .onSuccess { handleLoginSuccess() }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
     }
@@ -87,7 +89,7 @@ class LoginViewModel(
             loginWithAppleUseCase()
                 .onSuccess { handleLoginSuccess() }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
     }

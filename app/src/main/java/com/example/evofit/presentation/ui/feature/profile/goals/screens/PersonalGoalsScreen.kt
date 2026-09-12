@@ -162,7 +162,7 @@ private fun PersonalGoalsScreenPreview() {
                     "82kg",
                     "75kg",
                     70,
-                    com.example.evofit.R.drawable.ic_balance_2
+                    R.drawable.ic_balance_2
                 ),
                 GoalUiModel(
                     "2",
@@ -171,7 +171,7 @@ private fun PersonalGoalsScreenPreview() {
                     "0.0",
                     "90.0",
                     0,
-                    com.example.evofit.R.drawable.ic_back
+                    R.drawable.ic_back
                 ),
                 GoalUiModel(
                     "3",
@@ -180,7 +180,7 @@ private fun PersonalGoalsScreenPreview() {
                     "4.5km",
                     "10.0km",
                     45,
-                    com.example.evofit.R.drawable.ic_cardio
+                    R.drawable.ic_cardio
                 )
             ),
             onBackClick = {},

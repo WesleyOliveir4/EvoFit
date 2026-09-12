@@ -421,4 +421,13 @@
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>
+
+    <!-- Auth Errors -->
+    <string name="error_auth_invalid_credentials">E-mail ou senha incorretos. Verifique seus dados.</string>
+    <string name="error_auth_registration_failed">Não foi possível realizar o cadastro com os dados informados.</string>
+    <string name="error_auth_user_disabled">Esta conta foi desativada. Entre em contato com o suporte.</string>
+    <string name="error_auth_too_many_requests">Muitas tentativas malsucedidas. Tente novamente mais tarde.</string>
+    <string name="error_auth_weak_password">A senha informada não atende aos requisitos mínimos de segurança.</string>
+    <string name="error_auth_network_error">Falha na conexão. Verifique sua internet.</string>
+    <string name="error_auth_generic">Ocorreu um erro inesperado. Tente novamente em instantes.</string>
 </resources>
