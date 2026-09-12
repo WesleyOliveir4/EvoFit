@@ -2,16 +2,23 @@ package com.example.evofit.presentation.ui.feature.profile.goals.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evofit.domain.model.Exercise
-import com.example.evofit.domain.model.MuscleGroup
 import com.example.evofit.domain.model.UserGoal
+import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
+import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
-import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
-import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
+import com.example.evofit.presentation.mapper.toImageRes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class PersonalGoalsUiState(
@@ -25,7 +32,8 @@ data class GoalUiModel(
     val category: String,
     val currentValue: String,
     val targetValue: String,
-    val percentage: Int
+    val percentage: Int,
+    val iconRes: Int? = null
 )
 
 class PersonalGoalsViewModel(
@@ -48,6 +56,14 @@ class PersonalGoalsViewModel(
     private fun loadGoals() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+
+            // Pre-load muscle group mapping for exercises
+            val exerciseToMuscleGroup = mutableMapOf<String, com.example.evofit.domain.model.MuscleGroupType>()
+            getMuscleGroupsUseCase().forEach { group ->
+                getExercisesByGroupUseCase(group.id).forEach { exercise ->
+                    exerciseToMuscleGroup[exercise.name] = group.type
+                }
+            }
 
             getUserIdUseCase().flatMapLatest { userId ->
                 if (userId == null) {
@@ -72,13 +88,39 @@ class PersonalGoalsViewModel(
                                             is UserGoal.Weight -> "Peso"
                                         }
 
+                                        val iconRes = when (goal) {
+                                            is UserGoal.Strength -> {
+                                                val muscleType = exerciseToMuscleGroup[goal.exerciseName]
+                                                (muscleType ?: com.example.evofit.domain.model.MuscleGroupType.OTHER).toImageRes()
+                                            }
+                                            is UserGoal.Cardio -> com.example.evofit.domain.model.MuscleGroupType.CARDIO.toImageRes()
+                                            is UserGoal.Weight -> com.example.evofit.R.drawable.ic_balance_2
+                                        }
+
+                                        val curValue = if (goal is UserGoal.Cardio && progress.currentTime != null && progress.unit == "km") {
+                                            "%.1f em %.0fmin".format(progress.currentValue, progress.currentTime)
+                                        } else if (progress.unit == "min") {
+                                            "%.0fmin".format(progress.currentValue)
+                                        } else {
+                                            "%.1f${progress.unit}".format(progress.currentValue)
+                                        }
+
+                                        val tarValue = if (goal is UserGoal.Cardio && progress.targetTime != null && progress.unit == "km") {
+                                            "%.1fkm em %.0fmin".format(progress.targetValue, progress.targetTime)
+                                        } else if (progress.unit == "min") {
+                                            "%.0fmin".format(progress.targetValue)
+                                        } else {
+                                            "%.1f${progress.unit}".format(progress.targetValue)
+                                        }
+
                                         GoalUiModel(
                                             id = goal.id,
                                             title = title,
                                             category = category,
-                                            currentValue = "${progress.currentValue}${progress.unit}",
-                                            targetValue = "${progress.targetValue}${progress.unit}",
-                                            percentage = progress.percentage
+                                            currentValue = curValue,
+                                            targetValue = tarValue,
+                                            percentage = progress.percentage,
+                                            iconRes = iconRes
                                         )
                                     }
                                 }
@@ -109,7 +151,4 @@ class PersonalGoalsViewModel(
             onboardingRepository.deleteGoal(goalId)
         }
     }
-
-    fun getMuscleGroups(): List<MuscleGroup> = getMuscleGroupsUseCase()
-    fun getExercisesByGroup(groupId: String): List<Exercise> = getExercisesByGroupUseCase(groupId)
 }

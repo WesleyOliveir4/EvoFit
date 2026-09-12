@@ -130,6 +130,7 @@ import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.Person
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -239,8 +240,6 @@ val splashModule = module {
 val onboardingModule = module {
     viewModel {
         OnboardingViewModel(
-            get(),
-            get(),
             get(),
             get(),
             get(),
@@ -363,6 +362,10 @@ val authModule = module {
     viewModel { RecoverPasswordViewModel(get()) }
 }
 
+val goalModule = module {
+    viewModel { GoalWizardViewModel(get(), get()) }
+}
+
 val appModule = listOf(
     dataModule,
     domainModule,
@@ -372,5 +375,6 @@ val appModule = listOf(
     workoutModule,
     evoModule,
     profileModule,
-    authModule
+    authModule,
+    goalModule
 )

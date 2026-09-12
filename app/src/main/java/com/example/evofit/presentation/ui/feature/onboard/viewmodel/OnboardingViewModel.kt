@@ -18,8 +18,6 @@ class OnboardingViewModel(
     private val saveOnboardingDataUseCase: SaveOnboardingDataUseCase,
     private val completeOnboardingUseCase: CompleteOnboardingUseCase,
     private val addWeightUpdateUseCase: AddWeightUpdateUseCase,
-    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
-    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
     private val getGoalSuggestionsUseCase: GetGoalSuggestionsUseCase,
     private val appContext: Context,
     private val savedStateHandle: SavedStateHandle
@@ -133,7 +131,5 @@ class OnboardingViewModel(
         _userData.value = UserOnboardingData()
     }
 
-    fun getMuscleGroups() = getMuscleGroupsUseCase()
-    fun getExercisesByGroup(groupId: String) = getExercisesByGroupUseCase(groupId)
     fun getSuggestions() = getGoalSuggestionsUseCase()
 }
