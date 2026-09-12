@@ -31,7 +31,7 @@ data class UserGoalEntity(
     val time: String? = null,
     var updatedAt: Long = 0L,
 
-    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    @Exclude
     var isDeleted: Boolean = false,
 
     @Exclude

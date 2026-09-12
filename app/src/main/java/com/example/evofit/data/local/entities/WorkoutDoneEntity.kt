@@ -16,7 +16,7 @@ data class WorkoutDoneEntity(
     val time: String,
     val createdAt: Long,
 
-    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    @Exclude
     var isDeleted: Boolean = false,
 
     @Exclude

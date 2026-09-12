@@ -27,7 +27,7 @@ data class WorkoutEntity(
     val orderIndex: Int = 0,
     var updatedAt: Long = 0L,
 
-    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    @Exclude
     var isDeleted: Boolean = false,
 
     @Exclude

@@ -100,6 +100,7 @@ class WorkoutStartViewModel(
                             workoutExerciseId = workoutExercise.id,
                             exerciseId = workoutExercise.exerciseId,
                             name = exerciseInfo?.name ?: "",
+                            muscleGroupId = mGroupId,
                             muscleGroupName = mGroupName,
                             unit = workoutExercise.sets.firstOrNull()?.unit ?: MeasurementUnit.WEIGHT,
                             sets = workoutExercise.sets.map { set ->
@@ -234,6 +235,7 @@ class WorkoutStartViewModel(
                     WorkoutExercise(
                         id = exercise.workoutExerciseId,
                         exerciseId = exercise.exerciseId,
+                        muscleGroupId = exercise.muscleGroupId,
                         sets = doneSets,
                         totalSets = totalSetsPlanned
                     )

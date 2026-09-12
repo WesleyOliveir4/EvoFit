@@ -78,8 +78,7 @@ class WorkoutRemoteDataSourceImpl(
             "name" to workout.name,
             "date" to workout.date,
             "orderIndex" to workout.orderIndex,
-            "updatedAt" to FieldValue.serverTimestamp(),
-            "isDeleted" to workout.isDeleted
+            "updatedAt" to FieldValue.serverTimestamp()
         )
         batch.set(workoutRef, workoutMap)
 
@@ -98,12 +97,12 @@ class WorkoutRemoteDataSourceImpl(
 
     override suspend fun deleteWorkout(userId: String, workoutId: String) {
         try {
-            // Agora usamos Soft Delete no Firestore
+            // Deleção física no Firestore (Estratégia Clean Cloud)
             firestore.collection("users")
                 .document(userId)
                 .collection("workouts")
                 .document(workoutId)
-                .update("isDeleted", true, "updatedAt", FieldValue.serverTimestamp())
+                .delete()
                 .await()
         } catch (e: Exception) {
             Log.e(TAG, "Erro ao deletar treino completo: $workoutId", e)
@@ -140,8 +139,7 @@ class WorkoutRemoteDataSourceImpl(
             "date" to workoutDone.date,
             "exercisesByGroup" to workoutDone.exercisesByGroup,
             "time" to workoutDone.time,
-            "createdAt" to FieldValue.serverTimestamp(),
-            "isDeleted" to false // Por padrão, ao salvar está ativo
+            "createdAt" to FieldValue.serverTimestamp()
         )
 
         firestore.collection("users")
@@ -153,11 +151,12 @@ class WorkoutRemoteDataSourceImpl(
     }
 
     override suspend fun deleteWorkoutDone(userId: String, workoutDoneId: String) {
+        // Deleção física no Firestore (Estratégia Clean Cloud)
         firestore.collection("users")
             .document(userId)
             .collection("history")
             .document(workoutDoneId)
-            .update("isDeleted", true, "createdAt", FieldValue.serverTimestamp())
+            .delete()
             .await()
     }
 
@@ -224,18 +223,38 @@ class WorkoutRemoteDataSourceImpl(
                     else -> 0L
                 },
                 exercisesByGroup = exercisesRaw.map { groupMap ->
+                    val muscleGroupMap = groupMap["muscleGroup"] as? Map<String, Any>
                     com.example.evofit.domain.model.WorkoutGroup(
                         muscleGroupId = groupMap["muscleGroupId"] as? String ?: "",
+                        muscleGroup = muscleGroupMap?.let { mgMap ->
+                            com.example.evofit.domain.model.MuscleGroup(
+                                id = mgMap["id"] as? String ?: "",
+                                name = mgMap["name"] as? String ?: "",
+                                type = try {
+                                    com.example.evofit.domain.model.MuscleGroupType.valueOf(mgMap["type"] as? String ?: "OTHER")
+                                } catch (e: Exception) {
+                                    com.example.evofit.domain.model.MuscleGroupType.OTHER
+                                },
+                                category = try {
+                                    com.example.evofit.domain.model.ExerciseCategory.valueOf(mgMap["category"] as? String ?: "STRENGTH")
+                                } catch (e: Exception) {
+                                    com.example.evofit.domain.model.ExerciseCategory.STRENGTH
+                                }
+                            )
+                        },
                         orderIndex = (groupMap["orderIndex"] as? Long)?.toInt() ?: 0,
                         exercises = (groupMap["exercises"] as? List<Map<String, Any>>)?.map { exMap ->
                             com.example.evofit.domain.model.WorkoutExercise(
                                 id = exMap["id"] as? String ?: "",
                                 exerciseId = exMap["exerciseId"] as? String ?: "",
+                                muscleGroupId = exMap["muscleGroupId"] as? String ?: groupMap["muscleGroupId"] as? String ?: "",
                                 totalSets = (exMap["totalSets"] as? Long)?.toInt() ?: 0,
                                 orderIndex = (exMap["orderIndex"] as? Long)?.toInt() ?: 0,
                                 sets = (exMap["sets"] as? List<Map<String, Any>>)?.map { setMap ->
                                     com.example.evofit.domain.model.ExerciseSet(
                                         id = setMap["id"] as? String ?: "",
+                                        exerciseName = setMap["exerciseName"] as? String ?: "",
+                                        workoutExerciseId = setMap["workoutExerciseId"] as? String ?: "",
                                         setNumber = (setMap["setNumber"] as? Long)?.toInt() ?: 0,
                                         reps = (setMap["reps"] as? Long)?.toInt() ?: 0,
                                         load = (setMap["load"] as? Double) ?: (setMap["load"] as? Long)?.toDouble() ?: 0.0,

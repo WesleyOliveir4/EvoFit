@@ -39,6 +39,7 @@ interface WorkoutLocalDataSource {
     fun getWorkoutsSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDoneEntity>>
     suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity)
     suspend fun softDeleteWorkoutDone(workoutDoneId: String, timestamp: Long)
+    suspend fun deleteWorkoutDoneById(id: String)
     suspend fun deleteAllWorkoutDone(userId: String)
     suspend fun getPendingWorkouts(): List<FullWorkout>
     suspend fun getPendingWorkoutDone(): List<WorkoutDoneEntity>
@@ -101,6 +102,9 @@ class WorkoutLocalDataSourceImpl(
 
     override suspend fun softDeleteWorkoutDone(workoutDoneId: String, timestamp: Long) = 
         userDao.softDeleteWorkoutDone(workoutDoneId, timestamp)
+
+    override suspend fun deleteWorkoutDoneById(id: String) = 
+        userDao.deleteWorkoutDoneById(id).let { }
 
     override suspend fun deleteAllWorkoutDone(userId: String) = 
         userDao.deleteAllWorkoutDone(userId)

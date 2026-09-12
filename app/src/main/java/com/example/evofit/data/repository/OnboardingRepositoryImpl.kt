@@ -1,19 +1,31 @@
 package com.example.evofit.data.repository
 
 import android.content.Context
-import android.net.Uri
+import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
 import com.example.evofit.data.local.entities.SyncStatus
-import com.example.evofit.data.mapper.*
 import com.example.evofit.data.local.session.SessionManager
+import com.example.evofit.data.mapper.mapToDomain
+import com.example.evofit.data.mapper.toDomain
+import com.example.evofit.data.mapper.toEntity
 import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.domain.model.WeightUpdate
 import com.example.evofit.domain.repository.OnboardingRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -22,6 +34,7 @@ class OnboardingRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val workoutLocalDataSource: WorkoutLocalDataSource,
     private val workoutRemoteDataSource: WorkoutRemoteDataSource,
+    private val exerciseDataSource: LocalExerciseDataSource,
     private val sessionManager: SessionManager,
     private val context: Context
 ) : OnboardingRepository {
@@ -193,44 +206,51 @@ class OnboardingRepositoryImpl(
             val pendingUser = userDataSource.getPendingUser()
             pendingUser?.let {
                 userRemoteDataSource.saveUser(it)
-                // Após o save, o Firestore gerou um Server Timestamp. 
-                // Idealmente, deveríamos ler de volta, mas para simplificar, 
-                // marcamos como SYNCED com o tempo local aproximado ou 0 (confiando no próximo Pull)
                 userDataSource.markUserSynced(it.id, System.currentTimeMillis())
             }
 
             // 2. Push Goals
             val pendingGoals = userDataSource.getPendingGoals()
-            if (pendingGoals.isNotEmpty()) {
-                userRemoteDataSource.saveGoals(userId, pendingGoals)
-                pendingGoals.forEach { 
-                    userDataSource.markGoalSynced(it.id, System.currentTimeMillis()) 
+            pendingGoals.forEach { goal ->
+                if (goal.isDeleted) {
+                    userRemoteDataSource.deleteGoal(userId, goal.id)
+                    userDataSource.deleteGoalById(goal.id)
+                } else {
+                    userRemoteDataSource.saveGoals(userId, listOf(goal))
+                    userDataSource.markGoalSynced(goal.id, System.currentTimeMillis())
                 }
             }
 
             // 3. Push Workouts
             val pendingWorkouts = workoutLocalDataSource.getPendingWorkouts()
             pendingWorkouts.forEach { fullWorkout ->
-                val exercises = fullWorkout.exercises.map { it.workoutExercise }
-                val sets = fullWorkout.exercises.map { it.sets }
-                
                 if (fullWorkout.workout.isDeleted) {
                     workoutRemoteDataSource.deleteWorkout(userId, fullWorkout.workout.workoutId)
+                    workoutLocalDataSource.deleteWorkoutById(fullWorkout.workout.workoutId)
                 } else {
+                    val exercises = fullWorkout.exercises.map { it.workoutExercise }
+                    val sets = fullWorkout.exercises.map { it.sets }
                     workoutRemoteDataSource.saveFullWorkout(fullWorkout.workout, exercises, sets)
+                    workoutLocalDataSource.markWorkoutSynced(fullWorkout.workout.workoutId, System.currentTimeMillis())
                 }
-                workoutLocalDataSource.markWorkoutSynced(fullWorkout.workout.workoutId, System.currentTimeMillis())
             }
 
             // 4. Push New History
             val pendingHistory = workoutLocalDataSource.getPendingWorkoutDone()
-            pendingHistory.forEach { entity ->
-                if (entity.isDeleted) {
-                    workoutRemoteDataSource.deleteWorkoutDone(userId, entity.id)
-                } else {
-                    workoutRemoteDataSource.saveWorkoutDone(entity.toDomain())
+            if (pendingHistory.isNotEmpty()) {
+                val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
+                val exerciseNames = exerciseDataSource.getAllExercises().associate { it.id to it.name }
+                val resolver = { id: String -> exerciseNames[id] ?: "" }
+                
+                pendingHistory.forEach { entity ->
+                    if (entity.isDeleted) {
+                        workoutRemoteDataSource.deleteWorkoutDone(userId, entity.id)
+                        workoutLocalDataSource.deleteWorkoutDoneById(entity.id)
+                    } else {
+                        workoutRemoteDataSource.saveWorkoutDone(entity.toDomain(muscleGroups, resolver))
+                        workoutLocalDataSource.markWorkoutDoneSynced(entity.id)
+                    }
                 }
-                workoutLocalDataSource.markWorkoutDoneSynced(entity.id)
             }
 
             // 5. Push Weight History
@@ -238,10 +258,11 @@ class OnboardingRepositoryImpl(
             pendingWeights.forEach { entity ->
                 if (entity.isDeleted) {
                     userRemoteDataSource.deleteWeightUpdate(userId, entity.id)
+                    userDataSource.deleteWeightUpdateById(entity.id)
                 } else {
                     userRemoteDataSource.saveWeightUpdate(userId, entity)
+                    userDataSource.markWeightUpdateSynced(entity.id, System.currentTimeMillis())
                 }
-                userDataSource.markWeightUpdateSynced(entity.id, System.currentTimeMillis())
             }
 
         } catch (e: Exception) {

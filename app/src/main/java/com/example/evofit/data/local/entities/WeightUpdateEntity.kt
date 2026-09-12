@@ -23,7 +23,7 @@ data class WeightUpdateEntity(
     @get:PropertyName("timestamp") @set:PropertyName("timestamp") @PropertyName("timestamp")
     var timestamp: Long = System.currentTimeMillis(),
 
-    @get:PropertyName("isDeleted") @set:PropertyName("isDeleted") @PropertyName("isDeleted")
+    @Exclude
     var isDeleted: Boolean = false,
 
     @Exclude

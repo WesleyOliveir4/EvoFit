@@ -167,7 +167,7 @@ val dataModule = module {
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), androidContext()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }

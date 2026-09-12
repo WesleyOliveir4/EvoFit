@@ -190,8 +190,12 @@ class WorkoutRepositoryImpl(
             }
             emit(Unit)
         }.flatMapLatest {
+            val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
+            val exerciseNames = exerciseDataSource.getAllExercises().associate { it.id to it.name }
+            val resolver = { id: String -> exerciseNames[id] ?: "" }
+            
             workoutDataSource.getAllWorkoutDoneHistory(userId).map { list ->
-                list.map { it.toDomain() }
+                list.map { it.toDomain(muscleGroups, resolver) }
             }
         }
     }
@@ -199,11 +203,15 @@ class WorkoutRepositoryImpl(
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     override fun getWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDone>> {
         return flow {
+            val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
+            val exerciseNames = exerciseDataSource.getAllExercises().associate { it.id to it.name }
+            val resolver = { id: String -> exerciseNames[id] ?: "" }
+
             // 1. Verificar se existe histórico na nova estrutura local
             val newHistory = workoutDataSource.getLatestWorkoutDoneHistory(userId, limit).first()
             
             if (newHistory.isNotEmpty()) {
-                emit(newHistory.map { it.toDomain() })
+                emit(newHistory.map { it.toDomain(muscleGroups, resolver) })
             } else {
                 // 2. Se a nova estrutura estiver vazia, tenta migrar do formato antigo
                 val legacyHistory = workoutDataSource.getWorkoutDoneHistory(userId).firstOrNull()
@@ -242,16 +250,24 @@ class WorkoutRepositoryImpl(
                 }
             }
         }.flatMapLatest { initialData ->
+            val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
+            val exerciseNames = exerciseDataSource.getAllExercises().associate { it.id to it.name }
+            val resolver = { id: String -> exerciseNames[id] ?: "" }
+
             // Retorna o flow contínuo da nova tabela
             workoutDataSource.getLatestWorkoutDoneHistory(userId, limit).map { list ->
-                list.map { it.toDomain() }
+                list.map { it.toDomain(muscleGroups, resolver) }
             }
         }
     }
 
     override fun getWorkoutDoneSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDone>> {
+        val muscleGroups = exerciseDataSource.getAllMuscleGroups().map { it.toDomain() }
+        val exerciseNames = exerciseDataSource.getAllExercises().associate { it.id to it.name }
+        val resolver = { id: String -> exerciseNames[id] ?: "" }
+
         return workoutDataSource.getWorkoutsSince(userId, sinceTimestamp).map { list ->
-            list.map { it.toDomain() }
+            list.map { it.toDomain(muscleGroups, resolver) }
         }
     }
 }

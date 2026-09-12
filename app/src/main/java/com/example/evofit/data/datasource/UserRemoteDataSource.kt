@@ -57,8 +57,7 @@ class UserRemoteDataSourceImpl(
                 "id" to goal.id,
                 "userId" to goal.userId,
                 "type" to goal.type,
-                "updatedAt" to FieldValue.serverTimestamp(),
-                "isDeleted" to goal.isDeleted
+                "updatedAt" to FieldValue.serverTimestamp()
             )
             goal.exerciseName?.let { goalMap["exerciseName"] = it }
             goal.value?.let { goalMap["value"] = it }
@@ -73,12 +72,12 @@ class UserRemoteDataSourceImpl(
     }
 
     override suspend fun deleteGoal(userId: String, goalId: String) {
-        // Agora usamos soft delete no Firestore também
+        // Deleção física no Firestore (Estratégia Clean Cloud)
         firestore.collection("users")
             .document(userId)
             .collection("goals")
             .document(goalId)
-            .update("isDeleted", true, "updatedAt", FieldValue.serverTimestamp())
+            .delete()
             .await()
     }
 
@@ -169,8 +168,7 @@ class UserRemoteDataSourceImpl(
             "userId" to update.userId,
             "weight" to update.weight,
             "date" to update.date,
-            "timestamp" to FieldValue.serverTimestamp(),
-            "isDeleted" to update.isDeleted
+            "timestamp" to FieldValue.serverTimestamp()
         )
         firestore.collection("users")
             .document(userId)
@@ -181,11 +179,12 @@ class UserRemoteDataSourceImpl(
     }
 
     override suspend fun deleteWeightUpdate(userId: String, updateId: String) {
+        // Deleção física no Firestore (Estratégia Clean Cloud)
         firestore.collection("users")
             .document(userId)
             .collection("weight_history")
             .document(updateId)
-            .update("isDeleted", true, "timestamp", FieldValue.serverTimestamp())
+            .delete()
             .await()
     }
 
