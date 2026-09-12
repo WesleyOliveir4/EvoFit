@@ -40,16 +40,18 @@ class OnboardingViewModel(
         )
     )
 
-    val uiState: StateFlow<OnboardingUiState> = _userData
-        .map { data ->
-            OnboardingUiState(
-                name = data.name,
-                birthDate = data.birthDate,
-                weight = data.weight,
-                height = data.height,
-                goals = data.goals.map { it.toUiModel(appContext) }
-            )
-        }
+    private val _isLoading = MutableStateFlow(false)
+
+    val uiState: StateFlow<OnboardingUiState> = combine(_userData, _isLoading) { data, loading ->
+        OnboardingUiState(
+            name = data.name,
+            birthDate = data.birthDate,
+            weight = data.weight,
+            height = data.height,
+            goals = data.goals.map { it.toUiModel(appContext) },
+            isLoading = loading
+        )
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -113,13 +115,22 @@ class OnboardingViewModel(
     }
 
     fun finishOnboarding(onFinish: () -> Unit) {
+        if (_isLoading.value) return
+        
+        _isLoading.value = true
         viewModelScope.launch {
-            completeOnboardingUseCase(_userData.value)
-            if (_userData.value.weight.isNotBlank()) {
-                addWeightUpdateUseCase(_userData.value.weight)
+            try {
+                completeOnboardingUseCase(_userData.value)
+                if (_userData.value.weight.isNotBlank()) {
+                    addWeightUpdateUseCase(_userData.value.weight)
+                }
+                clearCache()
+                onFinish()
+            } catch (e: Exception) {
+                Log.e("OnboardingVM", "Erro ao finalizar onboarding", e)
+            } finally {
+                _isLoading.value = false
             }
-            clearCache()
-            onFinish()
         }
     }
 

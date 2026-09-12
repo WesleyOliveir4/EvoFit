@@ -16,7 +16,7 @@ data class UserEntity(
     var name: String = "",
 
     @ColumnInfo(name = "birthDate")
-    @get:PropertyName("age") @set:PropertyName("age") @PropertyName("age")
+    @get:PropertyName("birthDate") @set:PropertyName("birthDate") @PropertyName("birthDate")
     var birthDate: String = "",
 
     @get:PropertyName("weight") @set:PropertyName("weight") @PropertyName("weight")
@@ -35,5 +35,8 @@ data class UserEntity(
     var onboardingCompleted: Boolean = false,
     
     @get:PropertyName("updatedAt") @set:PropertyName("updatedAt") @PropertyName("updatedAt")
-    var updatedAt: Long = 0L
+    var updatedAt: Long = 0L,
+
+    @Exclude
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 )

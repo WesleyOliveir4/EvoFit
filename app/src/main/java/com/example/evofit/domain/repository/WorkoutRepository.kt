@@ -11,6 +11,7 @@ interface WorkoutRepository {
     suspend fun updateWorkout(workout: Workout): String
     suspend fun deleteWorkout(workoutId: String)
     suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone)
+    suspend fun deleteWorkoutDone(userId: String, workoutDoneId: String)
     fun getWorkoutDoneHistory(userId: String): Flow<List<WorkoutDone>>
     fun getWorkoutDoneHistory(userId: String, limit: Int): Flow<List<WorkoutDone>>
     fun getWorkoutDoneSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDone>>

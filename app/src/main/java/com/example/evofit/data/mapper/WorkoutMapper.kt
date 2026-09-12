@@ -55,6 +55,7 @@ fun WorkoutExerciseWithSets.toDomain(exerciseNameResolver: (String) -> String = 
     return WorkoutExercise(
         id = workoutExercise.id,
         exerciseId = workoutExercise.exerciseId,
+        muscleGroupId = workoutExercise.muscleGroupId,
         sets = domainSets,
         totalSets = if (workoutExercise.totalSets > 0) workoutExercise.totalSets else domainSets.size,
         orderIndex = workoutExercise.orderIndex
@@ -163,13 +164,31 @@ fun WorkoutDone.fixInconsistencies(): WorkoutDone {
     return this.copy(exercisesByGroup = fixedGroups)
 }
 
-fun WorkoutDoneEntity.toDomain(): WorkoutDone {
+fun WorkoutDoneEntity.toDomain(
+    muscleGroups: List<MuscleGroup> = emptyList(),
+    exerciseNameResolver: (String) -> String = { "" }
+): WorkoutDone {
+    val muscleGroupsMap = muscleGroups.associateBy { it.id }
+    val domainGroups = exercisesByGroup.map { group ->
+        val fixedExercises = group.exercises.map { exercise ->
+            val fixedSets = exercise.sets.map { set ->
+                if (set.exerciseName.isEmpty()) {
+                    set.copy(exerciseName = exerciseNameResolver(exercise.exerciseId))
+                } else set
+            }
+            exercise.copy(sets = fixedSets)
+        }
+        group.copy(
+            muscleGroup = group.muscleGroup ?: muscleGroupsMap[group.muscleGroupId],
+            exercises = fixedExercises
+        )
+    }
     return WorkoutDone(
         id = id,
         userId = userId,
         name = name,
         date = date,
-        exercisesByGroup = exercisesByGroup,
+        exercisesByGroup = domainGroups,
         time = time,
         createdAt = createdAt
     ).fixInconsistencies()

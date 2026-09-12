@@ -27,6 +27,7 @@ interface WorkoutLocalDataSource {
         sets: List<List<ExerciseSetEntity>>
     )
     suspend fun deleteWorkoutById(workoutId: String)
+    suspend fun softDeleteWorkout(workoutId: String, timestamp: Long)
     suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>)
     fun getWorkoutDoneHistory(userId: String): Flow<WorkoutDoneHistoryEntity?>
     suspend fun insertWorkoutDoneHistory(history: WorkoutDoneHistoryEntity)
@@ -37,7 +38,13 @@ interface WorkoutLocalDataSource {
     fun getAllWorkoutDoneHistory(userId: String): Flow<List<WorkoutDoneEntity>>
     fun getWorkoutsSince(userId: String, sinceTimestamp: Long): Flow<List<WorkoutDoneEntity>>
     suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity)
+    suspend fun softDeleteWorkoutDone(workoutDoneId: String, timestamp: Long)
+    suspend fun deleteWorkoutDoneById(id: String)
     suspend fun deleteAllWorkoutDone(userId: String)
+    suspend fun getPendingWorkouts(): List<FullWorkout>
+    suspend fun getPendingWorkoutDone(): List<WorkoutDoneEntity>
+    suspend fun markWorkoutSynced(workoutId: String, timestamp: Long)
+    suspend fun markWorkoutDoneSynced(id: String)
 
     // Active Session
     fun getActiveSession(): Flow<ActiveSessionWithSets?>
@@ -68,6 +75,9 @@ class WorkoutLocalDataSourceImpl(
     
     override suspend fun deleteWorkoutById(workoutId: String) = userDao.deleteWorkoutById(workoutId)
     
+    override suspend fun softDeleteWorkout(workoutId: String, timestamp: Long) = 
+        userDao.softDeleteWorkout(workoutId, timestamp)
+    
     override suspend fun updateWorkoutsOrder(workouts: List<WorkoutEntity>) = userDao.updateWorkoutsOrder(workouts)
     
     override fun getWorkoutDoneHistory(userId: String) = userDao.getWorkoutDoneHistory(userId)
@@ -90,8 +100,22 @@ class WorkoutLocalDataSourceImpl(
     override suspend fun insertWorkoutDone(workoutDone: WorkoutDoneEntity) = 
         userDao.insertWorkoutDone(workoutDone)
 
+    override suspend fun softDeleteWorkoutDone(workoutDoneId: String, timestamp: Long) = 
+        userDao.softDeleteWorkoutDone(workoutDoneId, timestamp)
+
+    override suspend fun deleteWorkoutDoneById(id: String) = 
+        userDao.deleteWorkoutDoneById(id).let { }
+
     override suspend fun deleteAllWorkoutDone(userId: String) = 
         userDao.deleteAllWorkoutDone(userId)
+
+    override suspend fun getPendingWorkouts(): List<FullWorkout> = userDao.getPendingFullWorkouts()
+    
+    override suspend fun getPendingWorkoutDone(): List<WorkoutDoneEntity> = userDao.getPendingWorkoutDone()
+    
+    override suspend fun markWorkoutSynced(workoutId: String, timestamp: Long) = userDao.markWorkoutSynced(workoutId, timestamp)
+    
+    override suspend fun markWorkoutDoneSynced(id: String) = userDao.markWorkoutDoneSynced(id)
 
     override fun getActiveSession(): Flow<ActiveSessionWithSets?> = userDao.getActiveSessionWithSets()
 
