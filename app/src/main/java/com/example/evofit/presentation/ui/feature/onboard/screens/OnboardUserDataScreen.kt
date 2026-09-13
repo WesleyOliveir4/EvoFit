@@ -1,5 +1,6 @@
 package com.example.evofit.presentation.ui.feature.onboard.screens
 
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,6 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import com.example.evofit.presentation.ui.feature.components.EvoDatePickerDialog
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.components.EvoFitInputField
@@ -161,6 +166,13 @@ fun OnboardUserDataContent(
                 ),
                 value = userData.birthDate,
                 enabled = false,
+                trailingIcon ={
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_today),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
+                    )
+                },
                 onValueChange = {},
                 modifier = Modifier.clickable { showDatePicker = true }
             )

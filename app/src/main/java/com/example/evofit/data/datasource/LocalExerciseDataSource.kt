@@ -155,9 +155,9 @@ class LocalExerciseDataSource {
         GoalSuggestion("1", "Perder peso", isWeightGoal = true),
         GoalSuggestion("2", "Ganhar peso", isWeightGoal = true),
         GoalSuggestion("3", "Ganho de força ", ExerciseCategory.STRENGTH, muscleGroupId = "3"),
-        GoalSuggestion("4", "Melhorar pace", ExerciseCategory.CARDIO, muscleGroupId = "9"),
-        GoalSuggestion("5", "Core Blindado", ExerciseCategory.STRENGTH, muscleGroupId = "8"),
-        GoalSuggestion("6", "Peito de aço", ExerciseCategory.STRENGTH, muscleGroupId = "2")
+        GoalSuggestion("4", "Cardio", ExerciseCategory.CARDIO, muscleGroupId = "9"),
+        GoalSuggestion("5", "Core", ExerciseCategory.STRENGTH, muscleGroupId = "8"),
+        GoalSuggestion("6", "Peito", ExerciseCategory.STRENGTH, muscleGroupId = "2")
     )
 
     fun getAllMuscleGroups(): List<MuscleGroupModel> = groups
