@@ -418,6 +418,18 @@
     <string name="profile_goals_button_delete">Excluir</string>
     <string name="profile_goal_delete_description">Excluir meta</string>
 
+    <!-- Support Screen -->
+    <string name="support_title">Ajuda e suporte</string>
+    <string name="support_description">Estamos aqui para te ajudar!\nEscolha uma opção ou envie um e-mail diretamente para o nosso time.</string>
+    <string name="support_option_email_title">Enviar e-mail</string>
+    <string name="support_option_email_desc">Tire suas dúvidas ou relate um problema.</string>
+    <string name="support_option_workouts_title">Sugerir novos treinos</string>
+    <string name="support_option_workouts_desc">Tem uma ideia? Conte pra gente!</string>
+    <string name="support_option_faq_title">Dúvidas frequentes</string>
+    <string name="support_option_faq_desc">Veja as perguntas mais comuns.</string>
+    <string name="support_option_tutorials_title">Tutoriais</string>
+    <string name="support_option_tutorials_desc">Aprenda a usar o app.</string>
+
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>

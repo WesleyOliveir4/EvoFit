@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,11 +13,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.evofit.presentation.ui.feature.components.TopBarReturn
+import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.developer.viewmodel.DeveloperViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.TextPrimary
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -38,9 +43,26 @@ fun DeveloperScreen(
         containerColor = AppDarkBg,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopBarReturn(
-                onBackClick = onBackClick,
-                title = "Menu do Desenvolvedor"
+            @OptIn(ExperimentalMaterial3Api::class)
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Menu do Desenvolvedor",
+                        color = TextPrimary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.new_workout_back_desc),
+                            tint = TextPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = AppDarkBg)
             )
         }
     ) { paddingValues ->
