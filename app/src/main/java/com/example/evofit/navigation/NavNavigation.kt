@@ -30,6 +30,8 @@ import com.example.evofit.presentation.ui.feature.profile.developer.screens.Deve
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
 import com.example.evofit.presentation.ui.feature.profile.support.screen.SupportScreen
+import com.example.evofit.presentation.ui.feature.profile.support.screen.SupportEmailScreen
+import com.example.evofit.presentation.ui.feature.profile.support.screen.SuggestionNewWorkoutsScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -521,6 +523,25 @@ fun NavNavigation() {
 
         composable(NavRoutes.Support.route) {
             SupportScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.SupportEmail.route) {
+            SupportEmailScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.SuggestionWorkouts.route) {
+            SuggestionNewWorkoutsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }

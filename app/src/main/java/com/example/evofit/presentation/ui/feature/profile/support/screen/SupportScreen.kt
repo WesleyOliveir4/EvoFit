@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.support.components.SupportItem
+import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -35,12 +36,13 @@ import com.example.evofit.presentation.ui.theme.TextSecondary
 
 @Composable
 fun SupportScreen(
+    onNavigate: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     SupportContent(
         onBackClick = onBackClick,
-        onEmailClick = { /* TODO: Open Email */ },
-        onSuggestWorkoutsClick = { /* TODO: Suggest */ },
+        onEmailClick = { onNavigate(NavRoutes.SupportEmail.route) },
+        onSuggestWorkoutsClick = { onNavigate(NavRoutes.SuggestionWorkouts.route) },
         onFaqClick = { /* TODO: FAQ */ },
         onTutorialsClick = { /* TODO: Tutorials */ }
     )

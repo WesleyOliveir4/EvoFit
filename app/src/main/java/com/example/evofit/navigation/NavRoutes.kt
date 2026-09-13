@@ -25,6 +25,8 @@ sealed class NavRoutes(val route: String) {
     object ProfileUserData : NavRoutes("profile_user_data")
     object ProfilePersonalGoals : NavRoutes("profile_personal_goals")
     object Support : NavRoutes("support")
+    object SupportEmail : NavRoutes("support_email")
+    object SuggestionWorkouts : NavRoutes("suggestion_workouts")
     object Developer : NavRoutes("developer")
 
     object LegalContent : NavRoutes("legal_content/{type}") {

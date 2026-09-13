@@ -430,6 +430,24 @@
     <string name="support_option_tutorials_title">Tutoriais</string>
     <string name="support_option_tutorials_desc">Aprenda a usar o app.</string>
 
+    <!-- Support Email Screen -->
+    <string name="support_email_title">Enviar e-mail</string>
+    <string name="support_email_description">Preencha os campos abaixo e nos conte como podemos te ajudar.</string>
+    <string name="support_email_label_subject">Título</string>
+    <string name="support_email_placeholder_subject">Selecione um assunto</string>
+    <string name="support_email_label_message">Mensagem</string>
+    <string name="support_email_placeholder_message">Escreva sua mensagem aqui...</string>
+    <string name="support_email_button_send">Enviar</string>
+    <string name="support_email_message_counter_format">%1$d/1000</string>
+
+    <!-- Suggestion New Workouts Screen -->
+    <string name="suggestion_workouts_title">Sugerir novos treinos</string>
+    <string name="suggestion_workouts_label_category">Categoria</string>
+    <string name="suggestion_workouts_placeholder_category">Selecione uma categoria</string>
+    <string name="suggestion_workouts_label_description">Descrição da sugestão</string>
+    <string name="suggestion_workouts_placeholder_description">Descreva sua sugestão aqui...</string>
+    <string name="suggestion_workouts_button_send">Enviar sugestão</string>
+
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>
