@@ -10,7 +10,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,8 +42,7 @@ fun SupportScreen(
         onBackClick = onBackClick,
         onEmailClick = { onNavigate(NavRoutes.SupportEmail.route) },
         onSuggestWorkoutsClick = { onNavigate(NavRoutes.SuggestionWorkouts.route) },
-        onFaqClick = { /* TODO: FAQ */ },
-        onTutorialsClick = { /* TODO: Tutorials */ }
+        onFaqClick = { onNavigate(NavRoutes.FAQ.route) }
     )
 }
 
@@ -55,7 +53,6 @@ fun SupportContent(
     onEmailClick: () -> Unit,
     onSuggestWorkoutsClick: () -> Unit,
     onFaqClick: () -> Unit,
-    onTutorialsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -127,15 +124,6 @@ fun SupportContent(
                     onClick = onFaqClick
                 )
             }
-
-            item {
-                SupportItem(
-                    title = stringResource(id = R.string.support_option_tutorials_title),
-                    description = stringResource(id = R.string.support_option_tutorials_desc),
-                    icon = Icons.Default.PlayCircle,
-                    onClick = onTutorialsClick
-                )
-            }
         }
     }
 }
@@ -148,8 +136,7 @@ private fun SupportScreenPreview() {
             onBackClick = {},
             onEmailClick = {},
             onSuggestWorkoutsClick = {},
-            onFaqClick = {},
-            onTutorialsClick = {}
+            onFaqClick = {}
         )
     }
 }

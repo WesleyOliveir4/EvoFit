@@ -448,6 +448,29 @@
     <string name="suggestion_workouts_placeholder_description">Descreva sua sugestão aqui...</string>
     <string name="suggestion_workouts_button_send">Enviar sugestão</string>
 
+    <!-- FAQ Screen -->
+    <string name="faq_title">Dúvidas frequentes</string>
+    <string name="faq_search_placeholder">Buscar uma pergunta...</string>
+    <string name="faq_section_title">Principais dúvidas</string>
+
+    <string name="faq_q1">Como criar uma conta?</string>
+    <string name="faq_a1">Para criar uma conta, basta clicar em \"Cadastre-se\" na tela inicial, preencher seus dados básicos (nome, e-mail e senha) e seguir o fluxo de onboarding para personalizar sua experiência.</string>
+
+    <string name="faq_q2">Como registrar meu treino?</string>
+    <string name="faq_a2">Na aba \"Treino\", selecione uma ficha de treino e clique em \"Iniciar Treino\". Durante a execução, você pode marcar as séries concluídas clicando no check de cada exercício.</string>
+
+    <string name="faq_q3">Posso editar ou excluir um treino?</string>
+    <string name="faq_a3">Sim! Na tela de detalhes do treino (Preview), você encontrará ícones de lápis para editar e lixeira para excluir no canto superior direito.</string>
+
+    <string name="faq_q4">O app funciona sem internet?</string>
+    <string name="faq_a4">Sim, o EvoFit funciona offline para você treinar sem interrupções. Seus dados serão sincronizados com a nuvem assim que você se conectar novamente.</string>
+
+    <string name="faq_q5">Como mudar meu objetivo?</string>
+    <string name="faq_a5">Vá em Perfil -> Metas Pessoais. Lá você pode editar suas metas atuais ou adicionar novas para refletir sua evolução.</string>
+
+    <string name="faq_q6">O que significa cada grupo muscular?</string>
+    <string name="faq_a6">Os exercícios são categorizados para ajudar no seu equilíbrio muscular. Peito, Costas e Pernas são grupos grandes, enquanto Ombros, Braços e Core auxiliam na estabilidade e força auxiliar.</string>
+
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>
