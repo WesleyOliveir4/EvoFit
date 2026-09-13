@@ -27,10 +27,12 @@ import com.example.evofit.data.repository.ExerciseRepositoryImpl
 import com.example.evofit.data.repository.OnboardingRepositoryImpl
 import com.example.evofit.data.repository.WorkoutRepositoryImpl
 import com.example.evofit.data.repository.WorkoutSessionRepositoryImpl
+import com.example.evofit.data.repository.SupportRepositoryImpl
 import com.example.evofit.domain.repository.ExerciseRepository
 import com.example.evofit.domain.repository.OnboardingRepository
 import com.example.evofit.domain.repository.WorkoutRepository
 import com.example.evofit.domain.repository.WorkoutSessionRepository
+import com.example.evofit.domain.repository.SupportRepository
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCase
 import com.example.evofit.domain.usecase.ClearWorkoutSessionUseCaseImpl
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
@@ -130,6 +132,8 @@ import com.example.evofit.presentation.ui.feature.profile.developer.viewmodel.De
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
+import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
+import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SuggestionNewWorkoutsViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import org.koin.android.ext.koin.androidContext
@@ -167,6 +171,7 @@ val dataModule = module {
     single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
     single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
+    single<SupportRepository> { SupportRepositoryImpl(get()) }
     single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext()) }
     single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
@@ -232,6 +237,7 @@ val domainModule = module {
     factory<LogoutUseCase> { LogoutUseCase(get()) }
     factory<SyncUserDataUseCase> { SyncUserDataUseCaseImpl(get()) }
     factory<NukeUserDataUseCase> { NukeUserDataUseCaseImpl(get()) }
+    factory<SendSupportEmailUseCase> { SendSupportEmailUseCaseImpl(get()) }
 }
 
 val splashModule = module {
@@ -352,6 +358,8 @@ val evoModule = module {
 
 val profileModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
+    viewModel { SupportEmailViewModel(get()) }
+    viewModel { SuggestionNewWorkoutsViewModel(get()) }
     viewModel { DeveloperViewModel(get()) }
     viewModel { UserDataViewModel(get(), get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }

@@ -1,7 +1,6 @@
 package com.example.evofit.presentation.ui.feature.profile.support.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,8 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.profile.support.FAQContext
-import com.example.evofit.presentation.ui.feature.profile.support.FAQItemData
+import com.example.evofit.presentation.ui.feature.profile.support.utils.FAQContext
+import com.example.evofit.presentation.ui.feature.profile.support.utils.FAQItemData
 import com.example.evofit.presentation.ui.feature.profile.support.components.FAQItem
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens

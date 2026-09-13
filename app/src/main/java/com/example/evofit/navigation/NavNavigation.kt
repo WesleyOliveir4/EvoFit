@@ -29,10 +29,7 @@ import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.Profile
 import com.example.evofit.presentation.ui.feature.profile.developer.screens.DeveloperScreen
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
-import com.example.evofit.presentation.ui.feature.profile.support.screen.SupportScreen
-import com.example.evofit.presentation.ui.feature.profile.support.screen.SupportEmailScreen
-import com.example.evofit.presentation.ui.feature.profile.support.screen.SuggestionNewWorkoutsScreen
-import com.example.evofit.presentation.ui.feature.profile.support.screen.FAQScreen
+import com.example.evofit.presentation.ui.feature.profile.support.screen.*
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen

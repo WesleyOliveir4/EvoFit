@@ -1,4 +1,4 @@
-package com.example.evofit.presentation.ui.feature.profile.support
+package com.example.evofit.presentation.ui.feature.profile.support.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

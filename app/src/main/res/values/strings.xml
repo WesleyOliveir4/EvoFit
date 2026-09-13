@@ -439,6 +439,15 @@
     <string name="support_email_placeholder_message">Escreva sua mensagem aqui...</string>
     <string name="support_email_button_send">Enviar</string>
     <string name="support_email_message_counter_format">%1$d/1000</string>
+    <string name="support_email_success">E-mail enviado com sucesso!</string>
+    <string name="support_email_error">Erro ao enviar e-mail. Tente novamente.</string>
+
+    <!-- Email Topics -->
+    <string name="email_topic_feedback">Feedback</string>
+    <string name="email_topic_bug">Bug encontrado</string>
+    <string name="email_topic_feature">Proposta de funcionalidade</string>
+    <string name="email_topic_doubts">Dúvidas gerais</string>
+    <string name="email_topic_other">Outro motivo</string>
 
     <!-- Suggestion New Workouts Screen -->
     <string name="suggestion_workouts_title">Sugerir novos treinos</string>
@@ -447,6 +456,13 @@
     <string name="suggestion_workouts_label_description">Descrição da sugestão</string>
     <string name="suggestion_workouts_placeholder_description">Descreva sua sugestão aqui...</string>
     <string name="suggestion_workouts_button_send">Enviar sugestão</string>
+    <string name="suggestion_workouts_success">Sugestão enviada com sucesso!</string>
+
+    <!-- Suggestion Categories -->
+    <string name="suggestion_category_new_workout">Novo tipo de treino</string>
+    <string name="suggestion_category_new_exercise">Novo exercício</string>
+    <string name="suggestion_category_app_feature">Nova funcionalidade</string>
+    <string name="suggestion_category_other">Outra sugestão</string>
 
     <!-- FAQ Screen -->
     <string name="faq_title">Dúvidas frequentes</string>
