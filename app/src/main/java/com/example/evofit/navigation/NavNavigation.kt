@@ -125,6 +125,25 @@ fun NavNavigation() {
                 },
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onTermsOfUseClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_TERMS))
+                },
+                onPrivacyPolicyClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_PRIVACY))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.LegalContent.route,
+            arguments = listOf(navArgument("type") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            LegalContentScreen(
+                type = type,
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

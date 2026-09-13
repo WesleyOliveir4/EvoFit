@@ -25,6 +25,12 @@ sealed class NavRoutes(val route: String) {
     object ProfileUserData : NavRoutes("profile_user_data")
     object ProfilePersonalGoals : NavRoutes("profile_personal_goals")
     object Developer : NavRoutes("developer")
+
+    object LegalContent : NavRoutes("legal_content/{type}") {
+        fun createRoute(type: String) = "legal_content/$type"
+        const val TYPE_TERMS = "terms"
+        const val TYPE_PRIVACY = "privacy"
+    }
     
     // Analytics Graph
     object AnalyticsGraph : NavRoutes("analytics_graph")
