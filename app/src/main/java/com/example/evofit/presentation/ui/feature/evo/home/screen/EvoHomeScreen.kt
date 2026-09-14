@@ -150,14 +150,20 @@ fun EvoHomeContent(
                 )
             }
 
-            LeastTrainedCard(
-                muscleName = uiState.leastTrainedGroup?.first ?: stringResource(R.string.evo_home_empty_value),
-                sessionsCount = uiState.leastTrainedGroup?.second ?: 0
-            )
-
-            KmPerWeekCard(
-                kmPerWeek = uiState.kmPerWeek
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
+            ) {
+                KmPerWeekCard(
+                    kmPerWeek = uiState.kmPerWeek,
+                    modifier = Modifier.weight(1f)
+                )
+                LeastTrainedCard(
+                    muscleName = uiState.leastTrainedGroup?.first ?: stringResource(R.string.evo_home_empty_value),
+                    sessionsCount = uiState.leastTrainedGroup?.second ?: 0,
+                    modifier = Modifier.weight(1.4f)
+                )
+            }
 
             AverageWorkoutTimeCard(
                 averageTimeMinutes = uiState.averageWorkoutTime

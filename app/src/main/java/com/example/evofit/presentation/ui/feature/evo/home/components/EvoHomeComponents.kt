@@ -225,49 +225,48 @@ fun LeastTrainedCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .height(Dimens.EvoCardHeightLarge),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimens.SpacingLarge, vertical = Dimens.SpacingMediumSmall),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(Dimens.SpacingLarge),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_alert),
-                        contentDescription = null,
-                        tint = MaterialTheme.evoColors.orange,
-                        modifier = Modifier.size(Dimens.IconSizeSmall)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_alert),
+                    contentDescription = null,
+                    tint = MaterialTheme.evoColors.orange,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
+                )
+                Text(
+                    text = stringResource(R.string.evo_home_least_trained_title),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
                     )
-                    Text(
-                        text = stringResource(R.string.evo_home_least_trained_title),
-                        color = MaterialTheme.colorScheme.secondary,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
-                        )
-                    )
-                }
+                )
+            }
+
+            Column {
                 Text(
                     text = muscleName,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.headlineSmall
                 )
+                Text(
+                    text = stringResource(R.string.evo_home_sessions_count, sessionsCount),
+                    color = MaterialTheme.evoColors.orange,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
             }
-
-            Text(
-                text = stringResource(R.string.evo_home_sessions_count, sessionsCount),
-                color = MaterialTheme.evoColors.orange,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-            )
         }
     }
 }
@@ -279,37 +278,37 @@ fun KmPerWeekCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .height(Dimens.EvoCardHeightLarge),
         shape = RoundedCornerShape(Dimens.CornerRadiusCard),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimens.SpacingLarge, vertical = Dimens.SpacingMediumSmall),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(Dimens.SpacingLarge),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_person_running),
-                        contentDescription = null,
-                        tint = MaterialTheme.evoColors.blue,
-                        modifier = Modifier.size(Dimens.IconSizeSmall)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_person_running),
+                    contentDescription = null,
+                    tint = MaterialTheme.evoColors.blue,
+                    modifier = Modifier.size(Dimens.IconSizeSmall)
+                )
+                Text(
+                    text = stringResource(R.string.evo_home_km_per_week_title),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
                     )
-                    Text(
-                        text = stringResource(R.string.evo_home_km_per_week_title),
-                        color = MaterialTheme.colorScheme.secondary,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = TextStyle(letterSpacing = Dimens.TextSizeExtraExtraSmall / 20).letterSpacing
-                        )
-                    )
-                }
+                )
+            }
+
+            Column {
                 Text(
                     text = stringResource(
                         R.string.evo_home_km_value,
@@ -318,13 +317,12 @@ fun KmPerWeekCard(
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.headlineSmall
                 )
+                Text(
+                    text = stringResource(R.string.evo_home_average_label),
+                    color = MaterialTheme.evoColors.blue,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                )
             }
-
-            Text(
-                text = stringResource(R.string.evo_home_average_label),
-                color = MaterialTheme.evoColors.blue,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-            )
         }
     }
 }
