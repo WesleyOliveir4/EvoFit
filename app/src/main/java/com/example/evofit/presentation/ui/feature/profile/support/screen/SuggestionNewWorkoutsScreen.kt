@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.support.utils.SuggestionCategory
-import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SuggestionNewWorkoutsViewModel
+import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
@@ -67,7 +67,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SuggestionNewWorkoutsScreen(
-    viewModel: SuggestionNewWorkoutsViewModel = koinViewModel(),
+    viewModel: SupportEmailViewModel = koinViewModel(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -101,7 +101,7 @@ fun SuggestionNewWorkoutsScreen(
         onBackClick = onBackClick,
         onSendClick = {
             if (selectedCategory != null) {
-                viewModel.sendSuggestion(selectedCategoryTitle, suggestion)
+                viewModel.sendEmail("Sugestão: $selectedCategoryTitle", suggestion)
             }
         }
     )

@@ -30,6 +30,7 @@ import com.example.evofit.presentation.ui.feature.profile.developer.screens.Deve
 import com.example.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
 import com.example.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
 import com.example.evofit.presentation.ui.feature.profile.support.screen.*
+import com.example.evofit.presentation.ui.feature.profile.about.screen.AboutAppScreen
 import com.example.evofit.presentation.ui.feature.splash.SplashScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
 import com.example.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
@@ -550,6 +551,20 @@ fun NavNavigation() {
             FAQScreen(
                 onBackClick = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.About.route) {
+            AboutAppScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onTermsClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_TERMS))
+                },
+                onPrivacyClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_PRIVACY))
                 }
             )
         }

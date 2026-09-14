@@ -28,6 +28,7 @@ sealed class NavRoutes(val route: String) {
     object SupportEmail : NavRoutes("support_email")
     object SuggestionWorkouts : NavRoutes("suggestion_workouts")
     object FAQ : NavRoutes("faq")
+    object About : NavRoutes("about")
     object Developer : NavRoutes("developer")
 
     object LegalContent : NavRoutes("legal_content/{type}") {

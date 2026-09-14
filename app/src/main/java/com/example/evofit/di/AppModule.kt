@@ -133,7 +133,6 @@ import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.Person
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
-import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SuggestionNewWorkoutsViewModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import org.koin.android.ext.koin.androidContext
@@ -359,7 +358,6 @@ val evoModule = module {
 val profileModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SupportEmailViewModel(get()) }
-    viewModel { SuggestionNewWorkoutsViewModel(get()) }
     viewModel { DeveloperViewModel(get()) }
     viewModel { UserDataViewModel(get(), get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }

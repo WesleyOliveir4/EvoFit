@@ -487,6 +487,18 @@
     <string name="faq_q6">O que significa cada grupo muscular?</string>
     <string name="faq_a6">Os exercícios são categorizados para ajudar no seu equilíbrio muscular. Peito, Costas e Pernas são grupos grandes, enquanto Ombros, Braços e Core auxiliam na estabilidade e força auxiliar.</string>
 
+    <!-- About App Screen -->
+    <string name="about_title">Sobre o app</string>
+    <string name="about_app_name">EvoFit</string>
+    <string name="about_slogan">Seu treino, seu progresso</string>
+    <string name="about_description">O EvoFit é um aplicativo criado para te ajudar a manter a constância nos treinos, acompanhar sua evolução e alcançar seus objetivos.</string>
+    <string name="about_option_version">Versão do app</string>
+    <string name="about_option_developer">Desenvolvedor</string>
+    <string name="about_developer_name">Campos Software Factory</string>
+    <string name="about_option_terms">Termos de uso</string>
+    <string name="about_option_privacy">Política de privacidade</string>
+    <string name="about_app_version">1.0.0</string>
+
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>
