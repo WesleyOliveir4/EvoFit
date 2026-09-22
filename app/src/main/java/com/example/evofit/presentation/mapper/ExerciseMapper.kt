@@ -9,36 +9,38 @@ object ExerciseMapper {
      */
     fun toImageRes(exerciseId: String): Int {
         return when (exerciseId) {
-            // Back (1-10, 92-94)
+            // Back (1-10, 92-94, 105)
             "1" -> R.drawable.img_puxada_alta
             "2" -> R.drawable.img_barra_fixa
             "3" -> R.drawable.img_remada_curvada_2
             "4" -> R.drawable.img_remada_unilateral_1
             "5" -> R.drawable.img_remada_baixa
-            "6" -> R.drawable.img_pull_down
+            "6" -> R.drawable.img_pullover
             "7" -> R.drawable.img_remada_cavalinho
             "8" -> R.drawable.img_pull_down
             "9" -> R.drawable.img_remada_t_bar
-            "10" -> R.drawable.img_levantamento_terra
-            "92" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "93" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "94" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "92" -> R.drawable.img_remada_articulada
+            "93" -> R.drawable.img_remada_articulada_baixa
+            "94" -> R.drawable.img_puxada_alta_triangulo
+            "105" -> R.drawable.img_remada_articulada_alta_2
 
-            // Chest (11-20, 95-96)
+            // Chest (11-20, 95-96, 106-107)
             "11" -> R.drawable.img_supino_reto
             "12" -> R.drawable.img_supino_inclinado
             "13" -> R.drawable.img_supino_declinado
             "14" -> R.drawable.img_crucifixo
             "15" -> R.drawable.img_crucifixo_inclinado
             "16" -> R.drawable.img_peck_deck
-            "17" -> R.drawable.img_crossover
+            "17" -> R.drawable.img_crossover_2
             "18" -> R.drawable.img_flexao_de_braco
             "19" -> R.drawable.img_chest_press
             "20" -> R.drawable.img_chest_press
-            "95" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "96" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "95" -> R.drawable.img_supino_reto_halter
+            "96" -> R.drawable.img_supino_reto_articulado
+            "106" -> R.drawable.img_supino_inclinado_articulado
+            "107" -> R.drawable.img_supino_declinado_articulado
 
-            // Legs (21-31, 97-100)
+            // Legs (21-31, 97-100, 108)
             "21" -> R.drawable.img_agachamento_livre
             "22" -> R.drawable.img_leg_press
             "23" -> R.drawable.img_hack_squat
@@ -50,10 +52,13 @@ object ExerciseMapper {
             "29" -> R.drawable.img_agachamento_bulgaro
             "30" -> R.drawable.img_stiff
             "31" -> R.drawable.img_stiff
-            "97" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "98" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "99" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "100" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "98" -> R.drawable.img_flexao_joelhos_maquina
+            "99" -> R.drawable.img_sumo_maquina
+            "100" -> R.drawable.img_agachamento_sumo
+            "108" -> R.drawable.img_cadeira_adutora
+            "10" -> R.drawable.img_levantamento_terra
+            "110" -> R.drawable.img_agachamento_smith
+
 
             // Biceps (32-38, 101)
             "32" -> R.drawable.img_rosca_direta
@@ -63,17 +68,18 @@ object ExerciseMapper {
             "36" -> R.drawable.img_rosca_martelo_pulley
             "37" -> R.drawable.img_rosca_scott
             "38" -> R.drawable.img_rosca_concentrada
-            "101" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "101" -> R.drawable.img_rosca_inclinada_halter
 
-            // Triceps (39-43, 102-104)
+            // Triceps (39-43, 102-104, 109)
             "39" -> R.drawable.img_triceps_pulley
             "40" -> R.drawable.img_triceps_pulley_corda
             "41" -> R.drawable.img_triceps_frances
             "42" -> R.drawable.img_triceps_testa
             "43" -> R.drawable.img_paralela_2
-            "102" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "103" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
-            "104" -> R.drawable.ic_cardio // Necessário criar imagem para este treino
+            "102" -> R.drawable.img_triceps_coice
+            "103" -> R.drawable.img_triceps_banco
+            "104" -> R.drawable.img_extensao_triceps_maquina
+            "109" -> R.drawable.img_triceps_press
 
             // Forearms (44-45)
             "44" -> R.drawable.img_rosca_inversa
@@ -125,6 +131,7 @@ object ExerciseMapper {
             "82" -> R.drawable.img_passada
             "83" -> R.drawable.img_gluteo_maquina
             "84" -> R.drawable.img_ponte_gluteo
+            "97" -> R.drawable.img_cadeira_abdutora
 
             // Calves (85-91)
             "85" -> R.drawable.img_panturrilha_em_pe
