@@ -27,10 +27,6 @@ class FilterWorkoutHistoryByPeriodUseCaseImpl : FilterWorkoutHistoryByPeriodUseC
     private fun getStartDateForPeriod(period: EvoPeriod): Date? {
         val calendar = Calendar.getInstance()
         return when (period) {
-            EvoPeriod.LAST_7_DAYS -> {
-                calendar.add(Calendar.DAY_OF_YEAR, -7)
-                calendar.time
-            }
             EvoPeriod.LAST_30_DAYS -> {
                 calendar.add(Calendar.MONTH, -1)
                 calendar.time

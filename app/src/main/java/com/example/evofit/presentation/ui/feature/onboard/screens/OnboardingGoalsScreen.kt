@@ -84,22 +84,32 @@ fun OnboardingGoalsContent(
     var selectedSuggestion by remember { mutableStateOf<GoalSuggestion?>(null) }
 
     if (showDialog) {
-        GoalWizardScreen(
-            onBack = {
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = {
                 showDialog = false
                 selectedSuggestion = null
             },
-            onClose = {
-                showDialog = false
-                selectedSuggestion = null
-            },
-            onGoalConfirmed = { newGoal ->
-                onAddGoal(newGoal)
-                showDialog = false
-                selectedSuggestion = null
-            },
-            initialSuggestion = selectedSuggestion
-        )
+            properties = androidx.compose.ui.window.DialogProperties(
+                usePlatformDefaultWidth = false // Permite que a tela ocupe o espaço total como o Scaffold original deseja
+            )
+        ) {
+            GoalWizardScreen(
+                onBack = {
+                    showDialog = false
+                    selectedSuggestion = null
+                },
+                onClose = {
+                    showDialog = false
+                    selectedSuggestion = null
+                },
+                onGoalConfirmed = { newGoal ->
+                    onAddGoal(newGoal)
+                    showDialog = false
+                    selectedSuggestion = null
+                },
+                initialSuggestion = selectedSuggestion
+            )
+        }
     }
 
     Scaffold(
@@ -206,7 +216,10 @@ fun OnboardingGoalsContent(
                 
                 item {
                     AddNewGoalButton(
-                        onClick = { showDialog = true }
+                        onClick = {
+                            selectedSuggestion = null
+                            showDialog = true
+                        }
                     )
                 }
             }

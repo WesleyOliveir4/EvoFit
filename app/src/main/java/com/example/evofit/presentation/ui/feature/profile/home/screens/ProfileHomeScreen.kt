@@ -94,6 +94,8 @@ fun ProfileHomeScreen(
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick,
+        onSupportClick = { onNavigate(NavRoutes.Support.route) },
+        onAboutClick = { onNavigate(NavRoutes.About.route) },
         onDeveloperClick = { onNavigate(NavRoutes.Developer.route) },
         onLogoutClick = { showLogoutDialog = true },
         onImageClick = { isPhotoExpanded = true }
@@ -161,18 +163,20 @@ fun ProfileHomeScreenContent(
     onGoalsClick: () -> Unit,
     onDeveloperClick: () -> Unit,
     onLogoutClick: () -> Unit,
-    onImageClick: () -> Unit
+    onImageClick: () -> Unit,
+    onSupportClick: () -> Unit,
+    onAboutClick: () -> Unit
 ) {
     val medalIcon = ImageVector.vectorResource(id = R.drawable.ic_medal)
 
-    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon, onDeveloperClick) {
+    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon, onDeveloperClick, onSupportClick, onAboutClick) {
         val baseList = mutableListOf(
             ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, isEnabled = true, isVisible = true, onUserDataClick),
             ProfileMenuItemData("2", "Metas Pessoais", medalIcon, isEnabled = true, isVisible = true, onGoalsClick),
             ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, isEnabled = false, isVisible = false, {}),
             ProfileMenuItemData("4", "Notificações", Icons.Default.Notifications, isEnabled = false, isVisible = false, {}),
-            ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, isEnabled = false, isVisible = true, {}),
-            ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, isEnabled = false, isVisible = true, {})
+            ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, isEnabled = true, isVisible = true, onSupportClick),
+            ProfileMenuItemData("6", "Sobre o App", Icons.Default.Info, isEnabled = true, isVisible = true, onAboutClick)
         )
 
         if (BuildConfig.FLAVOR == "staging" && BuildConfig.DEBUG) {
@@ -246,7 +250,9 @@ private fun ProfileHomeScreenPreview() {
             onGoalsClick = {},
             onDeveloperClick = {},
             onLogoutClick = {},
-            onImageClick = {}
+            onImageClick = {},
+            onSupportClick = {},
+            onAboutClick = {}
         )
     }
 }

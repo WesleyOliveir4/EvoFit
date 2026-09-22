@@ -166,7 +166,6 @@
     <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
     <string name="evo_home_empty_value">---</string>
     <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
-    <string name="evo_period_7_days">7 dias</string>
     <string name="evo_period_30_days">1 mês</string>
     <string name="evo_period_90_days">3 meses</string>
     <string name="evo_period_180_days">6 meses</string>
@@ -417,6 +416,87 @@
     <string name="profile_goals_button_finish">Finalizar</string>
     <string name="profile_goals_button_delete">Excluir</string>
     <string name="profile_goal_delete_description">Excluir meta</string>
+
+    <!-- Support Screen -->
+    <string name="support_title">Ajuda e suporte</string>
+    <string name="support_description">Estamos aqui para te ajudar!\nEscolha uma opção ou envie um e-mail diretamente para o nosso time.</string>
+    <string name="support_option_email_title">Enviar e-mail</string>
+    <string name="support_option_email_desc">Tire suas dúvidas ou relate um problema.</string>
+    <string name="support_option_workouts_title">Sugerir novos treinos</string>
+    <string name="support_option_workouts_desc">Tem uma ideia? Conte pra gente!</string>
+    <string name="support_option_faq_title">Dúvidas frequentes</string>
+    <string name="support_option_faq_desc">Veja as perguntas mais comuns.</string>
+    <string name="support_option_tutorials_title">Tutoriais</string>
+    <string name="support_option_tutorials_desc">Aprenda a usar o app.</string>
+
+    <!-- Support Email Screen -->
+    <string name="support_email_title">Enviar e-mail</string>
+    <string name="support_email_description">Preencha os campos abaixo e nos conte como podemos te ajudar.</string>
+    <string name="support_email_label_subject">Título</string>
+    <string name="support_email_placeholder_subject">Selecione um assunto</string>
+    <string name="support_email_label_message">Mensagem</string>
+    <string name="support_email_placeholder_message">Escreva sua mensagem aqui...</string>
+    <string name="support_email_button_send">Enviar</string>
+    <string name="support_email_message_counter_format">%1$d/1000</string>
+    <string name="support_email_success">E-mail enviado com sucesso!</string>
+    <string name="support_email_error">Erro ao enviar e-mail. Tente novamente.</string>
+
+    <!-- Email Topics -->
+    <string name="email_topic_feedback">Feedback</string>
+    <string name="email_topic_bug">Bug encontrado</string>
+    <string name="email_topic_feature">Proposta de funcionalidade</string>
+    <string name="email_topic_doubts">Dúvidas gerais</string>
+    <string name="email_topic_other">Outro motivo</string>
+
+    <!-- Suggestion New Workouts Screen -->
+    <string name="suggestion_workouts_title">Sugerir novos treinos</string>
+    <string name="suggestion_workouts_label_category">Categoria</string>
+    <string name="suggestion_workouts_placeholder_category">Selecione uma categoria</string>
+    <string name="suggestion_workouts_label_description">Descrição da sugestão</string>
+    <string name="suggestion_workouts_placeholder_description">Descreva sua sugestão aqui...</string>
+    <string name="suggestion_workouts_button_send">Enviar sugestão</string>
+    <string name="suggestion_workouts_success">Sugestão enviada com sucesso!</string>
+
+    <!-- Suggestion Categories -->
+    <string name="suggestion_category_new_workout">Novo tipo de treino</string>
+    <string name="suggestion_category_new_exercise">Novo exercício</string>
+    <string name="suggestion_category_app_feature">Nova funcionalidade</string>
+    <string name="suggestion_category_other">Outra sugestão</string>
+
+    <!-- FAQ Screen -->
+    <string name="faq_title">Dúvidas frequentes</string>
+    <string name="faq_search_placeholder">Buscar uma pergunta...</string>
+    <string name="faq_section_title">Principais dúvidas</string>
+
+    <string name="faq_q1">Como criar uma conta?</string>
+    <string name="faq_a1">Para criar uma conta, basta clicar em \"Cadastre-se\" na tela inicial, preencher seus dados básicos (nome, e-mail e senha) e seguir o fluxo de onboarding para personalizar sua experiência.</string>
+
+    <string name="faq_q2">Como registrar meu treino?</string>
+    <string name="faq_a2">Na aba \"Treino\", selecione uma ficha de treino e clique em \"Iniciar Treino\". Durante a execução, você pode marcar as séries concluídas clicando no check de cada exercício.</string>
+
+    <string name="faq_q3">Posso editar ou excluir um treino?</string>
+    <string name="faq_a3">Sim! Na tela de detalhes do treino (Preview), você encontrará ícones de lápis para editar e lixeira para excluir no canto superior direito.</string>
+
+    <string name="faq_q4">O app funciona sem internet?</string>
+    <string name="faq_a4">Sim, o EvoFit funciona offline para você treinar sem interrupções. Seus dados serão sincronizados com a nuvem assim que você se conectar novamente.</string>
+
+    <string name="faq_q5">Como mudar meu objetivo?</string>
+    <string name="faq_a5">Vá em Perfil -> Metas Pessoais. Lá você pode editar suas metas atuais ou adicionar novas para refletir sua evolução.</string>
+
+    <string name="faq_q6">O que significa cada grupo muscular?</string>
+    <string name="faq_a6">Os exercícios são categorizados para ajudar no seu equilíbrio muscular. Peito, Costas e Pernas são grupos grandes, enquanto Ombros, Braços e Core auxiliam na estabilidade e força auxiliar.</string>
+
+    <!-- About App Screen -->
+    <string name="about_title">Sobre o app</string>
+    <string name="about_app_name">EvoFit</string>
+    <string name="about_slogan">Seu treino, seu progresso</string>
+    <string name="about_description">O EvoFit é um aplicativo criado para te ajudar a manter a constância nos treinos, acompanhar sua evolução e alcançar seus objetivos.</string>
+    <string name="about_option_version">Versão do app</string>
+    <string name="about_option_developer">Desenvolvedor</string>
+    <string name="about_developer_name">Campos Software Factory</string>
+    <string name="about_option_terms">Termos de uso</string>
+    <string name="about_option_privacy">Política de privacidade</string>
+    <string name="about_app_version">1.0.0</string>
 
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>

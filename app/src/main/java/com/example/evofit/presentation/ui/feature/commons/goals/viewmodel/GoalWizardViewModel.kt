@@ -63,7 +63,12 @@ class GoalWizardViewModel(
         weightLossLabel: String,
         muscleGainLabel: String
     ) {
-        if (suggestion == null) return
+        if (suggestion == null) {
+            _uiState.update { 
+                GoalWizardUiState(muscleGroups = getMuscleGroupsUseCase()) 
+            }
+            return
+        }
 
         val category = when {
             suggestion.isWeightGoal -> {

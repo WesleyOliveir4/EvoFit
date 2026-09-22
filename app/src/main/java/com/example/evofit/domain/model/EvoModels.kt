@@ -3,7 +3,6 @@ package com.example.evofit.domain.model
 import com.example.evofit.R
 
 enum class EvoPeriod(val displayNameRes: Int) {
-    LAST_7_DAYS(R.string.evo_period_7_days),
     LAST_30_DAYS(R.string.evo_period_30_days),
     LAST_90_DAYS(R.string.evo_period_90_days),
     LAST_180_DAYS(R.string.evo_period_180_days),

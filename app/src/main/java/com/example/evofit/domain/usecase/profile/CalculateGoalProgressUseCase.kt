@@ -76,33 +76,60 @@ class CalculateGoalProgressUseCaseImpl(
         val targetDistance = goal.distance?.toDoubleOrNull() ?: 0.0
         val targetTime = goal.time.toDoubleOrNull() ?: 0.0
 
-        var bestDistance = 0.0
-        var bestTime = 0.0
+        if (targetDistance > 0 && targetTime > 0) {
+            var maxSpeed = 0.0
+            var bestDistance = 0.0
+            var bestTime = 0.0
 
-        history.forEach { workout ->
-            workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
-                exercise.sets.forEach { set ->
-                    if (set.exerciseName.equals(goal.type, ignoreCase = true)) {
-                        set.distance?.let { if (it > bestDistance) bestDistance = it }
-                        set.time?.let { if (it.toDouble() > bestTime) bestTime = it.toDouble() }
+            history.forEach { workout ->
+                workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
+                    exercise.sets.forEach { set ->
+                        if (set.exerciseName.equals(goal.type, ignoreCase = true)) {
+                            val d = set.distance ?: 0.0
+                            val t = set.time?.toDouble() ?: 0.0
+                            if (t > 0) {
+                                val currentSpeed = d / t
+                                if (currentSpeed > maxSpeed) {
+                                    maxSpeed = currentSpeed
+                                    bestDistance = d
+                                    bestTime = t
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
 
-        return if (targetDistance > 0) {
-            val percentage = (bestDistance / targetDistance * 100).toInt()
-            GoalProgress(
+            val targetSpeed = targetDistance / targetTime
+            val percentage = if (targetSpeed > 0) (maxSpeed / targetSpeed * 100).toInt() else 0
+
+            return GoalProgress(
                 currentValue = bestDistance,
                 targetValue = targetDistance,
-                percentage = percentage.coerceIn(0, 1000),
+                percentage = percentage.coerceIn(0, 100),
                 unit = "km",
                 currentTime = bestTime,
                 targetTime = targetTime
             )
         } else {
+            var bestTime = 0.0
+            history.forEach { workout ->
+                workout.exercisesByGroup.flatMap { it.exercises }.forEach { exercise ->
+                    exercise.sets.forEach { set ->
+                        if (set.exerciseName.equals(goal.type, ignoreCase = true)) {
+                            set.time?.let { if (it.toDouble() > bestTime) bestTime = it.toDouble() }
+                        }
+                    }
+                }
+            }
+
             val percentage = if (targetTime > 0) (bestTime / targetTime * 100).toInt() else 0
-            GoalProgress(bestTime, targetTime, percentage.coerceIn(0, 1000), "min")
+            return GoalProgress(
+                currentValue = bestTime,
+                targetValue = targetTime,
+                percentage = percentage.coerceIn(0, 100),
+                unit = "min"
+            )
         }
     }
 

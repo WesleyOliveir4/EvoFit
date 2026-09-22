@@ -224,13 +224,15 @@ fun GoalTag(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     Box(
         modifier = modifier
             .border(
                 width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
+                shape = shape
             )
+            .clip(shape)
             .clickable { onClick() }
             .padding(horizontal = Dimens.SpacingSmall, vertical = Dimens.SpacingExtraSmall)
     ) {
