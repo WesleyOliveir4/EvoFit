@@ -17,7 +17,7 @@ class EvoHomeViewModel(
     private val getEvoHomeSummaryUseCase: GetEvoHomeSummaryUseCase
 ) : ViewModel() {
 
-    private val _selectedPeriod = MutableStateFlow(EvoPeriod.LAST_30_DAYS)
+    private val _selectedPeriod = MutableStateFlow(EvoPeriod.LAST_90_DAYS)
 
     val uiState: StateFlow<EvoHomeUiState> = combine(
         _selectedPeriod,

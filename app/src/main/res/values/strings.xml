@@ -166,7 +166,6 @@
     <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
     <string name="evo_home_empty_value">---</string>
     <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
-    <string name="evo_period_7_days">7 dias</string>
     <string name="evo_period_30_days">1 mês</string>
     <string name="evo_period_90_days">3 meses</string>
     <string name="evo_period_180_days">6 meses</string>

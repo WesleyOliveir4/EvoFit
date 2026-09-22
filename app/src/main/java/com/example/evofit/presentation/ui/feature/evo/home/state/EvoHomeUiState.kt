@@ -8,7 +8,7 @@ import com.example.evofit.presentation.model.StrengthGainUIModel
 @Immutable
 data class EvoHomeUiState(
     val isLoading: Boolean = false,
-    val selectedPeriod: EvoPeriod = EvoPeriod.LAST_30_DAYS,
+    val selectedPeriod: EvoPeriod = EvoPeriod.LAST_90_DAYS,
     val strengthGains: List<StrengthGainUIModel>? = null,
     val mostEvolvedMuscle: MuscleEvolutionUIModel? = null,
     val workoutsCount: Int = 0,
