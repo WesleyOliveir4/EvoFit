@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -95,6 +96,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.crashlytics)
+    implementation(project(":core:monitoring"))
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play)
     implementation(libs.googleid)

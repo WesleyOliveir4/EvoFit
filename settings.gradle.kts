@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "EvoFit"
 include(":app")
+include(":core:monitoring")
  
