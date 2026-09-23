@@ -1,5 +1,6 @@
 package com.example.evofit.data.repository
 
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.datasource.WorkoutLocalDataSource
 import com.example.evofit.data.datasource.WorkoutRemoteDataSource
@@ -24,7 +25,8 @@ import kotlinx.coroutines.launch
 class WorkoutRepositoryImpl(
     private val workoutDataSource: WorkoutLocalDataSource,
     private val exerciseDataSource: LocalExerciseDataSource,
-    private val workoutRemoteDataSource: WorkoutRemoteDataSource
+    private val workoutRemoteDataSource: WorkoutRemoteDataSource,
+    private val crashReporter: CrashReporter
 ) : WorkoutRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -241,7 +243,7 @@ class WorkoutRepositoryImpl(
                                 workoutRemoteDataSource.saveWorkoutDone(workout)
                             }
                         } catch (e: Exception) {
-                            // Log error
+                            crashReporter.recordException(e)
                         }
                     }
                 } else {

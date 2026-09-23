@@ -1,6 +1,7 @@
 package com.example.evofit.data.datasource
 
 import android.util.Log
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.data.local.entities.ExerciseSetEntity
 import com.example.evofit.data.local.entities.FullWorkoutRemoteData
 import com.example.evofit.data.local.entities.WorkoutDoneHistoryEntity
@@ -38,7 +39,8 @@ interface WorkoutRemoteDataSource {
 }
 
 class WorkoutRemoteDataSourceImpl(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val crashReporter: CrashReporter
 ) : WorkoutRemoteDataSource {
 
     companion object {
@@ -105,6 +107,7 @@ class WorkoutRemoteDataSourceImpl(
                 .delete()
                 .await()
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Log.e(TAG, "Erro ao deletar treino completo: $workoutId", e)
             throw e
         }
@@ -175,6 +178,7 @@ class WorkoutRemoteDataSourceImpl(
                 mapDocToWorkoutDone(doc)
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             emptyList()
         }
     }
@@ -200,6 +204,7 @@ class WorkoutRemoteDataSourceImpl(
                     mapDocToWorkoutDone(doc)
                 }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             emptyList()
         }
     }
@@ -269,6 +274,7 @@ class WorkoutRemoteDataSourceImpl(
                 }
             ).fixInconsistencies()
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Log.e("EvoFit_Debug", "Falha no mapeamento manual de WorkoutDone: ${doc.id}", e)
             null
         }
@@ -287,6 +293,7 @@ class WorkoutRemoteDataSourceImpl(
                 .delete()
                 .await()
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Log.e(TAG, "Erro ao deletar sumario antigo: $userId", e)
         }
     }
@@ -378,6 +385,7 @@ class WorkoutRemoteDataSourceImpl(
             }
             deferredFullWorkouts.awaitAll().filterNotNull()
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             emptyList()
         }
     }
@@ -416,6 +424,7 @@ class WorkoutRemoteDataSourceImpl(
                                 createdAt = createdAt
                             ).fixInconsistencies()
                         } catch (e: Exception) {
+                            crashReporter.recordException(e)
                             null
                         }
                     }
@@ -424,6 +433,7 @@ class WorkoutRemoteDataSourceImpl(
                 null
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             null
         }
     }

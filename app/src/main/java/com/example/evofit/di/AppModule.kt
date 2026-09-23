@@ -167,17 +167,17 @@ val dataModule = module {
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get(), get()) }
     single { FirebaseFirestore.getInstance() }
-    single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
-    single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
+    single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get(), get()) }
+    single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get(), get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<SupportRepository> { SupportRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext()) }
-    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
+    single<SupportRepository> { SupportRepositoryImpl(get(), get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext(), get()) }
+    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
     single { GoogleSignInHandler(androidContext()) }
     single { AppleSignInHandler(get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
 }
 
 val domainModule = module {

@@ -1,5 +1,6 @@
 package com.example.evofit.data.repository
 
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.data.local.session.SessionManager
 import com.example.evofit.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -10,14 +11,20 @@ import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val crashReporter: CrashReporter
 ) : AuthRepository {
     override suspend fun register(email: String, password: String): Result<Unit> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            result.user?.uid?.let { sessionManager.saveSession(it) }
+            result.user?.uid?.let {
+                sessionManager.saveSession(it)
+                crashReporter.setUserId(it)
+                crashReporter.logEvent("User registered with email")
+            }
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
@@ -25,9 +32,14 @@ class AuthRepositoryImpl(
     override suspend fun login(email: String, password: String): Result<Unit> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            result.user?.uid?.let { sessionManager.saveSession(it) }
+            result.user?.uid?.let {
+                sessionManager.saveSession(it)
+                crashReporter.setUserId(it)
+                crashReporter.logEvent("User logged in with email")
+            }
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
@@ -36,9 +48,14 @@ class AuthRepositoryImpl(
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             val result = firebaseAuth.signInWithCredential(credential).await()
-            result.user?.uid?.let { sessionManager.saveSession(it) }
+            result.user?.uid?.let {
+                sessionManager.saveSession(it)
+                crashReporter.setUserId(it)
+                crashReporter.logEvent("User logged in with Google")
+            }
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
@@ -65,6 +82,7 @@ class AuthRepositoryImpl(
             firebaseAuth.sendPasswordResetEmail(email).await()
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
@@ -81,8 +99,11 @@ class AuthRepositoryImpl(
         return try {
             firebaseAuth.signOut()
             sessionManager.clearSession()
+            crashReporter.setUserId("")
+            crashReporter.logEvent("User logged out")
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
