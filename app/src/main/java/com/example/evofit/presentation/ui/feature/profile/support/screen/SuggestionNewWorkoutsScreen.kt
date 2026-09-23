@@ -234,7 +234,7 @@ fun SuggestionNewWorkoutsContent(
                         },
                         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                         colors = OutlinedTextFieldDefaults.colors(
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                             disabledBorderColor = Color.Transparent,
                             disabledPlaceholderColor = TextSecondary,
                             disabledTextColor = TextPrimary
@@ -284,8 +284,8 @@ fun SuggestionNewWorkoutsContent(
                     placeholder = { Text(stringResource(id = R.string.suggestion_workouts_placeholder_description)) },
                     shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedBorderColor = Color.Transparent,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         cursorColor = MaterialTheme.colorScheme.primary

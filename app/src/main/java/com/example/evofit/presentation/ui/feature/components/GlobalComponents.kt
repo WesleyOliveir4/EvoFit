@@ -161,7 +161,7 @@ fun TopBarReturn(
     modifier: Modifier = Modifier,
     title: String? = null,
     subtitle: String? = null,
-    isCenterAligned: Boolean = true,
+    isCenterAligned: Boolean = false,
     showBackIcon: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {}
 ) {

@@ -13,13 +13,13 @@ class LocalExerciseDataSource {
         MuscleGroupModel("1", "Costas", MuscleGroupType.BACK, ExerciseCategory.STRENGTH),
         MuscleGroupModel("2", "Peito", MuscleGroupType.CHEST, ExerciseCategory.STRENGTH),
         MuscleGroupModel("3", "Pernas", MuscleGroupType.LEGS, ExerciseCategory.STRENGTH),
-        MuscleGroupModel("4", "Biceps", MuscleGroupType.BICEPS, ExerciseCategory.STRENGTH),
-        MuscleGroupModel("5", "Triceps", MuscleGroupType.TRICEPS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("4", "Bíceps", MuscleGroupType.BICEPS, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("5", "Tríceps", MuscleGroupType.TRICEPS, ExerciseCategory.STRENGTH),
         MuscleGroupModel("6", "Antebraço", MuscleGroupType.FOREARMS, ExerciseCategory.STRENGTH),
         MuscleGroupModel("7", "Ombro", MuscleGroupType.SHOULDERS, ExerciseCategory.STRENGTH),
         MuscleGroupModel("8", "Core", MuscleGroupType.ABS, ExerciseCategory.STRENGTH),
         MuscleGroupModel("9", "Cardio", MuscleGroupType.CARDIO, ExerciseCategory.CARDIO),
-        MuscleGroupModel("10", "Gluteo", MuscleGroupType.GLUTES, ExerciseCategory.STRENGTH),
+        MuscleGroupModel("10", "Glúteo", MuscleGroupType.GLUTES, ExerciseCategory.STRENGTH),
         MuscleGroupModel("11", "Panturrilha", MuscleGroupType.CALVES, ExerciseCategory.STRENGTH),
     )
 
@@ -34,26 +34,26 @@ class LocalExerciseDataSource {
         ExerciseModel("7", "Remada Cavalinho", "1", MeasurementUnit.WEIGHT, 9),
         ExerciseModel("8", "Pulldown na Polia", "1", MeasurementUnit.WEIGHT, 12),
         ExerciseModel("9", "Remada T-Bar", "1", MeasurementUnit.WEIGHT, 10),
-        ExerciseModel("92", "Remada articulada", "1", MeasurementUnit.WEIGHT,3 ),
-        ExerciseModel("93", "Remada baixa articulada", "1", MeasurementUnit.WEIGHT, 4),
+        ExerciseModel("92", "Remada Articulada", "1", MeasurementUnit.WEIGHT, 3),
+        ExerciseModel("93", "Remada Baixa Articulada", "1", MeasurementUnit.WEIGHT, 4),
         ExerciseModel("94", "Puxada com Triângulo", "1", MeasurementUnit.WEIGHT, 2),
-        ExerciseModel("105", "Remada alta articulada", "1", MeasurementUnit.WEIGHT, 5),
+        ExerciseModel("105", "Remada Alta Articulada", "1", MeasurementUnit.WEIGHT, 5),
 
         // Chest (2)
-        ExerciseModel("11", "Supino Reto", "2", MeasurementUnit.WEIGHT,1),
-        ExerciseModel("12", "Supino Inclinado", "2", MeasurementUnit.WEIGHT,2),
-        ExerciseModel("13", "Supino Declinado", "2", MeasurementUnit.WEIGHT,3),
+        ExerciseModel("11", "Supino Reto", "2", MeasurementUnit.WEIGHT, 1),
+        ExerciseModel("12", "Supino Inclinado", "2", MeasurementUnit.WEIGHT, 2),
+        ExerciseModel("13", "Supino Declinado", "2", MeasurementUnit.WEIGHT, 3),
         ExerciseModel("14", "Crucifixo", "2", MeasurementUnit.WEIGHT, 8),
         ExerciseModel("15", "Crucifixo Inclinado", "2", MeasurementUnit.WEIGHT, 9),
-        ExerciseModel("16", "Peck Deck", "2", MeasurementUnit.WEIGHT,10),
+        ExerciseModel("16", "Peck Deck", "2", MeasurementUnit.WEIGHT, 10),
         ExerciseModel("17", "Crossover", "2", MeasurementUnit.WEIGHT, 11),
-        ExerciseModel("18", "Flexão de Braço", "2", MeasurementUnit.REPS,13 ),
-        ExerciseModel("19", "Supino Máquina", "2", MeasurementUnit.WEIGHT,7),
+        ExerciseModel("18", "Flexão de Braço", "2", MeasurementUnit.REPS, 13),
+        ExerciseModel("19", "Supino Máquina", "2", MeasurementUnit.WEIGHT, 7),
         ExerciseModel("20", "Chest Press", "2", MeasurementUnit.WEIGHT, 14, false),
         ExerciseModel("95", "Supino com Halteres", "2", MeasurementUnit.WEIGHT, 12),
-        ExerciseModel("96", "Supino Reto Articulado", "2", MeasurementUnit.WEIGHT,4 ),
-        ExerciseModel("106", "Supino Inclinado Articulado", "2", MeasurementUnit.WEIGHT,5),
-        ExerciseModel("107", "Supino Declinado Articulado", "2", MeasurementUnit.WEIGHT,6),
+        ExerciseModel("96", "Supino Reto Articulado", "2", MeasurementUnit.WEIGHT, 4),
+        ExerciseModel("106", "Supino Inclinado Articulado", "2", MeasurementUnit.WEIGHT, 5),
+        ExerciseModel("107", "Supino Declinado Articulado", "2", MeasurementUnit.WEIGHT, 6),
 
         // Legs (3)
         ExerciseModel("21", "Agachamento Livre", "3", MeasurementUnit.WEIGHT, 1),
@@ -69,13 +69,11 @@ class LocalExerciseDataSource {
         ExerciseModel("10", "Levantamento Terra", "3", MeasurementUnit.WEIGHT, 11),
         ExerciseModel("25", "Mesa Flexora", "3", MeasurementUnit.WEIGHT, 12),
         ExerciseModel("26", "Cadeira Flexora", "3", MeasurementUnit.WEIGHT, 13),
-        ExerciseModel("98", "Flexão de joelhos", "3", MeasurementUnit.WEIGHT, 14),
-        ExerciseModel("100", "Sumo halter", "3", MeasurementUnit.WEIGHT, 15),
-        ExerciseModel("99", "Sumo maquina", "3", MeasurementUnit.WEIGHT, 16),
+        ExerciseModel("98", "Flexão de Joelhos", "3", MeasurementUnit.WEIGHT, 14),
+        ExerciseModel("100", "Sumô com Halter", "3", MeasurementUnit.WEIGHT, 15),
+        ExerciseModel("99", "Sumô na Máquina", "3", MeasurementUnit.WEIGHT, 16),
         ExerciseModel("108", "Cadeira Adutora", "3", MeasurementUnit.WEIGHT, 17),
         ExerciseModel("97", "Cadeira Abdutora", "3", MeasurementUnit.WEIGHT, 18),
-
-
 
         // Biceps (4)
         ExerciseModel("32", "Rosca Direta", "4", MeasurementUnit.WEIGHT, 1),
@@ -89,7 +87,7 @@ class LocalExerciseDataSource {
 
         // Triceps (5)
         ExerciseModel("39", "Tríceps Pulley", "5", MeasurementUnit.WEIGHT, 1),
-        ExerciseModel("40", "Triceps Pulley Corda", "5", MeasurementUnit.WEIGHT, 2),
+        ExerciseModel("40", "Tríceps Pulley Corda", "5", MeasurementUnit.WEIGHT, 2),
         ExerciseModel("41", "Tríceps Francês", "5", MeasurementUnit.WEIGHT, 3),
         ExerciseModel("42", "Tríceps Testa", "5", MeasurementUnit.WEIGHT, 4),
         ExerciseModel("43", "Mergulho Paralelas", "5", MeasurementUnit.REPS, 5),
@@ -149,7 +147,6 @@ class LocalExerciseDataSource {
         ExerciseModel("83", "Glúteo Máquina", "10", MeasurementUnit.WEIGHT, 9),
         ExerciseModel("84", "Ponte de Glúteo", "10", MeasurementUnit.REPS, 10),
 
-
         // Calves (11)
         ExerciseModel("85", "Panturrilha em Pé", "11", MeasurementUnit.WEIGHT, 1),
         ExerciseModel("86", "Panturrilha Sentado", "11", MeasurementUnit.WEIGHT, 2),
@@ -161,9 +158,9 @@ class LocalExerciseDataSource {
     )
 
     private val suggestions = listOf(
-        GoalSuggestion("1", "Perder peso", isWeightGoal = true),
-        GoalSuggestion("2", "Ganhar peso", isWeightGoal = true),
-        GoalSuggestion("3", "Ganho de força ", ExerciseCategory.STRENGTH, muscleGroupId = "3"),
+        GoalSuggestion("1", "Perder Peso", isWeightGoal = true),
+        GoalSuggestion("2", "Ganhar Peso", isWeightGoal = true),
+        GoalSuggestion("3", "Ganho de Força", ExerciseCategory.STRENGTH, muscleGroupId = "3"),
         GoalSuggestion("4", "Cardio", ExerciseCategory.CARDIO, muscleGroupId = "9"),
         GoalSuggestion("5", "Core", ExerciseCategory.STRENGTH, muscleGroupId = "8"),
         GoalSuggestion("6", "Peito", ExerciseCategory.STRENGTH, muscleGroupId = "2")
