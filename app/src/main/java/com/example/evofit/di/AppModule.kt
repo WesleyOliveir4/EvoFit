@@ -31,6 +31,8 @@ import com.example.evofit.presentation.ui.feature.profile.support.tracking.Suppo
 import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTrackerImpl
 import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
 import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
+import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTracker
+import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -262,7 +264,8 @@ val domainModule = module {
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get(), get(), get()) }
+    single<SplashTracker> { SplashTrackerImpl(get()) }
+    viewModel { SplashViewModel(get(), get(), get(), get()) }
 }
 
 val onboardingModule = module {
