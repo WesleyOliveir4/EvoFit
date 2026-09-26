@@ -5,15 +5,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.ForgotPasswordIllustration
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 /**
  * Success screen of the password recovery flow.
@@ -22,8 +25,13 @@ import com.example.evofit.presentation.ui.theme.EvoFitTheme
 @Composable
 fun ForgotPasswordScreen(
     email: String,
+    authTracker: AuthTracker = koinInject(),
     onContinueClick: () -> Unit = {}
 ) {
+    LaunchedEffect(Unit) {
+        authTracker.trackForgotPasswordScreenView()
+    }
+
     ForgotPasswordContent(
         email = email,
         onContinueClick = onContinueClick

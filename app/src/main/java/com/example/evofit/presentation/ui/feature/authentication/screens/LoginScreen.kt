@@ -26,6 +26,7 @@ import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSign
 import com.example.evofit.presentation.ui.feature.authentication.components.*
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
@@ -37,6 +38,7 @@ import org.koin.compose.koinInject
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
+    authTracker: AuthTracker = koinInject(),
     googleSignInHandler: GoogleSignInHandler = koinInject(),
     appleSignInHandler: AppleSignInHandler = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
@@ -47,6 +49,10 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        authTracker.trackLoginScreenView()
+    }
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -61,7 +67,10 @@ fun LoginScreen(
         onPasswordChange = viewModel::onPasswordChange,
         onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
         onLoginClick = viewModel::onLoginClick,
-        onForgotPasswordClick = onForgotPasswordClick,
+        onForgotPasswordClick = {
+            authTracker.trackForgotPasswordClicked()
+            onForgotPasswordClick()
+        },
         onSignUpClick = onSignUpClick,
         onBackClick = onBackClick,
         onGoogleClick = {

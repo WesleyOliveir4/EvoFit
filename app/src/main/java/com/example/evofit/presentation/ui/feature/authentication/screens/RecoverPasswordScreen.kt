@@ -23,15 +23,18 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Logi
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.RecoverPasswordHeader
 import com.example.evofit.presentation.ui.feature.authentication.state.RecoverPasswordUiState
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun RecoverPasswordScreen(
     viewModel: RecoverPasswordViewModel = koinViewModel(),
+    authTracker: AuthTracker = koinInject(),
     onBackClick: () -> Unit = {},
     onCodeSent: (email: String) -> Unit = {}
 ) {
@@ -39,6 +42,10 @@ fun RecoverPasswordScreen(
     val context = LocalContext.current
 
     val isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(uiState.email).matches()
+
+    LaunchedEffect(Unit) {
+        authTracker.trackRecoverPasswordScreenView()
+    }
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
