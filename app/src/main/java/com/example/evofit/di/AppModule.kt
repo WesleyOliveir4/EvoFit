@@ -13,6 +13,10 @@ import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTr
 import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTrackerImpl
 import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
 import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTrackerImpl
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -262,6 +266,7 @@ val onboardingModule = module {
 }
 
 val homeModule = module {
+    single<EvoHomeTracker> { EvoHomeTrackerImpl(get()) }
     viewModel {
         HomeViewModel(
             get(),
@@ -270,6 +275,7 @@ val homeModule = module {
     }
     viewModel {
         EvoHomeViewModel(
+            get(),
             get(),
             get()
         )
@@ -356,7 +362,8 @@ val workoutModule = module {
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single<EvoAnalyticsTracker> { EvoAnalyticsTrackerImpl(get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val profileModule = module {

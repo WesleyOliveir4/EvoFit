@@ -14,6 +14,7 @@ import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.model.ExerciseWithRecordsUIModel
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +34,8 @@ class EvoAnalyticsViewModel(
     private val getExercisesWithRecordCountUseCase: GetExercisesWithRecordCountUseCase,
     private val processExerciseAnalyticsUseCase: ProcessExerciseAnalyticsUseCase,
     private val getWeightHistoryUseCase: GetWeightHistoryUseCase,
-    private val processBodyWeightAnalyticsUseCase: ProcessBodyWeightAnalyticsUseCase
+    private val processBodyWeightAnalyticsUseCase: ProcessBodyWeightAnalyticsUseCase,
+    private val tracker: EvoAnalyticsTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EvoAnalyticsState())
@@ -75,6 +77,7 @@ class EvoAnalyticsViewModel(
     }
 
     fun onMuscleGroupSelected(groupId: String, groupName: String) {
+        tracker.trackMuscleGroupSelected(groupId, groupName)
         val exercises = getExercisesWithRecordCountUseCase(groupId, _uiState.value.historyRawData)
         _uiState.update {
             it.copy(
@@ -93,6 +96,7 @@ class EvoAnalyticsViewModel(
     }
 
     fun onWeightSelected() {
+        tracker.trackWeightCategorySelected()
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isWeightAnalysis = true, selectedExerciseName = "Peso Corporal") }
             val userId = getUserIdUseCase().firstOrNull()
@@ -136,6 +140,7 @@ class EvoAnalyticsViewModel(
     }
 
     fun onExerciseSelected(exerciseId: String, exerciseName: String) {
+        tracker.trackExerciseSelected(exerciseId, exerciseName)
         _uiState.update {
             it.copy(
                 selectedExerciseId = exerciseId,

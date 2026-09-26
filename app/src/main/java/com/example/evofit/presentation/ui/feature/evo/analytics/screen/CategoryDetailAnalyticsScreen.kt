@@ -20,17 +20,26 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.components.EvoEx
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MetricStatCard
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.AnalyticsChartPoint
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun CategoryDetailAnalyticsScreen(
     viewModel: EvoAnalyticsViewModel,
+    tracker: EvoAnalyticsTracker = koinInject(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.selectedExerciseName) {
+        if (uiState.selectedExerciseName.isNotEmpty()) {
+            tracker.trackCategoryDetailAnalyticsScreenView(uiState.selectedExerciseName)
+        }
+    }
 
     CategoryDetailAnalyticsContent(
         uiState = uiState,

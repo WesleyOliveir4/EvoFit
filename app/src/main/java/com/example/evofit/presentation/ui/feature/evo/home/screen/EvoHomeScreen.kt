@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
 import com.example.evofit.R
 import com.example.evofit.domain.model.EvoPeriod
 import com.example.evofit.navigation.NavRoutes
@@ -33,22 +34,34 @@ import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitDropdownFilter
 import com.example.evofit.presentation.ui.feature.evo.home.components.*
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun EvoHomeScreen(
     onNavigate: (String) -> Unit = {},
-    viewModel: EvoHomeViewModel = koinViewModel()
+    viewModel: EvoHomeViewModel = koinViewModel(),
+    tracker: EvoHomeTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        tracker.trackEvoHomeScreenView()
+    }
 
     EvoHomeContent(
         uiState = uiState,
         onPeriodSelected = { viewModel.onPeriodSelected(it) },
-        onNavigate = onNavigate
+        onNavigate = { route ->
+            if (route == NavRoutes.MuscleGroupSelection.route) {
+                tracker.trackExerciseAnalyticsCardClicked()
+            }
+            onNavigate(route)
+        }
     )
 }
 

@@ -8,13 +8,15 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.presentation.model.MuscleEvolutionUIModel
 import com.example.evofit.presentation.model.StrengthGainUIModel
 import com.example.evofit.presentation.ui.feature.evo.home.state.EvoHomeUiState
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EvoHomeViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val getEvoHomeSummaryUseCase: GetEvoHomeSummaryUseCase
+    private val getEvoHomeSummaryUseCase: GetEvoHomeSummaryUseCase,
+    private val tracker: EvoHomeTracker
 ) : ViewModel() {
 
     private val _selectedPeriod = MutableStateFlow(EvoPeriod.LAST_90_DAYS)
@@ -56,6 +58,7 @@ class EvoHomeViewModel(
     )
 
     fun onPeriodSelected(period: EvoPeriod) {
+        tracker.trackPeriodSelected(period.name)
         _selectedPeriod.value = period
     }
 }
