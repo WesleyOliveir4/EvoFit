@@ -42,6 +42,7 @@ import com.example.evofit.presentation.ui.feature.commons.goals.components.GoalV
 import com.example.evofit.presentation.ui.feature.commons.goals.components.MuscleGroupStep
 import com.example.evofit.presentation.ui.feature.commons.goals.components.WizardProgress
 import com.example.evofit.presentation.ui.feature.commons.goals.components.WizardTopBar
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalAction
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardStep
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardUiState
@@ -49,6 +50,7 @@ import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWi
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun GoalWizardScreen(
@@ -56,7 +58,8 @@ fun GoalWizardScreen(
     onClose: () -> Unit,
     onGoalConfirmed: (UserGoal) -> Unit,
     initialSuggestion: GoalSuggestion? = null,
-    viewModel: GoalWizardViewModel = koinViewModel()
+    viewModel: GoalWizardViewModel = koinViewModel(),
+    tracker: GoalWizardTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     
@@ -64,6 +67,10 @@ fun GoalWizardScreen(
     val resistanceLabel = stringResource(R.string.goal_category_resistance)
     val weightLossLabel = stringResource(R.string.goal_category_weight_loss)
     val muscleGainLabel = stringResource(R.string.goal_category_muscle_gain)
+
+    LaunchedEffect(uiState.currentStep) {
+        tracker.trackGoalWizardStepView(uiState.currentStep.name)
+    }
 
     LaunchedEffect(initialSuggestion) {
         viewModel.initWithSuggestion(
@@ -124,7 +131,8 @@ fun GoalWizardBottomSheet(
     onDismiss: () -> Unit,
     onGoalConfirmed: (UserGoal) -> Unit,
     initialSuggestion: GoalSuggestion? = null,
-    viewModel: GoalWizardViewModel = koinViewModel()
+    viewModel: GoalWizardViewModel = koinViewModel(),
+    tracker: GoalWizardTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     
@@ -132,6 +140,10 @@ fun GoalWizardBottomSheet(
     val resistanceLabel = stringResource(R.string.goal_category_resistance)
     val weightLossLabel = stringResource(R.string.goal_category_weight_loss)
     val muscleGainLabel = stringResource(R.string.goal_category_muscle_gain)
+
+    LaunchedEffect(uiState.currentStep) {
+        tracker.trackGoalWizardStepView(uiState.currentStep.name)
+    }
 
     LaunchedEffect(initialSuggestion) {
         viewModel.initWithSuggestion(

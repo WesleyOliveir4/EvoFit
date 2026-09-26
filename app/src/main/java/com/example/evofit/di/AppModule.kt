@@ -11,6 +11,8 @@ import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSign
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTrackerImpl
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -374,7 +376,8 @@ val authModule = module {
 }
 
 val goalModule = module {
-    viewModel { GoalWizardViewModel(get(), get()) }
+    single<GoalWizardTracker> { GoalWizardTrackerImpl(get()) }
+    viewModel { GoalWizardViewModel(get(), get(), get()) }
 }
 
 val appModule = listOf(
