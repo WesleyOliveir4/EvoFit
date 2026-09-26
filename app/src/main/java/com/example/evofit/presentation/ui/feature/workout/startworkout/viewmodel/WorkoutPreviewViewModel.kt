@@ -13,6 +13,7 @@ import com.example.evofit.domain.usecase.UpdateWorkoutUseCase
 import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutDetailPreview
 import com.example.evofit.presentation.ui.feature.workout.startworkout.state.WorkoutPreviewUiState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,8 @@ class WorkoutPreviewViewModel(
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase,
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
-    private val updateWorkoutUseCase: UpdateWorkoutUseCase
+    private val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    private val tracker: StartWorkoutTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutPreviewUiState())
@@ -155,6 +157,7 @@ class WorkoutPreviewViewModel(
     }
 
     fun onConfirmDelete() {
+        tracker.trackWorkoutSessionDiscarded(workoutId)
         viewModelScope.launch {
             deleteWorkoutUseCase(workoutId)
             _uiState.update { it.copy(showDeleteDialog = false, isDeleted = true) }

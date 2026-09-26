@@ -20,6 +20,7 @@ import com.example.evofit.presentation.model.ExercisePreviewItem
 import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.workout.home.state.WorkoutState
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTracker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +38,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(FlowPreview::class)
 class WorkoutViewModel(
@@ -51,7 +51,8 @@ class WorkoutViewModel(
     private val getActiveWorkoutSessionUseCase: GetActiveWorkoutSessionUseCase,
     private val connectivityObserver: ConnectivityObserver,
     private val sessionManager: SessionManager,
-    private val syncUserDataUseCase: SyncUserDataUseCase
+    private val syncUserDataUseCase: SyncUserDataUseCase,
+    private val tracker: WorkoutHomeTracker
 ) : ViewModel() {
 
     private val _updateOrderFlow = MutableSharedFlow<List<WorkoutUIModel>>()

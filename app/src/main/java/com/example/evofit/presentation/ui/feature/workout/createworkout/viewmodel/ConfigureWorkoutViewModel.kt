@@ -17,6 +17,7 @@ import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ConfigureWorkoutUiState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -33,7 +34,8 @@ class ConfigureWorkoutViewModel(
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val updateWorkoutUseCase: UpdateWorkoutUseCase
+    private val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    private val tracker: CreateWorkoutTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConfigureWorkoutUiState())
@@ -201,6 +203,8 @@ class ConfigureWorkoutViewModel(
             _uiState.update { it.copy(isLoading = true) }
 
             val workoutGroups = buildWorkoutGroups(currentState)
+            val totalExercises = workoutGroups.sumOf { it.exercises.size }
+            tracker.trackWorkoutCreated(workoutName, totalExercises)
 
             val workout = Workout(
                 userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID,

@@ -43,16 +43,24 @@ import com.example.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 import com.example.evofit.presentation.ui.feature.workout.components.training.MuscleGroupPreviewCard
 import com.example.evofit.presentation.ui.feature.workout.components.training.rememberDraggableListState
 
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
+import org.koin.compose.koinInject
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutPreviewScreen(
     workoutId: String,
     viewModel: WorkoutPreviewViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
+    tracker: StartWorkoutTracker = koinInject(),
     onBackClick: () -> Unit = {},
     onStartWorkoutClick: () -> Unit = {},
     onEditClick: (String, String) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(workoutId) {
+        tracker.trackWorkoutPreviewScreenView(workoutId)
+    }
 
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) {

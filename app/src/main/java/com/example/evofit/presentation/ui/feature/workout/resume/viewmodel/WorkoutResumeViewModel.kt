@@ -7,6 +7,7 @@ import com.example.evofit.domain.usecase.GetWorkoutDoneByIdUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.ui.feature.workout.resume.state.ResumeMode
 import com.example.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,8 @@ class WorkoutResumeViewModel(
     private val editWorkoutId: String? = null,
     private val workoutNotFinishedId: String? = null,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getWorkoutDoneByIdUseCase: GetWorkoutDoneByIdUseCase
+    private val getWorkoutDoneByIdUseCase: GetWorkoutDoneByIdUseCase,
+    private val tracker: WorkoutResumeTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutResumeUiState())

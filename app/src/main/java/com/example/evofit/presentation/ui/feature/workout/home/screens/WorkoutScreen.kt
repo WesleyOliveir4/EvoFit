@@ -47,18 +47,25 @@ import com.example.evofit.presentation.model.WorkoutHistoryUIModel
 import com.example.evofit.presentation.model.WorkoutUIModel
 import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.workout.components.training.*
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTracker
 import com.example.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun WorkoutScreen(
     viewModel: WorkoutViewModel = koinViewModel(),
+    tracker: WorkoutHomeTracker = koinInject(),
     onNavigate: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        tracker.trackWorkoutHomeScreenView()
+    }
     val isOnline by viewModel.isOnline.collectAsState()
     var showOfflineToast by remember { mutableStateOf(false) }
 

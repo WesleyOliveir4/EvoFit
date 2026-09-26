@@ -33,6 +33,14 @@ import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.User
 import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
 import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTracker
 import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTracker
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTracker
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -302,8 +310,14 @@ val homeModule = module {
 }
 
 val workoutModule = module {
+    single<WorkoutHomeTracker> { WorkoutHomeTrackerImpl(get()) }
+    single<CreateWorkoutTracker> { CreateWorkoutTrackerImpl(get()) }
+    single<WorkoutResumeTracker> { WorkoutResumeTrackerImpl(get()) }
+    single<StartWorkoutTracker> { StartWorkoutTrackerImpl(get()) }
+
     viewModel {
         WorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -321,6 +335,7 @@ val workoutModule = module {
         NewWorkoutViewModel(
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -329,11 +344,13 @@ val workoutModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
     viewModel {
         ConfigureWorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -349,7 +366,8 @@ val workoutModule = module {
             editWorkoutId = editWorkoutId,
             workoutNotFinishedId = workoutNotFinishedId,
             getWorkoutByIdUseCase = get(),
-            getWorkoutDoneByIdUseCase = get()
+            getWorkoutDoneByIdUseCase = get(),
+            tracker = get()
         )
     }
     viewModel { (workoutId: String) ->
@@ -361,7 +379,8 @@ val workoutModule = module {
             getActiveWorkoutSessionUseCase = get(),
             clearWorkoutSessionUseCase = get(),
             getMuscleGroupsUseCase = get(),
-            updateWorkoutUseCase = get()
+            updateWorkoutUseCase = get(),
+            tracker = get()
         )
     }
     viewModel { (workoutId: String) ->
@@ -375,7 +394,8 @@ val workoutModule = module {
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),
             clearWorkoutSessionUseCase = get(),
-            getMuscleGroupsUseCase = get()
+            getMuscleGroupsUseCase = get(),
+            tracker = get()
         )
     }
 }

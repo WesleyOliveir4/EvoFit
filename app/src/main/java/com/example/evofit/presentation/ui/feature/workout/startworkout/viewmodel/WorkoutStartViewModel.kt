@@ -23,6 +23,7 @@ import com.example.evofit.core.common.DateMapper
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -49,7 +50,8 @@ class WorkoutStartViewModel(
     private val startWorkoutSessionUseCase: StartWorkoutSessionUseCase,
     private val updateCompletedSetsUseCase: UpdateCompletedSetsUseCase,
     private val clearWorkoutSessionUseCase: ClearWorkoutSessionUseCase,
-    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase
+    private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
+    private val tracker: StartWorkoutTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutStartUiState())
@@ -131,6 +133,7 @@ class WorkoutStartViewModel(
                 activeSession.startTime
             } else {
                 val now = System.currentTimeMillis()
+                tracker.trackWorkoutSessionStarted(workoutId)
                 startWorkoutSessionUseCase(workoutId, now)
                 now
             }
@@ -156,7 +159,11 @@ class WorkoutStartViewModel(
                 if (exercise.workoutExerciseId == workoutExerciseId) {
                     val updatedSets = exercise.sets.map { set ->
                         if (set.setNumber == setNumber) {
-                            set.copy(isDone = !set.isDone)
+                            val newDoneState = !set.isDone
+                            if (newDoneState) {
+                                tracker.trackSetCompleted(workoutId, exercise.exerciseId, setNumber)
+                            }
+                            set.copy(isDone = newDoneState)
                         } else {
                             set
                         }
@@ -199,6 +206,7 @@ class WorkoutStartViewModel(
     }
 
     fun onConfirmCancelWorkout() {
+        tracker.trackWorkoutSessionDiscarded(workoutId)
         viewModelScope.launch {
             clearWorkoutSessionUseCase()
             _uiState.update { it.copy(showCancelDialog = false, workoutNotFinished = true) }
@@ -206,6 +214,7 @@ class WorkoutStartViewModel(
     }
 
     fun onConfirmFinish() {
+        tracker.trackWorkoutFinished(workoutId)
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
             val userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID

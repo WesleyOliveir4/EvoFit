@@ -27,10 +27,12 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.workout.resume.components.WorkoutSummaryCard
 import com.example.evofit.presentation.ui.feature.workout.resume.state.ResumeMode
 import com.example.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTracker
 import com.example.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -43,9 +45,16 @@ fun WorkoutResumeScreen(
     onContinueClick: () -> Unit,
     viewModel: WorkoutResumeViewModel = koinViewModel { 
         parametersOf(workoutId, workoutDoneId, editWorkoutId, workoutNotFinishedId) 
-    }
+    },
+    tracker: WorkoutResumeTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(uiState.workoutName) {
+        if (uiState.workoutName.isNotEmpty()) {
+            tracker.trackWorkoutResumeScreenView(uiState.workoutName)
+        }
+    }
 
     WorkoutResumeContent(
         uiState = uiState,
