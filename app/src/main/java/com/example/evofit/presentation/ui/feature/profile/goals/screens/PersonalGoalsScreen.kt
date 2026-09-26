@@ -36,6 +36,7 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.commons.goals.screens.GoalWizardScreen
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalCard
 import com.example.evofit.presentation.ui.feature.profile.goals.components.GoalFilterRow
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTracker
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.GoalUiModel
 import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
@@ -43,14 +44,20 @@ import com.example.evofit.presentation.ui.theme.AppGreen
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun PersonalGoalsScreen(
     viewModel: PersonalGoalsViewModel = koinViewModel(),
+    tracker: PersonalGoalsTracker = koinInject(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddGoalDialog by remember { mutableStateOf(false) }
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackPersonalGoalsScreenView()
+    }
 
     PersonalGoalsContent(
         goals = uiState.goals,

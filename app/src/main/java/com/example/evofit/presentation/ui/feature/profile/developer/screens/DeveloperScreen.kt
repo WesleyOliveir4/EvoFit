@@ -18,19 +18,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTracker
 import com.example.evofit.presentation.ui.feature.profile.developer.viewmodel.DeveloperViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun DeveloperScreen(
     viewModel: DeveloperViewModel = koinViewModel(),
+    tracker: DeveloperTracker = koinInject(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = androidx.compose.runtime.remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        tracker.trackDeveloperScreenView()
+    }
 
     LaunchedEffect(uiState.generationSuccess) {
         if (uiState.generationSuccess) {

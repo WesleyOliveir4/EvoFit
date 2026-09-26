@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
 import com.example.evofit.presentation.ui.feature.profile.support.utils.EmailTopic
 import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
@@ -64,14 +65,20 @@ import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SupportEmailScreen(
     viewModel: SupportEmailViewModel = koinViewModel(),
+    tracker: SupportTracker = koinInject(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        tracker.trackSupportEmailScreenView()
+    }
     
     var selectedTopic by remember { mutableStateOf<EmailTopic?>(null) }
     var message by remember { mutableStateOf("") }

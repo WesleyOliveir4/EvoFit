@@ -37,16 +37,22 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.support.utils.FAQContext
 import com.example.evofit.presentation.ui.feature.profile.support.utils.FAQItemData
 import com.example.evofit.presentation.ui.feature.profile.support.components.FAQItem
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
+import org.koin.compose.koinInject
 
 @Composable
 fun FAQScreen(
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    tracker: SupportTracker = koinInject()
 ) {
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackFAQScreenView()
+    }
     val faqItems = FAQContext.getFAQItems()
     var searchQuery by remember { mutableStateOf("") }
 

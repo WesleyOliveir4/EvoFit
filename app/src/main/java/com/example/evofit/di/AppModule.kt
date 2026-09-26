@@ -17,6 +17,20 @@ import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnal
 import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
 import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
 import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTracker
+import com.example.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTracker
+import com.example.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTracker
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTracker
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -252,6 +266,7 @@ val splashModule = module {
 }
 
 val onboardingModule = module {
+    single<OnboardingTracker> { OnboardingTrackerImpl(get()) }
     viewModel {
         OnboardingViewModel(
             get(),
@@ -260,6 +275,7 @@ val onboardingModule = module {
             get(),
             get(),
             androidContext(),
+            get(),
             get()
         )
     }
@@ -367,11 +383,18 @@ val evoModule = module {
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get(), get()) }
-    viewModel { SupportEmailViewModel(get()) }
-    viewModel { DeveloperViewModel(get()) }
-    viewModel { UserDataViewModel(get(), get(), get()) }
-    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
+    single<ProfileHomeTracker> { ProfileHomeTrackerImpl(get()) }
+    single<AboutAppTracker> { AboutAppTrackerImpl(get()) }
+    single<DeveloperTracker> { DeveloperTrackerImpl(get()) }
+    single<PersonalGoalsTracker> { PersonalGoalsTrackerImpl(get()) }
+    single<SupportTracker> { SupportTrackerImpl(get()) }
+    single<UserDataTracker> { UserDataTrackerImpl(get()) }
+
+    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
+    viewModel { SupportEmailViewModel(get(), get()) }
+    viewModel { DeveloperViewModel(get(), get()) }
+    viewModel { UserDataViewModel(get(), get(), get(), get()) }
+    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {

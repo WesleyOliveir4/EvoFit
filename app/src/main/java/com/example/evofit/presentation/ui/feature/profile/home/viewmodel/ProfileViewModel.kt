@@ -9,6 +9,7 @@ import com.example.evofit.domain.usecase.SaveOnboardingDataUseCase
 import com.example.evofit.domain.usecase.GenerateFakeWorkoutHistoryUseCase
 import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.presentation.ui.feature.profile.home.state.ProfileUiState
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTracker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ class ProfileViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val nukeUserDataUseCase: NukeUserDataUseCase,
-    private val saveOnboardingDataUseCase: SaveOnboardingDataUseCase
+    private val saveOnboardingDataUseCase: SaveOnboardingDataUseCase,
+    private val tracker: ProfileHomeTracker
 ) : ViewModel() {
 
     private val _isLoggedOut = MutableStateFlow(false)
@@ -51,6 +53,7 @@ class ProfileViewModel(
     }
 
     fun updateProfilePicture(uri: String) {
+        tracker.trackProfilePictureUpdated()
         viewModelScope.launch {
             val currentData = getOnboardingDataUseCase().first()
             val updatedData = currentData.copy(profilePictureUri = uri)
@@ -59,6 +62,7 @@ class ProfileViewModel(
     }
 
     fun logout() {
+        tracker.trackLogoutClicked()
         viewModelScope.launch {
             logoutUseCase().onSuccess {
                 nukeUserDataUseCase()

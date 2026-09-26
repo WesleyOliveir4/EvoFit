@@ -22,10 +22,12 @@ import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.onboard.components.EvoWheelPicker
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun OnboardHeightScreen(
@@ -33,9 +35,14 @@ fun OnboardHeightScreen(
     totalPages: Int,
     onContinue: () -> Unit,
     onBack: () -> Unit,
-    viewModel: OnboardingViewModel = koinViewModel()
+    viewModel: OnboardingViewModel = koinViewModel(),
+    tracker: OnboardingTracker = koinInject()
 ) {
     val userData by viewModel.uiState.collectAsStateWithLifecycle()
+    
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackOnboardingHeightScreenView()
+    }
     
     val heightRange = remember { (100..250).toList() }
     val initialHeight = remember(userData.height) {

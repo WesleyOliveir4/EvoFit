@@ -38,10 +38,12 @@ import com.example.evofit.presentation.ui.feature.onboard.components.ActiveGoalI
 import com.example.evofit.presentation.ui.feature.onboard.components.AddNewGoalButton
 import com.example.evofit.presentation.ui.feature.onboard.components.GoalTag
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun OnboardingGoalsScreen(
@@ -50,9 +52,14 @@ fun OnboardingGoalsScreen(
     onContinue: () -> Unit,
     onSkip: () -> Unit,
     onBack: () -> Unit,
-    viewModel: OnboardingViewModel = koinViewModel()
+    viewModel: OnboardingViewModel = koinViewModel(),
+    tracker: OnboardingTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackOnboardingGoalsScreenView()
+    }
 
     OnboardingGoalsContent(
         activeGoals = uiState.goals,
