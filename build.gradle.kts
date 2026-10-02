@@ -6,3 +6,9 @@ plugins {
     alias(libs.plugins.google.gms.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
 }
+
+tasks.register("testUnit") {
+    group = "verification"
+    description = "Roda todos os testes unitários do projeto"
+    dependsOn(":app:testUnit")
+}

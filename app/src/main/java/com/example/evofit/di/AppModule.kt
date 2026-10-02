@@ -130,7 +130,6 @@ import com.example.evofit.domain.usecase.UpdateWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCaseImpl
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
-import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
@@ -294,12 +293,6 @@ val onboardingModule = module {
 
 val homeModule = module {
     single<EvoHomeTracker> { EvoHomeTrackerImpl(get()) }
-    viewModel {
-        HomeViewModel(
-            get(),
-            androidContext()
-        )
-    }
     viewModel {
         EvoHomeViewModel(
             get(),

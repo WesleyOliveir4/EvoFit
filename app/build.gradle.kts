@@ -132,3 +132,9 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 }
+
+tasks.register("testUnit") {
+    group = "verification"
+    description = "Roda todos os testes unitários do aplicativo (Staging e Production Debug)"
+    dependsOn("testStagingDebugUnitTest", "testProductionDebugUnitTest")
+}
