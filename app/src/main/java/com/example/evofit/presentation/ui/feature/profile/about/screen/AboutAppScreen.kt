@@ -114,7 +114,7 @@ fun AboutAppContent(
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_logo_evofit),
+                        painter = painterResource(id = R.drawable.ic_evofit_new),
                         contentDescription = null,
                         modifier = Modifier.size(Dimens.OnboardingLogoSize)
                     )

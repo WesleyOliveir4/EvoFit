@@ -37,7 +37,7 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_logo_evofit),
+            painter = painterResource(id = R.drawable.ic_evofit_new),
             contentDescription = stringResource(id = R.string.pre_login_content_desc_logo),
             modifier = Modifier.size(Dimens.AuthLogoSizeOnboarding)
         )
