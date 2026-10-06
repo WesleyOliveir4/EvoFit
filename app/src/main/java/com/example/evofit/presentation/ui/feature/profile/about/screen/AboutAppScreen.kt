@@ -127,7 +127,7 @@ fun AboutAppContent(
                     
                     Text(
                         text = stringResource(id = R.string.about_slogan),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodyLarge
                     )
                     
@@ -135,7 +135,7 @@ fun AboutAppContent(
                     
                     Text(
                         text = stringResource(id = R.string.about_description),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = Dimens.SpacingMedium)

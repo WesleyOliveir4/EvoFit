@@ -119,6 +119,7 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
                     
                     when (exercise.unit) {
                         MeasurementUnit.DISTANCE -> {
+                            val distanceValue = valueForSeries.toInt().toDouble().coerceAtLeast(1.0)
                             ExerciseSet(
                                 id = exercise.id,
                                 exerciseName = exercise.name,
@@ -127,8 +128,8 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
                                 reps = 0,
                                 load = 0.0,
                                 unit = exercise.unit,
-                                distance = valueForSeries,
-                                time = (valueForSeries * (8 + Random().nextInt(4))).toInt() // 8-12 min por km
+                                distance = distanceValue,
+                                time = (distanceValue * (8 + Random().nextInt(4))).toInt() // 8-12 min por km
                             )
                         }
                         MeasurementUnit.TIME -> {
@@ -151,7 +152,7 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
                                 workoutExerciseId = exerciseUuid,
                                 setNumber = setIndex + 1,
                                 reps = 10 + Random().nextInt(5),
-                                load = valueForSeries,
+                                load = valueForSeries.toInt().toDouble().coerceAtLeast(1.0),
                                 unit = exercise.unit,
                                 time = null,
                                 distance = null

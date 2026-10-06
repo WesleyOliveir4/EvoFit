@@ -334,7 +334,7 @@ fun GoalFilterRow(
                 ) {
                     Text(
                         text = filter,
-                        color = if (isSelected) Color.Black else TextSecondary,
+                        color = if (isSelected) Color.Black else MaterialTheme.colorScheme.secondary,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         fontSize = 14.sp
                     )
