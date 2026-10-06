@@ -236,7 +236,7 @@ fun SupportEmailContent(
                         },
                         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                         colors = OutlinedTextFieldDefaults.colors(
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                             disabledBorderColor = Color.Transparent,
                             disabledPlaceholderColor = TextSecondary,
                             disabledTextColor = TextPrimary
@@ -287,8 +287,8 @@ fun SupportEmailContent(
                     placeholder = { Text(stringResource(id = R.string.support_email_placeholder_message)) },
                     shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedBorderColor = Color.Transparent,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         cursorColor = MaterialTheme.colorScheme.primary

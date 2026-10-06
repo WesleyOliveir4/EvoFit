@@ -90,7 +90,7 @@ fun OnboardingGoalsContent(
                 selectedSuggestion = null
             },
             properties = androidx.compose.ui.window.DialogProperties(
-                usePlatformDefaultWidth = false // Permite que a tela ocupe o espaço total como o Scaffold original deseja
+                usePlatformDefaultWidth = false
             )
         ) {
             GoalWizardScreen(

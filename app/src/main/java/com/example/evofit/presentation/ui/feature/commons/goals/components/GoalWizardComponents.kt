@@ -24,12 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.evofit.R
 import com.example.evofit.domain.model.*
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalAction
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardStep
 import com.example.evofit.presentation.ui.theme.Dimens
+import com.example.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
@@ -42,7 +43,7 @@ fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
             Text(
                 text = stringResource(R.string.onboarding_back),
                 modifier = Modifier.clickable { onBack() },
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
             )
         } else {
@@ -73,7 +74,7 @@ fun WizardProgress(currentStep: GoalWizardStep) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val steps = GoalWizardStep.entries
-        steps.forEachIndexed { index, step ->
+        steps.forEachIndexed { index, _ ->
             val isCompleted = index < currentStep.ordinal
             val isCurrent = index == currentStep.ordinal
 
@@ -135,8 +136,8 @@ fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
                 },
                 modifier = Modifier.fillMaxWidth().height(Dimens.ButtonHeightPrimary),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
             ) {
@@ -163,8 +164,8 @@ fun MuscleGroupStep(muscleGroups: List<MuscleGroup>, onAction: (GoalAction) -> U
                     onClick = { onAction(GoalAction.SelectMuscle(group)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
-                    color = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ) {
                     Text(
                         text = group.name,
@@ -215,8 +216,8 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
                     onClick = { onAction(GoalAction.SelectExercise(exercise)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
-                    color = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ) {
                     Text(
                         text = exercise.name,
@@ -308,6 +309,113 @@ fun GoalValueStep(
             Icon(Icons.Default.Check, contentDescription = null)
             Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
             Text(stringResource(R.string.onboarding_button_continue), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+        }
+    }
+}
+
+// ============================================================================
+// PREVIEWS
+// ============================================================================
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WizardTopBarPreview() {
+    EvoFitTheme {
+        WizardTopBar(
+            onBack = {},
+            onClose = {},
+            showBack = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun WizardProgressPreview() {
+    EvoFitTheme {
+        Column(
+            modifier = Modifier.padding(Dimens.SpacingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
+        ) {
+            WizardProgress(currentStep = GoalWizardStep.GOAL_TYPE)
+            WizardProgress(currentStep = GoalWizardStep.MUSCLE_GROUP)
+            WizardProgress(currentStep = GoalWizardStep.EXERCISE)
+            WizardProgress(currentStep = GoalWizardStep.GOAL_VALUE)
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun GoalTypeStepPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
+            GoalTypeStep(onAction = {})
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun MuscleGroupStepPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
+            MuscleGroupStep(
+                muscleGroups = listOf(
+                    MuscleGroup(id = "1", name = "Peito"),
+                    MuscleGroup(id = "2", name = "Costas"),
+                    MuscleGroup(id = "3", name = "Pernas"),
+                    MuscleGroup(id = "4", name = "Ombros")
+                ),
+                onAction = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun ExerciseStepPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
+            ExerciseStep(
+                exercises = listOf(
+                    Exercise(id = "1", name = "Supino Reto", muscleGroupId = "1"),
+                    Exercise(id = "2", name = "Supino Inclinado", muscleGroupId = "1"),
+                    Exercise(id = "3", name = "Crucifixo", muscleGroupId = "1")
+                ),
+                search = "",
+                onAction = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun GoalValueStepPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
+            GoalValueStep(
+                selectedExercise = Exercise(id = "1", name = "Supino Reto", muscleGroupId = "1", unit = MeasurementUnit.WEIGHT),
+                value = "80",
+                onAction = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun GoalValueCardioStepPreview() {
+    EvoFitTheme {
+        Box(modifier = Modifier.padding(Dimens.SpacingMedium)) {
+            GoalValueStep(
+                selectedExercise = Exercise(id = "2", name = "Corrida na Esteira", muscleGroupId = "2", unit = MeasurementUnit.DISTANCE),
+                value = "5",
+                timeValue = "30",
+                onAction = {}
+            )
         }
     }
 }

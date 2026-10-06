@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -121,7 +120,7 @@ fun MuscleGroupCard(
                     .size(Dimens.IconSizeDefault)
                     .background(
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                        shape = CircleShape
+                        shape = RoundedCornerShape(Dimens.SpacingExtraSmall)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -141,7 +140,7 @@ fun MuscleGroupCard(
                     Box(
                         modifier = Modifier
                             .size(Dimens.IconSizeSmall)
-                            .background(MaterialTheme.colorScheme.surface, CircleShape)
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.SpacingExtraExtraSmall))
                     )
                 }
             }
@@ -220,7 +219,7 @@ fun ExerciseRowItem(
                     .size(Dimens.IconSizeDefault)
                     .background(
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                        shape = CircleShape
+                        shape = RoundedCornerShape(Dimens.SpacingExtraSmall)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -240,7 +239,7 @@ fun ExerciseRowItem(
                     Box(
                         modifier = Modifier
                             .size(Dimens.IconSizeSmall)
-                            .background(MaterialTheme.colorScheme.surface, CircleShape)
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.SpacingExtraExtraSmall))
                     )
                 }
             }

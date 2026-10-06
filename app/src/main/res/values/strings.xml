@@ -341,7 +341,7 @@
 
     <!-- Recover Password (insert email) Screen -->
     <string name="recover_password_title">Recuperar senha</string>
-    <string name="recover_password_subtitle">Digite seu e-mail para receber\no link de recuperação.</string>
+    <string name="recover_password_subtitle">Digite seu e-mail para receber o link de recuperação.</string>
     <string name="recover_password_button_send">Enviar link</string>
     <string name="recover_password_back_desc">Voltar</string>
     <string name="recover_password_error_invalid_email">Informe um e-mail válido.</string>
