@@ -50,7 +50,7 @@ fun SplashContent() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_evofit_new_splash),
+            painter = painterResource(id = R.drawable.ic_splash_logo),
             contentDescription = "Logo EvoFit",
             modifier = Modifier.size(318.dp)
         )

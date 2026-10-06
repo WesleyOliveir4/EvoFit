@@ -44,7 +44,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_evofit_new),
+                    painter = painterResource(id = R.drawable.ic_logo_evofit),
                     contentDescription = null,
                     tint = Color.Unspecified,
                     modifier = Modifier.size(Dimens.IconSizeDefault)

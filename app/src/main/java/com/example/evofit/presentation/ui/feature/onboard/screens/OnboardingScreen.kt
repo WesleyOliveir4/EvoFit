@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -113,10 +112,10 @@ fun OnboardingPageContent(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_evofit_new),
+                painter = painterResource(id = R.drawable.ic_logo_evofit),
                 contentDescription = null,
                 modifier = Modifier.size(Dimens.OnboardingIconSize),
-                tint = Color.Unspecified
+                tint = MaterialTheme.colorScheme.primary
             )
         }
 
