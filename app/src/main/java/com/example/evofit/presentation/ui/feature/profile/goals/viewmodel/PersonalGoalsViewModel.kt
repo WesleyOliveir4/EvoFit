@@ -9,6 +9,7 @@ import com.example.evofit.domain.usecase.GetUserIdUseCase
 import com.example.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.example.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.example.evofit.presentation.mapper.toImageRes
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTracker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +43,8 @@ class PersonalGoalsViewModel(
     private val calculateGoalProgressUseCase: CalculateGoalProgressUseCase,
     private val onboardingRepository: com.example.evofit.domain.repository.OnboardingRepository,
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
-    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase
+    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
+    private val tracker: PersonalGoalsTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PersonalGoalsUiState())
@@ -135,6 +137,7 @@ class PersonalGoalsViewModel(
     }
 
     fun addGoal(goal: UserGoal) {
+        tracker.trackGoalAdded(goal.javaClass.simpleName)
         viewModelScope.launch {
             val userId = getUserIdUseCase().firstOrNull() ?: return@launch
             val currentData = onboardingRepository.getUserData().firstOrNull()
@@ -147,6 +150,7 @@ class PersonalGoalsViewModel(
     }
 
     fun deleteGoal(goalId: String) {
+        tracker.trackGoalDeleted(goalId)
         viewModelScope.launch {
             onboardingRepository.deleteGoal(goalId)
         }

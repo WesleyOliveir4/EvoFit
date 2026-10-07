@@ -39,19 +39,26 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.EvoDatePickerDialog
 import com.example.evofit.presentation.ui.feature.profile.userdata.components.EvoWeightPickerDialog
 import com.example.evofit.presentation.ui.feature.profile.userdata.components.UserDataItem
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.AppGreen
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun UserDataScreen(
     viewModel: UserDataViewModel = koinViewModel(),
+    tracker: UserDataTracker = koinInject(),
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackUserDataScreenView()
+    }
 
     UserDataScreenContent(
         nameValue = uiState.name,

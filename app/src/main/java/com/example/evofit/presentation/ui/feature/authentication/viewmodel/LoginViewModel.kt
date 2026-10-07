@@ -11,6 +11,7 @@ import com.example.evofit.domain.usecase.NukeUserDataUseCase
 import com.example.evofit.domain.usecase.SyncUserDataUseCase
 import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.LoginUiState
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +25,8 @@ class LoginViewModel(
     private val authRepository: AuthRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
     private val nukeUserDataUseCase: NukeUserDataUseCase,
-    private val errorMapper: AuthErrorMapper
+    private val errorMapper: AuthErrorMapper,
+    private val authTracker: AuthTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -56,12 +58,17 @@ class LoginViewModel(
         val currentState = _uiState.value
         if (currentState.isLoading) return
 
+        authTracker.trackLoginClicked("email")
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
             loginUseCase(currentState.email, currentState.password)
-                .onSuccess { handleLoginSuccess() }
+                .onSuccess {
+                    authTracker.trackLoginSuccess("email")
+                    handleLoginSuccess()
+                }
                 .onFailure { error ->
+                    authTracker.trackLoginFailure("email", error.message)
                     _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
@@ -69,12 +76,18 @@ class LoginViewModel(
 
     fun onGoogleLoginClick(idToken: String) {
         if (_uiState.value.isLoading) return
+
+        authTracker.trackLoginClicked("google")
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
             loginWithGoogleUseCase(idToken)
-                .onSuccess { handleLoginSuccess() }
+                .onSuccess {
+                    authTracker.trackLoginSuccess("google")
+                    handleLoginSuccess()
+                }
                 .onFailure { error ->
+                    authTracker.trackLoginFailure("google", error.message)
                     _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }
@@ -82,12 +95,18 @@ class LoginViewModel(
 
     fun onAppleLoginClick() {
         if (_uiState.value.isLoading) return
+
+        authTracker.trackLoginClicked("apple")
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
             loginWithAppleUseCase()
-                .onSuccess { handleLoginSuccess() }
+                .onSuccess {
+                    authTracker.trackLoginSuccess("apple")
+                    handleLoginSuccess()
+                }
                 .onFailure { error ->
+                    authTracker.trackLoginFailure("apple", error.message)
                     _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
                 }
         }

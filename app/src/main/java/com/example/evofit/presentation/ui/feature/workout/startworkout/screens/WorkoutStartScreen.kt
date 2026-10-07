@@ -62,21 +62,28 @@ import com.example.evofit.presentation.ui.feature.workout.startworkout.session.E
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
 import com.example.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun WorkoutStartScreen(
     workoutId: String,
     viewModel: WorkoutStartViewModel = koinViewModel(parameters = { parametersOf(workoutId) }),
+    tracker: StartWorkoutTracker = koinInject(),
     onFinishWorkoutClick: (String?) -> Unit = {},
     onCancelWorkoutClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showImageForExerciseId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(workoutId) {
+        tracker.trackWorkoutStartScreenView(workoutId)
+    }
 
     BackHandler { 
         if (showImageForExerciseId != null) {

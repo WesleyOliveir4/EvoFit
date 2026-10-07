@@ -7,6 +7,7 @@ import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
 import com.example.evofit.domain.usecase.GetWorkoutByIdUseCase
 import com.example.evofit.presentation.mapper.toItem
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.NewWorkoutUiState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 class NewWorkoutViewModel(
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
+    private val tracker: CreateWorkoutTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewWorkoutUiState())

@@ -1,6 +1,6 @@
 package com.example.evofit.data.datasource
 
-import android.util.Log
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.data.local.entities.UserEntity
 import com.example.evofit.data.local.entities.UserGoalEntity
 import com.example.evofit.data.local.entities.WeightUpdateEntity
@@ -22,7 +22,8 @@ interface UserRemoteDataSource {
 }
 
 class UserRemoteDataSourceImpl(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val crashReporter: CrashReporter
 ) : UserRemoteDataSource {
 
     companion object {
@@ -123,6 +124,7 @@ class UserRemoteDataSourceImpl(
                 null
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             null
         }
     }
@@ -158,6 +160,7 @@ class UserRemoteDataSourceImpl(
                 goal.apply { this.updatedAt = updatedAt }
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             emptyList()
         }
     }
@@ -215,6 +218,7 @@ class UserRemoteDataSourceImpl(
                 weightUpdate.apply { this.timestamp = timestamp }
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             emptyList()
         }
     }

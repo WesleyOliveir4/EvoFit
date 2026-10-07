@@ -8,6 +8,7 @@ import com.example.evofit.domain.usecase.RegisterUseCase
 import com.example.evofit.domain.usecase.SyncUserDataUseCase
 import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,7 +19,8 @@ class RegisterViewModel(
     private val authRepository: AuthRepository,
     private val syncUserDataUseCase: SyncUserDataUseCase,
     private val nukeUserDataUseCase: NukeUserDataUseCase,
-    private val errorMapper: AuthErrorMapper
+    private val errorMapper: AuthErrorMapper,
+    private val authTracker: AuthTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
@@ -52,6 +54,7 @@ class RegisterViewModel(
         val currentState = _uiState.value
         if (currentState.isLoading) return
 
+        authTracker.trackRegisterClicked()
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
@@ -59,6 +62,7 @@ class RegisterViewModel(
                 email = currentState.email,
                 password = currentState.password
             ).onSuccess {
+                authTracker.trackRegisterSuccess()
                 val userId = authRepository.getCurrentUserId()
                 if (userId != null) {
                     nukeUserDataUseCase()
@@ -67,6 +71,7 @@ class RegisterViewModel(
                 }
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
             }.onFailure { error ->
+                authTracker.trackRegisterFailure(error.message)
                 _uiState.update { it.copy(isLoading = false, error = errorMapper.map(error)) }
             }
         }

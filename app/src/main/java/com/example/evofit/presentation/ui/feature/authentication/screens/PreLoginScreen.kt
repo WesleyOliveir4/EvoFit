@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -13,10 +14,12 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.authentication.components.PreLoginFooter
 import com.example.evofit.presentation.ui.feature.authentication.components.PreLoginHeader
 import com.example.evofit.presentation.ui.feature.authentication.components.PreLoginPageIndicator
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 /**
  * First screen of the authentication flow (mock screen 1 - "Bem-vindo(a)").
@@ -25,8 +28,13 @@ import com.example.evofit.presentation.ui.theme.EvoFitTheme
  */
 @Composable
 fun PreLoginScreen(
+    authTracker: AuthTracker = koinInject(),
     onStartClick: () -> Unit = {}
 ) {
+    LaunchedEffect(Unit) {
+        authTracker.trackPreLoginScreenView()
+    }
+
     PreLoginContent(onStartClick = onStartClick)
 }
 

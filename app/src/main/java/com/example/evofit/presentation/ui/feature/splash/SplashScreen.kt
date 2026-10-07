@@ -15,15 +15,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evofit.R
+import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTracker
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SplashScreen(
     onNavigate: (String) -> Unit,
-    viewModel: SplashViewModel = koinViewModel()
+    viewModel: SplashViewModel = koinViewModel(),
+    tracker: SplashTracker = koinInject()
 ) {
     val startDestination by viewModel.startDestination.collectAsState()
+
+    LaunchedEffect(Unit) {
+        tracker.trackSplashScreenView()
+    }
 
     LaunchedEffect(startDestination) {
         startDestination?.let { destination ->

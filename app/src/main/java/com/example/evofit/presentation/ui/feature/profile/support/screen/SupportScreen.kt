@@ -26,18 +26,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.profile.support.components.SupportItem
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
 import com.example.evofit.navigation.NavRoutes
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
 import com.example.evofit.presentation.ui.theme.TextSecondary
+import org.koin.compose.koinInject
 
 @Composable
 fun SupportScreen(
     onNavigate: (String) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    tracker: SupportTracker = koinInject()
 ) {
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        tracker.trackSupportScreenView()
+    }
     SupportContent(
         onBackClick = onBackClick,
         onEmailClick = { onNavigate(NavRoutes.SupportEmail.route) },

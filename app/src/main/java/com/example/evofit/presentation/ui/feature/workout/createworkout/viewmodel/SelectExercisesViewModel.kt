@@ -12,13 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import kotlinx.coroutines.launch
 
 class SelectExercisesViewModel(
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
     private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
     private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase,
-    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase
+    private val getExercisesByIdsUseCase: GetExercisesByIdsUseCase,
+    private val tracker: CreateWorkoutTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SelectExercisesUiState())
@@ -114,8 +116,10 @@ class SelectExercisesViewModel(
             val currentSelected = state.allSelectedExerciseIds[currentGroupId] ?: emptySet()
             
             val newSelected = if (currentSelected.contains(exerciseId)) {
+                tracker.trackExerciseRemovedFromWorkout(exerciseId)
                 currentSelected - exerciseId
             } else {
+                tracker.trackExerciseAddedToWorkout(exerciseId)
                 currentSelected + exerciseId
             }
             

@@ -1,15 +1,22 @@
 package com.example.evofit.domain.usecase
 
-import com.example.evofit.domain.model.*
+import com.example.evofit.domain.model.EvoPeriod
+import com.example.evofit.domain.model.ExerciseCategory
+import com.example.evofit.domain.model.ExerciseSet
+import com.example.evofit.domain.model.MuscleGroup
+import com.example.evofit.domain.model.MuscleGroupType
+import com.example.evofit.domain.model.WorkoutDone
+import com.example.evofit.domain.model.WorkoutExercise
+import com.example.evofit.domain.model.WorkoutGroup
 import com.example.evofit.domain.repository.WorkoutRepository
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.text.SimpleDateFormat
-import java.util.*
 
 class GetEvoHomeSummaryUseCaseTest {
 
@@ -38,13 +45,13 @@ class GetEvoHomeSummaryUseCaseTest {
         // Exercise 1: 11 records, 3rd lowest=30, 3rd highest=90, gain=60, evolution=(90-30)/30=200%
         val loads1 = listOf(10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0)
         val history = loads1.mapIndexed { index, load ->
-            createWorkoutDone(userId, index.toLong(), "Supino", "ex1", load, muscleGroup)
+            createWorkoutDone(userId, index.toString(), "Supino", "ex1", load, muscleGroup)
         }
 
-        coEvery { repository.getWorkoutDoneHistory(userId) } returns history
+        every { repository.getWorkoutDoneHistory(userId, 500) } returns flowOf(history)
 
         // Act
-        val result = useCase(userId, period)
+        val result = useCase(userId, period).first()
 
         // Assert
         assertEquals(11, result.workoutsCount)
@@ -63,13 +70,13 @@ class GetEvoHomeSummaryUseCaseTest {
         
         // Only 5 records
         val history = (1..5).map { index ->
-            createWorkoutDone(userId, index.toLong(), "Supino", "ex1", index * 10.0, muscleGroup)
+            createWorkoutDone(userId, index.toString(), "Supino", "ex1", index * 10.0, muscleGroup)
         }
 
-        coEvery { repository.getWorkoutDoneHistory(userId) } returns history
+        every { repository.getWorkoutDoneHistory(userId, 500) } returns flowOf(history)
 
         // Act
-        val result = useCase(userId, period)
+        val result = useCase(userId, period).first()
 
         // Assert
         assertEquals(5, result.workoutsCount)
@@ -79,7 +86,7 @@ class GetEvoHomeSummaryUseCaseTest {
 
     private fun createWorkoutDone(
         userId: String, 
-        id: Long, 
+        id: String, 
         exName: String, 
         exId: String, 
         load: Double,
@@ -89,14 +96,18 @@ class GetEvoHomeSummaryUseCaseTest {
             id = id,
             userId = userId,
             name = "Treino $id",
-            muscleGroupId = muscleGroup.id,
-            muscleGroup = muscleGroup,
             date = "01/01/2024",
-            exercises = listOf(
-                WorkoutExercise(
-                    exerciseId = exId,
-                    sets = listOf(
-                        ExerciseSet(exerciseName = exName, setNumber = 1, reps = 10, load = load)
+            exercisesByGroup = listOf(
+                WorkoutGroup(
+                    muscleGroupId = muscleGroup.id,
+                    muscleGroup = muscleGroup,
+                    exercises = listOf(
+                        WorkoutExercise(
+                            exerciseId = exId,
+                            sets = listOf(
+                                ExerciseSet(exerciseName = exName, setNumber = 1, reps = 10, load = load)
+                            )
+                        )
                     )
                 )
             ),

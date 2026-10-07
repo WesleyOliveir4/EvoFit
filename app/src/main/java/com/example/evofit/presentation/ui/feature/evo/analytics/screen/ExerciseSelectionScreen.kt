@@ -19,18 +19,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun ExerciseSelectionScreen(
     viewModel: EvoAnalyticsViewModel,
+    tracker: EvoAnalyticsTracker = koinInject(),
     onBackClick: () -> Unit = {},
     onExerciseClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.muscleGroupName) {
+        if (uiState.muscleGroupName.isNotEmpty()) {
+            tracker.trackExerciseSelectionScreenView(uiState.muscleGroupName)
+        }
+    }
 
     ExerciseSelectionContent(
         uiState = uiState,

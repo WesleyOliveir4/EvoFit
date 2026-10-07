@@ -43,15 +43,18 @@ import com.example.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.example.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.example.evofit.BuildConfig
 import com.example.evofit.presentation.ui.feature.profile.home.components.*
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTracker
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.io.File
 
 @Composable
 fun ProfileHomeScreen(
     viewModel: ProfileViewModel = koinViewModel(),
+    tracker: ProfileHomeTracker = koinInject(),
     onNavigate: (String) -> Unit = {},
     onUserDataClick: () -> Unit = {},
     onGoalsClick: () -> Unit = {},
@@ -59,6 +62,10 @@ fun ProfileHomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        tracker.trackProfileHomeScreenView()
+    }
     
     var showLogoutDialog by remember { mutableStateOf(false) }
     var isPhotoExpanded by remember { mutableStateOf(false) }

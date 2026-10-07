@@ -39,10 +39,12 @@ import com.example.evofit.presentation.model.MuscleGroupItem
 import com.example.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.workout.components.configure.MuscleGroupCard
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun NewWorkoutScreen(
@@ -50,9 +52,14 @@ fun NewWorkoutScreen(
     onNavigate: (String) -> Unit,
     onSelectExercisesClick: (List<String>, String?) -> Unit,
     editWorkoutId: String? = null,
-    viewModel: NewWorkoutViewModel = koinViewModel()
+    viewModel: NewWorkoutViewModel = koinViewModel(),
+    tracker: CreateWorkoutTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        tracker.trackNewWorkoutScreenView()
+    }
 
     LaunchedEffect(editWorkoutId) {
         viewModel.loadMuscleGroups(editWorkoutId)

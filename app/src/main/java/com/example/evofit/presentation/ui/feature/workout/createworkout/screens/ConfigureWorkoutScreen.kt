@@ -47,12 +47,14 @@ import com.example.evofit.presentation.ui.feature.workout.components.configure.E
 import com.example.evofit.presentation.ui.feature.workout.createworkout.components.ExerciseConfigContent
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.example.evofit.presentation.ui.feature.workout.createworkout.state.SetState
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,10 +65,15 @@ fun ConfigureWorkoutScreen(
     onFinishClick: (String) -> Unit,
     editWorkoutId: String? = null,
     onFinishEditClick: (String) -> Unit = {},
-    viewModel: ConfigureWorkoutViewModel = koinViewModel()
+    viewModel: ConfigureWorkoutViewModel = koinViewModel(),
+    tracker: CreateWorkoutTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        tracker.trackConfigureWorkoutScreenView()
+    }
 
     LaunchedEffect(exerciseIds, editWorkoutId) {
         viewModel.loadExercises(exerciseIds, editWorkoutId)

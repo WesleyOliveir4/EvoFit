@@ -68,8 +68,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.evofit.presentation.mapper.ExerciseMapper
-
-// ... (imports)
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
+import org.koin.compose.koinInject
 
 @Composable
 fun SelectExercisesScreen(
@@ -78,13 +78,18 @@ fun SelectExercisesScreen(
     onNavigate: (String) -> Unit,
     onConfigureExercisesClick: (List<String>, String, String?) -> Unit,
     editWorkoutId: String? = null,
-    viewModel: SelectExercisesViewModel = koinViewModel()
+    viewModel: SelectExercisesViewModel = koinViewModel(),
+    tracker: CreateWorkoutTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentGroupId = uiState.muscleGroupIds.getOrNull(uiState.currentGroupIndex) ?: ""
     val selectedIdsForCurrentGroup = uiState.allSelectedExerciseIds[currentGroupId] ?: emptySet()
     
     var showImageForExerciseId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        tracker.trackSelectExercisesScreenView()
+    }
 
     LaunchedEffect(muscleGroupIds, editWorkoutId) {
         viewModel.loadInitialData(muscleGroupIds, editWorkoutId)

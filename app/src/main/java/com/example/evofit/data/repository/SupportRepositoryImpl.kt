@@ -3,10 +3,12 @@ package com.example.evofit.data.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.domain.repository.SupportRepository
 
 class SupportRepositoryImpl(
-    private val context: Context
+    private val context: Context,
+    private val crashReporter: CrashReporter
 ) : SupportRepository {
     override suspend fun sendSupportEmail(topic: String, message: String): Result<Unit> {
         return try {
@@ -27,6 +29,7 @@ class SupportRepositoryImpl(
                 Result.success(Unit)
             }
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }

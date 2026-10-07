@@ -9,6 +9,38 @@ import com.example.evofit.domain.usecase.*
 import com.example.evofit.presentation.mapper.AuthErrorMapper
 import com.example.evofit.presentation.ui.feature.authentication.apple.AppleSignInHandler
 import com.example.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTrackerImpl
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTrackerImpl
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
+import com.example.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTracker
+import com.example.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTracker
+import com.example.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTracker
+import com.example.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTracker
+import com.example.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
+import com.example.evofit.presentation.ui.feature.profile.support.tracking.SupportTrackerImpl
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
+import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTracker
+import com.example.evofit.presentation.ui.feature.splash.tracking.SplashTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
+import com.example.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTracker
+import com.example.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTracker
+import com.example.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTrackerImpl
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
+import com.example.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTrackerImpl
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.*
 import com.example.evofit.data.datasource.UserRemoteDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSourceImpl
@@ -98,7 +130,6 @@ import com.example.evofit.domain.usecase.UpdateWorkoutUseCaseImpl
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCase
 import com.example.evofit.domain.usecase.UpdateWorkoutsOrderUseCaseImpl
 import com.example.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
-import com.example.evofit.presentation.ui.feature.home.viewmodel.HomeViewModel
 import com.example.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import com.example.evofit.presentation.ui.feature.splash.SplashViewModel
 import com.example.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
@@ -167,17 +198,17 @@ val dataModule = module {
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get(), get()) }
     single { FirebaseFirestore.getInstance() }
-    single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get()) }
-    single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get()) }
+    single<WorkoutRemoteDataSource> { WorkoutRemoteDataSourceImpl(get(), get()) }
+    single<UserRemoteDataSource> { UserRemoteDataSourceImpl(get(), get()) }
     single<WorkoutSessionRepository> { WorkoutSessionRepositoryImpl(get()) }
-    single<SupportRepository> { SupportRepositoryImpl(get()) }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext()) }
-    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get()) }
+    single<SupportRepository> { SupportRepositoryImpl(get(), get()) }
+    single<OnboardingRepository> { OnboardingRepositoryImpl(get(), get(), get(), get(), get(), get(), androidContext(), get()) }
+    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get(), get()) }
     single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
     single { FirebaseAuth.getInstance() }
     single { GoogleSignInHandler(androidContext()) }
     single { AppleSignInHandler(get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
 }
 
 val domainModule = module {
@@ -240,10 +271,12 @@ val domainModule = module {
 }
 
 val splashModule = module {
-    viewModel { SplashViewModel(get(), get(), get()) }
+    single<SplashTracker> { SplashTrackerImpl(get()) }
+    viewModel { SplashViewModel(get(), get(), get(), get()) }
 }
 
 val onboardingModule = module {
+    single<OnboardingTracker> { OnboardingTrackerImpl(get()) }
     viewModel {
         OnboardingViewModel(
             get(),
@@ -252,20 +285,17 @@ val onboardingModule = module {
             get(),
             get(),
             androidContext(),
+            get(),
             get()
         )
     }
 }
 
 val homeModule = module {
-    viewModel {
-        HomeViewModel(
-            get(),
-            androidContext()
-        )
-    }
+    single<EvoHomeTracker> { EvoHomeTrackerImpl(get()) }
     viewModel {
         EvoHomeViewModel(
+            get(),
             get(),
             get()
         )
@@ -273,8 +303,14 @@ val homeModule = module {
 }
 
 val workoutModule = module {
+    single<WorkoutHomeTracker> { WorkoutHomeTrackerImpl(get()) }
+    single<CreateWorkoutTracker> { CreateWorkoutTrackerImpl(get()) }
+    single<WorkoutResumeTracker> { WorkoutResumeTrackerImpl(get()) }
+    single<StartWorkoutTracker> { StartWorkoutTrackerImpl(get()) }
+
     viewModel {
         WorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -292,6 +328,7 @@ val workoutModule = module {
         NewWorkoutViewModel(
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -300,11 +337,13 @@ val workoutModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
     viewModel {
         ConfigureWorkoutViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -320,7 +359,8 @@ val workoutModule = module {
             editWorkoutId = editWorkoutId,
             workoutNotFinishedId = workoutNotFinishedId,
             getWorkoutByIdUseCase = get(),
-            getWorkoutDoneByIdUseCase = get()
+            getWorkoutDoneByIdUseCase = get(),
+            tracker = get()
         )
     }
     viewModel { (workoutId: String) ->
@@ -332,7 +372,8 @@ val workoutModule = module {
             getActiveWorkoutSessionUseCase = get(),
             clearWorkoutSessionUseCase = get(),
             getMuscleGroupsUseCase = get(),
-            updateWorkoutUseCase = get()
+            updateWorkoutUseCase = get(),
+            tracker = get()
         )
     }
     viewModel { (workoutId: String) ->
@@ -346,32 +387,43 @@ val workoutModule = module {
             startWorkoutSessionUseCase = get(),
             updateCompletedSetsUseCase = get(),
             clearWorkoutSessionUseCase = get(),
-            getMuscleGroupsUseCase = get()
+            getMuscleGroupsUseCase = get(),
+            tracker = get()
         )
     }
 }
 
 val evoModule = module {
-    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single<EvoAnalyticsTracker> { EvoAnalyticsTrackerImpl(get()) }
+    viewModel { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val profileModule = module {
-    viewModel { ProfileViewModel(get(), get(), get(), get()) }
-    viewModel { SupportEmailViewModel(get()) }
-    viewModel { DeveloperViewModel(get()) }
-    viewModel { UserDataViewModel(get(), get(), get()) }
-    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get()) }
+    single<ProfileHomeTracker> { ProfileHomeTrackerImpl(get()) }
+    single<AboutAppTracker> { AboutAppTrackerImpl(get()) }
+    single<DeveloperTracker> { DeveloperTrackerImpl(get()) }
+    single<PersonalGoalsTracker> { PersonalGoalsTrackerImpl(get()) }
+    single<SupportTracker> { SupportTrackerImpl(get()) }
+    single<UserDataTracker> { UserDataTrackerImpl(get()) }
+
+    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
+    viewModel { SupportEmailViewModel(get(), get()) }
+    viewModel { DeveloperViewModel(get(), get()) }
+    viewModel { UserDataViewModel(get(), get(), get(), get()) }
+    viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val authModule = module {
     single<AuthErrorMapper> { AuthErrorMapper(androidContext()) }
-    viewModel { RegisterViewModel(get(), get(), get(), get(), get()) }
-    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { RecoverPasswordViewModel(get(), get()) }
+    single<AuthTracker> { AuthTrackerImpl(get()) }
+    viewModel { RegisterViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { RecoverPasswordViewModel(get(), get(), get()) }
 }
 
 val goalModule = module {
-    viewModel { GoalWizardViewModel(get(), get()) }
+    single<GoalWizardTracker> { GoalWizardTrackerImpl(get()) }
+    viewModel { GoalWizardViewModel(get(), get(), get()) }
 }
 
 val appModule = listOf(

@@ -8,6 +8,7 @@ import com.example.evofit.domain.usecase.AddWeightUpdateUseCase
 import com.example.evofit.domain.usecase.CompleteOnboardingUseCase
 import com.example.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.example.evofit.presentation.ui.feature.profile.userdata.state.UserDataUiState
+import com.example.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 class UserDataViewModel(
     private val getOnboardingDataUseCase: GetOnboardingDataUseCase,
     private val completeOnboardingUseCase: CompleteOnboardingUseCase,
-    private val addWeightUpdateUseCase: AddWeightUpdateUseCase
+    private val addWeightUpdateUseCase: AddWeightUpdateUseCase,
+    private val tracker: UserDataTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserDataUiState())
@@ -55,6 +57,9 @@ class UserDataViewModel(
     ) {
         Log.d("UserDataVM", "updateUserData: birthDate=$birthDate")
         
+        val weightChanged = weight != currentData.weight && weight.isNotBlank()
+        tracker.trackUserDataUpdated(weightChanged)
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             

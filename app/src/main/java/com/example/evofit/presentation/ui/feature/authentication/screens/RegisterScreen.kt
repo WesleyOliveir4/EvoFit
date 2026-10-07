@@ -27,16 +27,19 @@ import com.example.evofit.presentation.ui.feature.authentication.components.Regi
 import com.example.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.example.evofit.presentation.ui.feature.authentication.components.TermsCheckboxRow
 import com.example.evofit.presentation.ui.feature.authentication.state.RegisterUiState
+import com.example.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.example.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = koinViewModel(),
+    authTracker: AuthTracker = koinInject(),
     onBackClick: () -> Unit = {},
     onRegisterSuccess: () -> Unit = {},
     onTermsOfUseClick: () -> Unit = {},
@@ -51,6 +54,10 @@ fun RegisterScreen(
         !passwordsMismatch &&
         uiState.termsAccepted &&
         !uiState.isLoading
+
+    LaunchedEffect(Unit) {
+        authTracker.trackRegisterScreenView()
+    }
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -75,8 +82,14 @@ fun RegisterScreen(
         onToggleConfirmPasswordVisibility = viewModel::onToggleConfirmPasswordVisibility,
         passwordsMismatch = passwordsMismatch,
         onTermsAcceptedChange = viewModel::onTermsAcceptedChange,
-        onTermsOfUseClick = onTermsOfUseClick,
-        onPrivacyPolicyClick = onPrivacyPolicyClick,
+        onTermsOfUseClick = {
+            authTracker.trackTermsClicked()
+            onTermsOfUseClick()
+        },
+        onPrivacyPolicyClick = {
+            authTracker.trackTermsClicked()
+            onPrivacyPolicyClick()
+        },
         canSubmit = canSubmit,
         onRegisterClick = viewModel::onRegisterClick,
         onLoginClick = onBackClick

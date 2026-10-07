@@ -1,6 +1,7 @@
 package com.example.evofit
 
 import android.app.Application
+import com.example.evofit.core.monitoring.di.monitoringModule
 import com.example.evofit.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -13,7 +14,7 @@ class EvoFitApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@EvoFitApplication)
-            modules(appModule)
+            modules(appModule + monitoringModule)
         }
     }
 }

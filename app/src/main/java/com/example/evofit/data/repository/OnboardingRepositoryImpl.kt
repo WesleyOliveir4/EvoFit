@@ -1,6 +1,7 @@
 package com.example.evofit.data.repository
 
 import android.content.Context
+import com.example.evofit.core.monitoring.CrashReporter
 import com.example.evofit.data.datasource.LocalExerciseDataSource
 import com.example.evofit.data.datasource.UserLocalDataSource
 import com.example.evofit.data.datasource.UserRemoteDataSource
@@ -36,7 +37,8 @@ class OnboardingRepositoryImpl(
     private val workoutRemoteDataSource: WorkoutRemoteDataSource,
     private val exerciseDataSource: LocalExerciseDataSource,
     private val sessionManager: SessionManager,
-    private val context: Context
+    private val context: Context,
+    private val crashReporter: CrashReporter
 ) : OnboardingRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -101,7 +103,7 @@ class OnboardingRepositoryImpl(
             try {
                 pushLocalDataToRemote(userId)
             } catch (e: Exception) {
-                // Background sync failure is handled by next sync cycle
+                crashReporter.recordException(e)
             }
         }
     }
@@ -113,7 +115,7 @@ class OnboardingRepositoryImpl(
                 file.delete()
             }
         } catch (e: Exception) {
-            // Error deleting local file
+            crashReporter.recordException(e)
         }
     }
 
@@ -196,6 +198,7 @@ class OnboardingRepositoryImpl(
 
             Result.success(Unit)
         } catch (e: Exception) {
+            crashReporter.recordException(e)
             Result.failure(e)
         }
     }
@@ -266,7 +269,7 @@ class OnboardingRepositoryImpl(
             }
 
         } catch (e: Exception) {
-            // Error pushing data
+            crashReporter.recordException(e)
         }
     }
 
@@ -280,7 +283,7 @@ class OnboardingRepositoryImpl(
                 profileDir.deleteRecursively()
             }
         } catch (e: Exception) {
-            // Error cleaning profile photos
+            crashReporter.recordException(e)
         }
     }
 

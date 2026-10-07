@@ -10,6 +10,7 @@ import com.example.evofit.domain.model.UserOnboardingData
 import com.example.evofit.domain.usecase.*
 import com.example.evofit.presentation.mapper.toUiModel
 import com.example.evofit.presentation.ui.feature.onboard.state.OnboardingUiState
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -20,7 +21,8 @@ class OnboardingViewModel(
     private val addWeightUpdateUseCase: AddWeightUpdateUseCase,
     private val getGoalSuggestionsUseCase: GetGoalSuggestionsUseCase,
     private val appContext: Context,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val tracker: OnboardingTracker
 ) : ViewModel() {
 
     companion object {
@@ -99,10 +101,12 @@ class OnboardingViewModel(
     }
 
     fun addGoal(goal: UserGoal) {
+        tracker.trackGoalAdded(goal.javaClass.simpleName)
         _userData.update { it.copy(goals = it.goals + goal) }
     }
 
     fun removeGoal(goalId: String) {
+        tracker.trackGoalRemoved(goalId)
         _userData.update { it.copy(goals = it.goals.filter { g -> g.id != goalId }) }
     }
 
@@ -120,6 +124,7 @@ class OnboardingViewModel(
         _isLoading.value = true
         viewModelScope.launch {
             try {
+                tracker.trackOnboardingCompleted(_userData.value.goals.size)
                 completeOnboardingUseCase(_userData.value)
                 if (_userData.value.weight.isNotBlank()) {
                     addWeightUpdateUseCase(_userData.value.weight)

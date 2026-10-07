@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.evofit.domain.model.*
 import com.example.evofit.domain.usecase.GetExercisesByGroupUseCase
 import com.example.evofit.domain.usecase.GetMuscleGroupsUseCase
+import com.example.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,7 +47,8 @@ sealed class GoalAction {
 
 class GoalWizardViewModel(
     private val getMuscleGroupsUseCase: GetMuscleGroupsUseCase,
-    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase
+    private val getExercisesByGroupUseCase: GetExercisesByGroupUseCase,
+    private val tracker: GoalWizardTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GoalWizardUiState())
@@ -63,6 +65,7 @@ class GoalWizardViewModel(
         weightLossLabel: String,
         muscleGainLabel: String
     ) {
+        tracker.trackGoalWizardOpened(hasSuggestion = suggestion != null)
         if (suggestion == null) {
             _uiState.update { 
                 GoalWizardUiState(muscleGroups = getMuscleGroupsUseCase()) 
@@ -111,6 +114,7 @@ class GoalWizardViewModel(
     fun onAction(action: GoalAction) {
         when (action) {
             is GoalAction.SelectCategory -> {
+                tracker.trackCategorySelected(action.category)
                 _uiState.update {
                     it.copy(
                         selectedCategory = action.category,
@@ -119,6 +123,7 @@ class GoalWizardViewModel(
                 }
             }
             is GoalAction.SelectMuscle -> {
+                tracker.trackMuscleGroupSelected(action.muscle.name)
                 val exercises = getExercisesByGroupUseCase(action.muscle.id)
                 _uiState.update {
                     it.copy(
@@ -131,6 +136,7 @@ class GoalWizardViewModel(
                 }
             }
             is GoalAction.SelectExercise -> {
+                tracker.trackExerciseSelected(action.exercise.name)
                 _uiState.update {
                     it.copy(
                         selectedExercise = action.exercise,
@@ -195,6 +201,12 @@ class GoalWizardViewModel(
         }
         
         goal?.let { newGoal ->
+            val goalType = when (newGoal) {
+                is UserGoal.Weight -> "Weight"
+                is UserGoal.Cardio -> "Cardio"
+                is UserGoal.Strength -> "Strength"
+            }
+            tracker.trackGoalConfirmed(goalType)
             _uiState.update { it.copy(confirmedGoal = newGoal) }
         }
     }

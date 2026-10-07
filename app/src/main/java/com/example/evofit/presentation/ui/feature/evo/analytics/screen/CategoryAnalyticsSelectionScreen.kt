@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,18 +29,25 @@ import com.example.evofit.presentation.ui.feature.components.TopBarReturn
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroup
 import com.example.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroupCard
 import com.example.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import com.example.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun CategoryAnalyticsSelectionScreen(
     onBackClick: () -> Unit = {},
     onGroupSelected: (String, String) -> Unit = { _, _ -> },
     onWeightSelected: () -> Unit = {},
-    viewModel: EvoAnalyticsViewModel
+    viewModel: EvoAnalyticsViewModel,
+    tracker: EvoAnalyticsTracker = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        tracker.trackCategoryAnalyticsSelectionScreenView()
+    }
 
     CategoryAnalyticsSelectionContent(
         uiState = uiState,

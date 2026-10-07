@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,15 +19,22 @@ import com.example.evofit.R
 import com.example.evofit.presentation.ui.feature.components.EvoFitButton
 import com.example.evofit.presentation.ui.feature.onboard.components.OnboardingPage
 import com.example.evofit.presentation.ui.feature.onboard.components.PageIndicators
+import com.example.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun OnboardingScreen(
     onFinish: () -> Unit,
     currentPage: Int,
-    totalPages: Int
+    totalPages: Int,
+    tracker: OnboardingTracker = koinInject()
 ) {
+    LaunchedEffect(Unit) {
+        tracker.trackOnboardingWelcomeScreenView()
+    }
+
     val welcomePage =
         OnboardingPage(
             title = stringResource(R.string.onboarding_welcome_title),
