@@ -137,7 +137,7 @@ fun OnboardingPageContent(
 
         Text(
             text = page.description,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )

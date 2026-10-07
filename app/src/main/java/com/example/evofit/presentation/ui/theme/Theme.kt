@@ -43,7 +43,7 @@ private val DarkColorScheme = darkColorScheme(
     primaryContainer = IconContainerBg,
     onPrimaryContainer = AppGreen,
     
-    secondary = TextSecondary,
+    secondary = TextTertiary,
     onSecondary = Color.White,
     secondaryContainer = WelcomeBoxBg,
     onSecondaryContainer = AppGreen,
