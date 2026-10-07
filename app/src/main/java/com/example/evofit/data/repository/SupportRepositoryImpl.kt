@@ -14,7 +14,7 @@ class SupportRepositoryImpl(
         return try {
             val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("campossoftwarefactorybr@gmail.com"))
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("guaracode@gmail.com"))
                 putExtra(Intent.EXTRA_SUBJECT, topic)
                 putExtra(Intent.EXTRA_TEXT, message)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
