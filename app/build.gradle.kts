@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -7,6 +9,25 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+val publishVersionFile = rootProject.file("publish-version.properties")
+val publishVersionProperties = Properties().apply {
+    if (publishVersionFile.exists()) {
+        publishVersionFile.inputStream().use { load(it) }
+    }
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+val pubVersionCode = (publishVersionProperties["versionCode"] as? String)?.toIntOrNull() ?: 1
+val pubVersionName = (publishVersionProperties["versionName"] as? String) ?: "1.0.0"
+val pubAppDescription = (publishVersionProperties["appDescription"] as? String)
+    ?: "EvoFit - Seu aplicativo completo para acompanhamento de treinos e evolução física."
+
 android {
     namespace = "com.example.evofit"
     compileSdk = 36
@@ -15,8 +36,11 @@ android {
         applicationId = "com.example.evofit"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = pubVersionCode
+        versionName = pubVersionName
+
+        resValue("string", "app_description", pubAppDescription)
+        buildConfigField("String", "APP_DESCRIPTION", "\"$pubAppDescription\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,18 +64,30 @@ android {
     }
 
     signingConfigs {
-        create("debugProd") {
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+        create("release") {
+            val storeFilePath = keystoreProperties.getProperty("storeFile")
+            val storePass = keystoreProperties.getProperty("storePassword")
+            val alias = keystoreProperties.getProperty("keyAlias")
+            val keyPass = keystoreProperties.getProperty("keyPassword")
+
+            if (!storeFilePath.isNullOrEmpty() && !storePass.isNullOrEmpty() && !alias.isNullOrEmpty()) {
+                storeFile = file(storeFilePath)
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass.ifEmpty { storePass }
+            } else {
+                storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debugProd")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -137,4 +173,17 @@ tasks.register("testUnit") {
     group = "verification"
     description = "Roda todos os testes unitários do aplicativo (Staging e Production Debug)"
     dependsOn("testStagingDebugUnitTest", "testProductionDebugUnitTest")
+}
+
+tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
+    doLast {
+        val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
+        val defaultBundle = File(bundleDir, "app-production-release.aab")
+        val customBundleName = "evofit-prod-${pubVersionCode}-${pubVersionName}-release.aab"
+        val customBundle = File(bundleDir, customBundleName)
+        if (defaultBundle.exists()) {
+            defaultBundle.copyTo(customBundle, overwrite = true)
+            println("✅ AAB copiado e gerado em: ${customBundle.absolutePath}")
+        }
+    }
 }
