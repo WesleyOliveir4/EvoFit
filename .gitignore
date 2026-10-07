@@ -26,3 +26,13 @@ local.properties
 /.idea/studiobot.xml
 /.idea/vcs.xml
 /.idea/deviceManager.xml
+
+# Signing & Release Output Files
+*.jks
+*.keystore
+keystore.properties
+*.aab
+*.apk
+release/
+**/release/
+
