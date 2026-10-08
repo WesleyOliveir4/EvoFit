@@ -9,6 +9,25 @@
       "client_info": {
         "mobilesdk_app_id": "1:382133495786:android:4ba425d58a1642f429f493",
         "android_client_info": {
+          "package_name": "com.example.evofit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1AK2bNDvGWjYzW6f4Di8Ufng33tr46HM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382133495786:android:dbdd29a6dbf536ee29f493",
+        "android_client_info": {
           "package_name": "com.guaracode.evofit"
         }
       },
