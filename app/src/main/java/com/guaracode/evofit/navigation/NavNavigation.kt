@@ -1,0 +1,599 @@
+package com.guaracode.evofit.navigation
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.guaracode.evofit.core.common.AppConstants
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.screen.CategoryDetailAnalyticsScreen
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.screen.ExerciseSelectionScreen
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.screen.CategoryAnalyticsSelectionScreen
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.guaracode.evofit.presentation.ui.feature.evo.home.screen.EvoHomeScreen
+import com.guaracode.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
+import com.guaracode.evofit.presentation.ui.feature.authentication.screens.*
+import com.guaracode.evofit.presentation.ui.feature.onboard.screens.*
+import com.guaracode.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.home.screens.ProfileHomeScreen
+import com.guaracode.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.developer.screens.DeveloperScreen
+import com.guaracode.evofit.presentation.ui.feature.profile.goals.screens.PersonalGoalsScreen
+import com.guaracode.evofit.presentation.ui.feature.profile.userdata.screens.UserDataScreen
+import com.guaracode.evofit.presentation.ui.feature.profile.support.screen.*
+import com.guaracode.evofit.presentation.ui.feature.profile.about.screen.AboutAppScreen
+import com.guaracode.evofit.presentation.ui.feature.splash.SplashScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.screens.ConfigureWorkoutScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.screens.NewWorkoutScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.screens.SelectExercisesScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.home.screens.WorkoutScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.resume.screens.WorkoutResumeScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutPreviewScreen
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.screens.WorkoutStartScreen
+import org.koin.androidx.compose.koinViewModel
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun NavNavigation() {
+    val navController = rememberNavController()
+    val totalSteps = 6
+
+    NavHost(
+        navController = navController,
+        startDestination = NavRoutes.Splash.route
+    ) {
+        // ... (Splash, Login, Register screens)
+        composable(NavRoutes.Splash.route) {
+            SplashScreen(
+                onNavigate = { destination ->
+                    navController.navigate(destination) {
+                        popUpTo(NavRoutes.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(NavRoutes.PreLogin.route) {
+            PreLoginScreen(
+                onStartClick = {
+                    navController.navigate(NavRoutes.Login.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.Login.route) {
+            LoginScreen(
+                onLoginSuccess = { isOnboardingCompleted ->
+                    val destination = if (isOnboardingCompleted) NavRoutes.Main.route else NavRoutes.Onboarding.route
+                    navController.navigate(destination) {
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onSignUpClick = {
+                    navController.navigate(NavRoutes.Register.route)
+                },
+                onForgotPasswordClick = {
+                    navController.navigate(NavRoutes.RecoverPassword.route)
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.RecoverPassword.route) {
+            RecoverPasswordScreen(
+                onCodeSent = { email ->
+                    navController.navigate(NavRoutes.ForgotPassword.createRoute(email))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.ForgotPassword.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            ForgotPasswordScreen(
+                email = email,
+                onContinueClick = {
+                    navController.navigate(NavRoutes.Login.route) {
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(NavRoutes.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(NavRoutes.Onboarding.route) {
+                        popUpTo(NavRoutes.Register.route) { inclusive = true }
+                        popUpTo(NavRoutes.Login.route) { inclusive = true }
+                    }
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onTermsOfUseClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_TERMS))
+                },
+                onPrivacyPolicyClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_PRIVACY))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.LegalContent.route,
+            arguments = listOf(navArgument("type") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            LegalContentScreen(
+                type = type,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        navigation(
+            startDestination = NavRoutes.Welcome.route,
+            route = NavRoutes.Onboarding.route
+        ) {
+            composable(NavRoutes.Welcome.route) {
+                OnboardingScreen(
+                    onFinish = {
+                        navController.navigate(NavRoutes.UserData.route)
+                    },
+                    currentPage = 0,
+                    totalPages = totalSteps
+                )
+            }
+
+            composable(NavRoutes.UserData.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+                OnboardUserDataScreen(
+                    viewModel = viewModel,
+                    currentPage = 1,
+                    totalPages = totalSteps,
+                    onContinue = {
+                        navController.navigate(NavRoutes.Weight.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(NavRoutes.Weight.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+                OnboardWeightScreen(
+                    viewModel = viewModel,
+                    currentPage = 2,
+                    totalPages = totalSteps,
+                    onContinue = {
+                        navController.navigate(NavRoutes.Height.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(NavRoutes.Height.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+                OnboardHeightScreen(
+                    viewModel = viewModel,
+                    currentPage = 3,
+                    totalPages = totalSteps,
+                    onContinue = {
+                        navController.navigate(NavRoutes.Goals.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(NavRoutes.Goals.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+                OnboardingGoalsScreen(
+                    viewModel = viewModel,
+                    currentPage = 4,
+                    totalPages = totalSteps,
+                    onContinue = {
+                        navController.navigate(NavRoutes.Summary.route)
+                    },
+                    onSkip = {
+                        navController.navigate(NavRoutes.Summary.route)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(NavRoutes.Summary.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+                OnboardSummaryScreen(
+                    viewModel = viewModel,
+                    currentPage = 5,
+                    totalPages = totalSteps,
+                    onStartTraining = {
+                        navController.navigate(NavRoutes.Main.route) {
+                            popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
+                        }
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+
+        navigation(
+            startDestination = NavRoutes.Home.route,
+            route = NavRoutes.Main.route
+        ) {
+            composable(NavRoutes.Home.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<WorkoutViewModel>(navController)
+                WorkoutScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        navController.navigateWithPopUp(route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.Evo.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoHomeViewModel>(navController)
+                EvoHomeScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        if (route == NavRoutes.MuscleGroupSelection.route) {
+                            navController.navigate(NavRoutes.AnalyticsGraph.route)
+                        } else {
+                            navController.navigateWithPopUp(route)
+                        }
+                    }
+                )
+            }
+
+            composable(NavRoutes.Profile.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<ProfileViewModel>(navController)
+                ProfileHomeScreen(
+                    viewModel = viewModel,
+                    onNavigate = { route ->
+                        navController.navigateWithPopUp(route)
+                    },
+                    onUserDataClick = {
+                        navController.navigate(NavRoutes.ProfileUserData.route)
+                    },
+                    onGoalsClick = {
+                        navController.navigate(NavRoutes.ProfilePersonalGoals.route)
+                    },
+                    onLogoutSuccess = {
+                        navController.navigate(NavRoutes.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
+        }
+
+        navigation(
+            startDestination = NavRoutes.MuscleGroupSelection.route,
+            route = NavRoutes.AnalyticsGraph.route
+        ) {
+            composable(NavRoutes.MuscleGroupSelection.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                CategoryAnalyticsSelectionScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onGroupSelected = { _, _ ->
+                        navController.navigate(NavRoutes.ExerciseSelection.route)
+                    },
+                    onWeightSelected = {
+                        navController.navigate(NavRoutes.ExerciseDetailAnalytics.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ExerciseSelection.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                ExerciseSelectionScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onExerciseClick = { _ ->
+                        navController.navigate(NavRoutes.ExerciseDetailAnalytics.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ExerciseDetailAnalytics.route) { backStackEntry ->
+                val viewModel = backStackEntry.sharedViewModel<EvoAnalyticsViewModel>(navController)
+                CategoryDetailAnalyticsScreen(
+                    viewModel = viewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+
+        composable(
+            route = NavRoutes.NewWorkout.route,
+            arguments = listOf(
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+            )
+        ) { backStackEntry ->
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            NewWorkoutScreen(
+                editWorkoutId = editWorkoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onSelectExercisesClick = { groupIds, editId ->
+                    val idsParam = groupIds.joinToString(",")
+                    navController.navigate(NavRoutes.SelectExercises.createRoute(idsParam, editId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.SelectExercises.route,
+            arguments = listOf(
+                navArgument("muscleGroupIds") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+            )
+        ) { backStackEntry ->
+            val muscleGroupIds = backStackEntry.arguments?.getString("muscleGroupIds")?.split(",") ?: emptyList()
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            SelectExercisesScreen(
+                muscleGroupIds = muscleGroupIds,
+                editWorkoutId = editWorkoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onConfigureExercisesClick = { exerciseIds, workoutName, editId ->
+                    val idsParam = exerciseIds.joinToString(",")
+                    navController.navigate(NavRoutes.ConfigureWorkout.createRoute(idsParam, workoutName, editId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.ConfigureWorkout.route,
+            arguments = listOf(
+                navArgument("exerciseIds") { type = NavType.StringType },
+                navArgument("workoutName") { type = NavType.StringType },
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+            )
+        ) { backStackEntry ->
+            val exerciseIds = backStackEntry.arguments?.getString("exerciseIds")?.split(",") ?: emptyList()
+            val workoutName = backStackEntry.arguments?.getString("workoutName") ?: ""
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            ConfigureWorkoutScreen(
+                exerciseIds = exerciseIds,
+                workoutName = workoutName,
+                editWorkoutId = editWorkoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onFinishClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                },
+                onFinishEditClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(editWorkoutId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutPreview.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
+            WorkoutPreviewScreen(
+                workoutId = workoutId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onStartWorkoutClick = {
+                    navController.navigate(NavRoutes.WorkoutStart.createRoute(workoutId))
+                },
+                onEditClick = { _, editWorkoutId ->
+                    navController.navigate(NavRoutes.NewWorkout.createRoute(editWorkoutId))
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutStart.route,
+            arguments = listOf(navArgument("workoutId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
+            WorkoutStartScreen(
+                workoutId = workoutId,
+                onBackClick = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onFinishWorkoutClick = { workoutDoneId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutDoneId = workoutDoneId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                },
+                onCancelWorkoutClick = { workoutId ->
+                    navController.navigate(NavRoutes.WorkoutResume.createRoute(workoutNotFinishedId = workoutId)) {
+                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavRoutes.WorkoutResume.route,
+            arguments = listOf(
+                navArgument("workoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("workoutDoneId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("editWorkoutId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID },
+                navArgument("workoutNotFinishedId") { type = NavType.StringType; defaultValue = AppConstants.INVALID_ID }
+            )
+        ) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getString("workoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutDoneId = backStackEntry.arguments?.getString("workoutDoneId")?.takeIf { it != AppConstants.INVALID_ID }
+            val editWorkoutId = backStackEntry.arguments?.getString("editWorkoutId")?.takeIf { it != AppConstants.INVALID_ID }
+            val workoutNotFinishedId = backStackEntry.arguments?.getString("workoutNotFinishedId")?.takeIf { it != AppConstants.INVALID_ID }
+            
+            WorkoutResumeScreen(
+                workoutId = workoutId,
+                workoutDoneId = workoutDoneId,
+                editWorkoutId = editWorkoutId,
+                workoutNotFinishedId = workoutNotFinishedId,
+                onContinueClick = {
+                    when {
+                        workoutDoneId != null || workoutNotFinishedId != null -> {
+                            navController.navigateWithPopUp(NavRoutes.Home.route)
+                        }
+                        editWorkoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(editWorkoutId)) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        workoutId != null -> {
+                            navController.navigate(NavRoutes.WorkoutPreview.createRoute(workoutId)) {
+                                popUpTo(NavRoutes.Home.route) { inclusive = false }
+                            }
+                        }
+                        else -> {
+                            navController.navigateWithPopUp(NavRoutes.Main.route)
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(NavRoutes.ProfilePersonalGoals.route) {
+            PersonalGoalsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.ProfileUserData.route) {
+            UserDataScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.Support.route) {
+            SupportScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.SupportEmail.route) {
+            SupportEmailScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.SuggestionWorkouts.route) {
+            SuggestionNewWorkoutsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.FAQ.route) {
+            FAQScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(NavRoutes.About.route) {
+            AboutAppScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onTermsClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_TERMS))
+                },
+                onPrivacyClick = {
+                    navController.navigate(NavRoutes.LegalContent.createRoute(NavRoutes.LegalContent.TYPE_PRIVACY))
+                }
+            )
+        }
+
+        composable(NavRoutes.Developer.route) {
+            DeveloperScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return koinViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return koinViewModel(viewModelStoreOwner = parentEntry)
+}
+
+fun NavController.navigateWithPopUp(route: String) {
+    this.navigate(route) {
+        popUpTo(this@navigateWithPopUp.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}

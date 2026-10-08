@@ -1,0 +1,32 @@
+package com.guaracode.evofit.data.model
+
+import com.guaracode.evofit.domain.model.ExerciseCategory
+import com.guaracode.evofit.domain.model.MeasurementUnit
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class MuscleGroupType {
+    CHEST, BACK, SHOULDERS, BICEPS, TRICEPS, FOREARMS, LEGS, ABS, CARDIO, GLUTES, CALVES, OTHER
+}
+
+@Serializable
+data class MuscleGroupModel(
+    val id: String,
+    val name: String,
+    val type: MuscleGroupType,
+    val category: ExerciseCategory = ExerciseCategory.STRENGTH
+)
+
+data class ExerciseModel(
+    val id: String,
+    val name: String,
+    val muscleGroupId: String,
+    val unit: MeasurementUnit = MeasurementUnit.WEIGHT,
+    val sortOrder: Int = 0,
+    val isEnabled: Boolean = true
+)
+
+data class MuscleGroupWithExercises(
+    val muscleGroup: MuscleGroupModel,
+    val exercises: List<ExerciseModel>
+)

@@ -1,0 +1,21 @@
+package com.guaracode.evofit.domain.usecase
+
+import com.guaracode.evofit.domain.repository.AuthRepository
+
+interface RegisterUseCase {
+    suspend operator fun invoke(email: String, password: String): Result<Unit>
+}
+
+class RegisterUseCaseImpl(
+    private val repository: AuthRepository
+) : RegisterUseCase {
+    override suspend fun invoke(email: String, password: String): Result<Unit> {
+        if (email.isBlank() || password.isBlank()) {
+            return Result.failure(IllegalArgumentException("Email and password cannot be empty"))
+        }
+        if (password.length < 6) {
+            return Result.failure(IllegalArgumentException("Password must be at least 6 characters"))
+        }
+        return repository.register(email, password)
+    }
+}

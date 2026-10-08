@@ -1,0 +1,19 @@
+package com.guaracode.evofit.domain.model
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WorkoutDone(
+    val id: String = "",
+    val userId: String = "",
+    val name: String = "",
+    val date: String = "",
+    val exercisesByGroup: List<WorkoutGroup> = emptyList(),
+    val time: String = "",
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+data class WorkoutDoneHistory(
+    val userId: String = "",
+    val history: List<WorkoutDone> = emptyList()
+)

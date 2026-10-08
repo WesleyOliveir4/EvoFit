@@ -1,0 +1,22 @@
+package com.guaracode.evofit.domain.repository
+
+import com.guaracode.evofit.domain.model.UserOnboardingData
+import com.guaracode.evofit.domain.model.WeightUpdate
+import kotlinx.coroutines.flow.Flow
+
+interface OnboardingRepository {
+    fun getUserData(): Flow<UserOnboardingData?>
+    fun getUserId(): Flow<String?>
+    suspend fun saveUserData(data: UserOnboardingData, userId: String, isCompleted: Boolean)
+    suspend fun completeOnboarding()
+    suspend fun deleteGoal(goalId: String)
+    suspend fun deleteProfilePicture(uri: String)
+    fun isOnboardingCompleted(): Flow<Boolean>
+    suspend fun isOnboardingCompletedDirect(): Boolean
+    suspend fun syncUserData(userId: String, shouldClearActiveSession: Boolean, isOnline: Boolean): Result<Unit>
+    suspend fun nukeUserData()
+    
+    // Weight History
+    suspend fun saveWeightUpdate(weightUpdate: WeightUpdate, userId: String)
+    fun getWeightHistory(userId: String): Flow<List<WeightUpdate>>
+}

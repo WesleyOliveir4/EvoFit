@@ -29,11 +29,11 @@ val pubAppDescription = (publishVersionProperties["appDescription"] as? String)
     ?: "EvoFit - Seu aplicativo completo para acompanhamento de treinos e evolução física."
 
 android {
-    namespace = "com.example.evofit"
+    namespace = "com.guaracode.evofit"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.evofit"
+        applicationId = "com.guaracode.evofit"
         minSdk = 24
         targetSdk = 36
         versionCode = pubVersionCode

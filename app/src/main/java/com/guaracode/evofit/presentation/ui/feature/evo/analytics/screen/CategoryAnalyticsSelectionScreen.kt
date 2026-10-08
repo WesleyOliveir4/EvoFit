@@ -1,0 +1,158 @@
+package com.guaracode.evofit.presentation.ui.feature.evo.analytics.screen
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.guaracode.evofit.R
+import com.guaracode.evofit.presentation.model.MuscleGroupItem
+import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroup
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.components.MuscleGroupCard
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.state.EvoAnalyticsState
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import org.koin.compose.koinInject
+
+@Composable
+fun CategoryAnalyticsSelectionScreen(
+    onBackClick: () -> Unit = {},
+    onGroupSelected: (String, String) -> Unit = { _, _ -> },
+    onWeightSelected: () -> Unit = {},
+    viewModel: EvoAnalyticsViewModel,
+    tracker: EvoAnalyticsTracker = koinInject()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        tracker.trackCategoryAnalyticsSelectionScreenView()
+    }
+
+    CategoryAnalyticsSelectionContent(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onGroupSelected = { id, name ->
+            viewModel.onMuscleGroupSelected(id, name)
+            onGroupSelected(id, name)
+        },
+        onWeightSelected = {
+            viewModel.onWeightSelected()
+            onWeightSelected()
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryAnalyticsSelectionContent(
+    uiState: EvoAnalyticsState,
+    onBackClick: () -> Unit,
+    onGroupSelected: (String, String) -> Unit,
+    onWeightSelected: () -> Unit
+) {
+    var selectedGroupId by remember { mutableStateOf("") }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            TopBarReturn(
+                title = stringResource(R.string.evo_analytics_select_muscle_group),
+                onBackClick = onBackClick,
+                isCenterAligned = false
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
+                ) {
+                    // Item fixo para Peso
+                    item {
+                        MuscleGroupCard(
+                            group = MuscleGroup(
+                                name = "Peso Corporal",
+                                imageRes = R.drawable.ic_balance_2
+                            ),
+                            isSelected = selectedGroupId == "WEIGHT_HISTORY",
+                            onClick = {
+                                selectedGroupId = "WEIGHT_HISTORY"
+                                onWeightSelected()
+                            }
+                        )
+                    }
+
+                    items(uiState.trainedGroups, key = { it.id }) { groupItem ->
+                        val isSelected = groupItem.id == selectedGroupId
+                        val uiGroup = remember(groupItem) {
+                            MuscleGroup(
+                                name = groupItem.name,
+                                imageRes = groupItem.imageRes
+                            )
+                        }
+
+                        MuscleGroupCard(
+                            group = uiGroup,
+                            isSelected = isSelected,
+                            onClick = {
+                                selectedGroupId = groupItem.id
+                                onGroupSelected(groupItem.id, groupItem.name)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF090909)
+@Composable
+private fun CategoryAnalyticsSelectionScreenPreview() {
+    EvoFitTheme {
+        CategoryAnalyticsSelectionContent(
+            uiState = EvoAnalyticsState(
+                trainedGroups = listOf(
+                    MuscleGroupItem("1", "Back", R.drawable.ic_back),
+                    MuscleGroupItem("2", "Chest", R.drawable.ic_chest),
+                ),
+                isLoading = false
+            ),
+            onBackClick = {},
+            onGroupSelected = { _, _ -> },
+            onWeightSelected = {}
+        )
+    }
+}
