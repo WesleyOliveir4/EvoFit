@@ -3,10 +3,7 @@ package com.guaracode.evofit.domain.usecase
 import com.guaracode.evofit.domain.model.UserOnboardingData
 import com.guaracode.evofit.domain.repository.AuthRepository
 import com.guaracode.evofit.domain.repository.OnboardingRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 interface CompleteOnboardingUseCase {
@@ -15,8 +12,7 @@ interface CompleteOnboardingUseCase {
 
 class CompleteOnboardingUseCaseImpl(
     private val repository: OnboardingRepository,
-    private val authRepository: AuthRepository,
-    private val firebaseAuth: FirebaseAuth
+    private val authRepository: AuthRepository
 ) : CompleteOnboardingUseCase {
     override suspend fun invoke(data: UserOnboardingData): Result<Unit> {
         return try {
@@ -24,18 +20,8 @@ class CompleteOnboardingUseCaseImpl(
                 ?: repository.getUserId().firstOrNull() 
                 ?: UUID.randomUUID().toString()
             
-            // Sincroniza o nome com o perfil do Firebase Auth se o usuário estiver logado
-            firebaseAuth.currentUser?.let { user ->
-                if (data.name.isNotBlank()) {
-                    try {
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                            .setDisplayName(data.name)
-                            .build()
-                        user.updateProfile(profileUpdates).await()
-                    } catch (e: Exception) {
-                        // Log error
-                    }
-                }
+            if (data.name.isNotBlank()) {
+                authRepository.updateDisplayName(data.name)
             }
 
             repository.saveUserData(data, userId, isCompleted = true)

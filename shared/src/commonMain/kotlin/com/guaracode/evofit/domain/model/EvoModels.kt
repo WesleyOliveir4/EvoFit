@@ -1,12 +1,10 @@
 package com.guaracode.evofit.domain.model
 
-import com.guaracode.evofit.R
-
-enum class EvoPeriod(val displayNameRes: Int) {
-    LAST_30_DAYS(R.string.evo_period_30_days),
-    LAST_90_DAYS(R.string.evo_period_90_days),
-    LAST_180_DAYS(R.string.evo_period_180_days),
-    ALL_TIME(R.string.evo_period_all_time)
+enum class EvoPeriod {
+    LAST_30_DAYS,
+    LAST_90_DAYS,
+    LAST_180_DAYS,
+    ALL_TIME
 }
 
 data class StrengthGain(

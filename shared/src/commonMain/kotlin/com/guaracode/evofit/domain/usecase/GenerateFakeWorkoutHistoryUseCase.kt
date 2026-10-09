@@ -1,11 +1,11 @@
 package com.guaracode.evofit.domain.usecase
 
-import com.guaracode.evofit.core.common.DateMapper
 import com.guaracode.evofit.domain.model.*
 import com.guaracode.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.firstOrNull
-import java.util.*
+import kotlinx.datetime.*
 import kotlin.math.pow
+import kotlin.random.Random
 
 interface GenerateFakeWorkoutHistoryUseCase {
     suspend operator fun invoke()
@@ -22,7 +22,6 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
     override suspend fun invoke() {
         val userId = getUserIdUseCase().firstOrNull() ?: return
         
-        // Gerar histórico de pesos
         generateFakeWeightHistory(userId)
         
         val muscleGroups = getMuscleGroupsUseCase()
@@ -34,81 +33,64 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
 
         if (muscleGroupsWithExercises.size < 3) return
 
-        // 1. Criar 7 Modelos de Treino (Templates)
-        // Cada modelo tem 3 grupos e 4 exercícios por grupo
-        val templates = List(7) { templateIndex ->
-            // Seleciona 3 grupos aleatórios (ou rotacionados para garantir variedade)
+        val templates = List(7) { _ ->
             val selectedGroups = muscleGroupsWithExercises.shuffled().take(3)
-            
             selectedGroups.mapIndexed { groupIndex, (group, exercises) ->
                 val selectedExercises = exercises.shuffled().take(4)
                 group to selectedExercises
             }
         }
 
-        // 2. Definir período: 6 meses atrás até hoje
-        val calendar = Calendar.getInstance()
-        val endDate = calendar.time
-        calendar.add(Calendar.MONTH, -6)
-        val startDate = calendar.time
+        val now = Clock.System.now()
+        val timeZone = TimeZone.currentSystemDefault()
+        val endDate = now.toLocalDateTime(timeZone).date
+        val startDate = endDate.minus(6, DateTimeUnit.MONTH)
 
-        // 3. Gerar treinos (4 por semana)
-        val currentCalendar = Calendar.getInstance()
-        currentCalendar.time = startDate
+        var currentLocalDate = startDate
+        val random = Random(now.toEpochMilliseconds())
 
-        val random = Random()
-
-        while (!currentCalendar.time.after(endDate)) {
-            // Para cada semana, escolhe 4 dias aleatórios (0 a 6)
+        while (currentLocalDate <= endDate) {
             val workoutDays = mutableSetOf<Int>()
             while (workoutDays.size < 4) {
                 workoutDays.add(random.nextInt(7))
             }
 
-            val weekStartDate = currentCalendar.time
-            
             for (dayOffset in 0..6) {
-                val workoutCalendar = Calendar.getInstance()
-                workoutCalendar.time = weekStartDate
-                workoutCalendar.add(Calendar.DAY_OF_YEAR, dayOffset)
-                
-                if (workoutCalendar.time.after(endDate)) break
+                val workoutDate = currentLocalDate.plus(dayOffset, DateTimeUnit.DAY)
+                if (workoutDate > endDate) break
 
                 if (workoutDays.contains(dayOffset)) {
-                    // Escolhe um template aleatório
                     val template = templates[random.nextInt(templates.size)]
-                    
-                    // Calcula evolução de carga: +5% ao mês
-                    val monthsPassed = getMonthsBetween(startDate, workoutCalendar.time)
+                    val monthsPassed = getMonthsBetween(startDate, workoutDate)
                     val evolutionFactor = 1.05.pow(monthsPassed.toDouble())
 
-                    saveFakeWorkout(userId, workoutCalendar.time, template, evolutionFactor)
+                    val millis = workoutDate.atStartOfDayIn(timeZone).toEpochMilliseconds()
+                    saveFakeWorkout(userId, millis, template, evolutionFactor)
                 }
             }
             
-            currentCalendar.add(Calendar.WEEK_OF_YEAR, 1)
+            currentLocalDate = currentLocalDate.plus(7, DateTimeUnit.DAY)
         }
     }
 
     private suspend fun saveFakeWorkout(
         userId: String,
-        date: Date,
+        timestamp: Long,
         template: List<Pair<MuscleGroup, List<Exercise>>>,
         evolutionFactor: Double
     ) {
-        val workoutId = UUID.randomUUID().toString()
+        val workoutId = randomId()
         
         val exercisesByGroup = template.mapIndexed { groupIndex, (group, exercises) ->
-            val workoutExerciseUuid = UUID.randomUUID().toString()
+            val workoutExerciseUuid = randomId()
             
             val workoutExercises = exercises.mapIndexed { exIndex, exercise ->
-                val exerciseUuid = UUID.randomUUID().toString()
+                val exerciseUuid = randomId()
                 
-                // Carga base dependendo da unidade
                 val baseValue = when (exercise.unit) {
-                    MeasurementUnit.DISTANCE -> 2.0 + Random().nextInt(3) // 2-5 km base
-                    MeasurementUnit.TIME -> 10.0 + Random().nextInt(20)   // 10-30 min base
-                    else -> 20.0 + Random().nextInt(20)                  // 20-40 kg base
+                    MeasurementUnit.DISTANCE -> 2.0 + Random.nextInt(3)
+                    MeasurementUnit.TIME -> 10.0 + Random.nextInt(20)
+                    else -> 20.0 + Random.nextInt(20)
                 }
                 
                 val evolvedValue = baseValue * evolutionFactor
@@ -129,7 +111,7 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
                                 load = 0.0,
                                 unit = exercise.unit,
                                 distance = distanceValue,
-                                time = (distanceValue * (8 + Random().nextInt(4))).toInt() // 8-12 min por km
+                                time = (distanceValue * (8 + Random.nextInt(4))).toInt()
                             )
                         }
                         MeasurementUnit.TIME -> {
@@ -151,7 +133,7 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
                                 exerciseName = exercise.name,
                                 workoutExerciseId = exerciseUuid,
                                 setNumber = setIndex + 1,
-                                reps = 10 + Random().nextInt(5),
+                                reps = 10 + Random.nextInt(5),
                                 load = valueForSeries.toInt().toDouble().coerceAtLeast(1.0),
                                 unit = exercise.unit,
                                 time = null,
@@ -179,66 +161,69 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
         }
 
         val workoutName = template.joinToString(" + ") { it.first.name }
+        val dateStr = formatDate(timestamp)
 
         val workoutDone = WorkoutDone(
-            id = UUID.randomUUID().toString(),
+            id = randomId(),
             userId = userId,
             name = workoutName,
-            date = DateMapper.formatDate(date),
+            date = dateStr,
             exercisesByGroup = exercisesByGroup,
-            time = "00:${45 + Random().nextInt(30)}:00",
-            createdAt = date.time
+            time = "00:${45 + Random.nextInt(30)}:00",
+            createdAt = timestamp
         )
 
         saveWorkoutDoneUseCase(userId, workoutDone)
     }
 
-    private fun getMonthsBetween(start: Date, end: Date): Int {
-        val startCal = Calendar.getInstance().apply { time = start }
-        val endCal = Calendar.getInstance().apply { time = end }
-        
-        val years = endCal.get(Calendar.YEAR) - startCal.get(Calendar.YEAR)
-        val months = endCal.get(Calendar.MONTH) - startCal.get(Calendar.MONTH)
-        
+    private fun getMonthsBetween(start: LocalDate, end: LocalDate): Int {
+        val years = end.year - start.year
+        val months = end.monthNumber - start.monthNumber
         return years * 12 + months
     }
 
     private suspend fun generateFakeWeightHistory(userId: String) {
-        val calendar = Calendar.getInstance()
-        val endDate = calendar.time
-        calendar.add(Calendar.MONTH, -6)
-        val startDate = calendar.time
+        val timeZone = TimeZone.currentSystemDefault()
+        val endDate = Clock.System.now().toLocalDateTime(timeZone).date
+        val startDate = endDate.minus(6, DateTimeUnit.MONTH)
         
-        val currentCalendar = Calendar.getInstance()
-        currentCalendar.time = startDate
+        var currentLocalDate = startDate
+        var currentWeight = 85.0 + Random.nextInt(10)
         
-        var currentWeight = 85.0 + Random().nextInt(10) // Peso inicial aleatório entre 85-95kg
-        
-        while (!currentCalendar.time.after(endDate)) {
-            // Gera 1 a 3 registros por mês
-            val recordsInMonth = 1 + Random().nextInt(3)
+        while (currentLocalDate <= endDate) {
+            val recordsInMonth = 1 + Random.nextInt(3)
             
             for (i in 0 until recordsInMonth) {
-                val weightCalendar = Calendar.getInstance()
-                weightCalendar.time = currentCalendar.time
-                // Espalha os registros pelo mês
-                weightCalendar.set(Calendar.DAY_OF_MONTH, 1 + (i * 10) + Random().nextInt(5))
+                val dayOffset = (i * 10) + Random.nextInt(5)
+                val weightDate = currentLocalDate.plus(dayOffset, DateTimeUnit.DAY)
+                if (weightDate > endDate) break
                 
-                if (weightCalendar.time.after(endDate)) break
-                
-                // Evolução: perde entre 0.2 a 0.8kg por registro (simulando emagrecimento)
-                currentWeight -= (0.2 + Random().nextDouble() * 0.6)
+                currentWeight -= (0.2 + Random.nextDouble() * 0.6)
+                val millis = weightDate.atStartOfDayIn(timeZone).toEpochMilliseconds()
                 
                 val weightUpdate = WeightUpdate(
-                    id = UUID.randomUUID().toString(),
-                    weight = String.format("%.1f", currentWeight).replace(".", ","),
-                    date = DateMapper.formatDate(weightCalendar.time)
+                    id = randomId(),
+                    weight = ((currentWeight * 10).toInt() / 10.0).toString().replace(".", ","),
+                    date = formatDate(millis)
                 )
                 
                 onboardingRepository.saveWeightUpdate(weightUpdate, userId)
             }
             
-            currentCalendar.add(Calendar.MONTH, 1)
+            currentLocalDate = currentLocalDate.plus(1, DateTimeUnit.MONTH)
         }
+    }
+
+    private fun formatDate(epochMillis: Long): String {
+        val instant = Instant.fromEpochMilliseconds(epochMillis)
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
+        val month = localDateTime.monthNumber.toString().padStart(2, '0')
+        val year = localDateTime.year
+        return "$day/$month/$year"
+    }
+
+    private fun randomId(): String {
+        return Random.nextBits(32).toString()
     }
 }
