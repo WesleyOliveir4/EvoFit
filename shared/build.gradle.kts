@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.kotlin.compose)
 }
 
 kotlin {
@@ -22,6 +24,13 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.room.runtime)
+
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
         }
         commonTest.dependencies {
             implementation(libs.junit)
