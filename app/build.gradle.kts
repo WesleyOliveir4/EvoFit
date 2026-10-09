@@ -175,6 +175,30 @@ tasks.register("testUnit") {
     dependsOn("testStagingDebugUnitTest", "testProductionDebugUnitTest")
 }
 
+tasks.register("generateReleaseAab") {
+    group = "publishing"
+    description = "Gera o AAB assinado de produção para a Play Store e envia para a pasta 'outputs' na raiz do projeto"
+    dependsOn("bundleProductionRelease")
+
+    doLast {
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
+        val customBundleName = "evofit-prod-${pubVersionCode}-${pubVersionName}-release.aab"
+        val destinationFile = File(outputDir, customBundleName)
+        val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
+        val customBundle = File(bundleDir, customBundleName)
+        val defaultBundle = File(bundleDir, "app-production-release.aab")
+        val sourceBundle = if (customBundle.exists()) customBundle else defaultBundle
+
+        if (sourceBundle.exists()) {
+            sourceBundle.copyTo(destinationFile, overwrite = true)
+            println("🚀 AAB assinado gerado com sucesso em: ${destinationFile.absolutePath}")
+        }
+    }
+}
+
 tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
     doLast {
         val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
@@ -184,6 +208,17 @@ tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
         if (defaultBundle.exists()) {
             defaultBundle.copyTo(customBundle, overwrite = true)
             println("✅ AAB copiado e gerado em: ${customBundle.absolutePath}")
+        }
+
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
+        val destinationFile = File(outputDir, customBundleName)
+        val sourceBundle = if (customBundle.exists()) customBundle else defaultBundle
+        if (sourceBundle.exists()) {
+            sourceBundle.copyTo(destinationFile, overwrite = true)
+            println("🚀 AAB disponibilizado na pasta outputs: ${destinationFile.absolutePath}")
         }
     }
 }
