@@ -20,10 +20,6 @@ class SendPasswordResetCodeUseCaseImpl(
     }
 
     private fun isValidEmail(email: String): Boolean {
-        return try {
-            android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        } catch (_: Throwable) {
-            emailRegex.matches(email)
-        }
+        return emailRegex.matches(email)
     }
 }

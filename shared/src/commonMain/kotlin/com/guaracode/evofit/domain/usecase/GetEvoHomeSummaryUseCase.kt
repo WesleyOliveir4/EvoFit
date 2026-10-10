@@ -2,7 +2,6 @@ package com.guaracode.evofit.domain.usecase
 
 import com.guaracode.evofit.domain.model.EvoHomeSummary
 import com.guaracode.evofit.domain.model.EvoPeriod
-
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

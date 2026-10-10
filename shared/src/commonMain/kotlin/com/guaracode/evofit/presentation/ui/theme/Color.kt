@@ -1,0 +1,43 @@
+package com.guaracode.evofit.presentation.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Official Brand Colors
+val AppGreen = Color(0xFF67D14E)
+val AppDarkBg = Color(0xFF090909)
+val AppSurface = Color(0xFF1E1E1E)
+val AppSurfaceVariant = Color(0xFF2C2C2E)
+
+// Functional Colors
+val IconContainerBg = Color(0xFF1F2E1F)
+val InputFieldBg = Color(0xFF232323)
+val InputBorder = Color(0xFF333333)
+val WelcomeBoxBg = Color(0xFF102312)
+val EvoDestructiveRed = Color(0xFFFF453A)
+val EvoIconBgRed = Color(0xFF3A1A1A)
+val EvoWarningYellow = Color(0xFFFFD60A)
+val EvoIconBgYellow = Color(0xFF3A321A)
+
+// Analytics Colors
+val EvoOrange = Color(0xFFE5984A)
+val EvoBlue = Color(0xFF5A9EED)
+val EvoGreen = Color(0xFF5ED961)
+val EvoPurple = Color(0xFFA855F7)
+val EvoDarkBg = Color(0xFF121212)
+val EvoRed = Color(0xFFFF453A)
+val EvoYellow = Color(0xFFFFD60A)
+
+// Text Colors
+val TextPrimary = Color(0xFFFFFFFF)
+val TextSecondary = Color(0xFF8E8E93)
+val TextTertiary = Color(0xFFB0BEC5)
+val TextDisabled = Color(0xFF444444)
+
+// Default Material Colors
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
+
+val Purple40 = Color(0xFF6650a4)
+val PurpleGrey40 = Color(0xFF625b71)
+val Pink40 = Color(0xFF7D5260)

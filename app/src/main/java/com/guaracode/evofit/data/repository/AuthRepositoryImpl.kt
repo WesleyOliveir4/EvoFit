@@ -87,6 +87,20 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun updateDisplayName(name: String): Result<Unit> {
+        return try {
+            val user = firebaseAuth.currentUser ?: return Result.failure(IllegalStateException("No user logged in"))
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+            user.updateProfile(profileUpdates).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            crashReporter.recordException(e)
+            Result.failure(e)
+        }
+    }
+
     override fun isLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }

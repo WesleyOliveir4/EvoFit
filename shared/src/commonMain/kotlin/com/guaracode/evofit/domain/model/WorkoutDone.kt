@@ -1,6 +1,7 @@
 package com.guaracode.evofit.domain.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.datetime.Clock
 
 @Serializable
 data class WorkoutDone(
@@ -10,7 +11,7 @@ data class WorkoutDone(
     val date: String = "",
     val exercisesByGroup: List<WorkoutGroup> = emptyList(),
     val time: String = "",
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = Clock.System.now().toEpochMilliseconds()
 )
 
 data class WorkoutDoneHistory(

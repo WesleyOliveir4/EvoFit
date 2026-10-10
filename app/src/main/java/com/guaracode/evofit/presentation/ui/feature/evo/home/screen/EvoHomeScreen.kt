@@ -90,7 +90,7 @@ fun EvoHomeContent(
             verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             val periods = EvoPeriod.entries
-            val periodNames = periods.map { stringResource(it.displayNameRes) }
+            val periodNames = periods.map { stringResource(it.toDisplayNameRes()) }
 
             Row(
                 modifier = Modifier
@@ -106,7 +106,7 @@ fun EvoHomeContent(
                 )
 
                 EvoFitDropdownFilter(
-                    selectedOption = stringResource(uiState.selectedPeriod.displayNameRes),
+                    selectedOption = stringResource(uiState.selectedPeriod.toDisplayNameRes()),
                     options = periodNames,
                     onOptionSelected = { selectedName ->
                         val index = periodNames.indexOf(selectedName)
@@ -210,5 +210,14 @@ private fun EvoHomeContentPreview() {
             onPeriodSelected = {},
             onNavigate = {}
         )
+    }
+}
+
+private fun EvoPeriod.toDisplayNameRes(): Int {
+    return when (this) {
+        EvoPeriod.LAST_30_DAYS -> R.string.evo_period_30_days
+        EvoPeriod.LAST_90_DAYS -> R.string.evo_period_90_days
+        EvoPeriod.LAST_180_DAYS -> R.string.evo_period_180_days
+        EvoPeriod.ALL_TIME -> R.string.evo_period_all_time
     }
 }

@@ -139,7 +139,7 @@ class CalculateGoalProgressUseCaseImpl(
 
         if (targetWeight <= 0 || currentWeight <= 0) return GoalProgress(currentWeight, targetWeight, 0)
 
-        val diff = Math.abs(currentWeight - targetWeight)
+        val diff = kotlin.math.abs(currentWeight - targetWeight)
         val percentage = if (currentWeight != 0.0) {
             (100 - (diff / currentWeight * 100)).toInt().coerceIn(0, 100)
         } else 0

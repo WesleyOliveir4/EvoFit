@@ -1,8 +1,6 @@
 package com.guaracode.evofit.domain.usecase
 
 import com.guaracode.evofit.domain.model.WorkoutDone
-import java.time.Duration
-import java.time.LocalTime
 
 interface GetAverageWorkoutTimeUseCase {
     operator fun invoke(history: List<WorkoutDone>): Int
@@ -11,23 +9,20 @@ interface GetAverageWorkoutTimeUseCase {
 class GetAverageWorkoutTimeUseCaseImpl : GetAverageWorkoutTimeUseCase {
     override fun invoke(history: List<WorkoutDone>): Int {
         if (history.isEmpty()) return 0
+        
+        var totalMinutes = 0
+        var count = 0
 
-        val totalMinutes = history.sumOf { workout ->
-            try {
-                val timeParts = workout.time.split(":")
-                if (timeParts.size == 3) {
-                    val hours = timeParts[0].toInt()
-                    val minutes = timeParts[1].toInt()
-                    val seconds = timeParts[2].toInt()
-                    hours * 60 + minutes + (if (seconds > 0) 1 else 0)
-                } else {
-                    0
-                }
-            } catch (e: Exception) {
-                0
+        for (workout in history) {
+            val parts = workout.time.split(":")
+            if (parts.size >= 2) {
+                val hours = parts[0].toIntOrNull() ?: 0
+                val minutes = parts[1].toIntOrNull() ?: 0
+                totalMinutes += (hours * 60) + minutes
+                count++
             }
         }
 
-        return (totalMinutes / history.size)
+        return if (count > 0) totalMinutes / count else 0
     }
 }

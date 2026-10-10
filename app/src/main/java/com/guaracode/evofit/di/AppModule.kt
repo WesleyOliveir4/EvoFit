@@ -221,7 +221,7 @@ val domainModule = module {
     factory<GetGoalSuggestionsUseCase> { GetGoalSuggestionsUseCaseImpl(get()) }
     factory<GetOnboardingDataUseCase> { GetOnboardingDataUseCaseImpl(get()) }
     factory<SaveOnboardingDataUseCase> { SaveOnboardingDataUseCaseImpl(get(), get()) }
-    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get(), get()) }
+    factory<CompleteOnboardingUseCase> { CompleteOnboardingUseCaseImpl(get(), get()) }
     factory<AddWeightUpdateUseCase> { AddWeightUpdateUseCaseImpl(get(), get()) }
     factory<IsOnboardingCompletedUseCase> { IsOnboardingCompletedUseCaseImpl(get()) }
     factory<IsUserLoggedInUseCase> { IsUserLoggedInUseCaseImpl(get()) }

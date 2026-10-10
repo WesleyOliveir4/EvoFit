@@ -4,7 +4,7 @@ import com.guaracode.evofit.domain.model.UserOnboardingData
 import com.guaracode.evofit.domain.repository.AuthRepository
 import com.guaracode.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.firstOrNull
-import java.util.UUID
+import kotlin.random.Random
 
 interface CompleteOnboardingUseCase {
     suspend operator fun invoke(data: UserOnboardingData): Result<Unit>
@@ -18,7 +18,7 @@ class CompleteOnboardingUseCaseImpl(
         return try {
             val userId = authRepository.getCurrentUserId()
                 ?: repository.getUserId().firstOrNull() 
-                ?: UUID.randomUUID().toString()
+                ?: Random.nextBits(32).toString()
             
             if (data.name.isNotBlank()) {
                 authRepository.updateDisplayName(data.name)

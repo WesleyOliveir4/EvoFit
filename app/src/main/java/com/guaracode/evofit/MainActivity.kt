@@ -7,8 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.guaracode.evofit.navigation.NavNavigation
-import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import com.guaracode.evofit.presentation.App
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -17,9 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EvoFitTheme {
-                NavNavigation()
-            }
+            App()
         }
     }
 }

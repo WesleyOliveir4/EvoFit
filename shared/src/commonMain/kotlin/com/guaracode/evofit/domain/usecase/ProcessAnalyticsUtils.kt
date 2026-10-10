@@ -1,7 +1,6 @@
 package com.guaracode.evofit.domain.usecase
 
 import com.guaracode.evofit.domain.model.WorkoutDone
-import java.util.Locale
 
 internal fun groupWorkoutsByMonth(workouts: List<WorkoutDone>): Map<String, List<WorkoutDone>> {
     return workouts.groupBy { workout ->
@@ -22,10 +21,13 @@ internal fun formatSecondsToTime(totalSeconds: Int): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val seconds = totalSeconds % 60
+    val mStr = minutes.toString().padStart(2, '0')
+    val sStr = seconds.toString().padStart(2, '0')
     return if (hours > 0) {
-        String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
+        val hStr = hours.toString().padStart(2, '0')
+        "$hStr:$mStr:$sStr"
     } else {
-        String.format(Locale.US, "%02d:%02d", minutes, seconds)
+        "$mStr:$sStr"
     }
 }
 
