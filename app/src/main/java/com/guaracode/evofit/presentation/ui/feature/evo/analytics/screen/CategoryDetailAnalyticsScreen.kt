@@ -103,7 +103,7 @@ fun CategoryDetailAnalyticsContent(
                     } else if (uiState.unit == MeasurementUnit.DISTANCE && uiState.secondaryRecord != null) {
                         MetricStatCard(
                             title = stringResource(R.string.analytics_detail_avg_speed),
-                            value = uiState.secondaryRecord,
+                            value = uiState.secondaryRecord.orEmpty(),
                             icon = ImageVector.vectorResource(R.drawable.ic_speed),
                             modifier = Modifier.weight(1f)
                         )
