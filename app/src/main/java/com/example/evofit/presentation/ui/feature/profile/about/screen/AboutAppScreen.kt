@@ -25,40 +25,43 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.evofit.R
-import com.example.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTracker
+import com.example.evofit.presentation.ui.feature.profile.about.state.AboutAppUiState
+import com.example.evofit.presentation.ui.feature.profile.about.viewmodel.AboutAppViewModel
 import com.example.evofit.presentation.ui.feature.profile.support.components.SupportItem
 import com.example.evofit.presentation.ui.theme.AppDarkBg
 import com.example.evofit.presentation.ui.theme.Dimens
 import com.example.evofit.presentation.ui.theme.EvoFitTheme
 import com.example.evofit.presentation.ui.theme.TextPrimary
-import com.example.evofit.presentation.ui.theme.TextSecondary
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AboutAppScreen(
     onBackClick: () -> Unit = {},
     onTermsClick: () -> Unit = {},
     onPrivacyClick: () -> Unit = {},
-    tracker: AboutAppTracker = koinInject()
+    viewModel: AboutAppViewModel = koinViewModel()
 ) {
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        tracker.trackAboutAppScreenView()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.trackScreenView()
     }
 
     AboutAppContent(
+        uiState = uiState,
         onBackClick = onBackClick,
         onTermsClick = onTermsClick,
         onPrivacyClick = onPrivacyClick
@@ -68,6 +71,7 @@ fun AboutAppScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutAppContent(
+    uiState: AboutAppUiState,
     onBackClick: () -> Unit,
     onTermsClick: () -> Unit,
     onPrivacyClick: () -> Unit,
@@ -118,21 +122,21 @@ fun AboutAppContent(
                         contentDescription = null,
                         modifier = Modifier.size(Dimens.OnboardingLogoSize)
                     )
-                    
+
                     Text(
                         text = stringResource(id = R.string.about_app_name),
                         color = TextPrimary,
                         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                    
+
                     Text(
                         text = stringResource(id = R.string.about_slogan),
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    
+
                     Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-                    
+
                     Text(
                         text = stringResource(id = R.string.about_description),
                         color = MaterialTheme.colorScheme.secondary,
@@ -147,25 +151,25 @@ fun AboutAppContent(
                 Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)) {
                     SupportItem(
                         title = stringResource(id = R.string.about_option_version),
-                        description = stringResource(id = R.string.about_app_version),
+                        description = uiState.appVersion,
                         icon = Icons.AutoMirrored.Filled.FactCheck,
                         onClick = { /* Nothing for now */ }
                     )
-                    
+
                     SupportItem(
                         title = stringResource(id = R.string.about_option_developer),
                         description = stringResource(id = R.string.about_developer_name),
                         icon = Icons.Default.Business,
                         onClick = { /* Nothing for now */ }
                     )
-                    
+
                     SupportItem(
                         title = stringResource(id = R.string.about_option_terms),
                         description = "",
                         icon = Icons.AutoMirrored.Filled.Assignment,
                         onClick = onTermsClick
                     )
-                    
+
                     SupportItem(
                         title = stringResource(id = R.string.about_option_privacy),
                         description = "",
@@ -183,6 +187,7 @@ fun AboutAppContent(
 private fun AboutAppScreenPreview() {
     EvoFitTheme {
         AboutAppContent(
+            uiState = AboutAppUiState(appVersion = "1.0.1"),
             onBackClick = {},
             onTermsClick = {},
             onPrivacyClick = {}

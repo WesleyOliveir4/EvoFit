@@ -164,6 +164,9 @@ import com.example.evofit.presentation.ui.feature.profile.goals.viewmodel.Person
 import com.example.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
 import com.example.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import com.example.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
+import com.example.evofit.presentation.ui.feature.profile.about.viewmodel.AboutAppViewModel
+import com.example.evofit.domain.usecase.GetAppVersionUseCase
+import com.example.evofit.domain.usecase.GetAppVersionUseCaseImpl
 import com.example.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
 import com.example.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import org.koin.android.ext.koin.androidContext
@@ -268,6 +271,7 @@ val domainModule = module {
     factory<SyncUserDataUseCase> { SyncUserDataUseCaseImpl(get()) }
     factory<NukeUserDataUseCase> { NukeUserDataUseCaseImpl(get()) }
     factory<SendSupportEmailUseCase> { SendSupportEmailUseCaseImpl(get()) }
+    factory<GetAppVersionUseCase> { GetAppVersionUseCaseImpl() }
 }
 
 val splashModule = module {
@@ -408,6 +412,7 @@ val profileModule = module {
 
     viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
     viewModel { SupportEmailViewModel(get(), get()) }
+    viewModel { AboutAppViewModel(get(), get()) }
     viewModel { DeveloperViewModel(get(), get()) }
     viewModel { UserDataViewModel(get(), get(), get(), get()) }
     viewModel { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get(), get()) }
