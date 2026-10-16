@@ -27,8 +27,9 @@ local.properties
 /.idea/vcs.xml
 /.idea/deviceManager.xml
 
-# Signing & Release Output Files
-*.jks
+# Kotlin Multiplatform / Metadata
+.kotlin/
+**/ .kotlin/
 *.keystore
 keystore.properties
 *.aab

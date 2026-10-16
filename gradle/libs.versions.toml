@@ -8,10 +8,12 @@ lifecycleRuntimeKtx = "2.10.0"
 navigationCompose = "2.9.8"
 activityCompose = "1.13.0"
 kotlin = "2.0.21"
+composeMultiplatform = "1.7.0"
 composeBom = "2026.02.01"
 koin = "4.0.0"
 datastore = "1.1.3"
 kotlinxSerialization = "1.8.0"
+kotlinxDatetime = "0.6.1"
 room = "2.7.0-alpha11"
 mockk = "1.13.12"
 kotlinxCoroutinesTest = "1.10.1"
@@ -30,6 +32,7 @@ coil = "2.7.0"
 
 [libraries]
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -70,6 +73,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
