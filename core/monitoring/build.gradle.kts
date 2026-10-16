@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.evofit.core.monitoring"
+    namespace = "com.guaracode.evofit.core.monitoring"
     compileSdk = 36
 
     defaultConfig {

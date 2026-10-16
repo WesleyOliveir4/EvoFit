@@ -1,0 +1,14 @@
+package com.guaracode.evofit.domain.model
+
+data class UserOnboardingData(
+    val name: String = "",
+    val birthDate: String = "",
+    val weight: String = "",
+    val height: String = "",
+    val profilePictureUri: String? = null,
+    val goals: List<UserGoal> = emptyList()
+) {
+    companion object {
+        fun empty() = UserOnboardingData()
+    }
+}

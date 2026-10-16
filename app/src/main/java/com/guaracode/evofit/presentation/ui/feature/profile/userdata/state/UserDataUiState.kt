@@ -1,0 +1,13 @@
+package com.guaracode.evofit.presentation.ui.feature.profile.userdata.state
+
+import androidx.compose.runtime.Immutable
+
+@Immutable
+data class UserDataUiState(
+    val name: String = "",
+    val birthDate: String = "",
+    val weight: String = "",
+    val height: String = "",
+    val isLoading: Boolean = false,
+    val isSaved: Boolean = false
+)
