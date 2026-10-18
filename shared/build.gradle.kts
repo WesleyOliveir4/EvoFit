@@ -28,19 +28,26 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
+            implementation("io.insert-koin:koin-compose:4.0.0")
             implementation(libs.gitlive.firebase.auth)
             implementation(libs.gitlive.firebase.firestore)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.lifecycleViewmodel)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.0")
         }
         androidMain.dependencies {
             implementation(libs.koin.android)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play)
+            implementation(libs.googleid)
+            implementation(libs.firebase.auth)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
