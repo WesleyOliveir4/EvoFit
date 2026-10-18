@@ -7,8 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun LegalContentScreen(
@@ -98,5 +100,13 @@ private fun LegalSection(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+@Preview
+@Composable
+private fun LegalContentScreenPreview() {
+    EvoFitTheme {
+        LegalContentScreen(type = "privacy", onBackClick = {})
     }
 }

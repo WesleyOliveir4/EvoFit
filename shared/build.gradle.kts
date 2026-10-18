@@ -40,6 +40,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.0")
         }
         androidMain.dependencies {

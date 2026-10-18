@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RegisterFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RegisterHeader
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.LoginInputField
@@ -23,6 +24,7 @@ import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.Auth
 import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -199,5 +201,27 @@ fun RegisterContent(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterScreenPreview() {
+    EvoFitTheme {
+        RegisterContent(
+            uiState = RegisterUiState(),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onTogglePasswordVisibility = {},
+            onConfirmPasswordChange = {},
+            onToggleConfirmPasswordVisibility = {},
+            passwordsMismatch = false,
+            onTermsAcceptedChange = {},
+            onTermsOfUseClick = {},
+            onPrivacyPolicyClick = {},
+            canSubmit = false,
+            onRegisterClick = {},
+            onLoginClick = {}
+        )
     }
 }

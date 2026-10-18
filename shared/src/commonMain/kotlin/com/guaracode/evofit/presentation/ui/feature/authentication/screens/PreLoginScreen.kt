@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.PreLoginFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.PreLoginHeader
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -60,5 +62,13 @@ fun PreLoginContent(
         ) {
             PreLoginHeader()
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PreLoginScreenPreview() {
+    EvoFitTheme {
+        PreLoginContent(onStartClick = {})
     }
 }

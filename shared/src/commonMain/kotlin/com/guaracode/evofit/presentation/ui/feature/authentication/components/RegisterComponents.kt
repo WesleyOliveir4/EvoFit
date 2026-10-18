@@ -1,5 +1,6 @@
 package com.guaracode.evofit.presentation.ui.feature.authentication.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,7 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun RegisterHeader(modifier: Modifier = Modifier) {
@@ -146,6 +149,18 @@ fun RegisterFooter(
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable { onLoginClick() }
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterPreview() {
+    EvoFitTheme {
+        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
+            RegisterHeader()
+            TermsCheckboxRow(checked = false, onCheckedChange = {}, onTermsOfUseClick = {}, onPrivacyPolicyClick = {})
+            RegisterFooter(isLoading = false, onRegisterClick = {}, onLoginClick = {})
         }
     }
 }

@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.ForgotPasswordFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.ForgotPasswordHeader
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.ForgotPasswordIllustration
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -68,5 +70,16 @@ fun ForgotPasswordContent(
             ForgotPasswordHeader(email = email)
             Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ForgotPasswordScreenPreview() {
+    EvoFitTheme {
+        ForgotPasswordContent(
+            email = "exemplo@email.com",
+            onContinueClick = {}
+        )
     }
 }

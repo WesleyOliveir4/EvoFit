@@ -15,7 +15,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
 import evofit.shared.generated.resources.ic_logo_evofit
 import org.jetbrains.compose.resources.painterResource
@@ -109,5 +111,17 @@ fun PreLoginFooter(
             text = "Começar",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PreLoginPreview() {
+    EvoFitTheme {
+        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
+            PreLoginHeader()
+            PreLoginPageIndicator()
+            PreLoginFooter(onStartClick = {})
+        }
     }
 }

@@ -21,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
@@ -91,5 +93,17 @@ fun ForgotPasswordFooter(
             text = "Continuar",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun ForgotPasswordPreview() {
+    EvoFitTheme {
+        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
+            ForgotPasswordIllustration()
+            ForgotPasswordHeader(email = "test@evofit.com")
+            ForgotPasswordFooter(onContinueClick = {})
+        }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RecoverPasswordFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RecoverPasswordHeader
@@ -20,6 +21,7 @@ import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.Auth
 import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -109,5 +111,19 @@ fun RecoverPasswordContent(
             
             Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun RecoverPasswordScreenPreview() {
+    EvoFitTheme {
+        RecoverPasswordContent(
+            uiState = RecoverPasswordUiState(),
+            onEmailChange = {},
+            canSubmit = false,
+            onBackClick = {},
+            onSendCodeClick = {}
+        )
     }
 }

@@ -17,12 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.*
 import com.guaracode.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -209,5 +211,22 @@ fun LoginContent(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    EvoFitTheme {
+        LoginContent(
+            uiState = LoginUiState(),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onTogglePasswordVisibility = {},
+            onLoginClick = {},
+            onForgotPasswordClick = {},
+            onSignUpClick = {},
+            onBackClick = {}
+        )
     }
 }

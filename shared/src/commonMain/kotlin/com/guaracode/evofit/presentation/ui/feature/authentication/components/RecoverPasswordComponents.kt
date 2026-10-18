@@ -1,5 +1,6 @@
 package com.guaracode.evofit.presentation.ui.feature.authentication.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -7,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 
 @Composable
 fun RecoverPasswordHeader(modifier: Modifier = Modifier) {
@@ -62,6 +65,17 @@ fun RecoverPasswordFooter(
                 text = "Enviar instruções",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun RecoverPasswordPreview() {
+    EvoFitTheme {
+        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
+            RecoverPasswordHeader()
+            RecoverPasswordFooter(onSendCodeClick = {})
         }
     }
 }
