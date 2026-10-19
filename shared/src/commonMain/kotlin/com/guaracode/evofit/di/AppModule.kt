@@ -4,6 +4,10 @@ import com.guaracode.evofit.data.datasource.*
 import com.guaracode.evofit.data.repository.*
 import com.guaracode.evofit.domain.repository.*
 import com.guaracode.evofit.domain.usecase.*
+import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
+import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCaseImpl
+import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
+import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCaseImpl
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
@@ -13,6 +17,24 @@ import com.guaracode.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeVi
 import com.guaracode.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
 import com.guaracode.evofit.presentation.ui.feature.onboard.tracking.OnboardingTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.about.tracking.AboutAppTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.about.viewmodel.AboutAppViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.developer.tracking.DeveloperTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.developer.viewmodel.DeveloperViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.goals.tracking.PersonalGoalsTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.goals.viewmodel.PersonalGoalsViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.home.tracking.ProfileHomeTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.home.viewmodel.ProfileViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.support.tracking.SupportTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.support.viewmodel.SupportEmailViewModel
+import com.guaracode.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
+import com.guaracode.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
@@ -88,6 +110,11 @@ val domainModule = module {
     factory<ProcessRepsAnalyticsUseCase> { ProcessRepsAnalyticsUseCaseImpl() }
     factory<ProcessExerciseAnalyticsUseCase> { ProcessExerciseAnalyticsUseCaseImpl(get(), get(), get(), get()) }
     factory<ProcessBodyWeightAnalyticsUseCase> { ProcessBodyWeightAnalyticsUseCaseImpl() }
+
+    // Profile Use Cases
+    factory<GetActiveUserGoalsUseCase> { GetActiveUserGoalsUseCaseImpl(get()) }
+    factory<CalculateGoalProgressUseCase> { CalculateGoalProgressUseCaseImpl(get(), get()) }
+    factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get(), get()) }
 }
 
 val evoModule = module {
@@ -102,10 +129,27 @@ val onboardingModule = module {
     factory { OnboardingViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }
 
+val profileModule = module {
+    single<AboutAppTracker> { AboutAppTrackerImpl(get()) }
+    single<DeveloperTracker> { DeveloperTrackerImpl(get()) }
+    single<PersonalGoalsTracker> { PersonalGoalsTrackerImpl(get()) }
+    single<ProfileHomeTracker> { ProfileHomeTrackerImpl(get()) }
+    single<SupportTracker> { SupportTrackerImpl(get()) }
+    single<UserDataTracker> { UserDataTrackerImpl(get()) }
+
+    factory { AboutAppViewModel(get(), get()) }
+    factory { DeveloperViewModel(get(), get()) }
+    factory { PersonalGoalsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get(), get()) }
+    factory { SupportEmailViewModel(get(), get()) }
+    factory { UserDataViewModel(get(), get(), get(), get()) }
+}
+
 val sharedAppModules = listOf(
     dataModule,
     domainModule,
     evoModule,
     onboardingModule,
+    profileModule,
     platformDataModule
 )

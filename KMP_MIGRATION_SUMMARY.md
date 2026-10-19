@@ -41,7 +41,7 @@
 
 ### Phase 5: Domain Use Cases & Dependency Injection
 - Migrated 100% of domain use cases (59 use cases: authentication, workout management, analytics, profile goals, fake history generator).
-- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `evoModule`, `onboardingModule`, and platform-specific `platformDataModule`).
+- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `evoModule`, `onboardingModule`, `profileModule`, and platform-specific `platformDataModule`).
 
 ### Phase 6: Presentation Models & Mappers
 - All 8 UI Models (`WorkoutUIModel`, `GoalUIModel`, `MuscleGroupItem`, `ExercisePreviewItem`, `ExerciseSelectionUIModel`, etc.) in `shared/src/commonMain/.../presentation/model/`.
@@ -73,6 +73,13 @@
    - `viewmodel/`: `OnboardingViewModel` (KMP pure, Context dependency removed)
    - `components/`: `OnboardingComponents` (`EvoWheelPicker`, `PageIndicators`, `UserInputField`, `GoalTag`, `ActiveGoalItem`, `AddNewGoalButton`)
    - `screens/`: `OnboardingScreen`, `OnboardUserDataScreen`, `OnboardWeightScreen`, `OnboardHeightScreen`, `OnboardingGoalsScreen`, `OnboardSummaryScreen`
+7. **Profile Feature (`profile/` - 42 files)**:
+   - `about/`: `AboutAppUiState`, `AboutAppTracker`, `AboutAppTrackerImpl`, `AboutAppViewModel`, `AboutAppScreen`.
+   - `developer/`: `DeveloperUiState`, `DeveloperTracker`, `DeveloperTrackerImpl`, `DeveloperViewModel`, `DeveloperScreen`.
+   - `goals/`: `GoalComponents`, `PersonalGoalsScreen`, `PersonalGoalsTracker`, `PersonalGoalsTrackerImpl`, `PersonalGoalsViewModel`.
+   - `home/`: `ProfileComponents`, `ProfileHomeScreen`, `ProfileUiState`, `ProfileHomeTracker`, `ProfileHomeTrackerImpl`, `ProfileViewModel`.
+   - `support/`: `FAQItem`, `SupportItem`, `FAQScreen`, `SuggestionNewWorkoutsScreen`, `SupportEmailScreen`, `SupportScreen`, `SupportEmailUiState`, `SupportTracker`, `SupportTrackerImpl`, `EmailTopic`, `FAQContext`, `SuggestionCategory`, `SupportEmailViewModel`.
+   - `userdata/`: `EvoWeightPickerDialog`, `UserDataComponents`, `UserDataItem`, `UserDataScreen`, `UserDataUiState`, `UserDataTracker`, `UserDataTrackerImpl`, `UserDataViewModel`.
 
 ---
 
@@ -98,11 +105,9 @@
 
 Remaining packages under `app/src/main/java/com/guaracode/evofit/presentation/ui/feature/`:
 
-1. **`profile/`**:
-   - `about/`, `developer/`, `goals/`, `home/`, `support/`, `userdata/`
-2. **`splash/`**:
+1. **`splash/`**:
    - `SplashScreen.kt`, `SplashViewModel.kt`
-3. **Navigation & Root App Composable**:
+2. **Navigation & Root App Composable**:
    - `navigation/NavRoutes.kt` & shared navigation host.
 
 ---
@@ -111,4 +116,4 @@ Remaining packages under `app/src/main/java/com/guaracode/evofit/presentation/ui
 
 To resume the migration in a new chat, use the following prompt:
 
-> "Continuando a migração do EvoFit para KMP com base no arquivo `KMP_MIGRATION_SUMMARY.md`. Todas as fases anteriores (core, data, domain, use cases, di, presentation models/mappers, authentication, commons/goals, global components, workout feature, evo feature, onboard feature) já foram concluídas. Vamos mapear e criar o plano para migrar o próximo pacote (`profile` ou `splash`). Por favor, leia o `KMP_MIGRATION_SUMMARY.md` para carregar as regras e o contexto."
+> "Continuando a migração do EvoFit para KMP com base no arquivo `KMP_MIGRATION_SUMMARY.md`. Todas as fases anteriores (core, data, domain, use cases, di, presentation models/mappers, authentication, commons/goals, global components, workout feature, evo feature, onboard feature, profile feature) já foram concluídas. Vamos mapear e criar o plano para migrar o próximo pacote (`splash` ou `navigation`). Por favor, leia o `KMP_MIGRATION_SUMMARY.md` para carregar as regras e o contexto."
