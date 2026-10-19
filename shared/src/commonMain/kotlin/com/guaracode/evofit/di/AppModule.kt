@@ -4,6 +4,12 @@ import com.guaracode.evofit.data.datasource.*
 import com.guaracode.evofit.data.repository.*
 import com.guaracode.evofit.domain.repository.*
 import com.guaracode.evofit.domain.usecase.*
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
+import com.guaracode.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
+import com.guaracode.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
@@ -60,10 +66,37 @@ val domainModule = module {
     factory<NukeUserDataUseCase> { NukeUserDataUseCaseImpl(get()) }
     factory<SendSupportEmailUseCase> { SendSupportEmailUseCaseImpl(get()) }
     factory<GetAppVersionUseCase> { GetAppVersionUseCaseImpl() }
+    
+    // Evo Use Cases
+    factory<FilterWorkoutHistoryByPeriodUseCase> { FilterWorkoutHistoryByPeriodUseCaseImpl() }
+    factory<GetStrengthGainsUseCase> { GetStrengthGainsUseCaseImpl() }
+    factory<GetMostEvolvedMuscleUseCase> { GetMostEvolvedMuscleUseCaseImpl() }
+    factory<GetLeastTrainedGroupUseCase> { GetLeastTrainedGroupUseCaseImpl() }
+    factory<GetKmPerWeekUseCase> { GetKmPerWeekUseCaseImpl() }
+    factory<GetAverageWorkoutTimeUseCase> { GetAverageWorkoutTimeUseCaseImpl() }
+    factory<GetCurrentWeekRangeUseCase> { GetCurrentWeekRangeUseCaseImpl() }
+    factory<GetEvoHomeSummaryUseCase> { GetEvoHomeSummaryUseCaseImpl(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory<FilterTrainedMuscleGroupsUseCase> { FilterTrainedMuscleGroupsUseCaseImpl() }
+    factory<GetTrainedMuscleGroupsUseCase> { GetTrainedMuscleGroupsUseCaseImpl(get()) }
+    factory<GetExercisesWithRecordCountUseCase> { GetExercisesWithRecordCountUseCaseImpl(get()) }
+    factory<ProcessWeightAnalyticsUseCase> { ProcessWeightAnalyticsUseCaseImpl() }
+    factory<ProcessDistanceAnalyticsUseCase> { ProcessDistanceAnalyticsUseCaseImpl() }
+    factory<ProcessTimeAnalyticsUseCase> { ProcessTimeAnalyticsUseCaseImpl() }
+    factory<ProcessRepsAnalyticsUseCase> { ProcessRepsAnalyticsUseCaseImpl() }
+    factory<ProcessExerciseAnalyticsUseCase> { ProcessExerciseAnalyticsUseCaseImpl(get(), get(), get(), get()) }
+    factory<ProcessBodyWeightAnalyticsUseCase> { ProcessBodyWeightAnalyticsUseCaseImpl() }
+}
+
+val evoModule = module {
+    single<EvoHomeTracker> { EvoHomeTrackerImpl(get()) }
+    single<EvoAnalyticsTracker> { EvoAnalyticsTrackerImpl(get()) }
+    factory { EvoHomeViewModel(get(), get(), get()) }
+    factory { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 val sharedAppModules = listOf(
     dataModule,
     domainModule,
+    evoModule,
     platformDataModule
 )

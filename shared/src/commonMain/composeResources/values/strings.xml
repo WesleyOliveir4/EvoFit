@@ -1,4 +1,58 @@
 <resources>
     <string name="app_name">EvoFit</string>
     <string name="welcome">Bem-vindo ao EvoFit</string>
+
+    <!-- Evo Home Strings -->
+    <string name="evo_home_title">Evo</string>
+    <string name="evo_home_filter_period_3_months">3 meses</string>
+    <string name="evo_home_filter_description">Mudar período</string>
+    <string name="evo_home_strength_title">TOP GANHOS DE FORÇA</string>
+    <string name="evo_home_most_evolved_title">MAIOR EVOLUÇÃO</string>
+    <string name="evo_home_workouts_title">TREINOS</string>
+    <string name="evo_home_workouts_completed">concluídos</string>
+    <string name="evo_home_ranking_format">%1$dº</string>
+    <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
+    <string name="evo_home_empty_value">---</string>
+    <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
+    <string name="evo_home_insufficient_data">Dados insuficientes para este período</string>
+    <string name="evo_home_least_trained_title">GRUPO MENOS TREINADO</string>
+    <string name="evo_home_sessions_count">%1$d sessões</string>
+    <string name="evo_home_km_per_week_title">KM POR SEMANA</string>
+    <string name="evo_home_average_label">média</string>
+    <string name="evo_home_avg_time_title">TEMPO MÉDIO POR DIA</string>
+    <string name="evo_home_per_session_label">por sessão</string>
+    <string name="evo_home_km_value">%1$s km</string>
+    <string name="evo_home_time_value">%1$d min</string>
+    <string name="evo_home_exercise_analysis_title">Evolução corporal</string>
+    <string name="evo_home_exercise_analysis_card_title">Analise sua evolução</string>
+    <string name="evo_home_exercise_analysis_card_desc">Filtre por categoria e veja a evolução detalhada dos seus exercícios ao longo do tempo.</string>
+
+    <!-- Evo Analytics Strings -->
+    <string name="evo_analytics_select_muscle_group">Selecione a categoria</string>
+    <string name="evo_analytics_select_exercise">Selecione um exercício</string>
+    <string name="evo_analytics_back_desc">Voltar</string>
+    <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>
+    <string name="evo_analytics_records_format">%1$d registros</string>
+    <string name="analytics_detail_subtitle">Análise de evolução</string>
+    <string name="analytics_detail_record_max">Recorde máximo</string>
+    <string name="analytics_detail_record_distance">Recorde distância</string>
+    <string name="analytics_detail_record_time">Recorde tempo</string>
+    <string name="analytics_detail_record_reps">Recorde repetições</string>
+    <string name="analytics_detail_avg_speed">Velocidade média</string>
+    <string name="analytics_detail_total_sets">Total de séries</string>
+    <string name="analytics_detail_first_record">Primeiro registro</string>
+    <string name="analytics_detail_last_record">Último registro</string>
+    <string name="analytics_chart_tab_load">Carga</string>
+    <string name="analytics_chart_tab_volume">Volume</string>
+    <string name="analytics_chart_tab_distance">Distância</string>
+    <string name="analytics_chart_tab_speed">Velocidade</string>
+    <string name="analytics_chart_average_label">Média • %1$s</string>
+    <string name="analytics_chart_empty_history">Nenhum registro</string>
+    <string name="analytics_unit_kg">kg</string>
+    <string name="analytics_unit_vol">vol</string>
+    <string name="analytics_unit_km">km</string>
+    <string name="analytics_unit_kmh">km/h</string>
+    <string name="analytics_unit_reps">reps</string>
+    <string name="analytics_unit_hours_format">%1$dh %2$02dm</string>
+    <string name="analytics_unit_minutes_format">%1$dm</string>
 </resources>

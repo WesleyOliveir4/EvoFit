@@ -1,0 +1,18 @@
+package com.guaracode.evofit.presentation.ui.feature.evo.home.state
+
+import androidx.compose.runtime.Immutable
+import com.guaracode.evofit.domain.model.EvoPeriod
+import com.guaracode.evofit.presentation.model.MuscleEvolutionUIModel
+import com.guaracode.evofit.presentation.model.StrengthGainUIModel
+
+@Immutable
+data class EvoHomeUiState(
+    val isLoading: Boolean = false,
+    val selectedPeriod: EvoPeriod = EvoPeriod.LAST_90_DAYS,
+    val strengthGains: List<StrengthGainUIModel>? = null,
+    val mostEvolvedMuscle: MuscleEvolutionUIModel? = null,
+    val workoutsCount: Int = 0,
+    val leastTrainedGroup: Pair<String, Int>? = null,
+    val kmPerWeek: Double = 0.0,
+    val averageWorkoutTime: Int = 0
+)
