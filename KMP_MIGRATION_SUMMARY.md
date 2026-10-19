@@ -41,7 +41,7 @@
 
 ### Phase 5: Domain Use Cases & Dependency Injection
 - Migrated 100% of domain use cases (59 use cases: authentication, workout management, analytics, profile goals, fake history generator).
-- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `evoModule`, and platform-specific `platformDataModule`).
+- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `evoModule`, `onboardingModule`, and platform-specific `platformDataModule`).
 
 ### Phase 6: Presentation Models & Mappers
 - All 8 UI Models (`WorkoutUIModel`, `GoalUIModel`, `MuscleGroupItem`, `ExercisePreviewItem`, `ExerciseSelectionUIModel`, etc.) in `shared/src/commonMain/.../presentation/model/`.
@@ -67,6 +67,12 @@
 5. **Evo Feature (`evo/` - 15 files)**:
    - `analytics/`: `EvoAnalyticsState`, `EvoAnalyticsTracker`, `EvoAnalyticsTrackerImpl`, `EvoAnalyticsViewModel`, `ExerciseAnalyticsComponents`, `MuscleGroupSelectionComponents`, `CategoryAnalyticsSelectionScreen`, `CategoryDetailAnalyticsScreen`, `ExerciseSelectionScreen`.
    - `home/`: `EvoHomeUiState`, `EvoHomeTracker`, `EvoHomeTrackerImpl`, `EvoHomeViewModel`, `EvoHomeComponents`, `EvoHomeScreen`.
+6. **Onboard Feature (`onboard/` - 11 files)**:
+   - `state/`: `OnboardingUiState`
+   - `tracking/`: `OnboardingTracker`, `OnboardingTrackerImpl`
+   - `viewmodel/`: `OnboardingViewModel` (KMP pure, Context dependency removed)
+   - `components/`: `OnboardingComponents` (`EvoWheelPicker`, `PageIndicators`, `UserInputField`, `GoalTag`, `ActiveGoalItem`, `AddNewGoalButton`)
+   - `screens/`: `OnboardingScreen`, `OnboardUserDataScreen`, `OnboardWeightScreen`, `OnboardHeightScreen`, `OnboardingGoalsScreen`, `OnboardSummaryScreen`
 
 ---
 
@@ -92,13 +98,11 @@
 
 Remaining packages under `app/src/main/java/com/guaracode/evofit/presentation/ui/feature/`:
 
-1. **`onboard/`**:
-   - `components/`, `screens/`, `state/`, `tracking/`, `viewmodel/`
-2. **`profile/`**:
+1. **`profile/`**:
    - `about/`, `developer/`, `goals/`, `home/`, `support/`, `userdata/`
-3. **`splash/`**:
+2. **`splash/`**:
    - `SplashScreen.kt`, `SplashViewModel.kt`
-4. **Navigation & Root App Composable**:
+3. **Navigation & Root App Composable**:
    - `navigation/NavRoutes.kt` & shared navigation host.
 
 ---
@@ -107,4 +111,4 @@ Remaining packages under `app/src/main/java/com/guaracode/evofit/presentation/ui
 
 To resume the migration in a new chat, use the following prompt:
 
-> "Continuando a migração do EvoFit para KMP com base no arquivo `KMP_MIGRATION_SUMMARY.md`. Todas as fases anteriores (core, data, domain, use cases, di, presentation models/mappers, authentication, commons/goals, global components, workout feature, evo feature) já foram concluídas. Vamos mapear e criar o plano para migrar o próximo pacote (`onboard`, `profile` ou `splash`). Por favor, leia o `KMP_MIGRATION_SUMMARY.md` para carregar as regras e o contexto."
+> "Continuando a migração do EvoFit para KMP com base no arquivo `KMP_MIGRATION_SUMMARY.md`. Todas as fases anteriores (core, data, domain, use cases, di, presentation models/mappers, authentication, commons/goals, global components, workout feature, evo feature, onboard feature) já foram concluídas. Vamos mapear e criar o plano para migrar o próximo pacote (`profile` ou `splash`). Por favor, leia o `KMP_MIGRATION_SUMMARY.md` para carregar as regras e o contexto."

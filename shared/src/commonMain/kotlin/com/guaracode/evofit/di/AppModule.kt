@@ -10,6 +10,9 @@ import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoA
 import com.guaracode.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTracker
 import com.guaracode.evofit.presentation.ui.feature.evo.home.tracking.EvoHomeTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.evo.home.viewmodel.EvoHomeViewModel
+import com.guaracode.evofit.presentation.ui.feature.onboard.tracking.OnboardingTracker
+import com.guaracode.evofit.presentation.ui.feature.onboard.tracking.OnboardingTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.onboard.viewmodel.OnboardingViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
@@ -94,9 +97,15 @@ val evoModule = module {
     factory { EvoAnalyticsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
+val onboardingModule = module {
+    single<OnboardingTracker> { OnboardingTrackerImpl(get()) }
+    factory { OnboardingViewModel(get(), get(), get(), get(), get(), get(), get()) }
+}
+
 val sharedAppModules = listOf(
     dataModule,
     domainModule,
     evoModule,
+    onboardingModule,
     platformDataModule
 )
