@@ -7,6 +7,7 @@
   - Kotlin `2.0.21`
   - AGP `9.1.1`
   - Compose Multiplatform `1.7.0`
+  - JetBrains Navigation Compose KMP `2.8.0-alpha10` (`org.jetbrains.androidx.navigation:navigation-compose`)
   - Koin KMP `4.0.0` (`koin-core`, `koin-compose`, `koin-compose-viewmodel`, `koin-android`)
   - GitLive Firebase `2.7.0` (`firebase-auth`, `firebase-firestore`)
   - Room KMP `2.7.0-alpha11` with bundled SQLite (`androidx.sqlite:sqlite-bundled`)
@@ -41,7 +42,7 @@
 
 ### Phase 5: Domain Use Cases & Dependency Injection
 - Migrated 100% of domain use cases (59 use cases: authentication, workout management, analytics, profile goals, fake history generator).
-- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `evoModule`, `onboardingModule`, `profileModule`, and platform-specific `platformDataModule`).
+- Configured shared Koin DI (`AppModule.kt` containing `dataModule`, `domainModule`, `authModule`, `workoutModule`, `goalModule`, `evoModule`, `onboardingModule`, `profileModule`, `splashModule`, and platform-specific `platformDataModule`).
 
 ### Phase 6: Presentation Models & Mappers
 - All 8 UI Models (`WorkoutUIModel`, `GoalUIModel`, `MuscleGroupItem`, `ExercisePreviewItem`, `ExerciseSelectionUIModel`, etc.) in `shared/src/commonMain/.../presentation/model/`.
@@ -80,6 +81,17 @@
    - `home/`: `ProfileComponents`, `ProfileHomeScreen`, `ProfileUiState`, `ProfileHomeTracker`, `ProfileHomeTrackerImpl`, `ProfileViewModel`.
    - `support/`: `FAQItem`, `SupportItem`, `FAQScreen`, `SuggestionNewWorkoutsScreen`, `SupportEmailScreen`, `SupportScreen`, `SupportEmailUiState`, `SupportTracker`, `SupportTrackerImpl`, `EmailTopic`, `FAQContext`, `SuggestionCategory`, `SupportEmailViewModel`.
    - `userdata/`: `EvoWeightPickerDialog`, `UserDataComponents`, `UserDataItem`, `UserDataScreen`, `UserDataUiState`, `UserDataTracker`, `UserDataTrackerImpl`, `UserDataViewModel`.
+8. **Splash Feature (`splash/` - 4 files)**:
+   - `tracking/`: `SplashTracker`, `SplashTrackerImpl`
+   - `viewmodel/`: `SplashViewModel`
+   - `screens/`: `SplashScreen`
+
+### Phase 8: Shared Navigation & Centralized Koin DI
+- **Shared Navigation (`navigation/`)**:
+  - `NavRoutes.kt`: Shared sealed class defining all application routes.
+  - `NavNavigation.kt`: Shared Navigation Graph using JetBrains Navigation Compose Multiplatform connecting all screens and ViewModels.
+- **Centralized Koin DI (`di/AppModule.kt`)**:
+  - `sharedAppModules` contains 100% of app Koin modules (`dataModule`, `domainModule`, `authModule`, `workoutModule`, `goalModule`, `evoModule`, `onboardingModule`, `profileModule`, `splashModule`, `platformDataModule`).
 
 ---
 
@@ -101,19 +113,14 @@
 
 ---
 
-## 4. Pending Packages to Migrate (Next Steps)
+## 4. Migration Status
 
-Remaining packages under `app/src/main/java/com/guaracode/evofit/presentation/ui/feature/`:
-
-1. **`splash/`**:
-   - `SplashScreen.kt`, `SplashViewModel.kt`
-2. **Navigation & Root App Composable**:
-   - `navigation/NavRoutes.kt` & shared navigation host.
-
----
-
-## 5. Prompt for New Session
-
-To resume the migration in a new chat, use the following prompt:
-
-> "Continuando a migração do EvoFit para KMP com base no arquivo `KMP_MIGRATION_SUMMARY.md`. Todas as fases anteriores (core, data, domain, use cases, di, presentation models/mappers, authentication, commons/goals, global components, workout feature, evo feature, onboard feature, profile feature) já foram concluídas. Vamos mapear e criar o plano para migrar o próximo pacote (`splash` ou `navigation`). Por favor, leia o `KMP_MIGRATION_SUMMARY.md` para carregar as regras e o contexto."
+**100% OF THE APPLICATION CODEBASE IS NOW MIGRATED TO KMP IN THE `:shared` MODULE!** 🎉
+Both Android (`androidMain`) and iOS (`iosMain`) targets share 100% of:
+- Core utilities & Network observers
+- Database, DataSources, DataStore & Firebase Remote Data
+- Domain Models, Repositories & Use Cases
+- Presentation UI Models, Mappers, ViewModels & Trackers
+- Compose Multiplatform UI Screens & Components
+- Centralized Koin Dependency Injection (`sharedAppModules`)
+- Shared Navigation Graph (`NavRoutes` & `NavNavigation`)

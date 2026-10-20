@@ -23,10 +23,11 @@ import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun RecoverPasswordScreen(
-    viewModel: RecoverPasswordViewModel,
+    viewModel: RecoverPasswordViewModel = koinViewModel(),
     authTracker: AuthTracker = koinInject(),
     onBackClick: () -> Unit = {},
     onCodeSent: (email: String) -> Unit = {}

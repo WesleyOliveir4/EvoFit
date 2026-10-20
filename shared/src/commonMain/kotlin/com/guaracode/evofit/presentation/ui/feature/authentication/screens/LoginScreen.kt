@@ -26,10 +26,11 @@ import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel,
+    viewModel: LoginViewModel = koinViewModel(),
     authTracker: AuthTracker = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},

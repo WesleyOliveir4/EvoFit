@@ -8,6 +8,14 @@ import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCaseImpl
 import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCaseImpl
+import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
+import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
+import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.RecoverPasswordViewModel
+import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.RegisterViewModel
+import com.guaracode.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTracker
+import com.guaracode.evofit.presentation.ui.feature.commons.goals.tracking.GoalWizardTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTracker
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.tracking.EvoAnalyticsTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoAnalyticsViewModel
@@ -35,6 +43,24 @@ import com.guaracode.evofit.presentation.ui.feature.profile.support.viewmodel.Su
 import com.guaracode.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTracker
 import com.guaracode.evofit.presentation.ui.feature.profile.userdata.tracking.UserDataTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.profile.userdata.viewmodel.UserDataViewModel
+import com.guaracode.evofit.presentation.ui.feature.splash.tracking.SplashTracker
+import com.guaracode.evofit.presentation.ui.feature.splash.tracking.SplashTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.splash.viewmodel.SplashViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewmodel.SelectExercisesViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTracker
+import com.guaracode.evofit.presentation.ui.feature.workout.home.tracking.WorkoutHomeTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTracker
+import com.guaracode.evofit.presentation.ui.feature.workout.resume.tracking.WorkoutResumeTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTrackerImpl
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutPreviewViewModel
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
@@ -81,6 +107,8 @@ val domainModule = module {
     factory<UpdateCompletedSetsUseCase> { UpdateCompletedSetsUseCaseImpl(get()) }
     factory<ClearWorkoutSessionUseCase> { ClearWorkoutSessionUseCaseImpl(get()) }
     factory<DeleteWorkoutUseCase> { DeleteWorkoutUseCaseImpl(get()) }
+    factory<UpdateWorkoutUseCase> { UpdateWorkoutUseCaseImpl(get()) }
+    factory<GetWorkoutsCountUseCase> { GetWorkoutsCountUseCaseImpl() }
     factory<RegisterUseCase> { RegisterUseCaseImpl(get()) }
     factory<LoginUseCase> { LoginUseCaseImpl(get()) }
     factory<LoginWithGoogleUseCase> { LoginWithGoogleUseCaseImpl(get()) }
@@ -117,6 +145,69 @@ val domainModule = module {
     factory<GenerateFakeWorkoutHistoryUseCase> { GenerateFakeWorkoutHistoryUseCaseImpl(get(), get(), get(), get(), get()) }
 }
 
+val authModule = module {
+    single<AuthTracker> { AuthTrackerImpl(get()) }
+    factory { RegisterViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { RecoverPasswordViewModel(get(), get(), get()) }
+}
+
+val workoutModule = module {
+    single<WorkoutHomeTracker> { WorkoutHomeTrackerImpl(get()) }
+    single<CreateWorkoutTracker> { CreateWorkoutTrackerImpl(get()) }
+    single<WorkoutResumeTracker> { WorkoutResumeTrackerImpl(get()) }
+    single<StartWorkoutTracker> { StartWorkoutTrackerImpl(get()) }
+
+    factory { WorkoutViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { NewWorkoutViewModel(get(), get(), get(), get()) }
+    factory { SelectExercisesViewModel(get(), get(), get(), get(), get()) }
+    factory { ConfigureWorkoutViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { (workoutId: String?, workoutDoneId: String?, editWorkoutId: String?, workoutNotFinishedId: String?) ->
+        WorkoutResumeViewModel(
+            workoutId = workoutId,
+            workoutDoneId = workoutDoneId,
+            editWorkoutId = editWorkoutId,
+            workoutNotFinishedId = workoutNotFinishedId,
+            getWorkoutByIdUseCase = get(),
+            getWorkoutDoneByIdUseCase = get(),
+            tracker = get()
+        )
+    }
+    factory { (workoutId: String) ->
+        WorkoutPreviewViewModel(
+            workoutId = workoutId,
+            getWorkoutByIdUseCase = get(),
+            getExercisesByIdsUseCase = get(),
+            deleteWorkoutUseCase = get(),
+            getActiveWorkoutSessionUseCase = get(),
+            clearWorkoutSessionUseCase = get(),
+            getMuscleGroupsUseCase = get(),
+            updateWorkoutUseCase = get(),
+            tracker = get()
+        )
+    }
+    factory { (workoutId: String) ->
+        WorkoutStartViewModel(
+            workoutId = workoutId,
+            getWorkoutByIdUseCase = get(),
+            getExercisesByIdsUseCase = get(),
+            saveWorkoutDoneUseCase = get(),
+            getUserIdUseCase = get(),
+            getActiveWorkoutSessionUseCase = get(),
+            startWorkoutSessionUseCase = get(),
+            updateCompletedSetsUseCase = get(),
+            clearWorkoutSessionUseCase = get(),
+            getMuscleGroupsUseCase = get(),
+            tracker = get()
+        )
+    }
+}
+
+val goalModule = module {
+    single<GoalWizardTracker> { GoalWizardTrackerImpl(get()) }
+    factory { GoalWizardViewModel(get(), get(), get()) }
+}
+
 val evoModule = module {
     single<EvoHomeTracker> { EvoHomeTrackerImpl(get()) }
     single<EvoAnalyticsTracker> { EvoAnalyticsTrackerImpl(get()) }
@@ -145,11 +236,20 @@ val profileModule = module {
     factory { UserDataViewModel(get(), get(), get(), get()) }
 }
 
+val splashModule = module {
+    single<SplashTracker> { SplashTrackerImpl(get()) }
+    factory { SplashViewModel(get(), get(), get(), get()) }
+}
+
 val sharedAppModules = listOf(
     dataModule,
     domainModule,
+    authModule,
+    workoutModule,
+    goalModule,
     evoModule,
     onboardingModule,
     profileModule,
+    splashModule,
     platformDataModule
 )

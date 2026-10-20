@@ -37,6 +37,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.lifecycleViewmodel)
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
