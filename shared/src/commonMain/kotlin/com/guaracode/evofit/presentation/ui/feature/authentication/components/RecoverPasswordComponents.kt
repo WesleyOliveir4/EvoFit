@@ -8,9 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.recover_password_button_send
+import evofit.shared.generated.resources.recover_password_subtitle
+import evofit.shared.generated.resources.recover_password_title
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun RecoverPasswordHeader(modifier: Modifier = Modifier) {
@@ -22,12 +27,12 @@ fun RecoverPasswordHeader(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
-            text = "Esqueceu sua senha?",
+            text = stringResource(Res.string.recover_password_title),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineLarge
         )
         Text(
-            text = "Digite seu e-mail cadastrado para receber as instruções de recuperação.",
+            text = stringResource(Res.string.recover_password_subtitle),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -62,7 +67,7 @@ fun RecoverPasswordFooter(
             )
         } else {
             Text(
-                text = "Enviar instruções",
+                text = stringResource(Res.string.recover_password_button_send),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }

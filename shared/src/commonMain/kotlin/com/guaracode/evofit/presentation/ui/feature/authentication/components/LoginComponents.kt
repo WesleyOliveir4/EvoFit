@@ -16,9 +16,19 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import com.guaracode.evofit.presentation.ui.theme.Dimens
+import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
 import evofit.shared.generated.resources.ic_logo_evofit
+import evofit.shared.generated.resources.login_button_enter
+import evofit.shared.generated.resources.login_no_account
+import evofit.shared.generated.resources.login_or_continue_with
+import evofit.shared.generated.resources.login_sign_up
+import evofit.shared.generated.resources.login_title
+import evofit.shared.generated.resources.login_welcome_subtitle
+import evofit.shared.generated.resources.login_welcome_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LoginHeader(modifier: Modifier = Modifier) {
@@ -46,7 +56,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
                 )
             }
             Text(
-                text = "EvoFit",
+                text = stringResource(Res.string.login_title),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleLarge
             )
@@ -56,12 +66,12 @@ fun LoginHeader(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
         ) {
             Text(
-                text = "Bem-vindo de volta",
+                text = stringResource(Res.string.login_welcome_title),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.headlineLarge
             )
             Text(
-                text = "Continue de onde parou na sua evolução.",
+                text = stringResource(Res.string.login_welcome_subtitle),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -140,7 +150,7 @@ fun LoginButton(
             )
         } else {
             Text(
-                text = "Entrar",
+                text = stringResource(Res.string.login_button_enter),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
@@ -193,7 +203,7 @@ fun LoginSocialDivider(modifier: Modifier = Modifier) {
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.surfaceVariant)
         Text(
-            text = "Ou continue com",
+            text = stringResource(Res.string.login_or_continue_with),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = Dimens.SpacingMedium)
@@ -214,15 +224,23 @@ fun LoginRegistrationFooter(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Não tem uma conta?",
+            text = stringResource(Res.string.login_no_account),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall
         )
         Text(
-            text = "Cadastre-se",
+            text = stringResource(Res.string.login_sign_up),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.clickable(enabled = enabled) { onSignUpClick() }
         )
+    }
+}
+
+@Preview
+@Composable
+private fun LoginHeaderPreview() {
+    EvoFitTheme {
+        LoginHeader()
     }
 }

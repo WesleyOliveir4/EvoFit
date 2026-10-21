@@ -10,9 +10,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.register_already_have_account
+import evofit.shared.generated.resources.register_button_confirm
+import evofit.shared.generated.resources.register_login
+import evofit.shared.generated.resources.register_privacy_policy
+import evofit.shared.generated.resources.register_subtitle
+import evofit.shared.generated.resources.register_terms_and
+import evofit.shared.generated.resources.register_terms_agree_prefix
+import evofit.shared.generated.resources.register_terms_of_use
+import evofit.shared.generated.resources.register_title
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun RegisterHeader(modifier: Modifier = Modifier) {
@@ -24,13 +35,13 @@ fun RegisterHeader(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
-            text = "Criar conta",
+            text = stringResource(Res.string.register_title),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.displayLarge,
             letterSpacing = 0.5.sp
         )
         Text(
-            text = "Junte-se ao EvoFit e alcance seus objetivos.",
+            text = stringResource(Res.string.register_subtitle),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -66,23 +77,23 @@ fun TermsCheckboxRow(
             horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall)
         ) {
             Text(
-                text = "Eu concordo com os ",
+                text = stringResource(Res.string.register_terms_agree_prefix),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelSmall
             )
             Text(
-                text = "Termos de Uso",
+                text = stringResource(Res.string.register_terms_of_use),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable(enabled = enabled) { onTermsOfUseClick() }
             )
             Text(
-                text = " e a ",
+                text = stringResource(Res.string.register_terms_and),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelSmall
             )
             Text(
-                text = "Política de Privacidade",
+                text = stringResource(Res.string.register_privacy_policy),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable(enabled = enabled) { onPrivacyPolicyClick() }
@@ -127,7 +138,7 @@ fun RegisterFooter(
                 )
             } else {
                 Text(
-                    text = "Confirmar cadastro",
+                    text = stringResource(Res.string.register_button_confirm),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
@@ -139,12 +150,12 @@ fun RegisterFooter(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Já tem uma conta?",
+                text = stringResource(Res.string.register_already_have_account),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Fazer login",
+                text = stringResource(Res.string.register_login),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.clickable { onLoginClick() }

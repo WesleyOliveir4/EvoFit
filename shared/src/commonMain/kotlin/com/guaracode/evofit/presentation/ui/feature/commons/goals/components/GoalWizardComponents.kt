@@ -23,12 +23,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.domain.model.*
 import com.guaracode.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalAction
 import com.guaracode.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardStep
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.goal_category_muscle_gain
+import evofit.shared.generated.resources.goal_category_resistance
+import evofit.shared.generated.resources.goal_category_strength
+import evofit.shared.generated.resources.goal_category_weight_loss
+import evofit.shared.generated.resources.goal_dialog_choose_type
+import evofit.shared.generated.resources.goal_dialog_title_new
+import evofit.shared.generated.resources.goal_search_placeholder
+import evofit.shared.generated.resources.goal_step_cardio_distance
+import evofit.shared.generated.resources.goal_step_exercise
+import evofit.shared.generated.resources.goal_step_muscle_group
+import evofit.shared.generated.resources.goal_step_reps
+import evofit.shared.generated.resources.goal_step_time
+import evofit.shared.generated.resources.goal_step_weight
+import evofit.shared.generated.resources.goal_unit_kg
+import evofit.shared.generated.resources.goal_unit_km
+import evofit.shared.generated.resources.goal_unit_min
+import evofit.shared.generated.resources.goal_unit_reps
+import evofit.shared.generated.resources.onboarding_back
+import evofit.shared.generated.resources.onboarding_button_continue
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
@@ -39,7 +60,7 @@ fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
     ) {
         if (showBack) {
             Text(
-                text = "Voltar",
+                text = stringResource(Res.string.onboarding_back),
                 modifier = Modifier.clickable { onBack() },
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
@@ -49,7 +70,7 @@ fun WizardTopBar(onBack: () -> Unit, onClose: () -> Unit, showBack: Boolean) {
         }
 
         Text(
-            text = "Nova Meta",
+            text = stringResource(Res.string.goal_dialog_title_new),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -108,10 +129,10 @@ fun WizardProgress(currentStep: GoalWizardStep) {
 
 @Composable
 fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
-    val strengthLabel = "Força"
-    val resistanceLabel = "Resistência"
-    val weightLossLabel = "Perda de Peso"
-    val muscleGainLabel = "Ganho de Massa"
+    val strengthLabel = stringResource(Res.string.goal_category_strength)
+    val resistanceLabel = stringResource(Res.string.goal_category_resistance)
+    val weightLossLabel = stringResource(Res.string.goal_category_weight_loss)
+    val muscleGainLabel = stringResource(Res.string.goal_category_muscle_gain)
 
     val categories = listOf(
         strengthLabel,
@@ -122,7 +143,7 @@ fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
 
     Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
-            text = "Escolha o tipo de meta",
+            text = stringResource(Res.string.goal_dialog_choose_type),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall
         )
@@ -149,7 +170,7 @@ fun GoalTypeStep(onAction: (GoalAction) -> Unit) {
 fun MuscleGroupStep(muscleGroups: List<MuscleGroup>, onAction: (GoalAction) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
-            text = "Selecione o grupo muscular",
+            text = stringResource(Res.string.goal_step_muscle_group),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall
         )
@@ -185,7 +206,7 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
 
     Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)) {
         Text(
-            text = "Selecione o exercício",
+            text = stringResource(Res.string.goal_step_exercise),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodySmall
         )
@@ -194,7 +215,7 @@ fun ExerciseStep(exercises: List<Exercise>, search: String, onAction: (GoalActio
             value = search,
             onValueChange = { onAction(GoalAction.UpdateSearch(it)) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Buscar exercício...") },
+            placeholder = { Text(stringResource(Res.string.goal_search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
             singleLine = true,
@@ -236,17 +257,17 @@ fun GoalValueStep(
     onAction: (GoalAction) -> Unit
 ) {
     val label = when (selectedExercise?.unit) {
-        MeasurementUnit.REPS -> "Repetições"
-        MeasurementUnit.TIME -> "Tempo"
-        MeasurementUnit.DISTANCE -> "Distância"
-        else -> "Carga"
+        MeasurementUnit.REPS -> stringResource(Res.string.goal_step_reps)
+        MeasurementUnit.TIME -> stringResource(Res.string.goal_step_time)
+        MeasurementUnit.DISTANCE -> stringResource(Res.string.goal_step_cardio_distance)
+        else -> stringResource(Res.string.goal_step_weight)
     }
 
     val suffix = when (selectedExercise?.unit) {
-        MeasurementUnit.REPS -> "reps"
-        MeasurementUnit.TIME -> "min"
-        MeasurementUnit.DISTANCE -> "km"
-        else -> "kg"
+        MeasurementUnit.REPS -> stringResource(Res.string.goal_unit_reps)
+        MeasurementUnit.TIME -> stringResource(Res.string.goal_unit_min)
+        MeasurementUnit.DISTANCE -> stringResource(Res.string.goal_unit_km)
+        else -> stringResource(Res.string.goal_unit_kg)
     }
 
     val isCardioDistance = selectedExercise?.unit == MeasurementUnit.DISTANCE
@@ -276,7 +297,7 @@ fun GoalValueStep(
 
         if (isCardioDistance) {
             Text(
-                text = "Tempo",
+                text = stringResource(Res.string.goal_step_time),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -285,7 +306,7 @@ fun GoalValueStep(
                 value = timeValue,
                 onValueChange = { onAction(GoalAction.UpdateTimeValue(it)) },
                 modifier = Modifier.fillMaxWidth(),
-                suffix = { Text("min") },
+                suffix = { Text(stringResource(Res.string.goal_unit_min)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
                 singleLine = true,
@@ -306,7 +327,7 @@ fun GoalValueStep(
         ) {
             Icon(Icons.Default.Check, contentDescription = null)
             Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
-            Text("Continuar", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+            Text(stringResource(Res.string.onboarding_button_continue), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
         }
     }
 }

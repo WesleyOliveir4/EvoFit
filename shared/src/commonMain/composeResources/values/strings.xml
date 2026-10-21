@@ -117,6 +117,27 @@
     <string name="goal_category_label_cardio">Cardio</string>
     <string name="goal_category_label_weight">Peso</string>
 
+    <!-- Goal Wizard Strings -->
+    <string name="goal_dialog_title_new">Nova Meta</string>
+    <string name="goal_dialog_title_complete">Completar Meta</string>
+    <string name="goal_dialog_close">Fechar</string>
+    <string name="goal_dialog_choose_type">Escolha o tipo da sua meta:</string>
+    <string name="goal_category_strength">Aumentar força</string>
+    <string name="goal_category_resistance">Melhorar resistência</string>
+    <string name="goal_category_weight_loss">Perder peso</string>
+    <string name="goal_category_muscle_gain">Ganhar massa</string>
+    <string name="goal_step_muscle_group">Qual grupo muscular?</string>
+    <string name="goal_step_exercise">Qual exercício?</string>
+    <string name="goal_step_reps">Meta de repetições:</string>
+    <string name="goal_step_time">Meta de tempo (min):</string>
+    <string name="goal_step_weight">Meta de quilos:</string>
+    <string name="goal_step_cardio_distance">Distância aproximada:</string>
+    <string name="goal_unit_reps">reps</string>
+    <string name="goal_unit_min">min</string>
+    <string name="goal_unit_kg">kg</string>
+    <string name="goal_unit_km">km</string>
+    <string name="goal_search_placeholder">Buscar exercício...</string>
+
     <!-- Personal Goals Strings -->
     <string name="profile_goals_title">Metas Pessoais</string>
     <string name="profile_goals_subtitle">Suas metas a serem atingidas!</string>
@@ -204,6 +225,62 @@
     <string name="about_option_terms">Termos de uso</string>
     <string name="about_option_privacy">Política de privacidade</string>
     <string name="about_app_version">1.0.0</string>
+
+    <!-- Authentication Strings -->
+    <string name="login_title">EvoFit</string>
+    <string name="login_subtitle">Entre para continuar acompanhando sua evolução diária.</string>
+    <string name="login_welcome_title">Bem-vindo de volta</string>
+    <string name="login_welcome_subtitle">Continue de onde parou na sua evolução.</string>
+    <string name="login_label_email">E-mail</string>
+    <string name="login_placeholder_email">Seu e-mail cadastrado</string>
+    <string name="login_label_password">Senha</string>
+    <string name="login_placeholder_password">Digite sua senha cadastrada</string>
+    <string name="login_forgot_password">Esqueci minha senha</string>
+    <string name="login_button_enter">Entrar</string>
+    <string name="login_no_account">Não possui uma conta?</string>
+    <string name="login_sign_up">Cadastre-se</string>
+    <string name="login_content_desc_hide_password">Ocultar senha</string>
+    <string name="login_content_desc_show_password">Mostrar senha</string>
+    <string name="login_or_continue_with">ou continue com</string>
+    <string name="login_google">Google</string>
+    <string name="login_apple">Apple</string>
+    <string name="login_content_desc_google">Entrar com Google</string>
+    <string name="login_content_desc_apple">Entrar com Apple</string>
+
+    <string name="register_title">Cadastre-se</string>
+    <string name="register_subtitle">Crie sua conta para começar sua jornada no EvoFit.</string>
+    <string name="register_button_confirm">Criar Conta</string>
+    <string name="register_already_have_account">Já possui uma conta?</string>
+    <string name="register_login">Entrar</string>
+    <string name="register_error_generic">Ocorreu um erro ao realizar o cadastro.</string>
+    <string name="register_success">Conta criada com sucesso!</string>
+    <string name="register_label_name">NOME</string>
+    <string name="register_placeholder_name">Seu nome</string>
+    <string name="register_label_confirm_password">Confirmar Senha</string>
+    <string name="register_placeholder_confirm_password">Confirme sua senha</string>
+    <string name="register_terms_agree_prefix">Eu concordo com os</string>
+    <string name="register_terms_of_use">Termos de Uso</string>
+    <string name="register_terms_and">e</string>
+    <string name="register_privacy_policy">Política de Privacidade</string>
+    <string name="register_error_passwords_dont_match">As senhas não coincidem.</string>
+    <string name="register_error_terms_required">É necessário aceitar os Termos de Uso e a Política de Privacidade.</string>
+
+    <string name="pre_login_title">Bem-vindo(a) ao\nseu novo melhor.</string>
+    <string name="pre_login_subtitle">Treinos personalizados, evolução real e resultados de verdade.</string>
+    <string name="pre_login_button_start">Começar</string>
+    <string name="pre_login_content_desc_logo">Logo EvoFit</string>
+
+    <string name="forgot_password_title">E-mail enviado!</string>
+    <string name="forgot_password_subtitle">Verifique seu e-mail %1$s para redefinir sua senha.</string>
+    <string name="forgot_password_button_continue">Seguir para o Login</string>
+    <string name="forgot_password_back_desc">Voltar</string>
+    <string name="forgot_password_content_desc_illustration">Ilustração de recuperação de senha</string>
+
+    <string name="recover_password_title">Recuperar senha</string>
+    <string name="recover_password_subtitle">Digite seu e-mail para receber o link de recuperação.</string>
+    <string name="recover_password_button_send">Enviar link</string>
+    <string name="recover_password_back_desc">Voltar</string>
+    <string name="recover_password_error_invalid_email">Informe um e-mail válido.</string>
 
     <!-- Generic Labels -->
     <string name="confirm">Confirmar</string>

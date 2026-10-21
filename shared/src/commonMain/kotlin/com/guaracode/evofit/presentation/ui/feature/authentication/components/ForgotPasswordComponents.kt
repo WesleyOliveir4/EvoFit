@@ -21,9 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.forgot_password_button_continue
+import evofit.shared.generated.resources.forgot_password_content_desc_illustration
+import evofit.shared.generated.resources.forgot_password_subtitle
+import evofit.shared.generated.resources.forgot_password_title
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
@@ -40,7 +46,7 @@ fun ForgotPasswordIllustration(modifier: Modifier = Modifier) {
         ) {
             Icon(
                 imageVector = Icons.Default.MailOutline,
-                contentDescription = "Ícone de e-mail",
+                contentDescription = stringResource(Res.string.forgot_password_content_desc_illustration),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(Dimens.SpacingExtraLargePlus)
             )
@@ -59,13 +65,13 @@ fun ForgotPasswordHeader(
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
     ) {
         Text(
-            text = "E-mail enviado!",
+            text = stringResource(Res.string.forgot_password_title),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Enviamos as instruções de recuperação para $email",
+            text = stringResource(Res.string.forgot_password_subtitle, email),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
@@ -90,7 +96,7 @@ fun ForgotPasswordFooter(
         shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         Text(
-            text = "Continuar",
+            text = stringResource(Res.string.forgot_password_button_continue),
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }

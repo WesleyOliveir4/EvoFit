@@ -15,12 +15,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
 import evofit.shared.generated.resources.ic_logo_evofit
+import evofit.shared.generated.resources.pre_login_button_start
+import evofit.shared.generated.resources.pre_login_content_desc_logo
+import evofit.shared.generated.resources.pre_login_subtitle
+import evofit.shared.generated.resources.pre_login_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PreLoginHeader(modifier: Modifier = Modifier) {
@@ -32,13 +37,13 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
     ) {
         Image(
             painter = painterResource(Res.drawable.ic_logo_evofit),
-            contentDescription = "Logo EvoFit",
+            contentDescription = stringResource(Res.string.pre_login_content_desc_logo),
             modifier = Modifier.size(Dimens.AuthLogoSizeOnboarding)
         )
 
         Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraLarge))
 
-        val fullTitle = "Evolua do seu jeito"
+        val fullTitle = stringResource(Res.string.pre_login_title)
         val highlightPart = "melhor"
         val annotatedTitle = buildAnnotatedString {
             val startIndex = fullTitle.indexOf(highlightPart)
@@ -56,11 +61,12 @@ fun PreLoginHeader(modifier: Modifier = Modifier) {
         Text(
             text = annotatedTitle,
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.displayLarge
+            style = MaterialTheme.typography.displayLarge,
+            textAlign = TextAlign.Center
         )
 
         Text(
-            text = "O aplicativo para acompanhar sua evolução de forma simples e eficiente.",
+            text = stringResource(Res.string.pre_login_subtitle),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
@@ -108,7 +114,7 @@ fun PreLoginFooter(
         shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
     ) {
         Text(
-            text = "Começar",
+            text = stringResource(Res.string.pre_login_button_start),
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }

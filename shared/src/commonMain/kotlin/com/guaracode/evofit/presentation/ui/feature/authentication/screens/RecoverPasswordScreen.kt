@@ -5,14 +5,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RecoverPasswordFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RecoverPasswordHeader
@@ -22,6 +18,11 @@ import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.Rec
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.login_label_email
+import evofit.shared.generated.resources.login_placeholder_email
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -103,8 +104,8 @@ fun RecoverPasswordContent(
                 LoginInputField(
                     value = uiState.email,
                     onValueChange = onEmailChange,
-                    label = "E-mail",
-                    placeholder = "seu@email.com",
+                    label = stringResource(Res.string.login_label_email),
+                    placeholder = stringResource(Res.string.login_placeholder_email),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     enabled = !uiState.isLoading
                 )

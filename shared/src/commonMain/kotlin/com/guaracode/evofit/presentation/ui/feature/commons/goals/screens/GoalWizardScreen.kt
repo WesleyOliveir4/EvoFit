@@ -27,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.domain.model.*
 import com.guaracode.evofit.presentation.ui.feature.commons.goals.components.ExerciseStep
 import com.guaracode.evofit.presentation.ui.feature.commons.goals.components.GoalTypeStep
@@ -42,8 +41,15 @@ import com.guaracode.evofit.presentation.ui.feature.commons.goals.viewmodel.Goal
 import com.guaracode.evofit.presentation.ui.feature.commons.goals.viewmodel.GoalWizardViewModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
-import org.koin.compose.viewmodel.koinViewModel
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.goal_category_muscle_gain
+import evofit.shared.generated.resources.goal_category_resistance
+import evofit.shared.generated.resources.goal_category_strength
+import evofit.shared.generated.resources.goal_category_weight_loss
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GoalWizardScreen(
@@ -56,10 +62,10 @@ fun GoalWizardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    val strengthLabel = "Força"
-    val resistanceLabel = "Resistência"
-    val weightLossLabel = "Perda de Peso"
-    val muscleGainLabel = "Ganho de Massa"
+    val strengthLabel = stringResource(Res.string.goal_category_strength)
+    val resistanceLabel = stringResource(Res.string.goal_category_resistance)
+    val weightLossLabel = stringResource(Res.string.goal_category_weight_loss)
+    val muscleGainLabel = stringResource(Res.string.goal_category_muscle_gain)
 
     LaunchedEffect(uiState.currentStep) {
         tracker.trackGoalWizardStepView(uiState.currentStep.name)
@@ -129,10 +135,10 @@ fun GoalWizardBottomSheet(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    val strengthLabel = "Força"
-    val resistanceLabel = "Resistência"
-    val weightLossLabel = "Perda de Peso"
-    val muscleGainLabel = "Ganho de Massa"
+    val strengthLabel = stringResource(Res.string.goal_category_strength)
+    val resistanceLabel = stringResource(Res.string.goal_category_resistance)
+    val weightLossLabel = stringResource(Res.string.goal_category_weight_loss)
+    val muscleGainLabel = stringResource(Res.string.goal_category_muscle_gain)
 
     LaunchedEffect(uiState.currentStep) {
         tracker.trackGoalWizardStepView(uiState.currentStep.name)
@@ -272,7 +278,7 @@ private fun GoalWizardScreenPreview() {
             ),
             onAction = {},
             onClose = {},
-            strengthLabel = "Força"
+            strengthLabel = "Aumentar força"
         )
     }
 }

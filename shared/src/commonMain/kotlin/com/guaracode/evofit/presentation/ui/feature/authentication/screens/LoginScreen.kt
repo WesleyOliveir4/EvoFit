@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.*
 import com.guaracode.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
@@ -25,6 +24,20 @@ import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.Log
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_apple
+import evofit.shared.generated.resources.ic_google
+import evofit.shared.generated.resources.login_content_desc_hide_password
+import evofit.shared.generated.resources.login_content_desc_show_password
+import evofit.shared.generated.resources.login_forgot_password
+import evofit.shared.generated.resources.login_google
+import evofit.shared.generated.resources.login_label_email
+import evofit.shared.generated.resources.login_label_password
+import evofit.shared.generated.resources.login_placeholder_email
+import evofit.shared.generated.resources.login_placeholder_password
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -38,8 +51,8 @@ fun LoginScreen(
     onBackClick: () -> Unit = {},
     onGoogleClick: () -> Unit = {},
     onAppleClick: () -> Unit = {},
-    googleIcon: Painter? = null,
-    appleIcon: Painter? = null
+    googleIcon: Painter = painterResource(Res.drawable.ic_google),
+    appleIcon: Painter = painterResource(Res.drawable.ic_apple)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -137,8 +150,8 @@ fun LoginContent(
                 }
 
                 LoginInputField(
-                    label = "E-mail",
-                    placeholder = "seu@email.com",
+                    label = stringResource(Res.string.login_label_email),
+                    placeholder = stringResource(Res.string.login_placeholder_email),
                     value = uiState.email,
                     onValueChange = onEmailChange,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -146,15 +159,19 @@ fun LoginContent(
                 )
 
                 LoginInputField(
-                    label = "Senha",
-                    placeholder = "Sua senha",
+                    label = stringResource(Res.string.login_label_password),
+                    placeholder = stringResource(Res.string.login_placeholder_password),
                     value = uiState.password,
                     onValueChange = onPasswordChange,
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
                                 imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null,
+                                contentDescription = if (uiState.isPasswordVisible) {
+                                    stringResource(Res.string.login_content_desc_hide_password)
+                                } else {
+                                    stringResource(Res.string.login_content_desc_show_password)
+                                },
                                 tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
                             )
                         }
@@ -172,7 +189,7 @@ fun LoginContent(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
-                    text = "Esqueceu sua senha?",
+                    text = stringResource(Res.string.login_forgot_password),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.clickable(enabled = !uiState.isLoading) { onForgotPasswordClick() }
@@ -194,7 +211,7 @@ fun LoginContent(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
                 ) {
                     SocialLoginButton(
-                        text = "Google",
+                        text = stringResource(Res.string.login_google),
                         icon = googleIcon,
                         onClick = onGoogleClick,
                         modifier = Modifier.weight(1f),

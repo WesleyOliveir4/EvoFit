@@ -14,10 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.guaracode.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RegisterFooter
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.RegisterHeader
-import com.guaracode.evofit.presentation.ui.feature.authentication.components.LoginInputField
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.TermsCheckboxRow
 import com.guaracode.evofit.presentation.ui.feature.authentication.state.RegisterUiState
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
@@ -25,6 +24,18 @@ import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.Reg
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.login_content_desc_hide_password
+import evofit.shared.generated.resources.login_content_desc_show_password
+import evofit.shared.generated.resources.login_label_email
+import evofit.shared.generated.resources.login_label_password
+import evofit.shared.generated.resources.login_placeholder_email
+import evofit.shared.generated.resources.login_placeholder_password
+import evofit.shared.generated.resources.register_error_passwords_dont_match
+import evofit.shared.generated.resources.register_label_confirm_password
+import evofit.shared.generated.resources.register_placeholder_confirm_password
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -141,8 +152,8 @@ fun RegisterContent(
                 LoginInputField(
                     value = uiState.email,
                     onValueChange = onEmailChange,
-                    label = "E-mail",
-                    placeholder = "seu@email.com",
+                    label = stringResource(Res.string.login_label_email),
+                    placeholder = stringResource(Res.string.login_placeholder_email),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     enabled = !uiState.isLoading
                 )
@@ -150,13 +161,17 @@ fun RegisterContent(
                 LoginInputField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    label = "Senha",
-                    placeholder = "Sua senha",
+                    label = stringResource(Res.string.login_label_password),
+                    placeholder = stringResource(Res.string.login_placeholder_password),
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
                                 imageVector = if (uiState.isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null,
+                                contentDescription = if (uiState.isPasswordVisible) {
+                                    stringResource(Res.string.login_content_desc_hide_password)
+                                } else {
+                                    stringResource(Res.string.login_content_desc_show_password)
+                                },
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                         }
@@ -169,13 +184,17 @@ fun RegisterContent(
                 LoginInputField(
                     value = uiState.confirmPassword,
                     onValueChange = onConfirmPasswordChange,
-                    label = "Confirmar senha",
-                    placeholder = "Confirme sua senha",
+                    label = stringResource(Res.string.register_label_confirm_password),
+                    placeholder = stringResource(Res.string.register_placeholder_confirm_password),
                     trailingIcon = {
                         IconButton(onClick = onToggleConfirmPasswordVisibility) {
                             Icon(
                                 imageVector = if (uiState.isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null,
+                                contentDescription = if (uiState.isConfirmPasswordVisible) {
+                                    stringResource(Res.string.login_content_desc_hide_password)
+                                } else {
+                                    stringResource(Res.string.login_content_desc_show_password)
+                                },
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                         }
@@ -187,7 +206,7 @@ fun RegisterContent(
 
                 if (passwordsMismatch) {
                     Text(
-                        text = "As senhas não coincidem",
+                        text = stringResource(Res.string.register_error_passwords_dont_match),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.labelSmall
                     )
