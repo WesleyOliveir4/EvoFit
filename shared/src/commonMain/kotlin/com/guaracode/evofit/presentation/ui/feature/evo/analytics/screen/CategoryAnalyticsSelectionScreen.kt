@@ -30,6 +30,7 @@ import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoA
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.analytics_body_weight
 import evofit.shared.generated.resources.evo_analytics_select_muscle_group
 import evofit.shared.generated.resources.ic_balance_2
 import org.jetbrains.compose.resources.stringResource
@@ -73,6 +74,7 @@ fun CategoryAnalyticsSelectionContent(
     onWeightSelected: () -> Unit
 ) {
     var selectedGroupId by remember { mutableStateOf("") }
+    val bodyWeightLabel = stringResource(Res.string.analytics_body_weight)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -103,7 +105,7 @@ fun CategoryAnalyticsSelectionContent(
                     item {
                         MuscleGroupCard(
                             group = MuscleGroup(
-                                name = "Peso Corporal",
+                                name = bodyWeightLabel,
                                 imageRes = Res.drawable.ic_balance_2
                             ),
                             isSelected = selectedGroupId == "WEIGHT_HISTORY",

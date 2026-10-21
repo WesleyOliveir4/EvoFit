@@ -41,6 +41,8 @@ import evofit.shared.generated.resources.analytics_detail_record_distance
 import evofit.shared.generated.resources.analytics_detail_record_max
 import evofit.shared.generated.resources.analytics_detail_record_reps
 import evofit.shared.generated.resources.analytics_detail_record_time
+import evofit.shared.generated.resources.analytics_detail_record_weight_max
+import evofit.shared.generated.resources.analytics_detail_record_weight_min
 import evofit.shared.generated.resources.analytics_detail_subtitle
 import evofit.shared.generated.resources.analytics_detail_total_sets
 import evofit.shared.generated.resources.ic_balance
@@ -107,7 +109,7 @@ fun CategoryDetailAnalyticsContent(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
                 ) {
                     MetricStatCard(
-                        title = if (uiState.isWeightAnalysis) "Peso Máximo" else when (uiState.unit) {
+                        title = if (uiState.isWeightAnalysis) stringResource(Res.string.analytics_detail_record_weight_max) else when (uiState.unit) {
                             MeasurementUnit.WEIGHT -> stringResource(Res.string.analytics_detail_record_max)
                             MeasurementUnit.DISTANCE -> stringResource(Res.string.analytics_detail_record_distance)
                             MeasurementUnit.TIME -> stringResource(Res.string.analytics_detail_record_time)
@@ -120,7 +122,7 @@ fun CategoryDetailAnalyticsContent(
                     
                     if (uiState.isWeightAnalysis) {
                         MetricStatCard(
-                            title = "Peso Mínimo",
+                            title = stringResource(Res.string.analytics_detail_record_weight_min),
                             value = uiState.secondaryRecord ?: "-",
                             icon = Icons.Default.Refresh,
                             modifier = Modifier.weight(1f)

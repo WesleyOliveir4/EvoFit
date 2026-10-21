@@ -2,6 +2,12 @@
     <string name="app_name">EvoFit</string>
     <string name="welcome">Bem-vindo ao EvoFit</string>
 
+    <!-- Evo Period Strings -->
+    <string name="evo_period_30_days">1 mês</string>
+    <string name="evo_period_90_days">3 meses</string>
+    <string name="evo_period_180_days">6 meses</string>
+    <string name="evo_period_all_time">Tudo</string>
+
     <!-- Evo Home Strings -->
     <string name="evo_home_title">Evo</string>
     <string name="evo_home_filter_period_3_months">3 meses</string>
@@ -33,8 +39,12 @@
     <string name="evo_analytics_back_desc">Voltar</string>
     <string name="evo_analytics_empty_history">Nenhum grupo muscular treinado ainda.</string>
     <string name="evo_analytics_records_format">%1$d registros</string>
+    <string name="analytics_body_weight">Peso Corporal</string>
+    <string name="analytics_no_exercises_found">Nenhum exercício encontrado.</string>
     <string name="analytics_detail_subtitle">Análise de evolução</string>
     <string name="analytics_detail_record_max">Recorde máximo</string>
+    <string name="analytics_detail_record_weight_max">Peso Máximo</string>
+    <string name="analytics_detail_record_weight_min">Peso Mínimo</string>
     <string name="analytics_detail_record_distance">Recorde distância</string>
     <string name="analytics_detail_record_time">Recorde tempo</string>
     <string name="analytics_detail_record_reps">Recorde repetições</string>

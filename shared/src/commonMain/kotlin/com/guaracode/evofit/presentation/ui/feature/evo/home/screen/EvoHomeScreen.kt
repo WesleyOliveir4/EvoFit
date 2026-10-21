@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.guaracode.evofit.domain.model.EvoPeriod
+import com.guaracode.evofit.navigation.NavRoutes
 import com.guaracode.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitDropdownFilter
 import com.guaracode.evofit.presentation.ui.feature.evo.home.components.AverageWorkoutTimeCard
@@ -45,17 +46,22 @@ import evofit.shared.generated.resources.evo_home_gain_kg_format
 import evofit.shared.generated.resources.evo_home_insufficient_data
 import evofit.shared.generated.resources.evo_home_ranking_format
 import evofit.shared.generated.resources.evo_home_title
+import evofit.shared.generated.resources.evo_period_180_days
+import evofit.shared.generated.resources.evo_period_30_days
+import evofit.shared.generated.resources.evo_period_90_days
+import evofit.shared.generated.resources.evo_period_all_time
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
+@Composable
 private fun EvoPeriod.getDisplayName(): String {
     return when (this) {
-        EvoPeriod.LAST_30_DAYS -> "30 dias"
-        EvoPeriod.LAST_90_DAYS -> "3 meses"
-        EvoPeriod.LAST_180_DAYS -> "6 meses"
-        EvoPeriod.ALL_TIME -> "Todo o período"
+        EvoPeriod.LAST_30_DAYS -> stringResource(Res.string.evo_period_30_days)
+        EvoPeriod.LAST_90_DAYS -> stringResource(Res.string.evo_period_90_days)
+        EvoPeriod.LAST_180_DAYS -> stringResource(Res.string.evo_period_180_days)
+        EvoPeriod.ALL_TIME -> stringResource(Res.string.evo_period_all_time)
     }
 }
 
@@ -75,7 +81,7 @@ fun EvoHomeScreen(
         uiState = uiState,
         onPeriodSelected = { viewModel.onPeriodSelected(it) },
         onNavigate = { route ->
-            if (route == "muscle_group_selection") {
+            if (route == NavRoutes.MuscleGroupSelection.route) {
                 tracker.trackExerciseAnalyticsCardClicked()
             }
             onNavigate(route)
@@ -94,7 +100,7 @@ fun EvoHomeContent(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             AppBottomNavigation(
-                currentRoute = "evo",
+                currentRoute = NavRoutes.Evo.route,
                 onNavigate = onNavigate
             )
         }
@@ -208,7 +214,7 @@ fun EvoHomeContent(
             )
 
             ExerciseAnalyticsCard(
-                onClick = { onNavigate("muscle_group_selection") }
+                onClick = { onNavigate(NavRoutes.MuscleGroupSelection.route) }
             )
 
             Spacer(modifier = Modifier.height(Dimens.SpacingLarge))

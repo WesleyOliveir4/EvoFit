@@ -42,6 +42,7 @@ import com.guaracode.evofit.presentation.ui.feature.evo.analytics.viewmodel.EvoA
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.analytics_no_exercises_found
 import evofit.shared.generated.resources.evo_analytics_records_format
 import evofit.shared.generated.resources.evo_analytics_select_exercise
 import org.jetbrains.compose.resources.stringResource
@@ -102,7 +103,7 @@ fun ExerciseSelectionContent(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (uiState.exercisesForSelection.isEmpty()) {
                 Text(
-                    text = "Nenhum exercício encontrado.",
+                    text = stringResource(Res.string.analytics_no_exercises_found),
                     modifier = Modifier.align(Alignment.Center),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
