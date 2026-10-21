@@ -49,8 +49,8 @@ import evofit.shared.generated.resources.ic_balance
 import evofit.shared.generated.resources.ic_speed
 import evofit.shared.generated.resources.ic_today
 import evofit.shared.generated.resources.ic_trophy
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
@@ -116,7 +116,7 @@ fun CategoryDetailAnalyticsContent(
                             MeasurementUnit.REPS -> stringResource(Res.string.analytics_detail_record_reps)
                         },
                         value = uiState.maxRecord,
-                        icon = Icons.Default.Refresh,
+                        icon = vectorResource(Res.drawable.ic_trophy),
                         modifier = Modifier.weight(1f)
                     )
                     
@@ -124,14 +124,14 @@ fun CategoryDetailAnalyticsContent(
                         MetricStatCard(
                             title = stringResource(Res.string.analytics_detail_record_weight_min),
                             value = uiState.secondaryRecord ?: "-",
-                            icon = Icons.Default.Refresh,
+                            icon = vectorResource(Res.drawable.ic_balance),
                             modifier = Modifier.weight(1f)
                         )
                     } else if (uiState.unit == MeasurementUnit.DISTANCE && uiState.secondaryRecord != null) {
                         MetricStatCard(
                             title = stringResource(Res.string.analytics_detail_avg_speed),
                             value = uiState.secondaryRecord,
-                            icon = Icons.Default.Refresh,
+                            icon = vectorResource(Res.drawable.ic_speed),
                             modifier = Modifier.weight(1f)
                         )
                     } else {
@@ -157,7 +157,7 @@ fun CategoryDetailAnalyticsContent(
                     MetricStatCard(
                         title = stringResource(Res.string.analytics_detail_last_record),
                         value = uiState.lastRecordDate,
-                        icon = Icons.Default.DateRange,
+                        icon = vectorResource(Res.drawable.ic_today),
                         modifier = Modifier.weight(1f)
                     )
                 }

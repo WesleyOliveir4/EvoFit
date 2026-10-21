@@ -54,7 +54,13 @@ import com.guaracode.evofit.presentation.ui.theme.evoColors
 import evofit.shared.generated.resources.Res
 import evofit.shared.generated.resources.ic_balance
 import evofit.shared.generated.resources.ic_ruller
+import evofit.shared.generated.resources.onboarding_summary_label_height
+import evofit.shared.generated.resources.onboarding_user_data_label_weight
+import evofit.shared.generated.resources.profile_logout
+import evofit.shared.generated.resources.profile_my_account
+import evofit.shared.generated.resources.profile_section_logout
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 data class ProfileMenuItemData(
@@ -112,7 +118,7 @@ fun UserDataInfoComponent(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Peso", 
+                            text = stringResource(Res.string.onboarding_user_data_label_weight), 
                             color = MaterialTheme.colorScheme.secondary, 
                             fontSize = Dimens.TextSizeExtraSmall
                         )
@@ -140,7 +146,7 @@ fun UserDataInfoComponent(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Altura", 
+                            text = stringResource(Res.string.onboarding_summary_label_height), 
                             color = MaterialTheme.colorScheme.secondary, 
                             fontSize = Dimens.TextSizeExtraSmall
                         )
@@ -294,7 +300,7 @@ fun ProfileOptionsMenuComponent(
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
-            text = "MINHA CONTA",
+            text = stringResource(Res.string.profile_my_account),
             color = MaterialTheme.colorScheme.secondary,
             fontSize = Dimens.TextSizeTiny,
             fontWeight = FontWeight.Bold,
@@ -392,7 +398,7 @@ fun LogoutComponent(
         verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
     ) {
         Text(
-            text = "SAIR",
+            text = stringResource(Res.string.profile_section_logout),
             color = MaterialTheme.colorScheme.secondary,
             fontSize = Dimens.TextSizeTiny,
             fontWeight = FontWeight.Bold,
@@ -434,7 +440,7 @@ fun LogoutComponent(
                 }
 
                 Text(
-                    text = "Sair da Conta",
+                    text = stringResource(Res.string.profile_logout),
                     color = MaterialTheme.colorScheme.error,
                     fontSize = Dimens.TextSizeMediumSmall,
                     fontWeight = FontWeight.Bold,

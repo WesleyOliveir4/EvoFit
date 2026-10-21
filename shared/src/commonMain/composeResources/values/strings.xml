@@ -108,6 +108,7 @@
     <!-- Profile Strings -->
     <string name="nav_profile">Perfil</string>
     <string name="profile_my_account">MINHA CONTA</string>
+    <string name="profile_section_logout">SAIR</string>
     <string name="profile_user_data">Dados do Usuário</string>
     <string name="profile_personal_goals">Metas Pessoais</string>
     <string name="profile_statistics">ESTATÍSTICAS</string>

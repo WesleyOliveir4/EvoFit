@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Info
@@ -28,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.guaracode.evofit.navigation.NavRoutes
 import com.guaracode.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.guaracode.evofit.presentation.ui.feature.profile.home.components.ImageSourcePickerBottomSheet
@@ -41,11 +41,15 @@ import com.guaracode.evofit.presentation.ui.feature.profile.home.viewmodel.Profi
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_logout
+import evofit.shared.generated.resources.ic_medal
+import evofit.shared.generated.resources.logout_dialog_cancel
 import evofit.shared.generated.resources.logout_dialog_confirm
 import evofit.shared.generated.resources.logout_dialog_message
 import evofit.shared.generated.resources.logout_dialog_title
 import evofit.shared.generated.resources.nav_profile
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -85,9 +89,9 @@ fun ProfileHomeScreen(
         onNavigate = onNavigate,
         onUserDataClick = onUserDataClick,
         onGoalsClick = onGoalsClick,
-        onSupportClick = { onNavigate("support") },
-        onAboutClick = { onNavigate("about") },
-        onDeveloperClick = { onNavigate("developer") },
+        onSupportClick = { onNavigate(NavRoutes.Support.route) },
+        onAboutClick = { onNavigate(NavRoutes.About.route) },
+        onDeveloperClick = { onNavigate(NavRoutes.Developer.route) },
         onLogoutClick = { showLogoutDialog = true },
         onImageClick = { isPhotoExpanded = true }
     )
@@ -116,8 +120,8 @@ fun ProfileHomeScreen(
             title = stringResource(Res.string.logout_dialog_title),
             description = stringResource(Res.string.logout_dialog_message),
             confirmButtonText = stringResource(Res.string.logout_dialog_confirm),
-            dismissButtonText = stringResource(Res.string.logout_dialog_confirm),
-            icon = Icons.AutoMirrored.Filled.ExitToApp,
+            dismissButtonText = stringResource(Res.string.logout_dialog_cancel),
+            icon = vectorResource(Res.drawable.ic_logout),
             onConfirm = {
                 showLogoutDialog = false
                 viewModel.logout()
@@ -144,10 +148,12 @@ fun ProfileHomeScreenContent(
     onSupportClick: () -> Unit,
     onAboutClick: () -> Unit
 ) {
-    val menuItems = remember(onUserDataClick, onGoalsClick, onDeveloperClick, onSupportClick, onAboutClick, isDeveloperMenuEnabled) {
+    val medalIcon = vectorResource(Res.drawable.ic_medal)
+
+    val menuItems = remember(onUserDataClick, onGoalsClick, medalIcon, onDeveloperClick, onSupportClick, onAboutClick, isDeveloperMenuEnabled) {
         val baseList = mutableListOf(
             ProfileMenuItemData("1", "Dados do Usuário", Icons.Default.Person, isEnabled = true, isVisible = true, onUserDataClick),
-            ProfileMenuItemData("2", "Metas Pessoais", Icons.Default.Person, isEnabled = true, isVisible = true, onGoalsClick),
+            ProfileMenuItemData("2", "Metas Pessoais", medalIcon, isEnabled = true, isVisible = true, onGoalsClick),
             ProfileMenuItemData("3", "Preferências", Icons.Default.Settings, isEnabled = false, isVisible = false, {}),
             ProfileMenuItemData("4", "Notificações", Icons.Default.Notifications, isEnabled = false, isVisible = false, {}),
             ProfileMenuItemData("5", "Ajuda e Suporte", Icons.AutoMirrored.Filled.HelpOutline, isEnabled = true, isVisible = true, onSupportClick),
@@ -168,7 +174,7 @@ fun ProfileHomeScreenContent(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             AppBottomNavigation(
-                currentRoute = "profile",
+                currentRoute = NavRoutes.Profile.route,
                 onNavigate = onNavigate
             )
         }

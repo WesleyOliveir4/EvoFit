@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.guaracode.evofit.navigation.NavRoutes
 import com.guaracode.evofit.presentation.ui.feature.profile.support.components.SupportItem
 import com.guaracode.evofit.presentation.ui.feature.profile.support.tracking.SupportTracker
 import com.guaracode.evofit.presentation.ui.theme.Dimens
@@ -52,9 +53,9 @@ fun SupportScreen(
     }
     SupportContent(
         onBackClick = onBackClick,
-        onEmailClick = { onNavigate("support_email") },
-        onSuggestWorkoutsClick = { onNavigate("suggestion_workouts") },
-        onFaqClick = { onNavigate("faq") }
+        onEmailClick = { onNavigate(NavRoutes.SupportEmail.route) },
+        onSuggestWorkoutsClick = { onNavigate(NavRoutes.SuggestionWorkouts.route) },
+        onFaqClick = { onNavigate(NavRoutes.FAQ.route) }
     )
 }
 
