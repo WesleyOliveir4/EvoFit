@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,11 +34,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.model.WorkoutUIModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.main_workout_drag_handle_desc
+import evofit.shared.generated.resources.main_workout_exercise_count
+import evofit.shared.generated.resources.main_workout_exercise_series_format
+import evofit.shared.generated.resources.main_workout_series_count
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun WorkoutListItem(
@@ -121,12 +128,33 @@ fun WorkoutListItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                val exercisesStr = stringResource(Res.string.main_workout_exercise_count, workout.exercises)
+                val seriesStr = stringResource(Res.string.main_workout_series_count, workout.series)
                 Text(
-                    text = "${workout.exercises} exercícios • ${workout.series} séries",
+                    text = stringResource(Res.string.main_workout_exercise_series_format, exercisesStr, seriesStr),
                     color = MaterialTheme.colorScheme.secondary,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+
+            Icon(
+                imageVector = Icons.Default.DragIndicator,
+                contentDescription = stringResource(Res.string.main_workout_drag_handle_desc),
+                tint = MaterialTheme.colorScheme.outline,
+                modifier = Modifier
+                    .size(Dimens.IconSizeDefault)
+                    .pointerInput(workout.id) {
+                        detectDragGesturesAfterLongPress(
+                            onDragStart = { currentOnDragStart() },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                currentOnDrag(dragAmount.y)
+                            },
+                            onDragEnd = { currentOnDragEnd() },
+                            onDragCancel = { currentOnDragCancel() }
+                        )
+                    }
+            )
 
             Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 

@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.ui.feature.workout.resume.components.WorkoutSummaryCard
 import com.guaracode.evofit.presentation.ui.feature.workout.resume.state.ResumeMode
 import com.guaracode.evofit.presentation.ui.feature.workout.resume.state.WorkoutResumeUiState
@@ -26,8 +24,22 @@ import com.guaracode.evofit.presentation.ui.feature.workout.resume.tracking.Work
 import com.guaracode.evofit.presentation.ui.feature.workout.resume.viewmodel.WorkoutResumeViewModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
-import org.koin.compose.viewmodel.koinViewModel
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_clipboard_off
+import evofit.shared.generated.resources.workout_done_resume_subtitle
+import evofit.shared.generated.resources.workout_resume_button_confirm
+import evofit.shared.generated.resources.workout_resume_cancelled_subtitle
+import evofit.shared.generated.resources.workout_resume_cancelled_title
+import evofit.shared.generated.resources.workout_resume_done_title
+import evofit.shared.generated.resources.workout_resume_subtitle
+import evofit.shared.generated.resources.workout_resume_title
+import evofit.shared.generated.resources.workout_resume_updated_subtitle
+import evofit.shared.generated.resources.workout_resume_updated_title
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -36,7 +48,7 @@ fun WorkoutResumeScreen(
     workoutDoneId: String? = null,
     editWorkoutId: String? = null,
     workoutNotFinishedId: String? = null,
-    onContinueClick: () -> Unit,
+    onContinueClick: () -> Unit = {},
     viewModel: WorkoutResumeViewModel = koinViewModel { 
         parametersOf(workoutId, workoutDoneId, editWorkoutId, workoutNotFinishedId) 
     },
@@ -144,25 +156,25 @@ private fun ResumeMainContent(
 
 @Composable
 private fun getModeResources(mode: ResumeMode): Pair<ImageVector, Color> = when (mode) {
-    ResumeMode.CANCELLED -> Icons.Default.Close to MaterialTheme.colorScheme.primary
+    ResumeMode.CANCELLED -> vectorResource(Res.drawable.ic_clipboard_off) to MaterialTheme.colorScheme.primary
     ResumeMode.UPDATED -> Icons.Default.Edit to MaterialTheme.colorScheme.primary
     else -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
 }
 
 @Composable
 private fun getTitleForMode(mode: ResumeMode): String = when (mode) {
-    ResumeMode.COMPLETED -> "Treino Concluído!"
-    ResumeMode.CANCELLED -> "Treino Cancelado"
-    ResumeMode.UPDATED -> "Treino Atualizado!"
-    ResumeMode.CREATED -> "Treino Criado!"
+    ResumeMode.COMPLETED -> stringResource(Res.string.workout_resume_done_title)
+    ResumeMode.CANCELLED -> stringResource(Res.string.workout_resume_cancelled_title)
+    ResumeMode.UPDATED -> stringResource(Res.string.workout_resume_updated_title)
+    ResumeMode.CREATED -> stringResource(Res.string.workout_resume_title)
 }
 
 @Composable
 private fun getSubtitleForMode(mode: ResumeMode, name: String): String = when (mode) {
-    ResumeMode.COMPLETED -> "Parabéns por concluir $name!"
-    ResumeMode.CANCELLED -> "A sessão de $name foi cancelada."
-    ResumeMode.UPDATED -> "A ficha $name foi atualizada com sucesso."
-    ResumeMode.CREATED -> "Sua ficha $name está pronta para usar."
+    ResumeMode.COMPLETED -> stringResource(Res.string.workout_done_resume_subtitle, name)
+    ResumeMode.CANCELLED -> stringResource(Res.string.workout_resume_cancelled_subtitle, name)
+    ResumeMode.UPDATED -> stringResource(Res.string.workout_resume_updated_subtitle, name)
+    ResumeMode.CREATED -> stringResource(Res.string.workout_resume_subtitle, name)
 }
 
 @Composable
@@ -184,7 +196,7 @@ private fun WorkoutResumeBottomBar(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(
-                text = "Concluir",
+                text = stringResource(Res.string.workout_resume_button_confirm),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )

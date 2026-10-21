@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.guaracode.evofit.domain.model.MeasurementUnit
 import com.guaracode.evofit.presentation.mapper.ExerciseMapper
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitCautionDialog
@@ -31,15 +31,27 @@ import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.compone
 import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.session.ExerciseProgressState
 import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.session.SetProgressState
 import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.session.WorkoutStartUiState
-import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.tracking.StartWorkoutTracker
+import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmodel.WorkoutStartViewModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
-import evofit.shared.generated.resources.ic_logo_evofit
+import evofit.shared.generated.resources.new_workout_back_desc
+import evofit.shared.generated.resources.workout_cancel_dialog_confirm
+import evofit.shared.generated.resources.workout_cancel_dialog_description
+import evofit.shared.generated.resources.workout_cancel_dialog_dismiss
+import evofit.shared.generated.resources.workout_cancel_dialog_title
+import evofit.shared.generated.resources.workout_finish_dialog_cancel
+import evofit.shared.generated.resources.workout_finish_dialog_confirm
+import evofit.shared.generated.resources.workout_finish_dialog_message
+import evofit.shared.generated.resources.workout_finish_dialog_title
+import evofit.shared.generated.resources.workout_start_finish_button
+import evofit.shared.generated.resources.workout_start_status
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -110,10 +122,14 @@ fun WorkoutStartScreen(
             val totalExercises = uiState.exercises.size
             val completedExercises = uiState.exercises.count { it.sets.all { set -> set.isDone } }
             EvoFitActionDialog(
-                title = "Finalizar treino?",
-                description = "Você completou $completedExercises de $totalExercises exercícios.",
-                confirmButtonText = "Finalizar",
-                dismissButtonText = "Cancelar",
+                title = stringResource(Res.string.workout_finish_dialog_title),
+                description = stringResource(
+                    Res.string.workout_finish_dialog_message,
+                    completedExercises,
+                    totalExercises
+                ),
+                confirmButtonText = stringResource(Res.string.workout_finish_dialog_confirm),
+                dismissButtonText = stringResource(Res.string.workout_finish_dialog_cancel),
                 onDismiss = { viewModel.onDismissFinishDialog() },
                 onConfirm = { viewModel.onConfirmFinish() }
             )
@@ -121,10 +137,10 @@ fun WorkoutStartScreen(
 
         if (uiState.showCancelDialog) {
             EvoFitCautionDialog(
-                title = "Sair sem salvar?",
-                description = "Seu progresso atual na ficha de treino não será registrado. Deseja realmente sair?",
-                confirmButtonText = "Sair",
-                dismissButtonText = "Continuar treinando",
+                title = stringResource(Res.string.workout_cancel_dialog_title),
+                description = stringResource(Res.string.workout_cancel_dialog_description),
+                confirmButtonText = stringResource(Res.string.workout_cancel_dialog_confirm),
+                dismissButtonText = stringResource(Res.string.workout_cancel_dialog_dismiss),
                 onDismiss = { viewModel.onDismissCancelDialog() },
                 onConfirm = { viewModel.onConfirmCancelWorkout() }
             )
@@ -140,6 +156,7 @@ fun WorkoutStartScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutStartContent(
     uiState: WorkoutStartUiState,
@@ -162,96 +179,60 @@ fun WorkoutStartContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBackClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    IconButton(onClick = onCancelWorkoutClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_logo_evofit),
-                            contentDescription = "Cancelar treino",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
+            TopAppBar(
+                title = {
+                    Column {
                         Text(
                             text = uiState.workoutTitle,
-                            color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraSmall))
                         Text(
-                            text = "$doneSets de $totalSets séries concluídas",
-                            color = MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.bodySmall
+                            text = stringResource(Res.string.workout_start_status, doneSets, totalSets),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
-
+                },
+                navigationIcon = {
+                    IconButton(onClick = onCancelWorkoutClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.new_workout_back_desc),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                actions = {
                     Row(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.CornerRadiusDefault))
-                            .padding(horizontal = Dimens.SpacingMediumSmall, vertical = Dimens.SpacingTiny),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall),
+                        modifier = Modifier.padding(end = Dimens.SpacingSmall)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timelapse,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(Dimens.IconSizeSmall)
                         )
                         Text(
                             text = uiState.elapsedTime,
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                }
-                Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
-                
-                LinearProgressIndicator(
-                    progress = { if (totalSets > 0) doneSets.toFloat() / totalSets else 0f },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(Dimens.SpacingExtraSmall)
-                        .clip(RoundedCornerShape(Dimens.SpacingExtraExtraSmall)),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+            )
         },
         bottomBar = {
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(Dimens.ScreenPaddingHorizontal)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                     .padding(bottom = Dimens.SpacingMedium)
             ) {
                 Button(
@@ -266,51 +247,53 @@ fun WorkoutStartContent(
                     )
                 ) {
                     Text(
-                        text = "Concluir treino",
+                        text = stringResource(Res.string.workout_start_finish_button),
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = Dimens.ScreenPaddingHorizontal),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
-            val groupedExercises = uiState.exercises.groupBy { it.muscleGroupName }
-            
-            groupedExercises.forEach { (groupName, exercises) ->
-                item {
-                    Text(
-                        text = groupName.uppercase(),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(top = Dimens.SpacingSmall, bottom = Dimens.SpacingExtraSmall)
-                    )
-                }
+            val progress = if (totalSets > 0) doneSets.toFloat() / totalSets else 0f
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
 
-                itemsIndexed(
-                    items = exercises,
-                    key = { _, exercise -> exercise.workoutExerciseId }
-                ) { index, exercise ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
+            ) {
+                item { Spacer(modifier = Modifier.height(Dimens.SpacingSmall)) }
+
+                itemsIndexed(uiState.exercises, key = { _, item -> item.workoutExerciseId }) { index, exerciseState ->
+                    val isExpanded = expandedWorkoutExerciseIds.contains(exerciseState.workoutExerciseId)
                     ExerciseTrackingCard(
-                        exercise = exercise,
                         index = index,
-                        isExpanded = expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId),
+                        exercise = exerciseState,
+                        isExpanded = isExpanded,
                         onExpandClick = {
-                            expandedWorkoutExerciseIds = if (expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId)) {
-                                expandedWorkoutExerciseIds - exercise.workoutExerciseId
+                            expandedWorkoutExerciseIds = if (isExpanded) {
+                                expandedWorkoutExerciseIds - exerciseState.workoutExerciseId
                             } else {
-                                expandedWorkoutExerciseIds + exercise.workoutExerciseId
+                                expandedWorkoutExerciseIds + exerciseState.workoutExerciseId
                             }
                         },
                         onToggleSetDone = onToggleSetDone,
                         onInfoClick = onInfoClick
                     )
                 }
+
+                item { Spacer(modifier = Modifier.height(Dimens.SpacingLarge)) }
             }
         }
     }
@@ -322,27 +305,23 @@ private fun WorkoutStartScreenPreview() {
     EvoFitTheme {
         WorkoutStartContent(
             uiState = WorkoutStartUiState(
-                workoutTitle = "Peito",
+                workoutTitle = "Treino A - Peito e Tríceps",
+                elapsedTime = "12:34",
                 exercises = listOf(
                     ExerciseProgressState(
                         workoutExerciseId = "1",
-                        exerciseId = "1",
-                        name = "Supino reto",
+                        exerciseId = "11",
+                        name = "Supino Reto",
+                        unit = MeasurementUnit.WEIGHT,
                         sets = listOf(
-                            SetProgressState(
-                                setNumber = 1,
-                                weight = 80.0,
-                                reps = 10,
-                                isDone = true
-                            )
+                            SetProgressState(1, 80.0, 10, isDone = true),
+                            SetProgressState(2, 80.0, 10, isDone = false)
                         )
                     )
-                ),
-                isLoading = false
+                )
             ),
             onToggleSetDone = { _, _ -> },
-            onFinishWorkoutClick = {},
-            onInfoClick = {}
+            onFinishWorkoutClick = {}
         )
     }
 }

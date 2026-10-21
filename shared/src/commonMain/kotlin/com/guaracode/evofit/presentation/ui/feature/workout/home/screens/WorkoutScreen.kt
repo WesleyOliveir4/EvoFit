@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.guaracode.evofit.navigation.NavRoutes
 import com.guaracode.evofit.presentation.model.ActiveSessionUIModel
 import com.guaracode.evofit.presentation.model.WorkoutHistoryUIModel
 import com.guaracode.evofit.presentation.model.WorkoutUIModel
@@ -47,18 +45,29 @@ import com.guaracode.evofit.presentation.ui.feature.workout.home.tracking.Workou
 import com.guaracode.evofit.presentation.ui.feature.workout.home.viewmodel.WorkoutViewModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_dumbbell
+import evofit.shared.generated.resources.ic_fire
+import evofit.shared.generated.resources.main_workout_active_session_title
+import evofit.shared.generated.resources.main_workout_empty_history
+import evofit.shared.generated.resources.main_workout_empty_workouts
+import evofit.shared.generated.resources.main_workout_new_workout_desc
+import evofit.shared.generated.resources.main_workout_stats_total_label
+import evofit.shared.generated.resources.main_workout_stats_week_label
+import evofit.shared.generated.resources.main_workout_tab_history
+import evofit.shared.generated.resources.main_workout_tab_my_workouts
 import kotlinx.coroutines.delay
-import org.koin.compose.viewmodel.koinViewModel
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun WorkoutScreen(
     viewModel: WorkoutViewModel = koinViewModel(),
     tracker: WorkoutHomeTracker = koinInject(),
-    onNavigate: (String) -> Unit = {},
-    onWorkoutClick: (String) -> Unit = {},
-    onActiveSessionClick: (String) -> Unit = {},
-    onAddWorkoutClick: () -> Unit = {}
+    onNavigate: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -102,12 +111,12 @@ fun WorkoutScreen(
         },
         onNavigate = onNavigate,
         onWorkoutClick = { workout ->
-            onWorkoutClick(workout.id)
+            onNavigate(NavRoutes.WorkoutPreview.createRoute(workout.id))
         },
         onActiveSessionClick = { session ->
-            onActiveSessionClick(session.workoutId)
+            onNavigate(NavRoutes.WorkoutStart.createRoute(session.workoutId))
         },
-        onAddWorkoutClick = onAddWorkoutClick
+        onAddWorkoutClick = { onNavigate(NavRoutes.NewWorkout.createRoute()) }
     )
 }
 
@@ -145,7 +154,7 @@ fun WorkoutContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Novo treino",
+                    contentDescription = stringResource(Res.string.main_workout_new_workout_desc),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(Dimens.StatCardIconSize)
                 )
@@ -153,7 +162,7 @@ fun WorkoutContent(
         },
         bottomBar = { 
             AppBottomNavigation(
-                currentRoute = "home",
+                currentRoute = NavRoutes.Home.route,
                 onNavigate = onNavigate
             ) 
         }
@@ -184,14 +193,14 @@ fun WorkoutContent(
                         StatCard(
                             modifier = Modifier.weight(1f),
                             value = totalWorkouts.toString(),
-                            label = "Treinos salvos",
-                            icon = Icons.Default.FitnessCenter
+                            label = stringResource(Res.string.main_workout_stats_total_label),
+                            icon = vectorResource(Res.drawable.ic_dumbbell)
                         )
                         StatCard(
                             modifier = Modifier.weight(1f),
                             value = workoutsThisWeek.toString(),
-                            label = "Esta semana",
-                            icon = Icons.Default.LocalFireDepartment
+                            label = stringResource(Res.string.main_workout_stats_week_label),
+                            icon = vectorResource(Res.drawable.ic_fire)
                         )
                     }
                     Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
@@ -200,7 +209,7 @@ fun WorkoutContent(
                 if (activeSession != null) {
                     item {
                         Text(
-                            text = "SESSÃO EM ANDAMENTO",
+                            text = stringResource(Res.string.main_workout_active_session_title),
                             color = MaterialTheme.colorScheme.secondary,
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                         )
@@ -216,8 +225,8 @@ fun WorkoutContent(
                 item {
                     WorkoutSegmentedControl(
                         options = listOf(
-                            "Meus treinos",
-                            "Histórico"
+                            stringResource(Res.string.main_workout_tab_my_workouts),
+                            stringResource(Res.string.main_workout_tab_history)
                         ),
                         selectedIndex = selectedTabIndex,
                         onOptionSelected = { selectedTabIndex = it }
@@ -228,7 +237,7 @@ fun WorkoutContent(
                 if (selectedTabIndex == 0) {
                     if (workouts.isEmpty()) {
                         item {
-                            WorkoutEmptyState(message = "Nenhum treino criado ainda.")
+                            WorkoutEmptyState(message = stringResource(Res.string.main_workout_empty_workouts))
                         }
                     } else {
                         draggableWorkoutList(
@@ -240,7 +249,7 @@ fun WorkoutContent(
                 } else {
                     if (history.isEmpty()) {
                         item {
-                            WorkoutEmptyState(message = "Nenhum treino concluído ainda.")
+                            WorkoutEmptyState(message = stringResource(Res.string.main_workout_empty_history))
                         }
                     } else {
                         items(history, key = { it.id }) { workoutDone ->

@@ -30,28 +30,33 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.domain.model.MeasurementUnit
+import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.feature.workout.components.configure.ExercisePageSegmentedIndicator
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.components.ExerciseConfigContent
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.state.ExerciseConfigState
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.state.SetState
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.tracking.CreateWorkoutTracker
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewmodel.ConfigureWorkoutViewModel
-import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.configure_workout_finish
+import evofit.shared.generated.resources.configure_workout_next
+import evofit.shared.generated.resources.configure_workout_title
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigureWorkoutScreen(
     exerciseIds: List<String>,
     workoutName: String,
-    onBackClick: () -> Unit,
-    onFinishClick: (String) -> Unit,
+    onBackClick: () -> Unit = {},
+    onFinishClick: (String) -> Unit = {},
     editWorkoutId: String? = null,
     onFinishEditClick: (String) -> Unit = {},
     viewModel: ConfigureWorkoutViewModel = koinViewModel(),
@@ -95,7 +100,11 @@ fun ConfigureWorkoutScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
-                title = "Exercício ${pagerState.currentPage + 1} de ${uiState.exerciseConfigs.size}",
+                title = stringResource(
+                    Res.string.configure_workout_title,
+                    pagerState.currentPage + 1,
+                    uiState.exerciseConfigs.size
+                ),
                 onBackClick = {
                     if (pagerState.currentPage > 0) {
                         coroutineScope.launch {
@@ -148,9 +157,9 @@ fun ConfigureWorkoutScreen(
                     } else {
                         Text(
                             text = if (pagerState.currentPage == uiState.exerciseConfigs.size - 1) {
-                                "Finalizar"
+                                stringResource(Res.string.configure_workout_finish)
                             } else {
-                                "Próximo exercício"
+                                stringResource(Res.string.configure_workout_next)
                             },
                             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )

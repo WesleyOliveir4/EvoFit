@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import com.guaracode.evofit.presentation.model.MuscleGroupItem
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitActionDialog
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
@@ -40,14 +39,18 @@ import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.tracki
 import com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewmodel.NewWorkoutViewModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
-import org.koin.compose.viewmodel.koinViewModel
+import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.new_workout_title
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NewWorkoutScreen(
-    onBackClick: () -> Unit,
-    onNavigate: (String) -> Unit,
-    onSelectExercisesClick: (List<String>, String?) -> Unit,
+    onBackClick: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
+    onSelectExercisesClick: (List<String>, String?) -> Unit = { _, _ -> },
     editWorkoutId: String? = null,
     viewModel: NewWorkoutViewModel = koinViewModel(),
     tracker: CreateWorkoutTracker = koinInject()
@@ -79,11 +82,11 @@ fun NewWorkoutScreen(
 
     if (uiState.showCancelEditDialog) {
         EvoFitActionDialog(
-            title = "Cancelar edição?",
+            title = "Cancelar Edição?",
             description = "Suas alterações não salvas serão perdidas.",
             icon = Icons.Default.EditOff,
-            confirmButtonText = "Sair sem salvar",
-            dismissButtonText = "Continuar editando",
+            confirmButtonText = "Sair",
+            dismissButtonText = "Continuar Editando",
             onConfirm = { viewModel.onConfirmCancelEdit(onProceed = onBackClick) },
             onDismiss = { viewModel.onDismissCancelEditDialog() }
         )
@@ -106,7 +109,7 @@ fun NewWorkoutContent(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarReturn(
-                title = "Novo treino",
+                title = stringResource(Res.string.new_workout_title),
                 onBackClick = onBackClick,
                 isCenterAligned = false
             )
@@ -189,8 +192,8 @@ fun NewWorkoutScreenPreview() {
     EvoFitTheme {
         NewWorkoutContent(
             muscleGroups = listOf(
-                MuscleGroupItem("1", "Costas"),
-                MuscleGroupItem("2", "Peito")
+                MuscleGroupItem("1", "Peito"),
+                MuscleGroupItem("2", "Costas")
             ),
             selectedMuscleGroupIds = setOf("1", "2"),
             isLoading = false,
