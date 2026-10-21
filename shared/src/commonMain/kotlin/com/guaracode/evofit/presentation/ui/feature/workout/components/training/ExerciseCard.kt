@@ -152,10 +152,11 @@ fun MuscleGroupPreviewCard(
 @Composable
 fun ExercisePreviewCard(
     index: Int,
-    item: ExercisePreviewItem
+    item: ExercisePreviewItem,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .border(
                 width = Dimens.BorderWidthThin,
                 color = MaterialTheme.colorScheme.outlineVariant,
