@@ -1,6 +1,10 @@
 package com.guaracode.evofit.di
 
+import com.guaracode.evofit.core.monitoring.CrashReporter
+import com.guaracode.evofit.core.monitoring.NoOpCrashReporter
 import com.guaracode.evofit.data.datasource.*
+import com.guaracode.evofit.data.local.AppDatabase
+import com.guaracode.evofit.data.local.session.SessionManager
 import com.guaracode.evofit.data.repository.*
 import com.guaracode.evofit.domain.repository.*
 import com.guaracode.evofit.domain.usecase.*
@@ -8,6 +12,7 @@ import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCase
 import com.guaracode.evofit.domain.usecase.profile.CalculateGoalProgressUseCaseImpl
 import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCase
 import com.guaracode.evofit.domain.usecase.profile.GetActiveUserGoalsUseCaseImpl
+import com.guaracode.evofit.presentation.mapper.AuthErrorMapper
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTrackerImpl
 import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
@@ -67,6 +72,10 @@ import dev.gitlive.firebase.firestore.firestore
 import org.koin.dsl.module
 
 val dataModule = module {
+    single<CrashReporter> { NoOpCrashReporter() }
+    single { get<AppDatabase>().userDao() }
+    single { get<AppDatabase>().weightHistoryDao() }
+    single { SessionManager(get()) }
     single { LocalExerciseDataSource() }
     single<WorkoutLocalDataSource> { WorkoutLocalDataSourceImpl(get()) }
     single<UserLocalDataSource> { UserLocalDataSourceImpl(get(), get()) }
@@ -146,6 +155,7 @@ val domainModule = module {
 }
 
 val authModule = module {
+    single { AuthErrorMapper() }
     single<AuthTracker> { AuthTrackerImpl(get()) }
     factory { RegisterViewModel(get(), get(), get(), get(), get(), get()) }
     factory { LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
