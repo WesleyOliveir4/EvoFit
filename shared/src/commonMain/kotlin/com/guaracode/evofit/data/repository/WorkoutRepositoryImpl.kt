@@ -1,13 +1,14 @@
 package com.guaracode.evofit.data.repository
 
+import com.guaracode.evofit.core.common.DateMapper
+import com.guaracode.evofit.core.common.randomUuid
+import com.guaracode.evofit.core.monitoring.CrashReporter
 import com.guaracode.evofit.data.datasource.LocalExerciseDataSource
 import com.guaracode.evofit.data.datasource.WorkoutLocalDataSource
 import com.guaracode.evofit.data.datasource.WorkoutRemoteDataSource
 import com.guaracode.evofit.data.local.entities.SyncStatus
 import com.guaracode.evofit.data.mapper.toDomain
 import com.guaracode.evofit.data.mapper.toEntity
-import com.guaracode.evofit.core.common.DateMapper
-import com.guaracode.evofit.core.monitoring.CrashReporter
 import com.guaracode.evofit.domain.model.Workout
 import com.guaracode.evofit.domain.model.WorkoutDone
 import com.guaracode.evofit.domain.repository.WorkoutRepository
@@ -59,7 +60,7 @@ class WorkoutRepositoryImpl(
     override suspend fun saveWorkout(workout: Workout): String {
         val nextOrderIndex = (workoutDataSource.getMaxOrderIndex(workout.userId) ?: -1) + 1
         
-        val workoutId = kotlinx.datetime.Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random()
+        val workoutId = randomUuid()
         val workoutEntity = workout.toEntity().copy(
             workoutId = workoutId,
             orderIndex = nextOrderIndex,
@@ -69,7 +70,7 @@ class WorkoutRepositoryImpl(
         
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
-                val workoutExerciseUuid = if (exercise.id.isEmpty()) kotlinx.datetime.Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random() else exercise.id
+                val workoutExerciseUuid = if (exercise.id.isEmpty()) randomUuid() else exercise.id
                 val exerciseEntity = exercise.toEntity(workoutId, group.muscleGroupId, group.orderIndex).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
                     set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)
@@ -83,6 +84,14 @@ class WorkoutRepositoryImpl(
 
         workoutDataSource.insertFullWorkout(workoutEntity, exerciseEntities, setsEntities)
 
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                crashReporter.recordException(e)
+            }
+        }
+
         return workoutId
     }
 
@@ -94,7 +103,7 @@ class WorkoutRepositoryImpl(
 
         val exercises = workout.exercisesByGroup.flatMap { group ->
             group.exercises.map { exercise ->
-                val workoutExerciseUuid = if (exercise.id.isEmpty()) kotlinx.datetime.Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random() else exercise.id
+                val workoutExerciseUuid = if (exercise.id.isEmpty()) randomUuid() else exercise.id
                 val exerciseEntity = exercise.toEntity(workout.id, group.muscleGroupId, group.orderIndex).copy(id = workoutExerciseUuid)
                 val sets = exercise.sets.map { set ->
                     set.toEntity(workoutExerciseUuid).copy(id = exercise.exerciseId)
@@ -108,11 +117,32 @@ class WorkoutRepositoryImpl(
 
         workoutDataSource.updateFullWorkout(workoutEntity, exerciseEntities, setsEntities)
 
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveFullWorkout(workoutEntity, exerciseEntities, setsEntities)
+            } catch (e: Exception) {
+                crashReporter.recordException(e)
+            }
+        }
+
         return workout.id
     }
 
     override suspend fun deleteWorkout(workoutId: String) {
+        val fullWorkout = workoutDataSource.getFullWorkoutById(workoutId).firstOrNull()
+        val userId = fullWorkout?.workout?.userId ?: ""
+
         workoutDataSource.deleteWorkoutById(workoutId)
+
+        if (userId.isNotEmpty()) {
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.deleteWorkout(userId, workoutId)
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                }
+            }
+        }
     }
 
     override suspend fun updateWorkoutsOrder(workouts: List<Workout>) {
@@ -123,6 +153,17 @@ class WorkoutRepositoryImpl(
             )
         }
         workoutDataSource.updateWorkoutsOrder(entities)
+
+        val userId = workouts.firstOrNull()?.userId ?: ""
+        if (userId.isNotEmpty()) {
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.updateWorkoutsOrder(userId, entities)
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                }
+            }
+        }
     }
 
     override suspend fun getMaxOrderIndex(userId: String): Int {
@@ -130,18 +171,36 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun saveWorkoutDone(userId: String, workoutDone: WorkoutDone) {
-        val nextId = if (workoutDone.id.isEmpty()) kotlinx.datetime.Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random() else workoutDone.id
-        val workoutWithId = workoutDone.copy(id = nextId)
+        val nextId = if (workoutDone.id.isEmpty()) randomUuid() else workoutDone.id
+        val workoutWithId = workoutDone.copy(id = nextId, userId = userId)
         
         val entity = workoutWithId.toEntity().copy(
             syncStatus = SyncStatus.PENDING,
             isDeleted = false
         )
         workoutDataSource.insertWorkoutDone(entity)
+
+        scope.launch {
+            try {
+                workoutRemoteDataSource.saveWorkoutDone(workoutWithId)
+            } catch (e: Exception) {
+                crashReporter.recordException(e)
+            }
+        }
     }
 
     override suspend fun deleteWorkoutDone(userId: String, workoutDoneId: String) {
         workoutDataSource.deleteWorkoutDoneById(workoutDoneId)
+
+        if (userId.isNotEmpty()) {
+            scope.launch {
+                try {
+                    workoutRemoteDataSource.deleteWorkoutDone(userId, workoutDoneId)
+                } catch (e: Exception) {
+                    crashReporter.recordException(e)
+                }
+            }
+        }
     }
 
     override fun getWorkoutDoneHistory(userId: String): Flow<List<WorkoutDone>> {

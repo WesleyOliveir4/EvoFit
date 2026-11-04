@@ -1,5 +1,6 @@
 package com.guaracode.evofit.data.mapper
 
+import com.guaracode.evofit.core.common.randomUuid
 import com.guaracode.evofit.data.local.entities.UserEntity
 import com.guaracode.evofit.data.local.entities.UserGoalEntity
 import com.guaracode.evofit.data.local.entities.WeightUpdateEntity
@@ -10,7 +11,7 @@ import com.guaracode.evofit.domain.model.WeightUpdate
 import kotlinx.datetime.Clock
 
 private fun generateUuid(): String {
-    return Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random()
+    return randomUuid()
 }
 
 fun WeightUpdate.toEntity(userId: String): WeightUpdateEntity {

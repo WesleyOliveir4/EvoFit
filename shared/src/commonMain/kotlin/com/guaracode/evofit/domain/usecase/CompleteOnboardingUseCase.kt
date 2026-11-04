@@ -1,11 +1,11 @@
 package com.guaracode.evofit.domain.usecase
 
+import com.guaracode.evofit.core.common.randomUuid
 import com.guaracode.evofit.domain.model.UserOnboardingData
 import com.guaracode.evofit.domain.repository.AuthRepository
 import com.guaracode.evofit.domain.repository.OnboardingRepository
 import dev.gitlive.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.datetime.Clock
 
 interface CompleteOnboardingUseCase {
     suspend operator fun invoke(data: UserOnboardingData): Result<Unit>
@@ -20,7 +20,7 @@ class CompleteOnboardingUseCaseImpl(
         return try {
             val userId = authRepository.getCurrentUserId()
                 ?: repository.getUserId().firstOrNull() 
-                ?: (Clock.System.now().toEpochMilliseconds().toString() + "_" + (1000..9999).random())
+                ?: randomUuid()
             
             firebaseAuth.currentUser?.let { user ->
                 if (data.name.isNotBlank()) {

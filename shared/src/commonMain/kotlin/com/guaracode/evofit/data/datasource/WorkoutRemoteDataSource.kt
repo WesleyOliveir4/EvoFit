@@ -72,11 +72,30 @@ class WorkoutRemoteDataSourceImpl(
 
         exercises.forEachIndexed { index, exercise ->
             val exerciseRef = workoutRef.collection("exercises").document(exercise.id)
-            batch.set(exerciseRef, exercise)
+            val exerciseMap = mapOf<String, Any?>(
+                "id" to exercise.id,
+                "workoutId" to exercise.workoutId,
+                "exerciseId" to exercise.exerciseId,
+                "muscleGroupId" to exercise.muscleGroupId,
+                "orderIndex" to exercise.orderIndex,
+                "groupOrderIndex" to exercise.groupOrderIndex,
+                "totalSets" to exercise.totalSets
+            )
+            batch.set(exerciseRef, exerciseMap)
             
             sets[index].forEach { set ->
                 val setRef = exerciseRef.collection("sets").document(set.setNumber.toString())
-                batch.set(setRef, set)
+                val setMap = mapOf<String, Any?>(
+                    "id" to set.id,
+                    "workoutExerciseId" to set.workoutExerciseId,
+                    "setNumber" to set.setNumber,
+                    "reps" to set.reps,
+                    "load" to set.load,
+                    "unit" to set.unit.name,
+                    "time" to set.time,
+                    "distance" to set.distance
+                )
+                batch.set(setRef, setMap)
             }
         }
 

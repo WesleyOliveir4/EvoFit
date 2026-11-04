@@ -3,6 +3,7 @@ package com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guaracode.evofit.core.common.AppConstants
+import com.guaracode.evofit.core.common.randomUuid
 import com.guaracode.evofit.domain.model.CompletedSet
 import com.guaracode.evofit.domain.model.ExerciseSet
 import com.guaracode.evofit.domain.model.MeasurementUnit
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.datetime.Clock
+import kotlin.random.Random
 
 @OptIn(FlowPreview::class)
 class WorkoutStartViewModel(
@@ -219,7 +221,7 @@ class WorkoutStartViewModel(
         viewModelScope.launch {
             val workout = workoutDomain ?: return@launch
             val userId = getUserIdUseCase().firstOrNull() ?: AppConstants.DEFAULT_USER_ID
-            val workoutDoneId = "done-${Clock.System.now().toEpochMilliseconds()}"
+            val workoutDoneId = randomUuid()
 
             val allWorkoutExercises = workout.exercisesByGroup.flatMap { it.exercises }
 
