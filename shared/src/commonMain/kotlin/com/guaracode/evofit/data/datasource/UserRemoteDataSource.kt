@@ -4,9 +4,9 @@ import com.guaracode.evofit.core.monitoring.CrashReporter
 import com.guaracode.evofit.data.local.entities.UserEntity
 import com.guaracode.evofit.data.local.entities.UserGoalEntity
 import com.guaracode.evofit.data.local.entities.WeightUpdateEntity
-import dev.gitlive.firebase.firestore.FirebaseFirestore
-import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.Direction
+import dev.gitlive.firebase.firestore.FieldValue
+import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 interface UserRemoteDataSource {
     suspend fun saveUser(user: UserEntity)
@@ -34,6 +34,7 @@ class UserRemoteDataSourceImpl(
             "weight" to user.weight,
             "height" to user.height,
             "onboardingCompleted" to user.onboardingCompleted,
+            "isOnboardingCompleted" to user.onboardingCompleted,
             "updatedAt" to FieldValue.serverTimestamp
         )
         firestore.collection("users")
@@ -82,32 +83,26 @@ class UserRemoteDataSourceImpl(
                 .get()
             
             if (document.exists) {
-                val data = document.data<Map<String, Any?>>() ?: return null
+                val rawOnboard1: Boolean? = try { document.get("onboardingCompleted") } catch (e: Exception) { null }
+                val rawOnboard2: Boolean? = try { document.get("isOnboardingCompleted") } catch (e: Exception) { null }
+                val isOnboardComplete = rawOnboard1 == true || rawOnboard2 == true
 
-                val rawOnboard = data["onboardingCompleted"]
-                val isOnboardComplete = when (rawOnboard) {
-                    is Boolean -> rawOnboard
-                    is Number -> rawOnboard.toInt() != 0
-                    is String -> rawOnboard.trim().lowercase() == "true"
-                    else -> false
-                }
+                val name: String = try { document.get("name") } catch (e: Exception) { "" }
+                val birthDate: String = try { document.get("birthDate") } catch (e: Exception) { try { document.get("age") } catch (e: Exception) { "" } }
+                val weight: String = try { document.get("weight") } catch (e: Exception) { "" }
+                val height: String = try { document.get("height") } catch (e: Exception) { "" }
 
                 val user = UserEntity(
-                    id = data["id"] as? String ?: userId,
-                    name = data["name"] as? String ?: "",
-                    birthDate = (data["birthDate"] as? String) ?: (data["age"] as? String) ?: "",
-                    weight = data["weight"] as? String ?: "",
-                    height = data["height"] as? String ?: "",
+                    id = userId,
+                    name = name,
+                    birthDate = birthDate,
+                    weight = weight,
+                    height = height,
                     onboardingCompleted = isOnboardComplete
                 )
 
-                val updatedAtRaw = data["updatedAt"]
-                val updatedAt = when (updatedAtRaw) {
-                    is Long -> updatedAtRaw
-                    is Number -> updatedAtRaw.toLong()
-                    else -> 0L
-                }
-                user.updatedAt = updatedAt
+                val updatedAtRaw: Long? = try { document.get("updatedAt") } catch (e: Exception) { null }
+                user.updatedAt = updatedAtRaw ?: 0L
                 
                 user
             } else {
@@ -127,18 +122,18 @@ class UserRemoteDataSourceImpl(
                 .get()
 
             snapshot.documents.mapNotNull { doc ->
-                val data = doc.data<Map<String, Any?>>() ?: return@mapNotNull null
+                if (!doc.exists) return@mapNotNull null
                 UserGoalEntity(
-                    id = data["id"] as? String ?: doc.id,
-                    userId = data["userId"] as? String ?: userId,
-                    type = data["type"] as? String ?: "",
-                    exerciseName = data["exerciseName"] as? String,
-                    value = data["value"] as? String,
-                    unit = data["unit"] as? String ?: "WEIGHT",
-                    cardioType = data["cardioType"] as? String,
-                    distance = data["distance"] as? String,
-                    time = data["time"] as? String,
-                    isDeleted = data["isDeleted"] as? Boolean ?: false
+                    id = doc.id,
+                    userId = userId,
+                    type = try { doc.get("type") } catch (e: Exception) { "" },
+                    exerciseName = try { doc.get("exerciseName") } catch (e: Exception) { null },
+                    value = try { doc.get("value") } catch (e: Exception) { null },
+                    unit = try { doc.get("unit") } catch (e: Exception) { "WEIGHT" },
+                    cardioType = try { doc.get("cardioType") } catch (e: Exception) { null },
+                    distance = try { doc.get("distance") } catch (e: Exception) { null },
+                    time = try { doc.get("time") } catch (e: Exception) { null },
+                    isDeleted = try { doc.get("isDeleted") } catch (e: Exception) { false }
                 )
             }
         } catch (e: Exception) {
@@ -179,13 +174,13 @@ class UserRemoteDataSourceImpl(
                 .get()
 
             snapshot.documents.mapNotNull { doc ->
-                val data = doc.data<Map<String, Any?>>() ?: return@mapNotNull null
+                if (!doc.exists) return@mapNotNull null
                 WeightUpdateEntity(
-                    id = data["id"] as? String ?: doc.id,
-                    userId = data["userId"] as? String ?: userId,
-                    weight = data["weight"] as? String ?: "",
-                    date = data["date"] as? String ?: "",
-                    isDeleted = data["isDeleted"] as? Boolean ?: false
+                    id = doc.id,
+                    userId = userId,
+                    weight = try { doc.get("weight") } catch (e: Exception) { "" },
+                    date = try { doc.get("date") } catch (e: Exception) { "" },
+                    isDeleted = try { doc.get("isDeleted") } catch (e: Exception) { false }
                 )
             }
         } catch (e: Exception) {

@@ -1,6 +1,7 @@
 package com.guaracode.evofit.presentation.ui.feature.onboard.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -167,21 +169,29 @@ fun OnboardUserDataContent(
 
             Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
-            EvoFitInputField(
-                label = stringResource(Res.string.onboarding_user_data_label_birth_date),
-                placeholder = stringResource(Res.string.onboarding_user_data_label_birth_date_example),
-                value = userData.birthDate,
-                enabled = false,
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_today),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
-                    )
-                },
-                onValueChange = {},
-                modifier = Modifier.clickable { showDatePicker = true }
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDatePicker = true }
+            ) {
+                EvoFitInputField(
+                    label = stringResource(Res.string.onboarding_user_data_label_birth_date),
+                    placeholder = stringResource(Res.string.onboarding_user_data_label_birth_date_example),
+                    value = userData.birthDate,
+                    readOnly = true,
+                    enabled = true,
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_today),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
+                            )
+                        }
+                    },
+                    onValueChange = {}
+                )
+            }
 
             Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }

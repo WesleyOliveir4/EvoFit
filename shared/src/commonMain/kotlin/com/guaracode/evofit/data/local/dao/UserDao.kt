@@ -185,6 +185,80 @@ abstract class UserDao {
     abstract suspend fun deleteActiveSession()
 
     @Transaction
+    open suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
+        shouldClearActiveSession: Boolean
+    ) {
+        if (shouldClearActiveSession) {
+            nukeUserData()
+        }
+
+        user?.let {
+            insertUser(it)
+        }
+        if (goals.isNotEmpty()) {
+            insertGoals(goals)
+        }
+        for (fullWorkout in workouts) {
+            insertFullWorkoutReturnId(
+                fullWorkout.workout,
+                fullWorkout.exercises,
+                fullWorkout.sets
+            )
+        }
+        legacyHistory?.let {
+            insertWorkoutDoneHistory(it)
+        }
+        for (historyItem in newHistory) {
+            insertWorkoutDone(historyItem)
+        }
+    }
+
+    @Transaction
+    open suspend fun syncIncremental(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        newHistory: List<WorkoutDoneEntity>
+    ) {
+        user?.let {
+            insertUser(it)
+        }
+        
+        for (goal in goals) {
+            if (goal.isDeleted) {
+                deleteGoalById(goal.id)
+            } else {
+                insertGoals(listOf(goal))
+            }
+        }
+
+        for (fullWorkout in workouts) {
+            if (fullWorkout.workout.isDeleted) {
+                deleteWorkoutById(fullWorkout.workout.workoutId)
+            } else {
+                insertFullWorkoutReturnId(
+                    fullWorkout.workout,
+                    fullWorkout.exercises,
+                    fullWorkout.sets
+                )
+            }
+        }
+
+        for (historyItem in newHistory) {
+            if (historyItem.isDeleted) {
+                deleteWorkoutDoneById(historyItem.id)
+            } else {
+                insertWorkoutDone(historyItem)
+            }
+        }
+    }
+
+    @Transaction
     open suspend fun nukeUserData() {
         deleteAllUsers()
         deleteAllGoals()

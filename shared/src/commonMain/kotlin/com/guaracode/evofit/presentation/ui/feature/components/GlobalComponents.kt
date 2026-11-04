@@ -646,7 +646,8 @@ fun EvoFitInputField(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    readOnly: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
@@ -657,6 +658,7 @@ fun EvoFitInputField(
         placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)) },
         trailingIcon = trailingIcon,
         enabled = enabled,
+        readOnly = readOnly,
         singleLine = true,
         shape = RoundedCornerShape(Dimens.CornerRadiusExtraSmall),
         colors = OutlinedTextFieldDefaults.colors(

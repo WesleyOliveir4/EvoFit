@@ -211,38 +211,71 @@ class WorkoutRemoteDataSourceImpl(
                 .get()
 
             workoutsSnapshot.documents.mapNotNull { workoutDoc ->
-                val data = workoutDoc.data<Map<String, Any?>>()
+                if (!workoutDoc.exists) return@mapNotNull null
+                val workoutId: String = try { workoutDoc.get("workoutId") } catch (e: Exception) { workoutDoc.id }
+                val workoutUserId: String = try { workoutDoc.get("userId") } catch (e: Exception) { userId }
+                val name: String = try { workoutDoc.get("name") } catch (e: Exception) { "" }
+                val date: String = try { workoutDoc.get("date") } catch (e: Exception) { "" }
+                val orderIndex: Int = try { (workoutDoc.get("orderIndex") as Number).toInt() } catch (e: Exception) { 0 }
+                val isDeleted: Boolean = try { workoutDoc.get("isDeleted") } catch (e: Exception) { false }
+
                 val workout = WorkoutEntity(
-                    workoutId = data["workoutId"] as? String ?: workoutDoc.id,
-                    userId = data["userId"] as? String ?: userId,
-                    name = data["name"] as? String ?: "",
-                    date = data["date"] as? String ?: "",
-                    orderIndex = (data["orderIndex"] as? Long)?.toInt() ?: 0
+                    workoutId = workoutId,
+                    userId = workoutUserId,
+                    name = name,
+                    date = date,
+                    orderIndex = orderIndex,
+                    isDeleted = isDeleted
                 )
+
                 val exercisesSnapshot = workoutDoc.reference.collection("exercises").get()
                 val exercisesWithSets = exercisesSnapshot.documents.mapNotNull { exerciseDoc ->
-                    val exData = exerciseDoc.data<Map<String, Any?>>()
+                    if (!exerciseDoc.exists) return@mapNotNull null
+                    val exId: String = try { exerciseDoc.get("id") } catch (e: Exception) { exerciseDoc.id }
+                    val exWorkoutId: String = try { exerciseDoc.get("workoutId") } catch (e: Exception) { workoutId }
+                    val exerciseId: String = try { exerciseDoc.get("exerciseId") } catch (e: Exception) { "" }
+                    val muscleGroupId: String = try { exerciseDoc.get("muscleGroupId") } catch (e: Exception) { "" }
+                    val exOrderIndex: Int = try { (exerciseDoc.get("orderIndex") as Number).toInt() } catch (e: Exception) { 0 }
+                    val groupOrderIndex: Int = try { (exerciseDoc.get("groupOrderIndex") as Number).toInt() } catch (e: Exception) { 0 }
+                    val totalSets: Int = try { (exerciseDoc.get("totalSets") as Number).toInt() } catch (e: Exception) { 0 }
+
                     val exercise = WorkoutExerciseEntity(
-                        id = exData["id"] as? String ?: exerciseDoc.id,
-                        workoutId = exData["workoutId"] as? String ?: "",
-                        exerciseId = exData["exerciseId"] as? String ?: "",
-                        muscleGroupId = exData["muscleGroupId"] as? String ?: "",
-                        orderIndex = (exData["orderIndex"] as? Long)?.toInt() ?: 0,
-                        groupOrderIndex = (exData["groupOrderIndex"] as? Long)?.toInt() ?: 0,
-                        totalSets = (exData["totalSets"] as? Long)?.toInt() ?: 0
+                        id = exId,
+                        workoutId = exWorkoutId,
+                        exerciseId = exerciseId,
+                        muscleGroupId = muscleGroupId,
+                        orderIndex = exOrderIndex,
+                        groupOrderIndex = groupOrderIndex,
+                        totalSets = totalSets
                     )
+
                     val setsSnapshot = exerciseDoc.reference.collection("sets").get()
                     val sets = setsSnapshot.documents.mapNotNull { setDoc ->
-                        val setData = setDoc.data<Map<String, Any?>>()
+                        if (!setDoc.exists) return@mapNotNull null
+                        val setId: String = try { setDoc.get("id") } catch (e: Exception) { setDoc.id }
+                        val setWorkoutExerciseId: String = try { setDoc.get("workoutExerciseId") } catch (e: Exception) { exId }
+                        val setNumber: Int = try { (setDoc.get("setNumber") as Number).toInt() } catch (e: Exception) { 0 }
+                        val reps: Int = try { (setDoc.get("reps") as Number).toInt() } catch (e: Exception) { 0 }
+                        val load: Double = try { (setDoc.get("load") as Number).toDouble() } catch (e: Exception) { 0.0 }
+                        val unitStr: String = try { setDoc.get("unit") } catch (e: Exception) { "WEIGHT" }
+                        val time: Int? = try { (setDoc.get("time") as? Number)?.toInt() } catch (e: Exception) { null }
+                        val distance: Double? = try { (setDoc.get("distance") as? Number)?.toDouble() } catch (e: Exception) { null }
+
+                        val unit = try {
+                            com.guaracode.evofit.domain.model.MeasurementUnit.valueOf(unitStr)
+                        } catch (e: Exception) {
+                            com.guaracode.evofit.domain.model.MeasurementUnit.WEIGHT
+                        }
+
                         ExerciseSetEntity(
-                            id = setData["id"] as? String ?: setDoc.id,
-                            workoutExerciseId = setData["workoutExerciseId"] as? String ?: "",
-                            setNumber = (setData["setNumber"] as? Long)?.toInt() ?: 0,
-                            reps = (setData["reps"] as? Long)?.toInt() ?: 0,
-                            load = (setData["load"] as? Double) ?: (setData["load"] as? Long)?.toDouble() ?: 0.0,
-                            unit = com.guaracode.evofit.domain.model.MeasurementUnit.valueOf(setData["unit"] as? String ?: "WEIGHT"),
-                            time = (setData["time"] as? Long)?.toInt(),
-                            distance = (setData["distance"] as? Double) ?: (setData["distance"] as? Long)?.toDouble()
+                            id = setId,
+                            workoutExerciseId = setWorkoutExerciseId,
+                            setNumber = setNumber,
+                            reps = reps,
+                            load = load,
+                            unit = unit,
+                            time = time,
+                            distance = distance
                         )
                     }
                     exercise to sets

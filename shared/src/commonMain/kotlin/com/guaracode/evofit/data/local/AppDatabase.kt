@@ -32,4 +32,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun weightHistoryDao(): WeightHistoryDao
 }
 
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase>

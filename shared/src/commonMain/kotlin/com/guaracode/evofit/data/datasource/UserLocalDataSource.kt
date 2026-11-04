@@ -11,6 +11,20 @@ interface UserLocalDataSource {
     suspend fun insertUser(user: UserEntity): Long
     suspend fun updateUser(user: UserEntity): Int
     suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>): Long
+    suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
+        shouldClearActiveSession: Boolean
+    )
+    suspend fun syncIncremental(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        newHistory: List<WorkoutDoneEntity>
+    )
     fun getGoalsForUser(userId: String): Flow<List<UserGoalEntity>>
     suspend fun deleteGoalsForUser(userId: String): Int
     suspend fun deleteGoalById(goalId: String): Int
@@ -38,7 +52,23 @@ class UserLocalDataSourceImpl(
     
     override suspend fun saveUserWithGoals(user: UserEntity, goals: List<UserGoalEntity>) = 
         userDao.saveUserWithGoals(user, goals)
-    
+
+    override suspend fun syncAllData(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        legacyHistory: WorkoutDoneHistoryEntity?,
+        newHistory: List<WorkoutDoneEntity>,
+        shouldClearActiveSession: Boolean
+    ) = userDao.syncAllData(user, goals, workouts, legacyHistory, newHistory, shouldClearActiveSession)
+
+    override suspend fun syncIncremental(
+        user: UserEntity?,
+        goals: List<UserGoalEntity>,
+        workouts: List<FullWorkoutRemoteData>,
+        newHistory: List<WorkoutDoneEntity>
+    ) = userDao.syncIncremental(user, goals, workouts, newHistory)
+
     override fun getGoalsForUser(userId: String) = userDao.getGoalsForUser(userId)
     
     override suspend fun deleteGoalsForUser(userId: String) = userDao.deleteGoalsForUser(userId)

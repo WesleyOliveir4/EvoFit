@@ -43,6 +43,7 @@ fun EvoDatePickerDialog(
     ) {
         DatePicker(
             state = datePickerState,
+            showModeToggle = true,
             colors = DatePickerDefaults.colors(
                 selectedDayContainerColor = AppGreen,
                 selectedDayContentColor = Color.Black,

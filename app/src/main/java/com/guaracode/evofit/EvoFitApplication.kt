@@ -1,8 +1,7 @@
 package com.guaracode.evofit
 
 import android.app.Application
-import com.guaracode.evofit.core.monitoring.di.monitoringModule
-import com.guaracode.evofit.di.appModule
+import com.guaracode.evofit.di.sharedAppModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -14,7 +13,7 @@ class EvoFitApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@EvoFitApplication)
-            modules(appModule + monitoringModule)
+            modules(sharedAppModules)
         }
     }
 }

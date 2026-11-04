@@ -7,6 +7,7 @@ import com.guaracode.evofit.data.datasource.UserRemoteDataSource
 import com.guaracode.evofit.data.datasource.WorkoutLocalDataSource
 import com.guaracode.evofit.data.datasource.WorkoutRemoteDataSource
 import com.guaracode.evofit.data.local.entities.SyncStatus
+import com.guaracode.evofit.data.local.entities.UserEntity
 import com.guaracode.evofit.data.local.session.SessionManager
 import com.guaracode.evofit.data.mapper.mapToDomain
 import com.guaracode.evofit.data.mapper.toDomain
@@ -150,13 +151,43 @@ class OnboardingRepositoryImpl(
                 val remoteWeightHistory = remoteWeightHistoryDeferred.await()
                 val remoteLegacyHistory = remoteLegacyHistoryDeferred?.await()
 
+                val finalUser = when {
+                    remoteUser != null && remoteUser.onboardingCompleted -> remoteUser
+                    remoteUser != null && (remoteWorkouts.isNotEmpty() || remoteGoals.isNotEmpty() || remoteNewHistory.isNotEmpty()) -> {
+                        remoteUser.copy(onboardingCompleted = true)
+                    }
+                    remoteUser == null && (remoteWorkouts.isNotEmpty() || remoteGoals.isNotEmpty() || remoteNewHistory.isNotEmpty()) -> {
+                        UserEntity(
+                            id = userId,
+                            name = "",
+                            birthDate = "",
+                            weight = "",
+                            height = "",
+                            onboardingCompleted = true
+                        )
+                    }
+                    else -> remoteUser
+                }
+
                 if (isFullSync) {
                     if (shouldClearActiveSession) {
                         nukeUserData()
                     }
-                    // Sync persistence
+                    userDataSource.syncAllData(
+                        user = finalUser,
+                        goals = remoteGoals,
+                        workouts = remoteWorkouts,
+                        legacyHistory = remoteLegacyHistory,
+                        newHistory = remoteNewHistory.map { it.toEntity() },
+                        shouldClearActiveSession = false
+                    )
                 } else {
-                    // Incremental Sync
+                    userDataSource.syncIncremental(
+                        user = finalUser,
+                        goals = remoteGoals,
+                        workouts = remoteWorkouts,
+                        newHistory = remoteNewHistory.map { it.toEntity() }
+                    )
                 }
 
                 remoteWeightHistory.forEach { weightUpdate ->
