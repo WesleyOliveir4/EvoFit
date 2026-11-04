@@ -35,8 +35,10 @@ import androidx.compose.ui.window.DialogProperties
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_dumbbell
 import evofit.shared.generated.resources.ic_logo_evofit
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun AppBottomNavigation(
@@ -50,7 +52,7 @@ fun AppBottomNavigation(
         NavigationBarItem(
             selected = currentRoute == "home",
             onClick = { onNavigate("home") },
-            icon = { Icon(painterResource(Res.drawable.ic_logo_evofit), contentDescription = "Treino") },
+            icon = { Icon(vectorResource(Res.drawable.ic_dumbbell), contentDescription = "Treino") },
             label = { Text("Treino") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.primary,

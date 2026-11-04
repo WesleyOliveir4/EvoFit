@@ -100,7 +100,7 @@ fun ExerciseTrackingCard(
                     )
                     val completedInExercise = exercise.sets.count { it.isDone }
                     Text(
-                        text = "$completedInExercise de ${exercise.sets.size} séries concluídas",
+                        text = "$completedInExercise/${exercise.sets.size} séries",
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -129,7 +129,7 @@ fun ExerciseTrackingCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "SÉRIE",
+                            "Série",
                             color = MaterialTheme.colorScheme.secondary,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.weight(0.8f),
@@ -138,14 +138,14 @@ fun ExerciseTrackingCard(
                         when (exercise.unit) {
                             MeasurementUnit.WEIGHT -> {
                                 Text(
-                                    "CARGA",
+                                    "Carga",
                                     color = MaterialTheme.colorScheme.secondary,
                                     style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
-                                    "REPS",
+                                    "Reps",
                                     color = MaterialTheme.colorScheme.secondary,
                                     style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.weight(1.2f),
@@ -197,7 +197,7 @@ fun ExerciseTrackingCard(
                     }
                     Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-                    exercise.sets.forEach { setItem ->
+                    exercise.sets.forEachIndexed { setIndex, setItem ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -205,7 +205,7 @@ fun ExerciseTrackingCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "${setItem.setNumber}",
+                                text = "${setIndex + 1}",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(0.8f),

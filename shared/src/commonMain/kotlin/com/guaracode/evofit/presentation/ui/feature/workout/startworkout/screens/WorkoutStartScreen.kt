@@ -36,6 +36,7 @@ import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.viewmod
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 import evofit.shared.generated.resources.Res
+import evofit.shared.generated.resources.ic_clipboard_off
 import evofit.shared.generated.resources.new_workout_back_desc
 import evofit.shared.generated.resources.workout_cancel_dialog_confirm
 import evofit.shared.generated.resources.workout_cancel_dialog_description
@@ -179,53 +180,89 @@ fun WorkoutStartContent(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = uiState.workoutTitle,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = stringResource(Res.string.workout_start_status, doneSets, totalSets),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onCancelWorkoutClick) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(horizontal = Dimens.ScreenPaddingHorizontal, vertical = Dimens.SpacingSmall)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.new_workout_back_desc),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                },
-                actions = {
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    IconButton(onClick = onCancelWorkoutClick, modifier = Modifier.size(Dimens.MinimumTouchTarget)) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_clipboard_off),
+                            contentDescription = "Cancelar treino",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(Dimens.SpacingExtraSmall))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = uiState.workoutTitle,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraSmall))
+                        Text(
+                            text = stringResource(Res.string.workout_start_status, doneSets, totalSets),
+                            color = MaterialTheme.colorScheme.secondary,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
                     Row(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(Dimens.CornerRadiusDefault))
+                            .padding(horizontal = Dimens.SpacingMediumSmall, vertical = Dimens.SpacingTiny),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraSmall),
-                        modifier = Modifier.padding(end = Dimens.SpacingSmall)
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingTiny)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timelapse,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(Dimens.IconSizeSmall)
                         )
                         Text(
                             text = uiState.elapsedTime,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-            )
+                }
+                Spacer(modifier = Modifier.height(Dimens.SpacingMediumSmall))
+                
+                LinearProgressIndicator(
+                    progress = { if (totalSets > 0) doneSets.toFloat() / totalSets else 0f },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.SpacingExtraSmall)
+                        .clip(RoundedCornerShape(Dimens.SpacingExtraExtraSmall)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
         },
         bottomBar = {
             Column(
@@ -254,47 +291,49 @@ fun WorkoutStartContent(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(horizontal = Dimens.ScreenPaddingHorizontal),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
         ) {
-            val progress = if (totalSets > 0) doneSets.toFloat() / totalSets else 0f
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
+            val groupedExercises = uiState.exercises.groupBy { it.muscleGroupName }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = Dimens.ScreenPaddingHorizontal),
-                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
-            ) {
-                item { Spacer(modifier = Modifier.height(Dimens.SpacingSmall)) }
+            groupedExercises.forEach { (groupName, exercises) ->
+                if (groupName.isNotBlank()) {
+                    item {
+                        Text(
+                            text = groupName.uppercase(),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(top = Dimens.SpacingSmall, bottom = Dimens.SpacingExtraSmall)
+                        )
+                    }
+                }
 
-                itemsIndexed(uiState.exercises, key = { _, item -> item.workoutExerciseId }) { index, exerciseState ->
-                    val isExpanded = expandedWorkoutExerciseIds.contains(exerciseState.workoutExerciseId)
+                itemsIndexed(
+                    items = exercises,
+                    key = { _, exercise -> exercise.workoutExerciseId }
+                ) { index, exercise ->
                     ExerciseTrackingCard(
+                        exercise = exercise,
                         index = index,
-                        exercise = exerciseState,
-                        isExpanded = isExpanded,
+                        isExpanded = expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId),
                         onExpandClick = {
-                            expandedWorkoutExerciseIds = if (isExpanded) {
-                                expandedWorkoutExerciseIds - exerciseState.workoutExerciseId
+                            expandedWorkoutExerciseIds = if (expandedWorkoutExerciseIds.contains(exercise.workoutExerciseId)) {
+                                expandedWorkoutExerciseIds - exercise.workoutExerciseId
                             } else {
-                                expandedWorkoutExerciseIds + exerciseState.workoutExerciseId
+                                expandedWorkoutExerciseIds + exercise.workoutExerciseId
                             }
                         },
                         onToggleSetDone = onToggleSetDone,
                         onInfoClick = onInfoClick
                     )
                 }
-
-                item { Spacer(modifier = Modifier.height(Dimens.SpacingLarge)) }
             }
+
+            item { Spacer(modifier = Modifier.height(Dimens.SpacingLarge)) }
         }
     }
 }

@@ -27,7 +27,6 @@ import com.guaracode.evofit.presentation.model.WorkoutDetailPreview
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitAlertDialog
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitCautionDialog
 import com.guaracode.evofit.presentation.ui.feature.components.TopBarReturn
-import com.guaracode.evofit.presentation.ui.feature.workout.components.training.ExercisePreviewCard
 import com.guaracode.evofit.presentation.ui.feature.workout.components.training.MuscleGroupPreviewCard
 import com.guaracode.evofit.presentation.ui.feature.workout.components.training.rememberDraggableListState
 import com.guaracode.evofit.presentation.ui.feature.workout.startworkout.components.HeaderIndicatorCard
@@ -159,14 +158,20 @@ fun WorkoutPreviewContent(
     }
 
     val dragState = rememberDraggableListState(
+        itemHeight = 80.dp,
         onMove = { from, to ->
             val mutableList = localGroupedExercises.toMutableList()
-            val movedItem = mutableList.removeAt(from)
-            mutableList.add(to, movedItem)
+            mutableList.add(to, mutableList.removeAt(from))
             localGroupedExercises = mutableList
-            onMove(mutableList.map { it.first })
+            onMove(localGroupedExercises.map { it.first })
         }
     )
+
+    LaunchedEffect(preview.groupedExercises) {
+        if (expandedGroups.isEmpty() && preview.groupedExercises.isNotEmpty()) {
+            expandedGroups = setOf(preview.groupedExercises.keys.first())
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -180,14 +185,14 @@ fun WorkoutPreviewContent(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = stringResource(Res.string.workout_preview_edit_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(Res.string.workout_preview_delete_desc),
-                            tint = MaterialTheme.colorScheme.error
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -197,6 +202,7 @@ fun WorkoutPreviewContent(
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(horizontal = Dimens.ScreenPaddingHorizontal)
                     .padding(bottom = Dimens.SpacingMedium)
             ) {
@@ -224,7 +230,7 @@ fun WorkoutPreviewContent(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = Dimens.ScreenPaddingHorizontal),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMediumSmall)
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
         ) {
             item {
                 Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
@@ -245,40 +251,33 @@ fun WorkoutPreviewContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
+                Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
             }
 
-            localGroupedExercises.forEachIndexed { groupIndex, (groupName, exercises) ->
-                val isExpanded = expandedGroups.contains(groupName)
-
-                item(key = "group_$groupName") {
-                    MuscleGroupPreviewCard(
-                        groupName = groupName,
-                        exercises = exercises,
-                        isExpanded = isExpanded,
-                        onExpandClick = {
-                            expandedGroups = if (isExpanded) {
-                                expandedGroups - groupName
-                            } else {
-                                expandedGroups + groupName
-                            }
+            itemsIndexed(localGroupedExercises, key = { _, pair -> pair.first }) { _, (groupName, exercises) ->
+                val isDragging = dragState.draggedItemId == groupName
+                MuscleGroupPreviewCard(
+                    groupName = groupName,
+                    exercises = exercises,
+                    isExpanded = expandedGroups.contains(groupName) && !isDragging,
+                    onExpandClick = {
+                        expandedGroups = if (expandedGroups.contains(groupName)) {
+                            expandedGroups - groupName
+                        } else {
+                            expandedGroups + groupName
                         }
-                    )
-                }
-
-                if (isExpanded) {
-                    itemsIndexed(exercises, key = { _, item -> item.workoutExerciseId }) { exerciseIndex, exerciseItem ->
-                        ExercisePreviewCard(
-                            index = exerciseIndex + 1,
-                            item = exerciseItem,
-                            modifier = Modifier.padding(start = Dimens.SpacingMediumSmall)
-                        )
-                    }
-                }
+                    },
+                    isDragging = isDragging,
+                    dragOffset = { if (isDragging) dragState.dragOffset else 0f },
+                    onDragStart = { dragState.onDragStart(groupName) },
+                    onDrag = { deltaY -> dragState.onDrag(deltaY, localGroupedExercises, { it.first }) },
+                    onDragEnd = dragState::onDragEnd,
+                    onDragCancel = dragState::onDragEnd
+                )
             }
 
             item {
-                Spacer(modifier = Modifier.height(Dimens.SpacingExtraExtraLarge))
+                Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
             }
         }
     }

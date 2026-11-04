@@ -267,7 +267,7 @@ fun SelectExercisesContent(
                     }
                     Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
                     Text(
-                        text = "$muscleGroupName: ${exercises.size} disponíveis",
+                        text = "$muscleGroupName: ${exercises.size} exercícios disponíveis",
                         color = MaterialTheme.colorScheme.secondary,
                         style = MaterialTheme.typography.bodySmall
                     )

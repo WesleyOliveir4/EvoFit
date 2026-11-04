@@ -7,9 +7,10 @@ import com.guaracode.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.guaracode.evofit.data.local.entities.WorkoutEntity
 import com.guaracode.evofit.data.local.entities.WorkoutExerciseEntity
 import com.guaracode.evofit.domain.model.WorkoutDone
-import dev.gitlive.firebase.firestore.FirebaseFirestore
-import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.Direction
+import dev.gitlive.firebase.firestore.DocumentSnapshot
+import dev.gitlive.firebase.firestore.FieldValue
+import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 interface WorkoutRemoteDataSource {
     suspend fun saveFullWorkout(
@@ -29,6 +30,70 @@ interface WorkoutRemoteDataSource {
     suspend fun getAllWorkoutDoneHistory(userId: String, sinceTimestamp: Long = 0L): List<WorkoutDone>
     suspend fun getWorkoutsSince(userId: String, sinceTimestamp: Long): List<WorkoutDone>
     suspend fun deleteOldHistorySummary(userId: String)
+}
+
+private fun DocumentSnapshot.getSafeInt(field: String, default: Int = 0): Int {
+    return try {
+        get<Int?>(field) ?: get<Long?>(field)?.toInt() ?: default
+    } catch (e: Exception) {
+        try {
+            get<Double?>(field)?.toInt() ?: default
+        } catch (e2: Exception) {
+            default
+        }
+    }
+}
+
+private fun DocumentSnapshot.getSafeIntNullable(field: String): Int? {
+    return try {
+        get<Int?>(field) ?: get<Long?>(field)?.toInt()
+    } catch (e: Exception) {
+        try {
+            get<Double?>(field)?.toInt()
+        } catch (e2: Exception) {
+            null
+        }
+    }
+}
+
+private fun DocumentSnapshot.getSafeDouble(field: String, default: Double = 0.0): Double {
+    return try {
+        get<Double?>(field) ?: get<Long?>(field)?.toDouble() ?: default
+    } catch (e: Exception) {
+        try {
+            get<Int?>(field)?.toDouble() ?: default
+        } catch (e2: Exception) {
+            default
+        }
+    }
+}
+
+private fun DocumentSnapshot.getSafeDoubleNullable(field: String): Double? {
+    return try {
+        get<Double?>(field) ?: get<Long?>(field)?.toDouble()
+    } catch (e: Exception) {
+        try {
+            get<Int?>(field)?.toDouble()
+        } catch (e2: Exception) {
+            null
+        }
+    }
+}
+
+private fun DocumentSnapshot.getSafeString(field: String, default: String = ""): String {
+    return try {
+        get<String?>(field) ?: default
+    } catch (e: Exception) {
+        default
+    }
+}
+
+private fun DocumentSnapshot.getSafeBoolean(field: String, default: Boolean = false): Boolean {
+    return try {
+        get<Boolean?>(field) ?: default
+    } catch (e: Exception) {
+        default
+    }
 }
 
 class WorkoutRemoteDataSourceImpl(
@@ -231,12 +296,12 @@ class WorkoutRemoteDataSourceImpl(
 
             workoutsSnapshot.documents.mapNotNull { workoutDoc ->
                 if (!workoutDoc.exists) return@mapNotNull null
-                val workoutId: String = try { workoutDoc.get("workoutId") } catch (e: Exception) { workoutDoc.id }
-                val workoutUserId: String = try { workoutDoc.get("userId") } catch (e: Exception) { userId }
-                val name: String = try { workoutDoc.get("name") } catch (e: Exception) { "" }
-                val date: String = try { workoutDoc.get("date") } catch (e: Exception) { "" }
-                val orderIndex: Int = try { (workoutDoc.get("orderIndex") as Number).toInt() } catch (e: Exception) { 0 }
-                val isDeleted: Boolean = try { workoutDoc.get("isDeleted") } catch (e: Exception) { false }
+                val workoutId: String = workoutDoc.getSafeString("workoutId", workoutDoc.id)
+                val workoutUserId: String = workoutDoc.getSafeString("userId", userId)
+                val name: String = workoutDoc.getSafeString("name")
+                val date: String = workoutDoc.getSafeString("date")
+                val orderIndex: Int = workoutDoc.getSafeInt("orderIndex")
+                val isDeleted: Boolean = workoutDoc.getSafeBoolean("isDeleted")
 
                 val workout = WorkoutEntity(
                     workoutId = workoutId,
@@ -250,13 +315,13 @@ class WorkoutRemoteDataSourceImpl(
                 val exercisesSnapshot = workoutDoc.reference.collection("exercises").get()
                 val exercisesWithSets = exercisesSnapshot.documents.mapNotNull { exerciseDoc ->
                     if (!exerciseDoc.exists) return@mapNotNull null
-                    val exId: String = try { exerciseDoc.get("id") } catch (e: Exception) { exerciseDoc.id }
-                    val exWorkoutId: String = try { exerciseDoc.get("workoutId") } catch (e: Exception) { workoutId }
-                    val exerciseId: String = try { exerciseDoc.get("exerciseId") } catch (e: Exception) { "" }
-                    val muscleGroupId: String = try { exerciseDoc.get("muscleGroupId") } catch (e: Exception) { "" }
-                    val exOrderIndex: Int = try { (exerciseDoc.get("orderIndex") as Number).toInt() } catch (e: Exception) { 0 }
-                    val groupOrderIndex: Int = try { (exerciseDoc.get("groupOrderIndex") as Number).toInt() } catch (e: Exception) { 0 }
-                    val totalSets: Int = try { (exerciseDoc.get("totalSets") as Number).toInt() } catch (e: Exception) { 0 }
+                    val exId: String = exerciseDoc.getSafeString("id", exerciseDoc.id)
+                    val exWorkoutId: String = exerciseDoc.getSafeString("workoutId", workoutId)
+                    val exerciseId: String = exerciseDoc.getSafeString("exerciseId")
+                    val muscleGroupId: String = exerciseDoc.getSafeString("muscleGroupId")
+                    val exOrderIndex: Int = exerciseDoc.getSafeInt("orderIndex")
+                    val groupOrderIndex: Int = exerciseDoc.getSafeInt("groupOrderIndex")
+                    val totalSets: Int = exerciseDoc.getSafeInt("totalSets")
 
                     val exercise = WorkoutExerciseEntity(
                         id = exId,
@@ -271,14 +336,14 @@ class WorkoutRemoteDataSourceImpl(
                     val setsSnapshot = exerciseDoc.reference.collection("sets").get()
                     val sets = setsSnapshot.documents.mapNotNull { setDoc ->
                         if (!setDoc.exists) return@mapNotNull null
-                        val setId: String = try { setDoc.get("id") } catch (e: Exception) { setDoc.id }
-                        val setWorkoutExerciseId: String = try { setDoc.get("workoutExerciseId") } catch (e: Exception) { exId }
-                        val setNumber: Int = try { (setDoc.get("setNumber") as Number).toInt() } catch (e: Exception) { 0 }
-                        val reps: Int = try { (setDoc.get("reps") as Number).toInt() } catch (e: Exception) { 0 }
-                        val load: Double = try { (setDoc.get("load") as Number).toDouble() } catch (e: Exception) { 0.0 }
-                        val unitStr: String = try { setDoc.get("unit") } catch (e: Exception) { "WEIGHT" }
-                        val time: Int? = try { (setDoc.get("time") as? Number)?.toInt() } catch (e: Exception) { null }
-                        val distance: Double? = try { (setDoc.get("distance") as? Number)?.toDouble() } catch (e: Exception) { null }
+                        val setId: String = setDoc.getSafeString("id", setDoc.id)
+                        val setWorkoutExerciseId: String = setDoc.getSafeString("workoutExerciseId", exId)
+                        val setNumber: Int = setDoc.getSafeInt("setNumber")
+                        val reps: Int = setDoc.getSafeInt("reps")
+                        val load: Double = setDoc.getSafeDouble("load")
+                        val unitStr: String = setDoc.getSafeString("unit", "WEIGHT")
+                        val time: Int? = setDoc.getSafeIntNullable("time")
+                        val distance: Double? = setDoc.getSafeDoubleNullable("distance")
 
                         val unit = try {
                             com.guaracode.evofit.domain.model.MeasurementUnit.valueOf(unitStr)

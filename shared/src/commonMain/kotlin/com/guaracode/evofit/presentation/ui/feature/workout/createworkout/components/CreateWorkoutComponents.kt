@@ -199,7 +199,7 @@ fun ExerciseConfigHeader(
 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "SÉRIE",
+                text = "Série",
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.weight(0.8f),
@@ -209,10 +209,10 @@ fun ExerciseConfigHeader(
             Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
             val (col1Text, col1Weight) = when (unit) {
-                MeasurementUnit.WEIGHT -> "PESO (KG)" to 1f
-                MeasurementUnit.DISTANCE -> "DISTÂNCIA (KM)" to 1.5f
-                MeasurementUnit.TIME -> "TEMPO (MIN)" to 2.2f
-                MeasurementUnit.REPS -> "REPETIÇÕES" to 2.2f
+                MeasurementUnit.WEIGHT -> "Peso (kg)" to 1f
+                MeasurementUnit.DISTANCE -> "Distância (km)" to 1.5f
+                MeasurementUnit.TIME -> "Tempo (min)" to 2.2f
+                MeasurementUnit.REPS -> "Repetições" to 2.2f
             }
 
             Text(
@@ -227,8 +227,8 @@ fun ExerciseConfigHeader(
                 Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
 
                 val (col2Text, col2Weight) = when (unit) {
-                    MeasurementUnit.WEIGHT -> "REPETIÇÕES" to 1.2f
-                    MeasurementUnit.DISTANCE -> "TEMPO (MIN)" to 1.5f
+                    MeasurementUnit.WEIGHT -> "Reps" to 1.2f
+                    MeasurementUnit.DISTANCE -> "Tempo (min)" to 1.5f
                     else -> "" to 0f
                 }
                 Text(

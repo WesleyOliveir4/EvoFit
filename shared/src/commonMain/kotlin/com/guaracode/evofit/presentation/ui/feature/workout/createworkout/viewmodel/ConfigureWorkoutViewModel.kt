@@ -3,6 +3,7 @@ package com.guaracode.evofit.presentation.ui.feature.workout.createworkout.viewm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guaracode.evofit.core.common.AppConstants
+import com.guaracode.evofit.core.common.randomUuid
 import com.guaracode.evofit.domain.model.ExerciseSet
 import com.guaracode.evofit.domain.model.MeasurementUnit
 import com.guaracode.evofit.domain.model.Workout
@@ -267,7 +268,7 @@ class ConfigureWorkoutViewModel(
                     muscleGroup = muscleGroupsMap[muscleGroupId],
                     orderIndex = 0,
                     exercises = configs.mapIndexed { index, config ->
-                        val workoutExerciseUuid = if (config.workoutExerciseId.isEmpty()) "ex-${Clock.System.now().toEpochMilliseconds()}-$index" else config.workoutExerciseId
+                        val workoutExerciseUuid = if (config.workoutExerciseId.isEmpty()) randomUuid() else config.workoutExerciseId
                         
                         WorkoutExercise(
                             id = workoutExerciseUuid,
