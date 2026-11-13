@@ -62,7 +62,7 @@ fun ProfileHomeScreen(
     onUserDataClick: () -> Unit = {},
     onGoalsClick: () -> Unit = {},
     onLogoutSuccess: () -> Unit = {},
-    isDeveloperMenuEnabled: Boolean = false
+    isDeveloperMenuEnabled: Boolean = true
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -138,7 +138,7 @@ fun ProfileHomeScreenContent(
     userWeight: String,
     userHeight: String,
     profileImageUrl: String,
-    isDeveloperMenuEnabled: Boolean = false,
+    isDeveloperMenuEnabled: Boolean = true,
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit,

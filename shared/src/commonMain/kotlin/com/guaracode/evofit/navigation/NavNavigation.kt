@@ -286,6 +286,7 @@ fun NavNavigation() {
                 val viewModel = backStackEntry.sharedViewModel<ProfileViewModel>(navController)
                 ProfileHomeScreen(
                     viewModel = viewModel,
+                    isDeveloperMenuEnabled = true,
                     onNavigate = { route ->
                         navController.navigateWithPopUp(route)
                     },
