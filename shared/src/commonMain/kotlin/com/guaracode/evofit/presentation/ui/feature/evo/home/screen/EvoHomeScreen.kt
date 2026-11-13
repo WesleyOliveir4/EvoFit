@@ -65,6 +65,13 @@ private fun EvoPeriod.getDisplayName(): String {
     }
 }
 
+private fun Double.formatOneDecimal(): String {
+    val rounded = (this * 10).toInt()
+    val integerPart = rounded / 10
+    val decimalPart = kotlin.math.abs(rounded % 10)
+    return if (decimalPart == 0) "$integerPart" else "$integerPart,$decimalPart"
+}
+
 @Composable
 fun EvoHomeScreen(
     onNavigate: (String) -> Unit = {},
@@ -152,10 +159,11 @@ fun EvoHomeContent(
                     )
                 } else {
                     gains.forEachIndexed { index, gain ->
+                        val gainStr = gain.gainKg.formatOneDecimal()
                         StrengthProgressRow(
                             position = stringResource(Res.string.evo_home_ranking_format, index + 1),
                             exerciseName = gain.exerciseName,
-                            progressValue = stringResource(Res.string.evo_home_gain_kg_format, gain.gainKg)
+                            progressValue = stringResource(Res.string.evo_home_gain_kg_format, gainStr)
                         )
                         if (index < gains.size - 1) {
                             HorizontalDivider(
@@ -176,7 +184,8 @@ fun EvoHomeContent(
                 MostEvolvedCard(
                     muscleName = evolution?.muscleGroupName ?: stringResource(Res.string.evo_home_empty_value),
                     percentage = evolution?.let { 
-                        stringResource(Res.string.evo_home_evolution_percentage_format, it.evolutionPercentage) 
+                        val pctStr = it.evolutionPercentage.formatOneDecimal()
+                        stringResource(Res.string.evo_home_evolution_percentage_format, pctStr) 
                     } ?: stringResource(Res.string.evo_home_empty_value),
                     modifier = Modifier.weight(1.4f)
                 )

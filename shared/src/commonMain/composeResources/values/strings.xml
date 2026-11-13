@@ -17,9 +17,9 @@
     <string name="evo_home_workouts_title">TREINOS</string>
     <string name="evo_home_workouts_completed">concluídos</string>
     <string name="evo_home_ranking_format">%1$dº</string>
-    <string name="evo_home_gain_kg_format">+%1$.1fkg</string>
+    <string name="evo_home_gain_kg_format">+%1$s kg</string>
     <string name="evo_home_empty_value">---</string>
-    <string name="evo_home_evolution_percentage_format">+%1$.0f%%</string>
+    <string name="evo_home_evolution_percentage_format">+%1$s%%</string>
     <string name="evo_home_insufficient_data">Dados insuficientes para este período</string>
     <string name="evo_home_least_trained_title">GRUPO MENOS TREINADO</string>
     <string name="evo_home_sessions_count">%1$d sessões</string>
