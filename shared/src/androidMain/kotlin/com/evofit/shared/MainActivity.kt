@@ -3,12 +3,14 @@ package com.evofit.shared
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.guaracode.evofit.navigation.NavNavigation
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
+import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)

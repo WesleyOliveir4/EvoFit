@@ -33,6 +33,9 @@ import com.guaracode.evofit.presentation.model.WorkoutHistoryUIModel
 import com.guaracode.evofit.presentation.ui.theme.Dimens
 import com.guaracode.evofit.presentation.ui.theme.EvoFitTheme
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutDoneItem(
     workoutDone: WorkoutHistoryUIModel,
@@ -42,9 +45,8 @@ fun WorkoutDoneItem(
     var isExpanded by remember { mutableStateOf(initiallyExpanded) }
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { isExpanded = !isExpanded },
+        onClick = { isExpanded = !isExpanded },
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

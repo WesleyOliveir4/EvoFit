@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutListItem(
     workout: WorkoutUIModel,
@@ -67,6 +69,8 @@ fun WorkoutListItem(
     val animatedScale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
 
     Card(
+        onClick = onClick,
+        enabled = !isDragging,
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer {
@@ -81,8 +85,7 @@ fun WorkoutListItem(
                 width = if (isDragging) Dimens.BorderWidthThin else Dimens.ElevationNone,
                 color = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                 shape = RoundedCornerShape(Dimens.CornerRadiusDefault)
-            )
-            .clickable(enabled = !isDragging) { onClick() },
+            ),
         shape = RoundedCornerShape(Dimens.CornerRadiusDefault),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

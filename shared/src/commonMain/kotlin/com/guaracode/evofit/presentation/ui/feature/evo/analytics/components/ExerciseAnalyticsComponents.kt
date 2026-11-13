@@ -124,7 +124,9 @@ fun MetricStatCard(
                 imageVector = icon,
                 contentDescription = null,
                 tint = displayColor,
-                modifier = Modifier.size(Dimens.IconSizeSmall)
+                modifier = Modifier
+                    .size(Dimens.IconSizeSmall)
+                    .offset(x = (-2).dp)
             )
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpacingExtraExtraSmall)) {
                 Text(
