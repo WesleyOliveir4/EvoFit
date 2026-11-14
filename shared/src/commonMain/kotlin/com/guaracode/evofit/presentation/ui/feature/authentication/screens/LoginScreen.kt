@@ -202,7 +202,7 @@ fun LoginContent(
                 enabled = !uiState.isLoading
             )
 
-            if (googleIcon != null) {
+            if ((uiState.showGoogleLogin && googleIcon != null) || (uiState.showAppleLogin && appleIcon != null)) {
                 LoginSocialDivider()
 
                 Row(
@@ -210,13 +210,15 @@ fun LoginContent(
                         .padding(bottom = Dimens.SpacingMedium),
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingMedium)
                 ) {
-                    SocialLoginButton(
-                        text = stringResource(Res.string.login_google),
-                        icon = googleIcon,
-                        onClick = onGoogleClick,
-                        modifier = Modifier.weight(1f),
-                        enabled = !uiState.isLoading
-                    )
+                    if (uiState.showGoogleLogin && googleIcon != null) {
+                        SocialLoginButton(
+                            text = stringResource(Res.string.login_google),
+                            icon = googleIcon,
+                            onClick = onGoogleClick,
+                            modifier = Modifier.weight(1f),
+                            enabled = !uiState.isLoading
+                        )
+                    }
                     if (uiState.showAppleLogin && appleIcon != null) {
                         SocialLoginButton(
                             text = "Apple",

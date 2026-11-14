@@ -1,6 +1,7 @@
 package com.guaracode.evofit.domain.usecase
 
 import com.guaracode.evofit.core.common.DateMapper
+import com.guaracode.evofit.core.common.randomUuid
 import com.guaracode.evofit.domain.model.*
 import com.guaracode.evofit.domain.repository.OnboardingRepository
 import kotlinx.coroutines.flow.firstOrNull
@@ -212,6 +213,6 @@ class GenerateFakeWorkoutHistoryUseCaseImpl(
     }
 
     private fun randomUUID(): String {
-        return "fake-${Clock.System.now().toEpochMilliseconds()}-${Random.Default.nextInt(100000)}"
+        return randomUuid()
     }
 }

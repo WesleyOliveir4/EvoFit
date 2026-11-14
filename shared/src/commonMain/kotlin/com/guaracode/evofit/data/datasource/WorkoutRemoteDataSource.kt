@@ -6,6 +6,7 @@ import com.guaracode.evofit.data.local.entities.FullWorkoutRemoteData
 import com.guaracode.evofit.data.local.entities.WorkoutDoneHistoryEntity
 import com.guaracode.evofit.data.local.entities.WorkoutEntity
 import com.guaracode.evofit.data.local.entities.WorkoutExerciseEntity
+import com.guaracode.evofit.data.mapper.fixInconsistencies
 import com.guaracode.evofit.domain.model.WorkoutDone
 import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.DocumentSnapshot
@@ -201,21 +202,60 @@ class WorkoutRemoteDataSourceImpl(
     }
 
     override suspend fun saveWorkoutDone(workoutDone: WorkoutDone) {
-        val workoutDoneMap = mapOf<String, Any?>(
-            "id" to workoutDone.id,
-            "userId" to workoutDone.userId,
-            "name" to workoutDone.name,
-            "date" to workoutDone.date,
-            "exercisesByGroup" to workoutDone.exercisesByGroup,
-            "time" to workoutDone.time,
-            "createdAt" to FieldValue.serverTimestamp
-        )
+        val workoutDoneMap = workoutDoneToMap(workoutDone)
 
         firestore.collection("users")
             .document(workoutDone.userId)
             .collection("history")
             .document(workoutDone.id)
             .set(workoutDoneMap)
+    }
+
+    private fun workoutDoneToMap(workoutDone: WorkoutDone): Map<String, Any?> {
+        return mapOf(
+            "id" to workoutDone.id,
+            "userId" to workoutDone.userId,
+            "name" to workoutDone.name,
+            "date" to workoutDone.date,
+            "time" to workoutDone.time,
+            "createdAt" to workoutDone.createdAt,
+            "exercisesByGroup" to workoutDone.exercisesByGroup.map { group ->
+                mapOf(
+                    "muscleGroupId" to group.muscleGroupId,
+                    "muscleGroup" to group.muscleGroup?.let { mg ->
+                        mapOf(
+                            "id" to mg.id,
+                            "name" to mg.name,
+                            "type" to mg.type.name,
+                            "category" to mg.category.name
+                        )
+                    },
+                    "orderIndex" to group.orderIndex,
+                    "exercises" to group.exercises.map { exercise ->
+                        mapOf(
+                            "id" to exercise.id,
+                            "exerciseId" to exercise.exerciseId,
+                            "muscleGroupId" to exercise.muscleGroupId,
+                            "totalSets" to exercise.totalSets,
+                            "orderIndex" to exercise.orderIndex,
+                            "sets" to exercise.sets.map { set ->
+                                mapOf(
+                                    "id" to set.id,
+                                    "exerciseName" to set.exerciseName,
+                                    "workoutExerciseId" to set.workoutExerciseId,
+                                    "setNumber" to set.setNumber,
+                                    "reps" to set.reps,
+                                    "load" to set.load,
+                                    "unit" to set.unit.name,
+                                    "time" to set.time,
+                                    "distance" to set.distance
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        )
     }
 
     override suspend fun deleteWorkoutDone(userId: String, workoutDoneId: String) {
@@ -237,8 +277,9 @@ class WorkoutRemoteDataSourceImpl(
             
             snapshot.documents.mapNotNull { doc ->
                 try {
-                    doc.data(WorkoutDone.serializer())
+                    doc.data(WorkoutDone.serializer()).fixInconsistencies()
                 } catch (e: Exception) {
+                    crashReporter.recordException(e)
                     null
                 }
             }
@@ -260,8 +301,9 @@ class WorkoutRemoteDataSourceImpl(
                 .filter { it.id != "summary" }
                 .mapNotNull { doc ->
                     try {
-                        doc.data(WorkoutDone.serializer())
+                        doc.data(WorkoutDone.serializer()).fixInconsistencies()
                     } catch (e: Exception) {
+                        crashReporter.recordException(e)
                         null
                     }
                 }

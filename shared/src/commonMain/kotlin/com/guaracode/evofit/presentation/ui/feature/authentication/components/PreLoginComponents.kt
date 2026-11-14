@@ -111,7 +111,7 @@ fun PreLoginFooter(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
+        shape = RoundedCornerShape(Dimens.CornerRadiusSmall)
     ) {
         Text(
             text = stringResource(Res.string.pre_login_button_start),

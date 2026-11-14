@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+import com.evofit.shared.getPlatform
+
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
@@ -37,8 +39,13 @@ class LoginViewModel(
     }
 
     private fun determineSocialLoginAvailability() {
-        val isAndroid = true 
-        _uiState.update { it.copy(showAppleLogin = !isAndroid) }
+        val platform = getPlatform()
+        _uiState.update { 
+            it.copy(
+                showGoogleLogin = platform.isAndroid,
+                showAppleLogin = platform.isIos
+            ) 
+        }
     }
 
     fun onEmailChange(email: String) {
