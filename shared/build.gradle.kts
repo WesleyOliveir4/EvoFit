@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
@@ -5,6 +7,34 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+}
+
+val generateAppVersionConfig = tasks.register("generateAppVersionConfig") {
+    val versionPropsFile = rootProject.file("publish-version.properties")
+    inputs.file(versionPropsFile)
+    
+    val outputDir = layout.buildDirectory.dir("generated/sources/appVersion/kotlin")
+    outputs.dir(outputDir)
+
+    doLast {
+        val props = Properties()
+        if (versionPropsFile.exists()) {
+            versionPropsFile.inputStream().use { props.load(it) }
+        }
+        val versionCode = (props["versionCode"] as? String)?.toIntOrNull() ?: 1
+        val versionName = (props["versionName"] as? String) ?: "1.0.0"
+
+        val outFile = outputDir.get().asFile.resolve("com/guaracode/evofit/core/common/AppVersionConfig.kt")
+        outFile.parentFile.mkdirs()
+        outFile.writeText("""
+            package com.guaracode.evofit.core.common
+
+            object AppVersionConfig {
+                const val VERSION_CODE = $versionCode
+                const val VERSION_NAME = "$versionName"
+            }
+        """.trimIndent())
+    }
 }
 
 kotlin {
@@ -25,6 +55,10 @@ kotlin {
 
     sourceSets {
         val compose = dependencies.compose
+        val commonMain by getting {
+            kotlin.srcDir(generateAppVersionConfig)
+        }
+        
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)

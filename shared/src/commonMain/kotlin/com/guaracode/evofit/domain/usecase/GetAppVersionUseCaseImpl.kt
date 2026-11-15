@@ -1,7 +1,9 @@
 package com.guaracode.evofit.domain.usecase
 
+import com.guaracode.evofit.core.common.AppVersionConfig
+
 class GetAppVersionUseCaseImpl : GetAppVersionUseCase {
     override fun invoke(): String {
-        return "1.0.0"
+        return AppVersionConfig.VERSION_NAME
     }
 }

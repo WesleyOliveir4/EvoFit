@@ -9,11 +9,26 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
-val publishVersionFile = rootProject.file("publish-version.properties")
-val publishVersionProperties = Properties().apply {
-    if (publishVersionFile.exists()) {
-        publishVersionFile.inputStream().use { load(it) }
+fun getPublishVersionProperties(): Properties {
+    val file = rootProject.file("publish-version.properties")
+    val props = Properties()
+    if (file.exists()) {
+        file.inputStream().use { props.load(it) }
     }
+    return props
+}
+
+fun getPublishVersionCode(): Int {
+    return (getPublishVersionProperties()["versionCode"] as? String)?.toIntOrNull() ?: 1
+}
+
+fun getPublishVersionName(): String {
+    return (getPublishVersionProperties()["versionName"] as? String) ?: "1.0.1"
+}
+
+fun getPublishAppDescription(): String {
+    return (getPublishVersionProperties()["appDescription"] as? String)
+        ?: "EvoFit - Seu aplicativo completo para acompanhamento de treinos e evolução física."
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -23,11 +38,6 @@ val keystoreProperties = Properties().apply {
     }
 }
 
-val pubVersionCode = (publishVersionProperties["versionCode"] as? String)?.toIntOrNull() ?: 1
-val pubVersionName = (publishVersionProperties["versionName"] as? String) ?: "1.0.0"
-val pubAppDescription = (publishVersionProperties["appDescription"] as? String)
-    ?: "EvoFit - Seu aplicativo completo para acompanhamento de treinos e evolução física."
-
 android {
     namespace = "com.guaracode.evofit"
     compileSdk = 36
@@ -36,11 +46,11 @@ android {
         applicationId = "com.guaracode.evofit"
         minSdk = 24
         targetSdk = 36
-        versionCode = pubVersionCode
-        versionName = pubVersionName
+        versionCode = getPublishVersionCode()
+        versionName = getPublishVersionName()
 
-        resValue("string", "app_description", pubAppDescription)
-        buildConfigField("String", "APP_DESCRIPTION", "\"$pubAppDescription\"")
+        resValue("string", "app_description", getPublishAppDescription())
+        buildConfigField("String", "APP_DESCRIPTION", "\"${getPublishAppDescription()}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -178,7 +188,7 @@ tasks.register("generateReleaseAab") {
         if (!outputDir.exists()) {
             outputDir.mkdirs()
         }
-        val customBundleName = "evofit-prod-${pubVersionCode}-${pubVersionName}-release.aab"
+        val customBundleName = "evofit-prod-${getPublishVersionCode()}-${getPublishVersionName()}-release.aab"
         val destinationFile = File(outputDir, customBundleName)
         val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
         val customBundle = File(bundleDir, customBundleName)
@@ -196,7 +206,7 @@ tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
     doLast {
         val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
         val defaultBundle = File(bundleDir, "app-production-release.aab")
-        val customBundleName = "evofit-prod-${pubVersionCode}-${pubVersionName}-release.aab"
+        val customBundleName = "evofit-prod-${getPublishVersionCode()}-${getPublishVersionName()}-release.aab"
         val customBundle = File(bundleDir, customBundleName)
         if (defaultBundle.exists()) {
             defaultBundle.copyTo(customBundle, overwrite = true)
@@ -212,6 +222,82 @@ tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
         if (sourceBundle.exists()) {
             sourceBundle.copyTo(destinationFile, overwrite = true)
             println("🚀 AAB disponibilizado na pasta outputs: ${destinationFile.absolutePath}")
+        }
+    }
+}
+
+tasks.register("GenerateApkRelease") {
+    group = "publishing"
+    description = "Gera o APK assinado de produção (Release) e copia para a pasta 'outputs' na raiz do projeto"
+    dependsOn("assembleProductionRelease")
+
+    doLast {
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) outputDir.mkdirs()
+        val customName = "evofit-prod-${getPublishVersionCode()}-${getPublishVersionName()}-release.apk"
+        val destinationFile = File(outputDir, customName)
+        val apkDir = layout.buildDirectory.dir("outputs/apk/production/release").get().asFile
+        val defaultApk = File(apkDir, "app-production-release.apk")
+        if (defaultApk.exists()) {
+            defaultApk.copyTo(destinationFile, overwrite = true)
+            println("🚀 APK de produção gerado em: ${destinationFile.absolutePath}")
+        }
+    }
+}
+
+tasks.register("GenerateApkStaging") {
+    group = "publishing"
+    description = "Gera o APK assinado de homologação (Staging) e copia para a pasta 'outputs' na raiz do projeto"
+    dependsOn("assembleStagingRelease")
+
+    doLast {
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) outputDir.mkdirs()
+        val customName = "evofit-staging-${getPublishVersionCode()}-${getPublishVersionName()}-release.apk"
+        val destinationFile = File(outputDir, customName)
+        val apkDir = layout.buildDirectory.dir("outputs/apk/staging/release").get().asFile
+        val defaultApk = File(apkDir, "app-staging-release.apk")
+        if (defaultApk.exists()) {
+            defaultApk.copyTo(destinationFile, overwrite = true)
+            println("🚀 APK de staging gerado em: ${destinationFile.absolutePath}")
+        }
+    }
+}
+
+tasks.register("GenerateAabRelease") {
+    group = "publishing"
+    description = "Gera o AAB assinado de produção (Release) e copia para a pasta 'outputs' na raiz do projeto"
+    dependsOn("bundleProductionRelease")
+
+    doLast {
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) outputDir.mkdirs()
+        val customName = "evofit-prod-${getPublishVersionCode()}-${getPublishVersionName()}-release.aab"
+        val destinationFile = File(outputDir, customName)
+        val bundleDir = layout.buildDirectory.dir("outputs/bundle/productionRelease").get().asFile
+        val defaultBundle = File(bundleDir, "app-production-release.aab")
+        if (defaultBundle.exists()) {
+            defaultBundle.copyTo(destinationFile, overwrite = true)
+            println("🚀 AAB de produção gerado em: ${destinationFile.absolutePath}")
+        }
+    }
+}
+
+tasks.register("GenerateAabStaging") {
+    group = "publishing"
+    description = "Gera o AAB assinado de homologação (Staging) e copia para a pasta 'outputs' na raiz do projeto"
+    dependsOn("bundleStagingRelease")
+
+    doLast {
+        val outputDir = rootProject.file("outputs")
+        if (!outputDir.exists()) outputDir.mkdirs()
+        val customName = "evofit-staging-${getPublishVersionCode()}-${getPublishVersionName()}-release.aab"
+        val destinationFile = File(outputDir, customName)
+        val bundleDir = layout.buildDirectory.dir("outputs/bundle/stagingRelease").get().asFile
+        val defaultBundle = File(bundleDir, "app-staging-release.aab")
+        if (defaultBundle.exists()) {
+            defaultBundle.copyTo(destinationFile, overwrite = true)
+            println("🚀 AAB de staging gerado em: ${destinationFile.absolutePath}")
         }
     }
 }
