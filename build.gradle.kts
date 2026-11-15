@@ -17,25 +17,25 @@ tasks.register("testUnit") {
 }
 
 tasks.register("GenerateApkRelease") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o APK assinado de produção (Release)"
     dependsOn(":app:GenerateApkRelease")
 }
 
 tasks.register("GenerateApkStaging") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o APK assinado de homologação (Staging)"
     dependsOn(":app:GenerateApkStaging")
 }
 
 tasks.register("GenerateAabRelease") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o AAB assinado de produção (Release)"
     dependsOn(":app:GenerateAabRelease")
 }
 
 tasks.register("GenerateAabStaging") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o AAB assinado de homologação (Staging)"
     dependsOn(":app:GenerateAabStaging")
 }

@@ -179,7 +179,7 @@ tasks.register("testUnit") {
 }
 
 tasks.register("generateReleaseAab") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o AAB assinado de produção para a Play Store e envia para a pasta 'outputs' na raiz do projeto"
     dependsOn("bundleProductionRelease")
 
@@ -227,7 +227,7 @@ tasks.matching { it.name == "bundleProductionRelease" }.configureEach {
 }
 
 tasks.register("GenerateApkRelease") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o APK assinado de produção (Release) e copia para a pasta 'outputs' na raiz do projeto"
     dependsOn("assembleProductionRelease")
 
@@ -246,7 +246,7 @@ tasks.register("GenerateApkRelease") {
 }
 
 tasks.register("GenerateApkStaging") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o APK assinado de homologação (Staging) e copia para a pasta 'outputs' na raiz do projeto"
     dependsOn("assembleStagingRelease")
 
@@ -265,7 +265,7 @@ tasks.register("GenerateApkStaging") {
 }
 
 tasks.register("GenerateAabRelease") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o AAB assinado de produção (Release) e copia para a pasta 'outputs' na raiz do projeto"
     dependsOn("bundleProductionRelease")
 
@@ -284,7 +284,7 @@ tasks.register("GenerateAabRelease") {
 }
 
 tasks.register("GenerateAabStaging") {
-    group = "publishing"
+    group = "publish"
     description = "Gera o AAB assinado de homologação (Staging) e copia para a pasta 'outputs' na raiz do projeto"
     dependsOn("bundleStagingRelease")
 
