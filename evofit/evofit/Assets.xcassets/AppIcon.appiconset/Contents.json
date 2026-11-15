@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "app_icon.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -12,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "app_icon.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -23,6 +25,7 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "app_icon.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -80,6 +83,6 @@
   ],
   "info" : {
     "author" : "xcode",
-    "version" : 1
+    "version" : "1"
   }
 }
