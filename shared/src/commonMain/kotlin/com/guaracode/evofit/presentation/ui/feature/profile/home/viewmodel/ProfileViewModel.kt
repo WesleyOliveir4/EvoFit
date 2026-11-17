@@ -2,6 +2,7 @@ package com.guaracode.evofit.presentation.ui.feature.profile.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guaracode.evofit.domain.model.UserOnboardingData
 import com.guaracode.evofit.domain.usecase.GetOnboardingDataUseCase
 import com.guaracode.evofit.domain.usecase.LogoutUseCase
 import com.guaracode.evofit.domain.usecase.NukeUserDataUseCase
@@ -36,12 +37,13 @@ class ProfileViewModel(
                 flow { emit(ProfileUiState(isLoggedOut = true)) }
             } else {
                 getOnboardingDataUseCase().map { userData ->
+                    println("EvoFit_Profile: ProfileViewModel collected userData, profilePictureUri = ${userData?.profilePictureUri}")
                     ProfileUiState(
-                        name = getFirstName(userData.name),
-                        birthDate = userData.birthDate,
-                        weight = userData.weight,
-                        height = userData.height,
-                        profilePictureUri = userData.profilePictureUri,
+                        name = getFirstName(userData?.name ?: ""),
+                        birthDate = userData?.birthDate ?: "",
+                        weight = userData?.weight ?: "",
+                        height = userData?.height ?: "",
+                        profilePictureUri = userData?.profilePictureUri,
                         isLoading = false
                     )
                 }
@@ -58,11 +60,14 @@ class ProfileViewModel(
     }
 
     fun updateProfilePicture(uri: String) {
+        println("EvoFit_Profile: updateProfilePicture called with uri: $uri")
         tracker.trackProfilePictureUpdated()
         viewModelScope.launch {
             val currentData = getOnboardingDataUseCase().first()
-            val updatedData = currentData.copy(profilePictureUri = uri)
+            val updatedData = currentData?.copy(profilePictureUri = uri) ?: UserOnboardingData(profilePictureUri = uri)
+            println("EvoFit_Profile: saving onboarding data with profilePictureUri: ${updatedData.profilePictureUri}")
             saveOnboardingDataUseCase(updatedData)
+            println("EvoFit_Profile: onboarding data saved successfully")
         }
     }
 

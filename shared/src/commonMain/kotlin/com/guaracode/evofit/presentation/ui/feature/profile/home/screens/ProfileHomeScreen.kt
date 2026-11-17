@@ -74,6 +74,12 @@ fun ProfileHomeScreen(
     var isPhotoExpanded by remember { mutableStateOf(false) }
     var showImageSourcePicker by remember { mutableStateOf(false) }
 
+    val imagePicker = rememberImagePickerLauncher(
+        onImageSelected = { uri ->
+            viewModel.updateProfilePicture(uri)
+        }
+    )
+
     LaunchedEffect(uiState.isLoggedOut) {
         if (uiState.isLoggedOut) {
             onLogoutSuccess()
@@ -110,8 +116,12 @@ fun ProfileHomeScreen(
     if (showImageSourcePicker) {
         ImageSourcePickerBottomSheet(
             onDismiss = { showImageSourcePicker = false },
-            onGalleryClick = { },
-            onCameraClick = { }
+            onGalleryClick = {
+                imagePicker.launchGallery()
+            },
+            onCameraClick = {
+                imagePicker.launchCamera()
+            }
         )
     }
 

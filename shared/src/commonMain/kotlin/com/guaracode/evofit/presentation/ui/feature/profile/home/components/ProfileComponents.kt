@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -165,11 +166,11 @@ fun UserDataInfoComponent(
                 .clickable { onImageClick() },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
+            ProfileImageComponent(
+                profileImageUrl = profileImageUrl,
                 contentDescription = "Foto de perfil",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxSize(0.6f)
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -198,11 +199,11 @@ fun ProfilePhotoExpandedDialog(
                     .padding(Dimens.SpacingLarge),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
+                ProfileImageComponent(
+                    profileImageUrl = profileImageUrl,
                     contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier.size(200.dp)
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 

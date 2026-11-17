@@ -88,6 +88,7 @@ kotlin {
             implementation(libs.googleid)
             implementation(libs.firebase.auth)
             implementation(libs.androidx.core.splashscreen)
+            implementation(libs.coil.compose)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

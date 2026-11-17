@@ -14,29 +14,36 @@ abstract class UserDao {
 
     @Transaction
     open suspend fun insertUser(user: UserEntity): Long {
-        val id = internalInsertUser(user)
+        val existing = getUserDirect()
+        val mergedUser = if (existing != null && user.profilePictureUri.isNullOrEmpty()) {
+            user.copy(profilePictureUri = existing.profilePictureUri)
+        } else {
+            user
+        }
+        val id = internalInsertUser(mergedUser)
         if (id == -1L) {
-            // Se já existe, apenas atualizamos os campos para NÃO disparar o CASCADE DELETE do REPLACE
             updateUserFields(
-                id = user.id,
-                name = user.name,
-                birthDate = user.birthDate,
-                weight = user.weight,
-                height = user.height,
-                onboardingCompleted = user.onboardingCompleted,
-                updatedAt = user.updatedAt
+                id = mergedUser.id,
+                name = mergedUser.name,
+                birthDate = mergedUser.birthDate,
+                weight = mergedUser.weight,
+                height = mergedUser.height,
+                profilePictureUri = mergedUser.profilePictureUri ?: existing?.profilePictureUri,
+                onboardingCompleted = mergedUser.onboardingCompleted,
+                updatedAt = mergedUser.updatedAt
             )
         }
         return id
     }
 
-    @Query("UPDATE users SET name = :name, birthDate = :birthDate, weight = :weight, height = :height, isOnboardingCompleted = :onboardingCompleted, updatedAt = :updatedAt WHERE id = :id")
+    @Query("UPDATE users SET name = :name, birthDate = :birthDate, weight = :weight, height = :height, profilePictureUri = COALESCE(:profilePictureUri, profilePictureUri), isOnboardingCompleted = :onboardingCompleted, updatedAt = :updatedAt WHERE id = :id")
     protected abstract suspend fun updateUserFields(
         id: String,
         name: String,
         birthDate: String,
         weight: String,
         height: String,
+        profilePictureUri: String?,
         onboardingCompleted: Boolean,
         updatedAt: Long
     )
