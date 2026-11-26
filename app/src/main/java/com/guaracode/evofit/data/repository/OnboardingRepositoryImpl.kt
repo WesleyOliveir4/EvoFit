@@ -8,6 +8,7 @@ import com.guaracode.evofit.data.datasource.UserRemoteDataSource
 import com.guaracode.evofit.data.datasource.WorkoutLocalDataSource
 import com.guaracode.evofit.data.datasource.WorkoutRemoteDataSource
 import com.guaracode.evofit.data.local.entities.SyncStatus
+import com.guaracode.evofit.data.local.entities.UserEntity
 import com.guaracode.evofit.data.local.session.SessionManager
 import com.guaracode.evofit.data.mapper.mapToDomain
 import com.guaracode.evofit.data.mapper.toDomain
@@ -153,7 +154,14 @@ class OnboardingRepositoryImpl(
                     async { workoutRemoteDataSource.getWorkoutDoneHistory(userId) }
                 } else null
 
-                val remoteUser = remoteUserDeferred.await()
+                val remoteUser = remoteUserDeferred.await() ?: UserEntity(
+                    id = userId,
+                    name = "",
+                    birthDate = "",
+                    weight = "",
+                    height = "",
+                    onboardingCompleted = false
+                )
                 val remoteGoals = remoteGoalsDeferred.await()
                 val remoteWorkouts = remoteWorkoutsDeferred.await()
                 val remoteNewHistory = remoteNewHistoryDeferred.await()

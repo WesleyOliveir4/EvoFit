@@ -12,7 +12,12 @@
           "package_name": "com.example.evofit.staging"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1061635064350-hgo89rhls33epj3mj8j0snmde9ddc9bd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDog-wZdW440rx-GKHKed4eqyArZyr3gx4"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061635064350-hgo89rhls33epj3mj8j0snmde9ddc9bd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1061635064350-v1715t8kiqg8pailu53c2b6r5qhuf959.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guaracode.evofit"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +48,20 @@
           "package_name": "com.guaracode.evofit.staging"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1061635064350-cvjpn0tkgfh4pv8h04ctd07pi9sdnuuv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guaracode.evofit.staging",
+            "certificate_hash": "4fa4e6354c2f7f1a9e70c42b026bfef759266b40"
+          }
+        },
+        {
+          "client_id": "1061635064350-hgo89rhls33epj3mj8j0snmde9ddc9bd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDog-wZdW440rx-GKHKed4eqyArZyr3gx4"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061635064350-hgo89rhls33epj3mj8j0snmde9ddc9bd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1061635064350-v1715t8kiqg8pailu53c2b6r5qhuf959.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guaracode.evofit"
+              }
+            }
+          ]
         }
       }
     }

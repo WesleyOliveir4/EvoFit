@@ -151,22 +151,22 @@ class OnboardingRepositoryImpl(
                 val remoteWeightHistory = remoteWeightHistoryDeferred.await()
                 val remoteLegacyHistory = remoteLegacyHistoryDeferred?.await()
 
-                val finalUser = when {
-                    remoteUser != null && remoteUser.onboardingCompleted -> remoteUser
-                    remoteUser != null && (remoteWorkouts.isNotEmpty() || remoteGoals.isNotEmpty() || remoteNewHistory.isNotEmpty()) -> {
-                        remoteUser.copy(onboardingCompleted = true)
+                val isNewUser = remoteUser == null
+                val finalUser = remoteUser ?: UserEntity(
+                    id = userId,
+                    name = "",
+                    birthDate = "",
+                    weight = "",
+                    height = "",
+                    onboardingCompleted = false
+                )
+
+                if (isNewUser) {
+                    try {
+                        userRemoteDataSource.saveUser(finalUser)
+                    } catch (e: Exception) {
+                        crashReporter.recordException(e)
                     }
-                    remoteUser == null && (remoteWorkouts.isNotEmpty() || remoteGoals.isNotEmpty() || remoteNewHistory.isNotEmpty()) -> {
-                        UserEntity(
-                            id = userId,
-                            name = "",
-                            birthDate = "",
-                            weight = "",
-                            height = "",
-                            onboardingCompleted = true
-                        )
-                    }
-                    else -> remoteUser
                 }
 
                 if (isFullSync) {

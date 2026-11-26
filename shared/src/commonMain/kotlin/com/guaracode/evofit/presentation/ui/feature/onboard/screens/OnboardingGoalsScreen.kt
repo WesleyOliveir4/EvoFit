@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -81,7 +82,7 @@ fun OnboardingGoalsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingGoalsContent(
     activeGoals: List<GoalUIModel>,
@@ -192,12 +193,11 @@ fun OnboardingGoalsContent(
 
             Spacer(modifier = Modifier.height(Dimens.SpacingLarge))
 
-            FlowRow(
+            LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall),
-                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSmall)
             ) {
-                suggestions.forEach { suggestion ->
+                items(suggestions) { suggestion ->
                     GoalTag(
                         text = suggestion.text,
                         onClick = {
@@ -240,25 +240,6 @@ fun OnboardingGoalsContent(
 
             Spacer(modifier = Modifier.height(Dimens.SpacingMedium))
         }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun FlowRow(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    maxItemsInEachRow: Int = Int.MAX_VALUE,
-    content: @Composable () -> Unit
-) {
-    androidx.compose.foundation.layout.FlowRow(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement,
-        maxItemsInEachRow = maxItemsInEachRow
-    ) {
-        content()
     }
 }
 

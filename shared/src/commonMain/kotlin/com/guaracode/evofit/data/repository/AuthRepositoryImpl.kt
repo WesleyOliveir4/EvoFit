@@ -35,13 +35,17 @@ class AuthRepositoryImpl(
 
     override suspend fun loginWithGoogle(idToken: String): Result<Unit> {
         return try {
+            println("EvoFit_Google: loginWithGoogle called with idToken length: ${idToken.length}")
             val credential = GoogleAuthProvider.credential(idToken, null)
             val result = firebaseAuth.signInWithCredential(credential)
             result.user?.uid?.let {
                 sessionManager.saveSession(it)
+                println("EvoFit_Google: firebaseAuth sign in success for uid: $it")
             }
             Result.success(Unit)
         } catch (e: Exception) {
+            println("EvoFit_Google: loginWithGoogle failed with exception: ${e.message}")
+            e.printStackTrace()
             Result.failure(e)
         }
     }

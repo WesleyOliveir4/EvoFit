@@ -9,6 +9,7 @@ import com.guaracode.evofit.core.network.NetworkConnectivityObserver
 import com.guaracode.evofit.data.local.AppDatabase
 import com.guaracode.evofit.data.repository.SupportRepositoryImpl
 import com.guaracode.evofit.domain.repository.SupportRepository
+import com.guaracode.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import okio.Path.Companion.toPath
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -16,6 +17,7 @@ import org.koin.dsl.module
 actual val platformDataModule = module {
     single<SupportRepository> { SupportRepositoryImpl(androidContext(), get()) }
     single<ConnectivityObserver> { NetworkConnectivityObserver(androidContext()) }
+    single { GoogleSignInHandler(androidContext()) }
     single<DataStore<Preferences>> {
         PreferenceDataStoreFactory.createWithPath(
             produceFile = {

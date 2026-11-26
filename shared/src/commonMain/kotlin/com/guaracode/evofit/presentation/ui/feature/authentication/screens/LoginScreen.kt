@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.guaracode.evofit.presentation.ui.feature.authentication.components.*
+import com.guaracode.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import com.guaracode.evofit.presentation.ui.feature.authentication.state.LoginUiState
 import com.guaracode.evofit.presentation.ui.feature.authentication.tracking.AuthTracker
 import com.guaracode.evofit.presentation.ui.feature.authentication.viewmodel.LoginViewModel
@@ -35,6 +36,7 @@ import evofit.shared.generated.resources.login_label_email
 import evofit.shared.generated.resources.login_label_password
 import evofit.shared.generated.resources.login_placeholder_email
 import evofit.shared.generated.resources.login_placeholder_password
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -45,15 +47,17 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     authTracker: AuthTracker = koinInject(),
+    googleSignInHandler: GoogleSignInHandler = koinInject(),
     onLoginSuccess: (Boolean) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    onGoogleClick: () -> Unit = {},
+    onGoogleClick: (() -> Unit)? = null,
     onAppleClick: () -> Unit = {},
     googleIcon: Painter = painterResource(Res.drawable.ic_google),
     appleIcon: Painter = painterResource(Res.drawable.ic_apple)
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -64,6 +68,21 @@ fun LoginScreen(
         if (uiState.isSuccess) {
             onLoginSuccess(uiState.isOnboardingCompleted)
             viewModel.resetSuccess()
+        }
+    }
+
+    val defaultGoogleClick: () -> Unit = {
+        coroutineScope.launch {
+            println("EvoFit_Google: defaultGoogleClick triggered")
+            googleSignInHandler.signIn()
+                .onSuccess { idToken ->
+                    println("EvoFit_Google: googleSignInHandler.signIn success, idToken length: ${idToken.length}")
+                    viewModel.onGoogleLoginClick(idToken)
+                }
+                .onFailure { error ->
+                    println("EvoFit_Google: googleSignInHandler.signIn failure: ${error.message}")
+                    error.printStackTrace()
+                }
         }
     }
 
@@ -79,7 +98,7 @@ fun LoginScreen(
         },
         onSignUpClick = onSignUpClick,
         onBackClick = onBackClick,
-        onGoogleClick = onGoogleClick,
+        onGoogleClick = onGoogleClick ?: defaultGoogleClick,
         onAppleClick = onAppleClick,
         googleIcon = googleIcon,
         appleIcon = appleIcon
@@ -236,7 +255,7 @@ fun LoginContent(
 
 @Preview
 @Composable
-private fun LoginScreenPreview() {
+private fun LoginScreen() {
     EvoFitTheme {
         LoginContent(
             uiState = LoginUiState(),

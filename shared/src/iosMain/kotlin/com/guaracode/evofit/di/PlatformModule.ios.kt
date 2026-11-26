@@ -11,6 +11,7 @@ import com.guaracode.evofit.data.local.AppDatabase
 import com.guaracode.evofit.data.local.AppDatabaseConstructor
 import com.guaracode.evofit.data.repository.SupportRepositoryImpl
 import com.guaracode.evofit.domain.repository.SupportRepository
+import com.guaracode.evofit.presentation.ui.feature.authentication.google.GoogleSignInHandler
 import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path.Companion.toPath
 import org.koin.dsl.module
@@ -22,6 +23,7 @@ import platform.Foundation.NSUserDomainMask
 actual val platformDataModule = module {
     single<SupportRepository> { SupportRepositoryImpl(get()) }
     single<ConnectivityObserver> { NetworkConnectivityObserver() }
+    single { GoogleSignInHandler() }
     single<DataStore<Preferences>> {
         PreferenceDataStoreFactory.createWithPath(
             produceFile = {
