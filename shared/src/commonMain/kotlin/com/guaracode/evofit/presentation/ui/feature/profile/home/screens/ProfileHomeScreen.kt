@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.evofit.shared.getPlatform
 import com.guaracode.evofit.navigation.NavRoutes
 import com.guaracode.evofit.presentation.ui.feature.components.AppBottomNavigation
 import com.guaracode.evofit.presentation.ui.feature.components.EvoFitAlertDialog
@@ -62,7 +63,7 @@ fun ProfileHomeScreen(
     onUserDataClick: () -> Unit = {},
     onGoalsClick: () -> Unit = {},
     onLogoutSuccess: () -> Unit = {},
-    isDeveloperMenuEnabled: Boolean = true
+    isDeveloperMenuEnabled: Boolean = getPlatform().isDebug
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -148,7 +149,7 @@ fun ProfileHomeScreenContent(
     userWeight: String,
     userHeight: String,
     profileImageUrl: String,
-    isDeveloperMenuEnabled: Boolean = true,
+    isDeveloperMenuEnabled: Boolean = getPlatform().isDebug,
     onNavigate: (String) -> Unit,
     onUserDataClick: () -> Unit,
     onGoalsClick: () -> Unit,
