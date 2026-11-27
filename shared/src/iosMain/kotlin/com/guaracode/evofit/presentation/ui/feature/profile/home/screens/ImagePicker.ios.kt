@@ -6,32 +6,10 @@ import platform.UIKit.*
 import platform.Foundation.*
 import platform.darwin.NSObject
 
-class IosImagePickerLauncher(
-    private val onImageSelected: (String) -> Unit
-) : ImagePickerLauncher, NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
-
-    override fun launchGallery() {
-        val picker = UIImagePickerController().apply {
-            sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
-            delegate = this@IosImagePickerLauncher
-        }
-        getRootViewController()?.presentViewController(picker, animated = true, completion = null)
-    }
-
-    override fun launchCamera() {
-        if (UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera)) {
-            val picker = UIImagePickerController().apply {
-                sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
-                delegate = this@IosImagePickerLauncher
-            }
-            getRootViewController()?.presentViewController(picker, animated = true, completion = null)
-        }
-    }
-
-    private fun getRootViewController(): UIViewController? {
-        val keyWindow = UIApplication.sharedApplication.keyWindow ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.let { win -> win.isKeyWindow() } == true } as? UIWindow
-        return keyWindow?.rootViewController
-    }
+private class ImagePickerDelegate(
+    private val onImageSelected: (String) -> Unit,
+    private val onDismiss: (UIImagePickerController) -> Unit
+) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
     override fun imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo: Map<Any?, *>) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
@@ -45,11 +23,47 @@ class IosImagePickerLauncher(
                 onImageSelected(fileURL.absoluteString ?: "")
             }
         }
-        picker.dismissViewControllerAnimated(true, completion = null)
+        onDismiss(picker)
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        picker.dismissViewControllerAnimated(true, completion = null)
+        onDismiss(picker)
+    }
+}
+
+class IosImagePickerLauncher(
+    private val onImageSelected: (String) -> Unit
+) : ImagePickerLauncher {
+
+    private var delegate: ImagePickerDelegate? = null
+
+    override fun launchGallery() {
+        val picker = UIImagePickerController().apply {
+            sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
+            delegate = ImagePickerDelegate(onImageSelected) { p ->
+                p.dismissViewControllerAnimated(true, completion = null)
+                delegate = null
+            }.also { delegate = it }
+        }
+        getRootViewController()?.presentViewController(picker, animated = true, completion = null)
+    }
+
+    override fun launchCamera() {
+        if (UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera)) {
+            val picker = UIImagePickerController().apply {
+                sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+                delegate = ImagePickerDelegate(onImageSelected) { p ->
+                    p.dismissViewControllerAnimated(true, completion = null)
+                    delegate = null
+                }.also { delegate = it }
+            }
+            getRootViewController()?.presentViewController(picker, animated = true, completion = null)
+        }
+    }
+
+    private fun getRootViewController(): UIViewController? {
+        val keyWindow = UIApplication.sharedApplication.keyWindow ?: UIApplication.sharedApplication.windows.firstOrNull { (it as? UIWindow)?.let { win -> win.isKeyWindow() } == true } as? UIWindow
+        return keyWindow?.rootViewController
     }
 }
 
